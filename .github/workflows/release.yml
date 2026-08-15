@@ -1,0 +1,97 @@
+name: Release template
+
+# Tags are how Copier resolves "latest version", so an untagged commit on main
+# is invisible to `copier update`. Releasing is therefore a deliberate act.
+#
+# Run from the Actions tab: pick the bump, confirm, done.
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump
+        required: true
+        type: choice
+        options: [patch, minor, major]
+      dry_run:
+        description: Print the tag without creating it
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute next version
+        id: version
+        run: |
+          latest=$(git tag -l 'v*' --sort=-v:refname | head -1)
+          if [ -z "$latest" ]; then
+            next="v0.1.0"
+          else
+            v=${latest#v}
+            IFS='.' read -r major minor patch <<< "$v"
+            case "${{ inputs.bump }}" in
+              major) next="v$((major + 1)).0.0" ;;
+              minor) next="v${major}.$((minor + 1)).0" ;;
+              patch) next="v${major}.${minor}.$((patch + 1))" ;;
+            esac
+          fi
+          echo "latest=${latest:-none}" >> "$GITHUB_OUTPUT"
+          echo "next=$next" >> "$GITHUB_OUTPUT"
+          echo "### $latest → $next" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Changes since last release
+        id: notes
+        run: |
+          latest="${{ steps.version.outputs.latest }}"
+          {
+            echo "notes<<EOF"
+            if [ "$latest" = "none" ]; then
+              echo "Initial release."
+            else
+              git log "${latest}..HEAD" --pretty='- %s' --no-merges
+            fi
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Warn on breaking template changes
+        run: |
+          latest="${{ steps.version.outputs.latest }}"
+          [ "$latest" = "none" ] && exit 0
+          # Renamed or deleted template files break `copier update` for
+          # existing projects unless a migration is declared.
+          moved=$(git diff --name-status "$latest..HEAD" -- template/ \
+                  | grep -E '^(R|D)' || true)
+          if [ -n "$moved" ] && ! grep -q '_migrations' copier.yml; then
+            echo "::warning::Template files moved or deleted with no _migrations block:"
+            echo "$moved"
+          fi
+
+      - name: Create tag
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.next }}" \
+            -m "Release ${{ steps.version.outputs.next }}"
+          git push origin "${{ steps.version.outputs.next }}"
+
+      - name: GitHub release
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.next }}" \
+            --title "${{ steps.version.outputs.next }}" \
+            --notes "${{ steps.notes.outputs.notes }}
+
+          ---
+          Existing projects can pull this in with \`uvx copier update --trust\`."
