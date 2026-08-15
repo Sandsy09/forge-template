@@ -69,7 +69,7 @@ for name in "${!COMBOS[@]}"; do
     --data github_org="test-org" \
     --data author_name="Test User" \
     --data author_email="test@example.com" \
-    ${COMBOS[$name]} > /dev/null
+    "${COMBOS[$name]}" > /dev/null
 
   cd "$out"
 
