@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+dist/
+build/
+*.egg-info/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.env
+{%- if versioning_resolved == 'vcs' %}
+src/{{ package_name }}/_version.py
+{%- endif %}

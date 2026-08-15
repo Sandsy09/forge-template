@@ -1,0 +1,157 @@
+# {{ project_name }}
+
+{{ project_description }}
+
+## Installation
+
+This package is not published to a package index. Install it directly from
+GitHub (requires read access to the repository):
+
+```bash
+uv add git+{{ repo_url }}
+```
+
+Pin to a released tag:
+
+```bash
+uv add git+{{ repo_url }}@v{{ initial_version if versioning_resolved == 'static' else '0.1.0' }}
+```
+{% if versioning_resolved == 'vcs' %}
+> [!IMPORTANT]
+> This package derives its version from git tags at build time.
+>
+> **Supported:** `git+https://` installs (a real clone, so tag history is
+> present) and installs from a built sdist or wheel (the version is baked into
+> the distribution metadata).
+>
+> **Not supported:** GitHub's auto-generated source archives, i.e.
+> `{{ repo_url }}/archive/refs/tags/v1.0.0.tar.gz`. These are raw tree
+> snapshots with no `.git` directory and no packaging metadata, so the build
+> cannot determine a version and fails outright.
+{% endif %}
+## Requirements
+
+- Python {{ python_min_version }}+ (developed against {{ python_version }})
+- [uv](https://docs.astral.sh/uv/){% if task_runner == 'make' %}
+- `make` (not present by default on Windows){% endif %}
+
+## Development
+
+```bash
+git clone {{ repo_url }}.git
+cd {{ repo_name }}
+uv sync --all-groups
+uv run pre-commit install --install-hooks
+```
+
+### Tasks
+
+Tasks are defined once in `pyproject.toml` under `[tool.poe.tasks]`.
+{%- if task_runner == 'make' %} The `Makefile` is a thin proxy over them.{% endif %}
+
+{% if task_runner == 'make' -%}
+| Command | Description |
+| --- | --- |
+| `make check` | Everything below, in order |
+| `make lint` | Ruff lint |
+| `make format` | Ruff format |
+| `make typecheck` | {{ 'mypy' if type_checking == 'mypy' else 'pyright' if type_checking == 'pyright' else 'mypy, then pyright' }} |
+| `make test` | pytest with coverage |
+{%- if use_docs %}
+| `make docs` | Serve docs locally |
+{%- endif %}
+{%- else -%}
+| Command | Description |
+| --- | --- |
+| `uv run poe check` | Everything below, in order |
+| `uv run poe lint` | Ruff lint |
+| `uv run poe format` | Ruff format |
+| `uv run poe typecheck` | {{ 'mypy' if type_checking == 'mypy' else 'pyright' if type_checking == 'pyright' else 'mypy, then pyright' }} |
+| `uv run poe test` | pytest with coverage |
+{%- if use_docs %}
+| `uv run poe docs` | Serve docs locally |
+{%- endif %}
+{%- endif %}
+
+Run `check` before pushing — CI runs the same tasks.
+
+## Project structure
+
+```
+{{ repo_name }}/
+├── src/{{ package_name }}/   Package source
+├── tests/                    Test suite
+{%- if use_docs %}
+├── docs/                     MkDocs site (docs/adr/ for decision records)
+{%- endif %}
+├── pyproject.toml            Dependencies, tooling, task definitions
+└── .copier-answers.yml       Template state — keep committed
+```
+
+## Versioning and releases
+
+{% if versioning_resolved == 'vcs' -%}
+The version is derived from git tags via `hatch-vcs`; it is never written into
+`pyproject.toml`. To release, tag the commit:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+Untagged builds get a development version such as `0.1.1.dev4+g1a2b3c`.
+Because the version is dynamic, `uv version` cannot read or set it — read
+`{{ package_name }}.__version__` from an installed copy instead.
+{%- else -%}
+The version is set statically in `pyproject.toml`. To release, bump it, then
+tag the same commit so the two never disagree:
+
+```bash
+uv version --bump minor
+git commit -am "chore: release v$(uv version --short)"
+git tag "v$(uv version --short)"
+git push --follow-tags
+```
+{%- endif %}
+
+{% if changelog_tool == 'git-cliff' -%}
+`CHANGELOG.md` is generated from Conventional Commits:
+
+```bash
+{% if task_runner == 'make' %}make changelog{% else %}uv run poe changelog{% endif %}
+```
+
+Commit messages are the source of the changelog, so write them for a reader
+who was not in the pull request.
+{%- else -%}
+`CHANGELOG.md` is maintained by hand, following
+[Keep a Changelog](https://keepachangelog.com/). Add an entry under
+`[Unreleased]` in the same pull request as the change.
+{%- endif %}
+
+## Updating from the template
+
+This project was scaffolded from a Copier template and can pull in later
+template changes:
+
+```bash
+uvx copier update --trust
+```
+
+Review the three-way merge carefully — local edits to templated files may
+conflict. Never delete or hand-edit `.copier-answers.yml`.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Security issues: see
+[SECURITY.md](SECURITY.md) — do not open a public issue.
+
+## License
+
+{% if license == 'proprietary' -%}
+Proprietary and confidential. Internal use only. See [LICENSE](LICENSE).
+{%- elif license == 'mit' -%}
+MIT — see [LICENSE](LICENSE).
+{%- else -%}
+Apache-2.0 — see [LICENSE](LICENSE).
+{%- endif %}

@@ -1,0 +1,293 @@
+{%- set py_target = 'py' ~ python_min_version | replace('.', '') -%}
+[build-system]
+{%- if build_backend == 'uv_build' %}
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
+{%- elif versioning_resolved == 'vcs' %}
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+{%- else %}
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+{%- endif %}
+
+[project]
+name = "{{ repo_name }}"
+{%- if versioning_resolved == 'vcs' %}
+dynamic = ["version"]
+{%- else %}
+version = "{{ initial_version }}"
+{%- endif %}
+description = "{{ project_description }}"
+readme = "README.md"
+requires-python = ">={{ python_min_version }}"
+{%- if license == 'proprietary' %}
+license = "LicenseRef-Proprietary"
+{%- elif license == 'mit' %}
+license = "MIT"
+{%- else %}
+license = "Apache-2.0"
+{%- endif %}
+license-files = ["LICENSE"]
+{%- if author_name %}
+authors = [{ name = "{{ author_name }}"{% if author_email %}, email = "{{ author_email }}"{% endif %} }]
+{%- endif %}
+classifiers = [
+{%- if license == 'proprietary' %}
+    # Hard-stops an accidental `uv publish` to public PyPI.
+    "Private :: Do Not Upload",
+{%- endif %}
+{%- for v in python_matrix %}
+    "Programming Language :: Python :: {{ v }}",
+{%- endfor %}
+    "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Repository = "{{ repo_url }}"
+Issues = "{{ repo_url }}/issues"
+{%- if use_docs %}
+Documentation = "{{ repo_url }}/blob/main/docs/index.md"
+{%- endif %}
+
+# -----------------------------------------------------------------------------
+# Dependency groups (PEP 735) - not shipped to consumers
+# -----------------------------------------------------------------------------
+
+[dependency-groups]
+lint = [
+    "ruff>=0.14",
+    "pre-commit>=4.0",
+]
+test = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+]
+typecheck = [
+{%- if type_checking in ('mypy', 'both') %}
+    "mypy>=1.14",
+{%- endif %}
+{%- if type_checking in ('pyright', 'both') %}
+    "pyright>=1.1.390",
+{%- endif %}
+]
+{%- if use_docs %}
+docs = [
+    "mkdocs>=1.6",
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.27",
+]
+{%- endif %}
+dev = [
+    { include-group = "lint" },
+    { include-group = "test" },
+    { include-group = "typecheck" },
+{%- if use_docs %}
+    { include-group = "docs" },
+{%- endif %}
+    "poethepoet>=0.31",
+{%- if changelog_tool == 'git-cliff' %}
+    "git-cliff>=2.7",
+{%- endif %}
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+{% if build_backend == 'uv_build' -%}
+[tool.uv.build-backend]
+module-name = "{{ package_name }}"
+module-root = "src"
+{%- else -%}
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ package_name }}"]
+{%- if versioning_resolved == 'vcs' %}
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+# Generated at build time; git-ignored, never committed.
+version-file = "src/{{ package_name }}/_version.py"
+{%- endif %}
+{%- endif %}
+
+# -----------------------------------------------------------------------------
+# Ruff
+# -----------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 88
+target-version = "{{ py_target }}"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",    # pycodestyle
+    "F",         # pyflakes
+    "I",         # isort
+    "N",         # pep8-naming
+    "UP",        # pyupgrade
+    "B",         # flake8-bugbear
+    "A",         # flake8-builtins
+    "C4",        # flake8-comprehensions
+    "SIM",       # flake8-simplify
+    "PTH",       # flake8-use-pathlib
+    "RUF",       # ruff-specific
+    "ANN",       # flake8-annotations
+    "D",         # pydocstyle
+]
+ignore = [
+    "D107",      # __init__ docstring - covered by the class docstring
+    "ANN401",    # allow Any where deliberately used
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D", "ANN", "S101"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["{{ package_name }}"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+# -----------------------------------------------------------------------------
+# Type checking
+# -----------------------------------------------------------------------------
+{% if type_checking in ('mypy', 'both') %}
+[tool.mypy]
+python_version = "{{ python_min_version }}"
+files = ["src", "tests"]
+strict = true
+warn_unreachable = true
+warn_unused_ignores = true
+{%- if type_checking == 'both' %}
+# pyright owns unused-ignore reporting for its own dialect; keep mypy from
+# flagging `# pyright: ignore` comments it cannot interpret.
+enable_error_code = ["redundant-expr", "truthy-bool"]
+{%- endif %}
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+{%- endif %}
+{% if type_checking in ('pyright', 'both') %}
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "{{ python_min_version }}"
+typeCheckingMode = "basic"
+venvPath = "."
+venv = ".venv"
+{%- endif %}
+
+# -----------------------------------------------------------------------------
+# Tests + coverage
+# -----------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--import-mode=importlib",
+    "--cov",
+    "--cov-report=term-missing",
+]
+
+[tool.coverage.run]
+source = ["src/{{ package_name }}"]
+branch = true
+{%- if versioning_resolved == 'vcs' %}
+omit = ["src/{{ package_name }}/_version.py"]
+{%- endif %}
+
+[tool.coverage.report]
+show_missing = true
+{%- if coverage_fail_under > 0 %}
+fail_under = {{ coverage_fail_under }}
+{%- else %}
+# No threshold enforced. Set fail_under once the suite is meaningful.
+{%- endif %}
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "@(abc\\.)?abstractmethod",
+]
+
+# -----------------------------------------------------------------------------
+# Tasks - the single definition. A Makefile, if present, only proxies these.
+# -----------------------------------------------------------------------------
+
+[tool.poe.tasks]
+lint = "ruff check ."
+format = "ruff format ."
+"lint:fix" = "ruff check --fix ."
+"format:check" = "ruff format --check ."
+{%- if type_checking == 'mypy' %}
+typecheck = "mypy"
+{%- elif type_checking == 'pyright' %}
+typecheck = "pyright"
+{%- else %}
+typecheck = ["_typecheck_mypy", "_typecheck_pyright"]
+_typecheck_mypy = "mypy"
+_typecheck_pyright = "pyright"
+{%- endif %}
+test = "pytest"
+check = ["format:check", "lint", "typecheck", "test"]
+{%- if use_docs %}
+docs = "mkdocs serve"
+"docs:build" = "mkdocs build --strict"
+{%- endif %}
+{%- if changelog_tool == 'git-cliff' %}
+changelog = "git-cliff --output CHANGELOG.md"
+{%- endif %}
+{% if changelog_tool == 'git-cliff' %}
+# -----------------------------------------------------------------------------
+# git-cliff - Tera templates below; {% raw %}{{ }}{% endraw %} is Tera syntax, not Jinja.
+# -----------------------------------------------------------------------------
+
+[tool.git-cliff.changelog]
+header = """
+# Changelog
+
+All notable changes to this project are documented here.
+This file is generated by git-cliff from Conventional Commits.
+"""
+{% raw -%}
+body = """
+{% if version %}\
+## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+## [Unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | upper_first }}
+{% for commit in commits %}
+- {{ commit.message | upper_first }}\
+{% endfor %}
+{% endfor %}\n
+"""
+{%- endraw %}
+trim = true
+
+[tool.git-cliff.git]
+conventional_commits = true
+filter_unconventional = true
+protect_breaking_commits = true
+tag_pattern = "v[0-9]*"
+commit_parsers = [
+    { message = "^feat", group = "Features" },
+    { message = "^fix", group = "Bug Fixes" },
+    { message = "^perf", group = "Performance" },
+    { message = "^refactor", group = "Refactor" },
+    { message = "^docs", group = "Documentation" },
+    { message = "^test", group = "Testing" },
+    { message = "^(chore|build|ci)", skip = true },
+]
+{%- endif %}

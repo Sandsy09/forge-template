@@ -1,0 +1,172 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: {% raw %}${{ github.workflow }}-${{ github.ref }}{% endraw %}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  UV_VERSION: "0.12.0"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: {% raw %}${{ env.UV_VERSION }}{% endraw %}
+          enable-cache: true
+          python-version: "{{ python_version }}"
+
+      - name: Check lockfile is current
+        run: uv lock --check
+
+      - run: uv sync --group lint
+
+      - name: Ruff format
+        run: uv run ruff format --check .
+
+      - name: Ruff lint
+        run: uv run ruff check --output-format=github .
+
+  typecheck:
+    name: Type check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+{%- if versioning_resolved == 'vcs' %}
+        with:
+          # hatch-vcs resolves the version from tags; `uv sync` installs this
+          # project, so a shallow clone breaks the sync outright.
+          fetch-depth: 0
+{%- endif %}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: {% raw %}${{ env.UV_VERSION }}{% endraw %}
+          enable-cache: true
+          python-version: "{{ python_version }}"
+
+      - run: uv sync --all-groups
+{% if type_checking in ('mypy', 'both') %}
+      - name: mypy
+        run: uv run mypy
+{%- endif %}
+{%- if type_checking in ('pyright', 'both') %}
+
+      - name: pyright
+        run: uv run pyright
+{%- endif %}
+
+  test:
+    name: Test (Python {% raw %}${{ matrix.python-version }}{% endraw %})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: {{ python_matrix | tojson }}
+    steps:
+      - uses: actions/checkout@v4
+{%- if versioning_resolved == 'vcs' %}
+        with:
+          fetch-depth: 0
+{%- endif %}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: {% raw %}${{ env.UV_VERSION }}{% endraw %}
+          enable-cache: true
+          python-version: {% raw %}${{ matrix.python-version }}{% endraw %}
+
+      - run: uv sync --group test
+
+      - name: pytest
+        run: uv run pytest --cov-report=xml --cov-report=term-missing
+
+      - name: Upload coverage
+        if: {% raw %}${{ matrix.python-version == '{% endraw %}{{ python_version }}{% raw %}' }}{% endraw %}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: error
+
+  build:
+    name: Build distributions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+{%- if versioning_resolved == 'vcs' %}
+        with:
+          fetch-depth: 0
+{%- endif %}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: {% raw %}${{ env.UV_VERSION }}{% endraw %}
+          enable-cache: true
+          python-version: "{{ python_version }}"
+
+      - name: Build sdist and wheel
+        run: uv build
+{% if versioning_resolved == 'vcs' %}
+      - name: Fail on unresolved version
+        run: |
+          # A dev version here means the tag history did not reach the runner.
+          if ls dist/ | grep -qE '(dev0|\+d[0-9]{8})'; then
+            echo "::error::Version did not resolve from git tags. Check fetch-depth."
+            ls dist/
+            exit 1
+          fi
+{%- endif %}
+
+      - name: Verify metadata
+        run: |
+          uv tool run twine check dist/*
+          ls -la dist/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+{%- if use_docs %}
+
+  docs:
+    name: Build docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+{%- if versioning_resolved == 'vcs' %}
+        with:
+          fetch-depth: 0
+{%- endif %}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: {% raw %}${{ env.UV_VERSION }}{% endraw %}
+          enable-cache: true
+          python-version: "{{ python_version }}"
+
+      - run: uv sync --group docs
+
+      - name: Build (warnings are errors)
+        run: uv run mkdocs build --strict
+{%- endif %}

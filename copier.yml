@@ -1,0 +1,262 @@
+# =============================================================================
+# copier.yml - Library archetype
+# =============================================================================
+# Template repo layout assumed:
+#   copier.yml                <- this file (never copied into projects)
+#   template/                 <- everything below here IS the scaffold
+#   tests/                    <- template's own tests (scaffold + verify)
+#   .github/workflows/        <- template's own CI
+# =============================================================================
+
+_subdirectory: template
+_min_copier_version: "9.4.0"
+_answers_file: .copier-answers.yml
+
+_exclude:
+  - "copier.yml"
+  - "~*"
+  - "*.py[co]"
+  - "__pycache__"
+  - ".git"
+  - ".DS_Store"
+
+# Never clobber these if regenerating over an existing project.
+_skip_if_exists:
+  - CHANGELOG.md
+  - .env
+
+# -----------------------------------------------------------------------------
+# Identity
+# -----------------------------------------------------------------------------
+
+project_name:
+  type: str
+  help: Project name (human readable, e.g. "Credit Risk Utils")
+  validator: >-
+    {% if not project_name %}Project name is required{% endif %}
+
+package_name:
+  type: str
+  help: Import name (must be a valid Python identifier)
+  default: >-
+    {{ project_name | lower | replace(' ', '_') | replace('-', '_') }}
+  validator: >-
+    {% if not package_name | regex_search('^[a-z][a-z0-9_]*$') %}
+    Must be lowercase, start with a letter, and contain only letters, digits and underscores
+    {% endif %}
+
+repo_name:
+  type: str
+  help: GitHub repository name (used in clone URLs)
+  default: "{{ project_name | lower | replace(' ', '-') | replace('_', '-') }}"
+  validator: >-
+    {% if not repo_name | regex_search('^[a-z0-9][a-z0-9._-]*$') %}
+    Must be a valid GitHub repository name
+    {% endif %}
+
+project_description:
+  type: str
+  help: One-line description
+  default: ""
+
+github_org:
+  type: str
+  help: GitHub organisation or username
+  # NOTE: default supplied by the CLI's org profile, not hard-coded here.
+  default: ""
+
+repo_url:
+  type: str
+  when: false
+  default: "https://github.com/{{ github_org }}/{{ repo_name }}"
+
+author_name:
+  type: str
+  help: Author / maintainer name
+  default: ""
+
+author_email:
+  type: str
+  help: Author / maintainer email
+  default: ""
+  validator: >-
+    {% if author_email and not author_email | regex_search('^[^@\s]+@[^@\s]+\.[^@\s]+$') %}
+    Not a valid email address
+    {% endif %}
+
+codeowners_team:
+  type: str
+  help: CODEOWNERS entry (e.g. "@org/credit-risk" or "@username")
+  default: "@{{ github_org }}/{{ package_name | replace('_', '-') }}-maintainers"
+
+license:
+  type: str
+  help: License
+  default: proprietary
+  choices:
+    Proprietary - internal use only: proprietary
+    MIT: mit
+    Apache-2.0: apache-2.0
+
+# -----------------------------------------------------------------------------
+# Python versions
+# -----------------------------------------------------------------------------
+# python_version -> .python-version + requires-python floor for dev
+# python_min_version -> lower bound of the CI test matrix
+
+python_all:
+  type: json
+  when: false
+  default: '["3.11", "3.12", "3.13", "3.14"]'
+
+python_version:
+  type: str
+  help: Python version to pin for development (.python-version)
+  default: "3.13"
+  choices:
+    - "3.11"
+    - "3.12"
+    - "3.13"
+    - "3.14"
+
+python_min_version:
+  type: str
+  help: Oldest Python version to support (lower bound of the CI matrix)
+  default: "3.11"
+  choices:
+    - "3.11"
+    - "3.12"
+    - "3.13"
+    - "3.14"
+  validator: >-
+    {% if python_all.index(python_min_version) > python_all.index(python_version) %}
+    Minimum supported version cannot be newer than the pinned dev version
+    {% endif %}
+
+python_matrix:
+  type: json
+  when: false
+  default: >-
+    {{ python_all[python_all.index(python_min_version) : python_all.index(python_version) + 1] | tojson }}
+
+# -----------------------------------------------------------------------------
+# Build backend + versioning (LINKED PAIR - do not decouple)
+# -----------------------------------------------------------------------------
+
+build_backend:
+  type: str
+  help: Build backend
+  default: uv_build
+  choices:
+    uv_build (simple, static version only): uv_build
+    hatchling (needed for git-tag versioning): hatchling
+
+versioning:
+  type: str
+  help: How the package version is determined
+  default: static
+  when: "{{ build_backend == 'hatchling' }}"
+  choices:
+    Static - version literal in pyproject.toml: static
+    Git tags via hatch-vcs (breaks archive-tarball installs): vcs
+
+# Forces static when uv_build is chosen, so downstream templates only
+# ever read `versioning` and never re-derive the constraint.
+versioning_resolved:
+  type: str
+  when: false
+  default: "{% if build_backend == 'uv_build' %}static{% else %}{{ versioning }}{% endif %}"
+
+initial_version:
+  type: str
+  help: Initial version
+  default: "0.1.0"
+  when: "{{ versioning_resolved == 'static' }}"
+  validator: >-
+    {% if not initial_version | regex_search('^\d+\.\d+\.\d+') %}
+    Must be a PEP 440 version, e.g. 0.1.0
+    {% endif %}
+
+# -----------------------------------------------------------------------------
+# Tooling
+# -----------------------------------------------------------------------------
+
+task_runner:
+  type: str
+  help: Task runner (tasks are always defined in pyproject.toml; Make is a proxy)
+  default: poe
+  choices:
+    Poe the Poet: poe
+    Makefile (thin proxy over poe): make
+
+type_checking:
+  type: str
+  help: Type checker(s) - CI gate
+  default: mypy
+  choices:
+    mypy (strict): mypy
+    pyright (basic): pyright
+    Both - chained via `typecheck` task: both
+
+coverage_fail_under:
+  type: int
+  help: Coverage threshold to enforce in CI (0 disables the gate)
+  default: 0
+  validator: >-
+    {% if coverage_fail_under < 0 or coverage_fail_under > 100 %}
+    Must be between 0 and 100
+    {% endif %}
+
+dependency_updates:
+  type: str
+  help: Automated dependency updates
+  default: renovate
+  choices:
+    Renovate (best uv lockfile support): renovate
+    Dependabot: dependabot
+    None: none
+
+use_docs:
+  type: bool
+  help: Include MkDocs + mkdocstrings documentation site?
+  default: false
+
+changelog_tool:
+  type: str
+  help: CHANGELOG generation (Conventional Commits are enforced either way)
+  default: git-cliff
+  choices:
+    git-cliff - generated from commit history: git-cliff
+    Hand-written (Keep a Changelog): manual
+
+# -----------------------------------------------------------------------------
+# Post-generation
+# -----------------------------------------------------------------------------
+# Requires --trust. The CLI wrapper always passes it; direct `copier copy`
+# users are prompted.
+
+_tasks:
+  - "git init --initial-branch=main"
+  - "git add -A"
+  - 'git commit -m "feat: initial scaffold from template"'
+  - "uv sync --all-groups"
+  - "uv run pre-commit install --install-hooks"
+
+_message_after_copy: |
+
+  {{ project_name }} scaffolded.
+
+    cd {{ repo_name }}
+    {% if task_runner == 'poe' %}uv run poe check{% else %}make check{% endif %}
+
+  Next:
+    1. Create the repo:  gh repo create {{ github_org }}/{{ repo_name }} --private --source=.
+    2. Commit:           git add -A && git commit -m "feat: initial scaffold"
+    3. Pull updates:     copier update
+
+  Keep .copier-answers.yml committed - `copier update` needs it.
+
+_message_after_update: |
+
+  Updated to {{ _copier_answers._commit }}. Review conflicts, then re-run:
+    {% if task_runner == 'poe' %}uv run poe check{% else %}make check{% endif %}
