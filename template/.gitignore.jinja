@@ -7,10 +7,21 @@ build/
 .coverage
 .coverage.*
 htmlcov/
+.pyright/
+*.orig
+*.rej
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .env
+
 {%- if versioning_resolved == 'vcs' %}
 src/{{ package_name }}/_version.py
+{%- endif %}
+
+{%- if use_docs %}
+
+# MkDocs build output
+site/
+.cache/
 {%- endif %}

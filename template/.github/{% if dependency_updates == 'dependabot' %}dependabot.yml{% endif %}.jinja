@@ -1,0 +1,37 @@
+version: 2
+
+updates:
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/London
+    open-pull-requests-limit: 5
+    labels: [dependencies]
+    commit-message:
+      prefix: chore
+      prefix-development: chore
+      include: scope
+    groups:
+      dev-tooling:
+        dependency-type: development
+        update-types: [minor, patch]
+{%- if use_docs %}
+    ignore:
+      # MkDocs 2.0 removes the plugin system and breaks mkdocstrings.
+      - dependency-name: mkdocs
+        versions: [">=2.0.0"]
+      - dependency-name: mkdocs-material
+        versions: [">=10.0.0"]
+{%- endif %}
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    labels: [dependencies, ci]
+    commit-message:
+      prefix: ci

@@ -25,12 +25,15 @@ for name in "${COMBOS[@]}"; do
   echo "==> $repo"
   cd "$WORK/$name"
 
-  # test-combos.sh may have left dist/ and .venv behind.
-  rm -rf dist .venv
+  # .venv/ and dist/ are gitignored — nothing to clean.
+  git remote remove origin 2>/dev/null || true
 
-  gh repo create "$ORG/$repo" --private --source=. --remote=origin > /dev/null
+  gh repo create "$ORG/$repo" --private > /dev/null
+  git remote add origin "https://github.com/$ORG/$repo.git"
   git add -A
-  git commit -q -m "chore: local test artifacts" --allow-empty
+  if [[ -n "$(git status --porcelain)" ]]; then
+    git commit -q -am "chore: test artifacts"
+  fi
   git push -q -u origin main
 
   # Tag AFTER the push so the vcs combos get a resolvable version in CI.
