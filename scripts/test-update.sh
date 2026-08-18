@@ -83,9 +83,9 @@ t = t.replace(marker, "## Local section\n\nAdded by the project team, not the te
 p.write_text(t)
 PY
 
-echo "" >> README.md
-echo "## Local section" >> README.md
-echo "Added by the project team, not the template." >> README.md
+# echo "" >> README.md
+# echo "## Local section" >> README.md
+# echo "Added by the project team, not the template." >> README.md
 
 git add -A
 git commit -q -m "feat: local customisations" --no-verify
