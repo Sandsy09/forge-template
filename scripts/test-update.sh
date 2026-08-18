@@ -74,6 +74,15 @@ def fetch() -> str:
 PY
 
 # (c) edit a templated doc
+python - <<'PY'
+import pathlib
+p = pathlib.Path("README.md")
+t = p.read_text()
+marker = "## Development"
+t = t.replace(marker, "## Local section\n\nAdded by the project team, not the template.\n\n" + marker, 1)
+p.write_text(t)
+PY
+
 echo "" >> README.md
 echo "## Local section" >> README.md
 echo "Added by the project team, not the template." >> README.md
