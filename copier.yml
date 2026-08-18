@@ -238,8 +238,9 @@ changelog_tool:
 _tasks:
   - "git init --initial-branch=main"
   - "git add -A"
-  - 'git commit -m "feat: initial scaffold from template"'
+  - "git commit --no-verify -m 'feat: initial scaffold from template'"
   - "uv sync --all-groups"
+  - "git add uv.lock && git commit --no-verify -m 'chore: add lockfile' --allow-empty"
   - "uv run pre-commit install --install-hooks"
 
 _message_after_copy: |
