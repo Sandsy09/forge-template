@@ -1,0 +1,45 @@
+# This repo's own lint gate -- also what CI runs (see the `lint` job in
+# .github/workflows/test-template.yml). Deliberately covers template/**: the
+# whitespace/EOF hooks are how invariant 1 in CLAUDE.md (generated output
+# must be pre-commit clean) gets enforced at the source, not just discovered
+# downstream when a scaffold's own pre-commit run fails.
+default_install_hook_types: [pre-commit, commit-msg]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+
+  # shellcheck-py, not koalaman/shellcheck-precommit: the latter's hook
+  # shells out to `docker`, which isn't guaranteed to be running (and
+  # wasn't, here). This wraps a prebuilt shellcheck binary via pip instead.
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        files: ^scripts/.*\.sh$
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.0
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.12.0
+    hooks:
+      - id: uv-lock
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.6.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]

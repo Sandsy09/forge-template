@@ -26,6 +26,9 @@ Separate because Copier resolves template versions from PEP440 git tags here.
 ```
 forge-template/
 ├── copier.yml              Question schema. MUST be at root.
+├── pyproject.toml          This repo's OWN tooling — NOT part of the scaffold
+├── src/forge_template/     Checks that validate copier.yml against this file
+├── tests/                  Tests for src/forge_template
 ├── scripts/
 │   ├── test-combos.sh      Scaffold every combo, assert, run their checks
 │   ├── verify-ci.sh        Push combos to throwaway repos, watch CI
@@ -37,8 +40,10 @@ forge-template/
 ```
 
 Nothing inside `template/` describes the template itself. `copier.yml`,
-scripts, and this repo's own CI stay at root and are excluded via
-`_subdirectory: template`.
+`pyproject.toml`, `src/`, `tests/`, scripts, and this repo's own CI stay at
+root and are excluded via `_subdirectory: template`. `src/forge_template` is
+not scaffold code — see [#5](https://github.com/Sandsy09/forge-template/issues/5)
+for the plan to grow it into the home for `test-combos.sh`/`test-update.sh`.
 
 ## The question schema
 
@@ -142,9 +147,10 @@ stay byte-empty**.
 
 ## Validation
 
-Run in this order. All three currently pass.
+Run in this order. All four currently pass.
 
 ```bash
+uv run poe check             # this repo's own lint/typecheck/tests + copier.yml schema checks
 ./scripts/test-combos.sh     # local: 4 combos, render assertions, poe check
 ./scripts/verify-ci.sh <org> # pushes to throwaway repos, watches CI
 ./scripts/test-update.sh     # three-way merge: local edits survive
@@ -174,6 +180,12 @@ identity configured and doesn't reproduce the CI runner's environment. Fixed
 2026-08-21; `gh run view <run-id>` on the actual push is the only way to know
 CI is real, not just that the local script exited 0.
 
+The shellcheck failure specifically was possible because shellcheck existed
+**only** in CI, with no local config to catch it first. Closed by adding a
+root `.pre-commit-config.yaml` (which the `lint` job now runs directly via
+`uv run pre-commit run --all-files`, replacing the hand-rolled apt-get +
+shellcheck steps) — see backlog item 1, done.
+
 ## Current state
 
 Working: library archetype, all four combos green locally and in CI, update
@@ -181,34 +193,38 @@ merge validated, root and template `.gitattributes` both in place, no
 byte-empty template files remain, `task_runner`/`make` removed (it was the
 one untested, 100%-broken conditional — see Deferred). **`v0.1.0` is tagged
 (annotated, via `release.yml`) and pushed to `origin`** — the CLI can
-scaffold from this repo.
+scaffold from this repo. Root repo hygiene (backlog item 1) is done: root
+`pyproject.toml`, `.pre-commit-config.yaml`, and real content for `LICENSE`,
+`README.md`, `CONTRIBUTING.md`, `SECURITY.md` all exist; `src/forge_template`
+holds checks for `copier.yml` itself (layout, computed-value defaults, the
+`versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
+via `uv run poe check`, which the `lint` CI job now calls directly.
 
 Not yet done:
-- No root `pyproject.toml` for the template repo's own tooling (uv, ruff, poe)
-- No pre-commit config at root
-- Root `LICENSE`, `README.md`, `CONTRIBUTING.md` exist but are 0-byte
-  placeholders; `SECURITY.md` doesn't exist at root at all
 - No `docs/`
+- `scripts/test-combos.sh` / `test-update.sh` are still bash, not yet ported
+  to the `tests/` pytest suite — see [#5](https://github.com/Sandsy09/forge-template/issues/5)
 
 ## Backlog, in order
 
-**1. Root repo hygiene** ([#2](https://github.com/Sandsy09/forge-template/issues/2)).
-`pyproject.toml` for the template repo's own tooling, pre-commit config,
-content for the placeholder `LICENSE` (MIT, matching the CLI), `README.md`,
-`CONTRIBUTING.md` (how to change a template safely — the invariants above,
-and it should point at this file rather than restate it), and a new
-`SECURITY.md`.
-
-**2. `docs/`** ([#3](https://github.com/Sandsy09/forge-template/issues/3)).
+**1. `docs/`** ([#3](https://github.com/Sandsy09/forge-template/issues/3)).
 ADRs for decisions already made: Copier over Cookiecutter, two-repo split,
 uv_build vs Hatchling as a user choice, git-cliff over hand-written
 changelogs, mypy as default with pyright optional, MkDocs pinned below 2.0.
 
-**3. Archetype two** ([#4](https://github.com/Sandsy09/forge-template/issues/4)).
+**2. Archetype two** ([#4](https://github.com/Sandsy09/forge-template/issues/4)).
 Extract shared files into a common location, add the new archetype's own
 directory. **This is the `_migrations` moment** — plan it before writing any
 code, and keep the library archetype's paths stable if possible. Candidates
 in rough order of usefulness: `cli`, `service` (FastAPI + Docker), `pipeline`.
+
+**3. Migrate the validation scripts to Python** ([#5](https://github.com/Sandsy09/forge-template/issues/5)).
+`test-combos.sh` and `test-update.sh` already lean on `python -c` and
+`python - <<'PY'` heredocs for anything non-trivial; port both to `tests/`
+using Copier's Python API (`run_copy`/`run_update`) and pytest
+parametrization. `verify-ci.sh` stays bash. Not urgent — the bash scripts
+work — but the split is arbitrary and costs real things (serial combo runs,
+no per-combo isolation, Windows needing Git Bash).
 
 ## Known limitation, documented not fixed
 

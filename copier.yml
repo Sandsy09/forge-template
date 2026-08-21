@@ -5,6 +5,7 @@
 #   copier.yml                <- this file (never copied into projects)
 #   template/                 <- everything below here IS the scaffold
 #   scripts/                  <- template's own tests (scaffold + verify)
+#   src/, tests/               <- this repo's own tooling (see pyproject.toml)
 #   .github/workflows/        <- template's own CI
 # =============================================================================
 

@@ -36,26 +36,18 @@ jobs:
           enable-cache: true
           python-version: "3.13"
 
-      - name: copier.yml is valid YAML
-        run: |
-          uv run --with pyyaml python -c "
-          import yaml, sys
-          cfg = yaml.safe_load(open('copier.yml'))
-          assert '_subdirectory' in cfg, 'missing _subdirectory'
-          assert cfg['_subdirectory'] == 'template', '_subdirectory must be template/'
-          assert '_answers_file' in cfg, 'missing _answers_file'
-          print(f'{len([k for k in cfg if not k.startswith(\"_\")])} questions defined')
-          "
+      - name: Install dependencies
+        run: uv sync --all-groups
 
-      - name: Answers file template exists
-        run: |
-          test -f 'template/.copier-answers.yml.jinja' \
-            || { echo '::error::template/.copier-answers.yml.jinja missing — copier update will not work'; exit 1; }
+      # Same gate as `uv run pre-commit run --all-files` locally: ruff,
+      # shellcheck, and the whitespace/EOF hooks that guard invariant 1.
+      - name: Pre-commit
+        run: uv run pre-commit run --all-files --show-diff-on-failure
 
-      - name: Shell scripts
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y shellcheck
-          shellcheck scripts/*.sh
+      # copier.yml layout, computed-value defaults, and the
+      # versioning / versioning_resolved indirection.
+      - name: Schema and unit tests
+        run: uv run poe check
 
   # ---------------------------------------------------------------------------
   # Scaffold every combination, then run the checks the generated CI runs.

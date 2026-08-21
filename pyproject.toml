@@ -1,0 +1,166 @@
+# This repo's own tooling -- not part of the scaffold. template/pyproject.toml.jinja
+# is what generated projects get; this file governs forge-template itself.
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "forge-template"
+version = "0.1.0"
+description = "Copier template that scaffolds modern Python projects."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Alex" }]
+classifiers = [
+    # Consumed by git tag via Copier, never published to PyPI.
+    "Private :: Do Not Upload",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/Sandsy09/forge-template"
+Issues = "https://github.com/Sandsy09/forge-template/issues"
+
+# -----------------------------------------------------------------------------
+# Dependency groups (PEP 735) - not shipped to consumers
+# -----------------------------------------------------------------------------
+
+[dependency-groups]
+lint = [
+    "ruff>=0.14",
+    "pre-commit>=4.0",
+]
+test = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "jinja2>=3.1",
+]
+typecheck = [
+    "mypy>=1.14",
+    "types-PyYAML>=6.0",
+]
+dev = [
+    { include-group = "lint" },
+    { include-group = "test" },
+    { include-group = "typecheck" },
+    "poethepoet>=0.31",
+    "copier>=9.4,<10",
+    "pyyaml>=6.0",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/forge_template"]
+
+# -----------------------------------------------------------------------------
+# Ruff
+# -----------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+src = ["src", "tests"]
+# template/ is scaffold content, not this repo's code -- its .py files
+# (template/tests/__init__.py, __init__.py.jinja) are not meant to lint clean
+# against this repo's own rules.
+extend-exclude = ["template"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",    # pycodestyle
+    "F",         # pyflakes
+    "I",         # isort
+    "N",         # pep8-naming
+    "UP",        # pyupgrade
+    "B",         # flake8-bugbear
+    "A",         # flake8-builtins
+    "C4",        # flake8-comprehensions
+    "SIM",       # flake8-simplify
+    "PTH",       # flake8-use-pathlib
+    "RUF",       # ruff-specific
+    "ANN",       # flake8-annotations
+    "D",         # pydocstyle
+]
+ignore = [
+    "D107",      # __init__ docstring - covered by the class docstring
+    "ANN401",    # allow Any where deliberately used
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D", "ANN", "S101"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["forge_template"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+# -----------------------------------------------------------------------------
+# Type checking
+# -----------------------------------------------------------------------------
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src", "tests"]
+strict = true
+warn_unreachable = true
+warn_unused_ignores = true
+exclude = ["^template/"]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+# -----------------------------------------------------------------------------
+# Tests + coverage
+# -----------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--import-mode=importlib",
+    "--cov",
+    "--cov-report=term-missing",
+]
+
+[tool.coverage.run]
+source = ["src/forge_template"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
+
+# -----------------------------------------------------------------------------
+# Tasks - the single definition. Run via `uv run poe <task>`.
+# -----------------------------------------------------------------------------
+
+[tool.poe.tasks]
+lint = "ruff check ."
+format = "ruff format ."
+"lint:fix" = "ruff check --fix ."
+"format:check" = "ruff format --check ."
+typecheck = "mypy"
+test = "pytest"
+combos = "bash scripts/test-combos.sh"
+update = "bash scripts/test-update.sh"
+"verify-ci" = "bash scripts/verify-ci.sh"
+check = ["format:check", "lint", "typecheck", "test"]
