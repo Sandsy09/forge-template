@@ -12,6 +12,69 @@ uv sync --all-groups
 uv run pre-commit install --install-hooks
 ```
 
+## Branching and pull requests
+
+`main` is never committed to directly. Every change gets its own branch and a
+pull request — even a single-line fix.
+
+**Branch names** are `<type>/<short-slug>`, kebab-case, where `<type>` is one
+of the Conventional Commits types this repo already uses: `feat`, `fix`,
+`docs`, `chore`, `refactor`, `test`, `ci`, `build`. Pick the type that the
+branch's eventual squash commit will carry — for example:
+
+```
+feat/archetype-cli
+fix/gitignore-trailing-newline
+ci/shellcheck-in-pre-commit
+docs/adr-branch-workflow
+```
+
+**Flow:**
+
+```bash
+git switch -c <type>/<short-slug>       # branch from an up-to-date main
+# ... commit(s), following Commit messages below ...
+git push -u origin <type>/<short-slug>
+gh pr create
+```
+
+Wait for `All checks passed` to go green, then **squash merge**. Two reasons
+this repo squashes rather than merges or rebases:
+
+- `release.yml`'s notes step is `git log "${latest}..HEAD" --pretty='- %s'
+  --no-merges` — one squash commit per PR becomes exactly one release-note
+  line. A merge commit or a rebased multi-commit branch produces one line per
+  branch commit instead, including any WIP messages.
+- **The squash commit's subject is what release notes and `git log` show.**
+  Edit it into a well-formed Conventional Commits subject before merging —
+  don't leave GitHub's default `Title (#12)`.
+
+Delete the branch after merging (GitHub can do this automatically; see Branch
+protection below).
+
+Merging is not releasing — `main` stays untagged, and therefore invisible to
+`copier update`, until [Releasing](#releasing) below is actually run.
+
+Which of the validation ladder in [Proposing a template change](#proposing-a-template-change)
+to run before pushing depends on what the branch touches; that section is the
+one definition of the ladder, not repeated here.
+
+### Branch protection
+
+Recommended settings for `main` (GitHub → Settings → Branches), documented
+here so they can be audited or reapplied rather than applied automatically by
+this change:
+
+- Require a pull request before merging.
+- Require the `All checks passed` status check
+  ([test-template.yml](.github/workflows/test-template.yml)'s aggregate job)
+  to pass before merging. It's the only check worth requiring directly — it's
+  `if: always()` and already fails if any job it depends on failed or was
+  cancelled.
+- Allow squash merging only, with "Default to pull request title" off (the
+  merger edits the subject by hand — see above).
+- Automatically delete head branches after merge.
+
 ## Before opening a pull request
 
 ```bash

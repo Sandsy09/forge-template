@@ -1,0 +1,42 @@
+name: Bug report
+description: Report something that isn't working as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: >
+        Include the answers (or which combo, if this is about
+        `tests/test_combos.py`) that reproduce it.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: input
+    id: template-version
+    attributes:
+      label: Template version
+      description: The tag `copier` scaffolded from, or `main` at a commit SHA
+      placeholder: "e.g. v0.1.1"
+    validations:
+      required: true
+
+  - type: input
+    id: copier-version
+    attributes:
+      label: Copier version
+      placeholder: "e.g. 9.4.1 (uv run copier --version)"
+    validations:
+      required: false

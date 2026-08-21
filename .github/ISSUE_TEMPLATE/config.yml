@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: create-forge CLI issue
+    url: https://github.com/Sandsy09/create-forge/issues/new/choose
+    about: Report a problem with the `create-forge` CLI itself, not this template.
