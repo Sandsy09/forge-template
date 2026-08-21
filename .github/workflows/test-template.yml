@@ -108,7 +108,7 @@ jobs:
 
       - name: Scaffold
         run: |
-          uvx copier copy . "$RUNNER_TEMP/${{ matrix.slug }}" \
+          uvx copier copy "$GITHUB_WORKSPACE" "$RUNNER_TEMP/${{ matrix.slug }}" \
             --trust --defaults --vcs-ref=HEAD \
             --data project_name="CI ${{ matrix.slug }}" \
             --data github_org="${{ github.repository_owner }}" \
@@ -122,7 +122,7 @@ jobs:
           if find . -name '*.jinja' -not -path './.venv/*' | grep -q .; then
             echo "::error::.jinja files present in output"; exit 1
           fi
-          if grep -rIl --exclude-dir={.venv,.git,dist} -E '\{%-? *(if|for|endif|endfor)' . ; then
+          if grep -rIl --exclude-dir={.venv,.git,dist} -E '\{%[^ ]|\{\{ *[a-z_]+ *\}\}|\{%- *(if|for|endif|endfor)' . ; then
             echo "::error::unrendered Jinja in output"; exit 1
           fi
           grep -qE '\$\{\{' .github/workflows/ci.yml \
@@ -207,7 +207,7 @@ jobs:
       - name: Scaffold
         shell: bash
         run: |
-          uvx copier copy . "$RUNNER_TEMP/win" \
+          uvx copier copy "$GITHUB_WORKSPACE" "$RUNNER_TEMP/win" \
             --trust --defaults --vcs-ref=HEAD \
             --data project_name="Windows Test" \
             --data github_org="${{ github.repository_owner }}" \
@@ -256,7 +256,7 @@ jobs:
       - name: Scaffold from released version
         if: steps.tag.outputs.tag != ''
         run: |
-          uvx copier copy . "$RUNNER_TEMP/upd" \
+          uvx copier copy "$GITHUB_WORKSPACE" "$RUNNER_TEMP/upd" \
             --trust --defaults --vcs-ref="${{ steps.tag.outputs.tag }}" \
             --data project_name="Update Test" \
             --data github_org="${{ github.repository_owner }}"
