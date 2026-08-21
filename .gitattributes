@@ -1,0 +1,12 @@
+# Normalise to LF in the repository. Without this, Windows checkouts get CRLF
+# and a fresh clone's checked-out template/*.jinja files would render CRLF
+# into every scaffolded project.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.whl binary
