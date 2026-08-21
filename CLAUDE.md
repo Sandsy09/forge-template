@@ -160,6 +160,20 @@ real bugs the other three missed — including all 11 byte-empty template files
 below, once an eighth assertion (no zero-byte file in rendered output, outside
 a `py.typed`/`tests/__init__.py` allowlist) was added. Keep both.
 
+**Local-green does not mean CI-green — verify actual GitHub Actions runs, not
+just `test-combos.sh` locally.** The `lint` job's shellcheck step, and three
+separate bugs in `scaffold`/`windows`/`update-compat` (git identity missing on
+the runner; a Jinja-leftover regex broader than `test-combos.sh`'s that
+false-positived on the intentionally-raw git-cliff Tera block; scaffolding
+from a relative `.` path, which made `_src_path` resolve wrong once `copier
+update` ran from inside the scaffolded project) — all of this sat broken on
+`main` since at least 2026-08-16, invisible because `needs: lint` meant one
+early failure hid everything downstream. `test-combos.sh` never caught any of
+it because it runs entirely locally, on a machine that already has a git
+identity configured and doesn't reproduce the CI runner's environment. Fixed
+2026-08-21; `gh run view <run-id>` on the actual push is the only way to know
+CI is real, not just that the local script exited 0.
+
 ## Current state
 
 Working: library archetype, all four combos green locally and in CI, update
