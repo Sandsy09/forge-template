@@ -32,8 +32,7 @@ uv add git+{{ repo_url }}@v{{ initial_version if versioning_resolved == 'static'
 ## Requirements
 
 - Python {{ python_min_version }}+ (developed against {{ python_version }})
-- [uv](https://docs.astral.sh/uv/){% if task_runner == 'make' %}
-- `make` (not present by default on Windows){% endif %}
+- [uv](https://docs.astral.sh/uv/)
 
 ## Development
 
@@ -47,20 +46,7 @@ uv run pre-commit install --install-hooks
 ### Tasks
 
 Tasks are defined once in `pyproject.toml` under `[tool.poe.tasks]`.
-{%- if task_runner == 'make' %} The `Makefile` is a thin proxy over them.{% endif %}
 
-{% if task_runner == 'make' -%}
-| Command | Description |
-| --- | --- |
-| `make check` | Everything below, in order |
-| `make lint` | Ruff lint |
-| `make format` | Ruff format |
-| `make typecheck` | {{ 'mypy' if type_checking == 'mypy' else 'pyright' if type_checking == 'pyright' else 'mypy, then pyright' }} |
-| `make test` | pytest with coverage |
-{%- if use_docs %}
-| `make docs` | Serve docs locally |
-{%- endif %}
-{%- else -%}
 | Command | Description |
 | --- | --- |
 | `uv run poe check` | Everything below, in order |
@@ -70,7 +56,6 @@ Tasks are defined once in `pyproject.toml` under `[tool.poe.tasks]`.
 | `uv run poe test` | pytest with coverage |
 {%- if use_docs %}
 | `uv run poe docs` | Serve docs locally |
-{%- endif %}
 {%- endif %}
 
 Run `check` before pushing — CI runs the same tasks.
@@ -118,7 +103,7 @@ git push --follow-tags
 `CHANGELOG.md` is generated from Conventional Commits:
 
 ```bash
-{% if task_runner == 'make' %}make changelog{% else %}uv run poe changelog{% endif %}
+uv run poe changelog
 ```
 
 Commit messages are the source of the changelog, so write them for a reader

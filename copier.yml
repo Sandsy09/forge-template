@@ -4,7 +4,7 @@
 # Template repo layout assumed:
 #   copier.yml                <- this file (never copied into projects)
 #   template/                 <- everything below here IS the scaffold
-#   tests/                    <- template's own tests (scaffold + verify)
+#   scripts/                  <- template's own tests (scaffold + verify)
 #   .github/workflows/        <- template's own CI
 # =============================================================================
 
@@ -181,14 +181,6 @@ initial_version:
 # Tooling
 # -----------------------------------------------------------------------------
 
-task_runner:
-  type: str
-  help: Task runner (tasks are always defined in pyproject.toml; Make is a proxy)
-  default: poe
-  choices:
-    Poe the Poet: poe
-    Makefile (thin proxy over poe): make
-
 type_checking:
   type: str
   help: Type checker(s) - CI gate
@@ -248,7 +240,7 @@ _message_after_copy: |
   {{ project_name }} scaffolded.
 
     cd {{ repo_name }}
-    {% if task_runner == 'poe' %}uv run poe check{% else %}make check{% endif %}
+    uv run poe check
 
   Next:
     1. Create the repo:  gh repo create {{ github_org }}/{{ repo_name }} --private --source=.
@@ -260,4 +252,4 @@ _message_after_copy: |
 _message_after_update: |
 
   Updated to {{ _copier_answers._commit }}. Review conflicts, then re-run:
-    {% if task_runner == 'poe' %}uv run poe check{% else %}make check{% endif %}
+    uv run poe check
