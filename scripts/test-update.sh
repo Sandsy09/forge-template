@@ -6,6 +6,10 @@
 #
 # Usage: ./scripts/test-update.sh [/path/to/template-repo]
 # =============================================================================
+# shellcheck disable=SC2015
+# `A && pass X || fail Y` is used throughout: pass() always returns 0, so
+# `|| fail` only ever runs when A itself failed - the usual A&&B||C footgun
+# (C also running when B fails) doesn't apply here.
 set -euo pipefail
 
 TEMPLATE="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"

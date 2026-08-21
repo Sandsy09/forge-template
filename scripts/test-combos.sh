@@ -6,6 +6,10 @@
 #
 # Usage:  ./scripts/test-combos.sh [/path/to/template-repo]
 # =============================================================================
+# shellcheck disable=SC2015
+# `A && pass X || fail Y` is used throughout: pass() always returns 0, so
+# `|| fail` only ever runs when A itself failed - the usual A&&B||C footgun
+# (C also running when B fails) doesn't apply here.
 set -euo pipefail
 
 TEMPLATE_SRC="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
@@ -64,6 +68,8 @@ for name in "${!COMBOS[@]}"; do
 
   # ---- scaffold ------------------------------------------------------------
   info "Scaffolding"
+  # shellcheck disable=SC2086
+  # Intentional word-splitting: each combo's value is several `--data k=v` args.
   uvx copier copy "$SNAPSHOT" "$out" --trust --defaults \
     --data project_name="Test ${name}" \
     --data github_org="test-org" \
@@ -91,6 +97,8 @@ for name in "${!COMBOS[@]}"; do
   fi
 
   # ---- assertion 3: GHA expressions preserved ------------------------------
+  # shellcheck disable=SC2016
+  # Single quotes are intentional: we want the literal ${{ }}, not expansion.
   if grep -q '\${{' .github/workflows/ci.yml; then
     pass "GHA \${{ }} expressions survived raw blocks"
   else
@@ -98,8 +106,8 @@ for name in "${!COMBOS[@]}"; do
   fi
 
   # ---- assertion 4: every YAML file parses ---------------------------------
-  if find . -path ./.venv -prune -o \( -name '*.yml' -o -name '*.yaml' \) -print \
-     | xargs -r -I{} python -c "import yaml,sys; yaml.safe_load(open('{}'))" 2>/dev/null; then
+  if find . -path ./.venv -prune -o \( -name '*.yml' -o -name '*.yaml' \) -print0 \
+     | xargs -0 -r -I{} python -c "import yaml,sys; yaml.safe_load(open('{}'))" 2>/dev/null; then
     pass "all YAML parses"
   else
     fail "YAML parse error"
@@ -144,15 +152,16 @@ for name in "${!COMBOS[@]}"; do
 
   # ---- assertion 6: version actually resolved ------------------------------
   if grep -q 'hatch-vcs' pyproject.toml; then
-    if ls dist/ | grep -qE '(dev0|\+d[0-9]{8})'; then
-      fail "version did not resolve from tag: $(ls dist/)"
+    dist_files=(dist/*)
+    if printf '%s\n' "${dist_files[@]}" | grep -qE '(dev0|\+d[0-9]{8})'; then
+      fail "version did not resolve from tag: ${dist_files[*]}"
     else
-      pass "version resolved from tag: $(ls dist/ | head -1)"
+      pass "version resolved from tag: ${dist_files[0]##*/}"
     fi
   fi
 
   # ---- assertion 7: wheel contains only the package ------------------------
-  wheel=$(ls dist/*.whl | head -1)
+  wheel=$(find dist -maxdepth 1 -name '*.whl' -print -quit)
   if python -m zipfile -l "$wheel" | grep -qE '^(tests|docs|\.github)/'; then
     fail "wheel contains files it should not"
   else
