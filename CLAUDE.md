@@ -165,13 +165,11 @@ a `py.typed`/`tests/__init__.py` allowlist) was added. Keep both.
 Working: library archetype, all four combos green locally and in CI, update
 merge validated, root and template `.gitattributes` both in place, no
 byte-empty template files remain, `task_runner`/`make` removed (it was the
-one untested, 100%-broken conditional — see Deferred).
+one untested, 100%-broken conditional — see Deferred). **`v0.1.0` is tagged
+(annotated, via `release.yml`) and pushed to `origin`** — the CLI can
+scaffold from this repo.
 
 Not yet done:
-- **No tag pushed yet.** A `v0.1.0` tag was created by hand at one point but
-  never reached `origin` — `release.yml` (which creates annotated tags) has
-  never actually run. The CLI cannot scaffold from this repo until a real
-  release goes out.
 - No root `pyproject.toml` for the template repo's own tooling (uv, ruff, poe)
 - No pre-commit config at root
 - Root `LICENSE`, `README.md`, `CONTRIBUTING.md` exist but are 0-byte
@@ -180,24 +178,23 @@ Not yet done:
 
 ## Backlog, in order
 
-**0. Tag `v0.1.0` and push.** Blocks everything downstream, including the CLI.
+**1. Root repo hygiene** ([#2](https://github.com/Sandsy09/forge-template/issues/2)).
+`pyproject.toml` for the template repo's own tooling, pre-commit config,
+content for the placeholder `LICENSE` (MIT, matching the CLI), `README.md`,
+`CONTRIBUTING.md` (how to change a template safely — the invariants above,
+and it should point at this file rather than restate it), and a new
+`SECURITY.md`.
 
-**1. Root repo hygiene.** `pyproject.toml` for the template repo's own tooling,
-pre-commit config, content for the placeholder `LICENSE` (MIT, matching the
-CLI), `README.md`, `CONTRIBUTING.md` (how to change a template safely — the
-invariants above, and it should point at this file rather than restate it),
-and a new `SECURITY.md`.
+**2. `docs/`** ([#3](https://github.com/Sandsy09/forge-template/issues/3)).
+ADRs for decisions already made: Copier over Cookiecutter, two-repo split,
+uv_build vs Hatchling as a user choice, git-cliff over hand-written
+changelogs, mypy as default with pyright optional, MkDocs pinned below 2.0.
 
-**2. `docs/`.** ADRs for decisions already made: Copier over Cookiecutter,
-two-repo split, uv_build vs Hatchling as a user choice, git-cliff over
-hand-written changelogs, mypy as default with pyright optional, MkDocs pinned
-below 2.0.
-
-**3. Archetype two.** Extract shared files into a common location, add the new
-archetype's own directory. **This is the `_migrations` moment** — plan it before
-writing any code, and keep the library archetype's paths stable if possible.
-Candidates in rough order of usefulness: `cli`, `service` (FastAPI + Docker),
-`pipeline`.
+**3. Archetype two** ([#4](https://github.com/Sandsy09/forge-template/issues/4)).
+Extract shared files into a common location, add the new archetype's own
+directory. **This is the `_migrations` moment** — plan it before writing any
+code, and keep the library archetype's paths stable if possible. Candidates
+in rough order of usefulness: `cli`, `service` (FastAPI + Docker), `pipeline`.
 
 ## Known limitation, documented not fixed
 
@@ -226,4 +223,5 @@ generated `CONTRIBUTING.md`.
   shipped as a byte-empty `Makefile` with an unrunnable `make check` in
   `_message_after_copy`. Reintroduce only as a fully CI-tested option (a real
   Makefile mirroring every Poe task, plus a workflow job that runs `make check`
-  on Linux) — tracked as a follow-up, not scheduled yet.
+  on Linux) — tracked as [#1](https://github.com/Sandsy09/forge-template/issues/1),
+  not scheduled yet.
