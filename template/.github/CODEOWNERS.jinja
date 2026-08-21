@@ -1,0 +1,7 @@
+{% if github_org -%}
+* {{ codeowners_team }}
+{%- else -%}
+# No github_org was set at scaffold time, so codeowners_team could not be
+# resolved to a valid @org/team handle. Fill this in by hand:
+# * @your-org/your-team
+{%- endif %}

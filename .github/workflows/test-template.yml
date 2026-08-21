@@ -84,7 +84,7 @@ jobs:
             slug: kitchen-sink
             args: >-
               --data build_backend=hatchling --data versioning=vcs
-              --data type_checking=both --data task_runner=make
+              --data type_checking=both
               --data use_docs=true --data changelog_tool=manual
               --data dependency_updates=dependabot
 
@@ -124,6 +124,17 @@ jobs:
             || { echo "::error::GHA expressions were consumed by Jinja"; exit 1; }
           grep -q '_commit' .copier-answers.yml \
             || { echo "::error::answers file has no _commit"; exit 1; }
+
+      - name: Assert no zero-byte files in output
+        working-directory: ${{ runner.temp }}/${{ matrix.slug }}
+        run: |
+          # py.typed and tests/__init__.py are allowed to be empty by design.
+          zero_byte=$(find . -path './.venv' -prune -o -path './.git' -prune -o \
+            -path './dist' -prune -o -type f -empty -print 2>/dev/null \
+            | grep -vE '/py\.typed$|/tests/__init__\.py$' || true)
+          if [[ -n "$zero_byte" ]]; then
+            echo "::error::zero-byte files in rendered output: $zero_byte"; exit 1
+          fi
 
       - name: Generated workflows are valid YAML
         working-directory: ${{ runner.temp }}/${{ matrix.slug }}
@@ -182,7 +193,7 @@ jobs:
           enable-cache: true
           python-version: "3.13"
 
-      - name: Scaffold (poe, not make — make is absent on Windows)
+      - name: Scaffold
         shell: bash
         run: |
           uvx copier copy . "$RUNNER_TEMP/win" \

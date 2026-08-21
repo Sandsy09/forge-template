@@ -1,0 +1,49 @@
+# Contributing
+
+## Setup
+
+```bash
+git clone {{ repo_url }}.git
+cd {{ repo_name }}
+uv sync --all-groups
+uv run pre-commit install --install-hooks
+```
+
+## Before opening a pull request
+
+```bash
+uv run poe check
+```
+
+Runs formatting, lint, type checking, and tests — the same gate CI runs.
+
+## Commit messages
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/)
+(`feat:`, `fix:`, `chore:`, ...); a `commit-msg` hook enforces this.
+{%- if changelog_tool == 'git-cliff' %} `CHANGELOG.md` is generated from
+this history, so write messages for a reader who was not in the pull
+request.
+{%- endif %}
+
+## Keeping up with the template
+
+This project was scaffolded from a Copier template and can pull in later
+template changes:
+
+```bash
+uvx copier update --trust
+```
+
+Review the three-way merge carefully. `copier update` compares your working
+tree against the template's old and new versions of each file — local edits
+in the middle of a templated file merge cleanly, but **edits appended at the
+very end of a file can be lost**: both the template and your change add
+content at the same place with no trailing context for the merge to anchor
+to, and the incoming template version wins. If you need to add something
+project-specific to the end of a templated file, prefer inserting it above
+any stable trailing section (e.g. above the License heading) rather than
+appending after it.
+
+Never delete or hand-edit `.copier-answers.yml` — `copier update` needs it to
+know what was asked and answered.

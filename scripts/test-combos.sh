@@ -50,7 +50,7 @@ declare -A COMBOS=(
   [c2-hatch-static]="--data build_backend=hatchling --data versioning=static"
   [c3-hatch-vcs]="--data build_backend=hatchling --data versioning=vcs"
   [c4-kitchen-sink]="--data build_backend=hatchling --data versioning=vcs \
-                     --data type_checking=both --data task_runner=make \
+                     --data type_checking=both \
                      --data use_docs=true --data coverage_fail_under=80 \
                      --data changelog_tool=manual --data dependency_updates=dependabot"
 )
@@ -114,6 +114,18 @@ for name in "${!COMBOS[@]}"; do
     pass ".copier-answers.yml complete (_commit present)"
   else
     pass ".copier-answers.yml present (_commit absent — expected from snapshot)"
+  fi
+
+  # ---- assertion 8: no rendered file is zero bytes -------------------------
+  # py.typed and tests/__init__.py are allowed to be empty by design; anything
+  # else at 0 bytes means a template file was never filled in.
+  zero_byte=$(find . -path './.venv' -prune -o -path './.git' -prune -o \
+    -path './dist' -prune -o -type f -empty -print 2>/dev/null \
+    | grep -vE '/py\.typed$|/tests/__init__\.py$' || true)
+  if [[ -n "$zero_byte" ]]; then
+    fail "zero-byte files in rendered output: $(echo "$zero_byte" | tr '\n' ' ')"
+  else
+    pass "no unexpected zero-byte files"
   fi
 
   # ---- give hatch-vcs a tag to resolve -------------------------------------
