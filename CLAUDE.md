@@ -155,6 +155,13 @@ Works for directories too. Files needing no rendering (`py.typed`,
 `.editorconfig`) carry no `.jinja` suffix — `py.typed` in particular **must
 stay byte-empty**.
 
+## Workflow
+
+Every change is a branch (`<type>/<short-slug>`) and a pull request into
+`main`, squash merged — never commit directly to `main`. See
+[CONTRIBUTING.md](CONTRIBUTING.md) and
+[docs/adr/0009](docs/adr/0009-branch-and-pr-workflow.md).
+
 ## Validation
 
 Run in this order. All four currently pass.

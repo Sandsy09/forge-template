@@ -9,6 +9,27 @@ uv sync --all-groups
 uv run pre-commit install --install-hooks
 ```
 
+## Branching and pull requests
+
+`main` is never committed to directly. Every change gets its own branch and a
+pull request.
+
+Branch names are `<type>/<short-slug>`, kebab-case, where `<type>` is a
+Conventional Commits type (`feat`, `fix`, `docs`, `chore`, `refactor`, `test`,
+`ci`, `build`) — pick the type the branch's eventual squash commit will carry,
+e.g. `fix/retry-timeout` or `docs/update-readme`.
+
+```bash
+git switch -c <type>/<short-slug>
+# ... commit(s) ...
+git push -u origin <type>/<short-slug>
+```
+
+Open a pull request and wait for CI to pass, then **squash merge**: it keeps
+one commit per change on `main`, and the squash commit's subject is what
+`git log` shows afterwards, so edit it into a proper Conventional Commits
+subject rather than leaving GitHub's default title.
+
 ## Before opening a pull request
 
 ```bash
