@@ -52,7 +52,7 @@ forge-template/
 ├── pyproject.toml           This repo's OWN tooling (not part of the scaffold)
 ├── src/, tests/              ^ same
 ├── docs/adr/                 Why this repo is shaped the way it is
-├── scripts/                 Scaffold every combo, assert, run their checks
+├── scripts/                 verify-ci.sh: push scaffolded combos, watch CI
 ├── .github/workflows/       This repo's own CI + release automation
 └── template/                Everything here becomes the generated project
 ```

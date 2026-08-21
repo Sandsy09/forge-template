@@ -39,7 +39,12 @@ lint = [
 test = [
     "pytest>=8.3",
     "pytest-cov>=6.0",
+    "pytest-xdist>=3.6",
     "jinja2>=3.1",
+    # Needed in-process by tests/test_combos.py and tests/test_update.py,
+    # which call copier.run_copy / copier.run_update directly rather than
+    # shelling out to `uvx copier`.
+    "copier>=9.4,<10",
 ]
 typecheck = [
     "mypy>=1.14",
@@ -50,7 +55,6 @@ dev = [
     { include-group = "test" },
     { include-group = "typecheck" },
     "poethepoet>=0.31",
-    "copier>=9.4,<10",
     "pyyaml>=6.0",
 ]
 
@@ -101,7 +105,10 @@ ignore = [
 convention = "google"
 
 [tool.ruff.lint.isort]
-known-first-party = ["forge_template"]
+# "tests" is included so tests/test_combos.py and tests/test_update.py, which
+# import shared helpers from tests/conftest.py, sort that import alongside
+# forge_template rather than grouping it with third-party packages.
+known-first-party = ["forge_template", "tests"]
 
 [tool.ruff.format]
 docstring-code-format = true
@@ -137,6 +144,10 @@ addopts = [
     "--cov",
     "--cov-report=term-missing",
 ]
+markers = [
+    "combos: scaffolds every answer combination and runs its full toolchain (slow; `poe combos`)",
+    "update: exercises `copier update` end-to-end (slow; `poe update`)",
+]
 
 [tool.coverage.run]
 source = ["src/forge_template"]
@@ -159,8 +170,8 @@ format = "ruff format ."
 "lint:fix" = "ruff check --fix ."
 "format:check" = "ruff format --check ."
 typecheck = "mypy"
-test = "pytest"
-combos = "bash scripts/test-combos.sh"
-update = "bash scripts/test-update.sh"
+test = "pytest -m 'not (combos or update)'"
+combos = "pytest -m combos -n 4"
+update = "pytest -m update"
 "verify-ci" = "bash scripts/verify-ci.sh"
 check = ["format:check", "lint", "typecheck", "test"]

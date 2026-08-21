@@ -30,13 +30,11 @@ Separate because Copier resolves template versions from PEP440 git tags here.
 forge-template/
 ├── copier.yml              Question schema. MUST be at root.
 ├── pyproject.toml          This repo's OWN tooling — NOT part of the scaffold
-├── src/forge_template/     Checks that validate copier.yml against this file
-├── tests/                  Tests for src/forge_template
+├── src/forge_template/     Checks that validate copier.yml/template/ + rendered output
+├── tests/                  pytest suite: schema, ADRs, combos (slow), update (slow)
 ├── docs/adr/               Why past decisions were made (Nygard-format ADRs)
 ├── scripts/
-│   ├── test-combos.sh      Scaffold every combo, assert, run their checks
-│   ├── verify-ci.sh        Push combos to throwaway repos, watch CI
-│   └── test-update.sh      Validate copier update three-way merge
+│   └── verify-ci.sh        Push `poe combos` output to throwaway repos, watch CI
 ├── .github/workflows/
 │   ├── test-template.yml   This repo's CI
 │   └── release.yml         Manual tag + release
@@ -46,8 +44,9 @@ forge-template/
 Nothing inside `template/` describes the template itself. `copier.yml`,
 `pyproject.toml`, `src/`, `tests/`, scripts, and this repo's own CI stay at
 root and are excluded via `_subdirectory: template`. `src/forge_template` is
-not scaffold code — see [#5](https://github.com/Sandsy09/forge-template/issues/5)
-for the plan to grow it into the home for `test-combos.sh`/`test-update.sh`.
+not scaffold code — it holds the checks (`schema.py`, `adr.py`, `render.py`)
+that both `poe check` and `tests/test_combos.py`/`test_update.py` call;
+see [#5](https://github.com/Sandsy09/forge-template/issues/5), done.
 
 ## The question schema
 
@@ -81,7 +80,13 @@ trips `end-of-file-fixer`. **This has already broken `.gitignore` and
 `renovate.json` once.** End conditional files with `{% endif %}` followed by a
 real newline.
 
-Guarded by an assertion in `test-combos.sh`. Keep it.
+Guarded by the root `.pre-commit-config.yaml`'s whitespace/EOF hooks, which
+deliberately cover `template/` directly rather than relying on the generated
+project's own CI (which never runs pre-commit against files it didn't just
+edit). `test-combos.sh` never actually caught this class of bug; five
+template files still shipped without trailing newlines in `v0.1.0` until the
+root pre-commit config was added and run against `template/` for the first
+time. Keep the pre-commit hooks scoped that way.
 
 ### 2. `.copier-answers.yml` must be generated and committed
 
@@ -155,16 +160,26 @@ stay byte-empty**.
 Run in this order. All four currently pass.
 
 ```bash
-uv run poe check             # this repo's own lint/typecheck/tests + copier.yml schema checks
-./scripts/test-combos.sh     # local: 4 combos, render assertions, poe check
-./scripts/verify-ci.sh <org> # pushes to throwaway repos, watches CI
-./scripts/test-update.sh     # three-way merge: local edits survive
+uv run poe check             # fast: this repo's own lint/typecheck + schema/ADR/render unit tests
+uv run poe combos            # slow: 4 combos in parallel, render assertions, each combo's own poe check
+./scripts/verify-ci.sh <org> # pushes poe combos' output to throwaway repos, watches CI
+uv run poe update             # slow: both copier update scenarios (local edits survive; latest tag -> HEAD)
 ```
 
-`test-combos.sh` scaffolds from a **non-git snapshot** so uncommitted edits are
-picked up. `test-update.sh` clones properly, because updates need real tags.
-`_commit` is legitimately absent from answers files produced by the snapshot
-path — that is not a bug.
+`poe check`, `poe combos`, and `poe update` are all `pytest` under a marker
+select (`tests/test_combos.py` / `tests/test_update.py` carry the `combos` /
+`update` markers; `poe check` runs everything else). `tests/`, ported from the
+former `scripts/test-combos.sh` and `scripts/test-update.sh` — see
+[#5](https://github.com/Sandsy09/forge-template/issues/5), done — is a single
+definition of every assertion, called from both here and CI's
+`test-template.yml`, closing the duplication that let CI and the local script
+drift (see below). `poe combos` scaffolds from a **non-git snapshot** by
+default (`tests/conftest.py`'s `template_snapshot` fixture) so uncommitted
+edits are picked up, matching what `test-combos.sh` did; pass `--from-git` (a
+`pytest` option registered in `conftest.py`) to scaffold from real git history
+instead, which is what CI does since `_commit` must be recorded.
+`tests/test_update.py` always uses real git history — updates need real tags
+regardless.
 
 Combo 4 (kitchen sink) flips every remaining conditional at once. It has caught
 real bugs the other three missed — including all 11 byte-empty template files
@@ -172,7 +187,7 @@ below, once an eighth assertion (no zero-byte file in rendered output, outside
 a `py.typed`/`tests/__init__.py` allowlist) was added. Keep both.
 
 **Local-green does not mean CI-green — verify actual GitHub Actions runs, not
-just `test-combos.sh` locally.** The `lint` job's shellcheck step, and three
+just `poe combos` locally.** The `lint` job's shellcheck step, and three
 separate bugs in `scaffold`/`windows`/`update-compat` (git identity missing on
 the runner; a Jinja-leftover regex broader than `test-combos.sh`'s that
 false-positived on the intentionally-raw git-cliff Tera block; scaffolding
@@ -180,10 +195,14 @@ from a relative `.` path, which made `_src_path` resolve wrong once `copier
 update` ran from inside the scaffolded project) — all of this sat broken on
 `main` since at least 2026-08-16, invisible because `needs: lint` meant one
 early failure hid everything downstream. `test-combos.sh` never caught any of
-it because it runs entirely locally, on a machine that already has a git
+it because it ran entirely locally, on a machine that already has a git
 identity configured and doesn't reproduce the CI runner's environment. Fixed
 2026-08-21; `gh run view <run-id>` on the actual push is the only way to know
-CI is real, not just that the local script exited 0.
+CI is real, not just that the local suite exited 0. The git-identity class of
+bug specifically is now closed for good rather than just fixed once:
+`tests/conftest.py`'s `_git_identity` autouse fixture supplies one whenever
+the environment (local or CI) doesn't already have one, so CI's workflow no
+longer needs its own `git config --global` steps.
 
 The shellcheck failure specifically was possible because shellcheck existed
 **only** in CI, with no local config to catch it first. Closed by adding a
@@ -206,11 +225,14 @@ holds checks for `copier.yml` itself (layout, computed-value defaults, the
 via `uv run poe check`, which the `lint` CI job now calls directly.
 `docs/adr/` (backlog item 1, done) holds nine ADRs recording the rationale
 behind decisions already made, checked for internal consistency by
-`src/forge_template/adr.py`.
-
-Not yet done:
-- `scripts/test-combos.sh` / `test-update.sh` are still bash, not yet ported
-  to the `tests/` pytest suite — see [#5](https://github.com/Sandsy09/forge-template/issues/5)
+`src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
+gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
+`src/forge_template/render.py` and run in parallel via `pytest-xdist` (`poe
+combos -n 4`) — see [#5](https://github.com/Sandsy09/forge-template/issues/5),
+done. `copier.yml` also gained two schema checks issue #5 asked for:
+`check_question_usage` (every question is referenced under `template/**` and
+vice versa) and `check_conditional_filenames` (every `{% if %}name{% endif %}`
+path renders to a valid filename or empty, never something in between).
 
 ## Backlog, in order
 
@@ -220,18 +242,12 @@ directory. **This is the `_migrations` moment** — plan it before writing any
 code, and keep the library archetype's paths stable if possible. Candidates
 in rough order of usefulness: `cli`, `service` (FastAPI + Docker), `pipeline`.
 
-**2. Migrate the validation scripts to Python** ([#5](https://github.com/Sandsy09/forge-template/issues/5)).
-`test-combos.sh` and `test-update.sh` already lean on `python -c` and
-`python - <<'PY'` heredocs for anything non-trivial; port both to `tests/`
-using Copier's Python API (`run_copy`/`run_update`) and pytest
-parametrization. `verify-ci.sh` stays bash. Not urgent — the bash scripts
-work — but the split is arbitrary and costs real things (serial combo runs,
-no per-combo isolation, Windows needing Git Bash).
-
 Also open, not yet scheduled: [#1](https://github.com/Sandsy09/forge-template/issues/1)
 (reintroduce `make`, see Deferred below), [#6](https://github.com/Sandsy09/forge-template/issues/6)
 (Markdown linter in the pre-commit gate), [#7](https://github.com/Sandsy09/forge-template/issues/7)
-(split this file into invariants + agent guidance).
+(split this file into invariants + agent guidance), [#8](https://github.com/Sandsy09/forge-template/issues/8)
+(declare `pyyaml`/`jinja2`/`copier` as real `[project] dependencies`, not just
+dev/test-group ones).
 
 ## Known limitation, documented not fixed
 

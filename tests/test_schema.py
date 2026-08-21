@@ -10,7 +10,9 @@ import pytest
 from forge_template.schema import (
     check_all,
     check_computed,
+    check_conditional_filenames,
     check_layout,
+    check_question_usage,
     check_versioning_indirection,
     load_schema,
     render_default,
@@ -85,6 +87,74 @@ def test_check_versioning_indirection_allows_resolved_reference(tmp_path: Path) 
         "{% if versioning_resolved == 'vcs' %}\ndynamic = [\"version\"]\n{% endif %}\n"
     )
     assert check_versioning_indirection(tmp_path) == []
+
+
+# -----------------------------------------------------------------------------
+# Question <-> template/** cross-reference.
+# -----------------------------------------------------------------------------
+
+
+def test_check_question_usage_passes_on_real_tree(cfg: dict[str, Any]) -> None:
+    assert check_question_usage(cfg) == []
+
+
+def test_check_question_usage_flags_unreferenced_question(tmp_path: Path) -> None:
+    cfg = {"never_used": {"type": "str", "default": ""}}
+    (tmp_path / "file.txt.jinja").write_text("no jinja here\n")
+    errors = check_question_usage(cfg, tmp_path)
+    assert any("never_used" in e and "never referenced" in e for e in errors)
+
+
+def test_check_question_usage_flags_undeclared_reference(tmp_path: Path) -> None:
+    (tmp_path / "file.txt.jinja").write_text("{{ mystery_var }}\n")
+    errors = check_question_usage({}, tmp_path)
+    assert any("mystery_var" in e and "not declared" in e for e in errors)
+
+
+def test_check_question_usage_ignores_loop_and_set_locals(tmp_path: Path) -> None:
+    # `v` and `py_target` are loop/set-scoped locals, not real questions --
+    # mirrors the real `{% for v in python_matrix %}` / `{% set py_target ...`
+    # usage in template/pyproject.toml.jinja.
+    cfg = {"python_matrix": {"type": "json", "when": False, "default": "[]"}}
+    (tmp_path / "file.txt.jinja").write_text(
+        "{%- set py_target = 'x' -%}\n{{ py_target }}\n"
+        "{%- for v in python_matrix %}{{ v }}{% endfor -%}\n"
+    )
+    assert check_question_usage(cfg, tmp_path) == []
+
+
+def test_check_question_usage_ignores_computed_inputs(tmp_path: Path) -> None:
+    # python_all and versioning feed computed defaults but are never read
+    # directly by template/** -- see _COMPUTED_INPUTS.
+    cfg = {
+        "python_all": {"type": "json", "when": False, "default": "[]"},
+        "versioning": {"type": "str", "default": "static"},
+    }
+    (tmp_path / "file.txt.jinja").write_text("no jinja here\n")
+    assert check_question_usage(cfg, tmp_path) == []
+
+
+# -----------------------------------------------------------------------------
+# Conditional filenames.
+# -----------------------------------------------------------------------------
+
+
+def test_check_conditional_filenames_passes_on_real_tree(cfg: dict[str, Any]) -> None:
+    assert check_conditional_filenames(cfg) == []
+
+
+def test_check_conditional_filenames_flags_partial_render(tmp_path: Path) -> None:
+    cfg = {"toggle": {"type": "bool", "default": False}}
+    (tmp_path / "{% if toggle %} bad name {% endif %}.jinja").write_text("x")
+    errors = check_conditional_filenames(cfg, tmp_path)
+    assert len(errors) == 1
+    assert "neither a valid filename nor empty" in errors[0]
+
+
+def test_check_conditional_filenames_allows_clean_toggle(tmp_path: Path) -> None:
+    cfg = {"toggle": {"type": "bool", "default": False}}
+    (tmp_path / "{% if toggle %}name.txt{% endif %}.jinja").write_text("x")
+    assert check_conditional_filenames(cfg, tmp_path) == []
 
 
 # -----------------------------------------------------------------------------

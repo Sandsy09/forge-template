@@ -2,7 +2,7 @@
 # =============================================================================
 # scripts/verify-ci.sh
 # Pushes each scaffolded combo to a throwaway private repo and waits for CI.
-# Run scripts/test-combos.sh FIRST — this costs Actions minutes.
+# Run `uv run poe combos` FIRST — this costs Actions minutes.
 #
 # Requires: gh CLI, authenticated (`gh auth status`)
 # Usage:    ./scripts/verify-ci.sh <github-org-or-username>
@@ -14,13 +14,18 @@ ORG="${1:?Usage: verify-ci.sh <github-org-or-username> [--cleanup]}"
 CLEANUP="${2:-}"
 WORK="${TMPDIR:-/tmp}/copier-combos"
 STAMP=$(date +%Y%m%d%H%M%S)
-COMBOS=(c1-uvbuild-static c2-hatch-static c3-hatch-vcs c4-kitchen-sink)
 REPOS=()
 
 gh auth status > /dev/null || { echo "Run: gh auth login"; exit 1; }
 
-for name in "${COMBOS[@]}"; do
-  [[ -d "$WORK/$name" ]] || { echo "Missing $WORK/$name — run test-combos.sh"; exit 1; }
+# Discovered rather than hardcoded: tests/test_combos.py (via the
+# combos_workdir fixture in tests/conftest.py) is the single source of truth
+# for which combos exist and writes each one to $WORK/<combo-name>.
+[[ -d "$WORK" ]] || { echo "Missing $WORK — run: uv run poe combos"; exit 1; }
+mapfile -t NAMES < <(find "$WORK" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort)
+[[ ${#NAMES[@]} -gt 0 ]] || { echo "No combos in $WORK — run: uv run poe combos"; exit 1; }
+
+for name in "${NAMES[@]}"; do
   repo="copier-ci-test-${name}-${STAMP}"
   echo "==> $repo"
   cd "$WORK/$name"

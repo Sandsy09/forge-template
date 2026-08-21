@@ -44,13 +44,18 @@ jobs:
       - name: Pre-commit
         run: uv run pre-commit run --all-files --show-diff-on-failure
 
-      # copier.yml layout, computed-value defaults, and the
-      # versioning / versioning_resolved indirection.
+      # copier.yml layout, computed-value defaults, the versioning /
+      # versioning_resolved indirection, question <-> template/** usage, and
+      # the docs/adr/ set -- see src/forge_template/{schema,adr}.py.
       - name: Schema and unit tests
         run: uv run poe check
 
   # ---------------------------------------------------------------------------
   # Scaffold every combination, then run the checks the generated CI runs.
+  # tests/test_combos.py is the single definition of every assertion here --
+  # see tests/conftest.py's --from-git option and _git_identity fixture (no
+  # manual `git config` step needed; the fixture supplies one when the runner
+  # has none, closing the bug class documented in CLAUDE.md's "Validation").
   # ---------------------------------------------------------------------------
   scaffold:
     name: ${{ matrix.name }}
@@ -61,24 +66,13 @@ jobs:
       matrix:
         include:
           - name: uv_build + static
-            slug: uvbuild-static
-            args: --data build_backend=uv_build
-
+            combo: c1-uvbuild-static
           - name: hatchling + static
-            slug: hatch-static
-            args: --data build_backend=hatchling --data versioning=static
-
+            combo: c2-hatch-static
           - name: hatchling + vcs
-            slug: hatch-vcs
-            args: --data build_backend=hatchling --data versioning=vcs
-
+            combo: c3-hatch-vcs
           - name: kitchen sink (all conditionals on)
-            slug: kitchen-sink
-            args: >-
-              --data build_backend=hatchling --data versioning=vcs
-              --data type_checking=both
-              --data use_docs=true --data changelog_tool=manual
-              --data dependency_updates=dependabot
+            combo: c4-kitchen-sink
 
     steps:
       - uses: actions/checkout@v4
@@ -93,83 +87,11 @@ jobs:
           enable-cache: true
           python-version: "3.13"
 
-      - name: Configure git identity for scaffolded commits
-        run: |
-          git config --global user.name "CI"
-          git config --global user.email "ci@example.com"
+      - name: Install dependencies
+        run: uv sync --all-groups
 
-      - name: Scaffold
-        run: |
-          uvx copier copy "$GITHUB_WORKSPACE" "$RUNNER_TEMP/${{ matrix.slug }}" \
-            --trust --defaults --vcs-ref=HEAD \
-            --data project_name="CI ${{ matrix.slug }}" \
-            --data github_org="${{ github.repository_owner }}" \
-            --data author_name="CI" \
-            --data author_email="ci@example.com" \
-            ${{ matrix.args }}
-
-      - name: Assert render is clean
-        working-directory: ${{ runner.temp }}/${{ matrix.slug }}
-        run: |
-          if find . -name '*.jinja' -not -path './.venv/*' | grep -q .; then
-            echo "::error::.jinja files present in output"; exit 1
-          fi
-          if grep -rIl --exclude-dir={.venv,.git,dist} -E '\{%[^ ]|\{\{ *[a-z_]+ *\}\}|\{%- *(if|for|endif|endfor)' . ; then
-            echo "::error::unrendered Jinja in output"; exit 1
-          fi
-          grep -qE '\$\{\{' .github/workflows/ci.yml \
-            || { echo "::error::GHA expressions were consumed by Jinja"; exit 1; }
-          grep -q '_commit' .copier-answers.yml \
-            || { echo "::error::answers file has no _commit"; exit 1; }
-
-      - name: Assert no zero-byte files in output
-        working-directory: ${{ runner.temp }}/${{ matrix.slug }}
-        run: |
-          # py.typed and tests/__init__.py are allowed to be empty by design.
-          zero_byte=$(find . -path './.venv' -prune -o -path './.git' -prune -o \
-            -path './dist' -prune -o -type f -empty -print 2>/dev/null \
-            | grep -vE '/py\.typed$|/tests/__init__\.py$' || true)
-          if [[ -n "$zero_byte" ]]; then
-            echo "::error::zero-byte files in rendered output: $zero_byte"; exit 1
-          fi
-
-      - name: Generated workflows are valid YAML
-        working-directory: ${{ runner.temp }}/${{ matrix.slug }}
-        run: |
-          uv run --with pyyaml python -c "
-          import pathlib, yaml
-          for p in pathlib.Path('.github').rglob('*.y*ml'):
-              yaml.safe_load(p.read_text())
-              print(f'ok {p}')
-          "
-
-      - name: Tag for vcs versioning
-        working-directory: ${{ runner.temp }}/${{ matrix.slug }}
-        run: |
-          if grep -q 'hatch-vcs' pyproject.toml; then git tag v0.1.0; fi
-
-      - name: Run the generated project's checks
-        working-directory: ${{ runner.temp }}/${{ matrix.slug }}
-        run: |
-          uv lock --check
-          uv sync --all-groups
-          uv run poe check
-
-      - name: Build and verify version resolved
-        working-directory: ${{ runner.temp }}/${{ matrix.slug }}
-        run: |
-          uv build
-          ls -la dist/
-          if grep -q 'hatch-vcs' pyproject.toml; then
-            if ls dist/ | grep -qE '(dev0|\+d[0-9]{8})'; then
-              echo "::error::version did not resolve from tag"; exit 1
-            fi
-          fi
-
-      - name: Docs
-        working-directory: ${{ runner.temp }}/${{ matrix.slug }}
-        run: |
-          if [ -f mkdocs.yml ]; then uv run mkdocs build --strict; fi
+      - name: Scaffold and verify -- ${{ matrix.combo }}
+        run: uv run pytest -m combos -k ${{ matrix.combo }} --from-git -v
 
   # ---------------------------------------------------------------------------
   # Windows smoke test — path separators, line endings, missing Unix tools.
@@ -190,32 +112,16 @@ jobs:
           enable-cache: true
           python-version: "3.13"
 
-      - name: Configure git identity for scaffolded commits
-        shell: bash
-        run: |
-          git config --global user.name "CI"
-          git config --global user.email "ci@example.com"
+      - name: Install dependencies
+        run: uv sync --all-groups
 
-      - name: Scaffold
-        shell: bash
-        run: |
-          uvx copier copy "$GITHUB_WORKSPACE" "$RUNNER_TEMP/win" \
-            --trust --defaults --vcs-ref=HEAD \
-            --data project_name="Windows Test" \
-            --data github_org="${{ github.repository_owner }}" \
-            --data build_backend=uv_build
-
-      - name: Checks
-        shell: bash
-        working-directory: ${{ runner.temp }}/win
-        run: |
-          uv sync --all-groups
-          uv run poe check
-          uv build
+      - name: Scaffold and verify -- c1-uvbuild-static
+        run: uv run pytest -m combos -k c1-uvbuild-static --from-git -v
 
   # ---------------------------------------------------------------------------
-  # copier update from the last release to HEAD must not explode.
-  # Skipped on the very first run, when no tag exists yet.
+  # copier update from the last release to HEAD must not explode, and local
+  # edits survive a merge. tests/test_update.py's two scenarios each skip
+  # themselves (not fail) when no tag exists yet -- the very first run.
   # ---------------------------------------------------------------------------
   update-compat:
     name: copier update compatibility
@@ -233,44 +139,11 @@ jobs:
           enable-cache: true
           python-version: "3.13"
 
-      - name: Find latest tag
-        id: tag
-        run: |
-          tag=$(git tag -l 'v*' --sort=-v:refname | head -1)
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          [ -n "$tag" ] || echo "::notice::No tags yet — update test skipped"
+      - name: Install dependencies
+        run: uv sync --all-groups
 
-      - name: Configure git identity for scaffolded commits
-        run: |
-          git config --global user.name "CI"
-          git config --global user.email "ci@example.com"
-
-      - name: Scaffold from released version
-        if: steps.tag.outputs.tag != ''
-        run: |
-          uvx copier copy "$GITHUB_WORKSPACE" "$RUNNER_TEMP/upd" \
-            --trust --defaults --vcs-ref="${{ steps.tag.outputs.tag }}" \
-            --data project_name="Update Test" \
-            --data github_org="${{ github.repository_owner }}"
-          cd "$RUNNER_TEMP/upd"
-          git add -A && git commit -q -m "chore: baseline" --allow-empty
-
-      - name: Update to HEAD
-        if: steps.tag.outputs.tag != ''
-        working-directory: ${{ runner.temp }}/upd
-        run: |
-          uvx copier update --trust --defaults --vcs-ref=HEAD --conflict=inline
-          # Copier writes conflict markers inline rather than failing.
-          if grep -rIl '^<<<<<<<' . --exclude-dir={.git,.venv}; then
-            echo "::warning::Update produced conflicts — expected if templates moved"
-          fi
-
-      - name: Still works after update
-        if: steps.tag.outputs.tag != ''
-        working-directory: ${{ runner.temp }}/upd
-        run: |
-          uv sync --all-groups
-          uv run poe check
+      - name: copier update scenarios
+        run: uv run pytest -m update -v
 
   # ---------------------------------------------------------------------------
   # Single required status check for branch protection.
