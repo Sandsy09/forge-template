@@ -52,18 +52,29 @@ def _git_identity() -> None:
     Missing git identity on the CI runner was one of three bugs that sat
     undetected on `main` for days (CLAUDE.md, "Validation") because the local
     suite never reproduced it -- the author's own machine already has an
-    identity configured. Env vars rather than `git config --global` keep the
-    fix scoped to this test process instead of mutating the operator's config.
+    identity configured.
+
+    `GIT_AUTHOR_NAME`/etc env vars were tried first here and did not work:
+    Copier's `_tasks` execution goes through `plumbum`, which snapshots
+    `os.environ` when `copier` is first imported -- during pytest collection,
+    before this session-scoped fixture's body ever runs -- so mutating
+    `os.environ` here was invisible to it. `git config --global` writes to
+    the actual gitconfig file, which every subprocess reads fresh regardless
+    of when it started, so it isn't subject to that ordering. Safe here
+    specifically because it only fires when no identity exists at all: on the
+    author's own machine that never triggers, and on a CI runner the git
+    config is thrown away with the VM.
     """
     result = subprocess.run(
         ["git", "config", "--get", "user.email"], capture_output=True, text=True
     )
     if result.returncode == 0 and result.stdout.strip():
         return
-    os.environ.setdefault("GIT_AUTHOR_NAME", "pytest")
-    os.environ.setdefault("GIT_AUTHOR_EMAIL", "pytest@example.invalid")
-    os.environ.setdefault("GIT_COMMITTER_NAME", "pytest")
-    os.environ.setdefault("GIT_COMMITTER_EMAIL", "pytest@example.invalid")
+    subprocess.run(["git", "config", "--global", "user.name", "pytest"], check=True)
+    subprocess.run(
+        ["git", "config", "--global", "user.email", "pytest@example.invalid"],
+        check=True,
+    )
 
 
 @pytest.fixture(scope="session")
