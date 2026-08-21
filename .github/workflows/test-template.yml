@@ -101,6 +101,11 @@ jobs:
           enable-cache: true
           python-version: "3.13"
 
+      - name: Configure git identity for scaffolded commits
+        run: |
+          git config --global user.name "CI"
+          git config --global user.email "ci@example.com"
+
       - name: Scaffold
         run: |
           uvx copier copy . "$RUNNER_TEMP/${{ matrix.slug }}" \
@@ -193,6 +198,12 @@ jobs:
           enable-cache: true
           python-version: "3.13"
 
+      - name: Configure git identity for scaffolded commits
+        shell: bash
+        run: |
+          git config --global user.name "CI"
+          git config --global user.email "ci@example.com"
+
       - name: Scaffold
         shell: bash
         run: |
@@ -236,6 +247,11 @@ jobs:
           tag=$(git tag -l 'v*' --sort=-v:refname | head -1)
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           [ -n "$tag" ] || echo "::notice::No tags yet — update test skipped"
+
+      - name: Configure git identity for scaffolded commits
+        run: |
+          git config --global user.name "CI"
+          git config --global user.email "ci@example.com"
 
       - name: Scaffold from released version
         if: steps.tag.outputs.tag != ''
