@@ -9,7 +9,9 @@ projects. Currently one archetype: **library**.
 
 Copier was chosen over Cookiecutter specifically for `copier update`, which
 three-way merges template changes into projects generated months earlier. Every
-decision here is downstream of preserving that capability.
+decision here is downstream of preserving that capability. See
+[docs/adr/0002](docs/adr/0002-copier-over-cookiecutter.md) for the full
+rationale and its consequences.
 
 ## Repository relationship
 
@@ -19,7 +21,8 @@ decision here is downstream of preserving that capability.
 | `https://github.com/Sandsy09/create-forge` | The CLI that scaffolds from it. |
 
 Separate because Copier resolves template versions from PEP440 git tags here.
-**Do not merge them.**
+**Do not merge them.** See
+[docs/adr/0003](docs/adr/0003-two-repo-split.md).
 
 ## Layout
 
@@ -29,6 +32,7 @@ forge-template/
 ├── pyproject.toml          This repo's OWN tooling — NOT part of the scaffold
 ├── src/forge_template/     Checks that validate copier.yml against this file
 ├── tests/                  Tests for src/forge_template
+├── docs/adr/               Why past decisions were made (Nygard-format ADRs)
 ├── scripts/
 │   ├── test-combos.sh      Scaffold every combo, assert, run their checks
 │   ├── verify-ci.sh        Push combos to throwaway repos, watch CI
@@ -57,7 +61,8 @@ Key mechanics:
   value that collapses to `static` for `uv_build`. **All templates read
   `versioning_resolved`, never `versioning`.** This makes the invalid
   combination unrepresentable rather than merely unselected, which matters
-  because `copier update` replays stored answers.
+  because `copier update` replays stored answers. Full rationale:
+  [docs/adr/0004](docs/adr/0004-build-backend-and-versioning.md).
 - **`python_matrix` is computed**, sliced from `python_all` between
   `python_min_version` and `python_version`. Adding a new Python version is a
   one-line edit to `python_all`.
@@ -199,32 +204,34 @@ scaffold from this repo. Root repo hygiene (backlog item 1) is done: root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
+`docs/adr/` (backlog item 1, done) holds nine ADRs recording the rationale
+behind decisions already made, checked for internal consistency by
+`src/forge_template/adr.py`.
 
 Not yet done:
-- No `docs/`
 - `scripts/test-combos.sh` / `test-update.sh` are still bash, not yet ported
   to the `tests/` pytest suite — see [#5](https://github.com/Sandsy09/forge-template/issues/5)
 
 ## Backlog, in order
 
-**1. `docs/`** ([#3](https://github.com/Sandsy09/forge-template/issues/3)).
-ADRs for decisions already made: Copier over Cookiecutter, two-repo split,
-uv_build vs Hatchling as a user choice, git-cliff over hand-written
-changelogs, mypy as default with pyright optional, MkDocs pinned below 2.0.
-
-**2. Archetype two** ([#4](https://github.com/Sandsy09/forge-template/issues/4)).
+**1. Archetype two** ([#4](https://github.com/Sandsy09/forge-template/issues/4)).
 Extract shared files into a common location, add the new archetype's own
 directory. **This is the `_migrations` moment** — plan it before writing any
 code, and keep the library archetype's paths stable if possible. Candidates
 in rough order of usefulness: `cli`, `service` (FastAPI + Docker), `pipeline`.
 
-**3. Migrate the validation scripts to Python** ([#5](https://github.com/Sandsy09/forge-template/issues/5)).
+**2. Migrate the validation scripts to Python** ([#5](https://github.com/Sandsy09/forge-template/issues/5)).
 `test-combos.sh` and `test-update.sh` already lean on `python -c` and
 `python - <<'PY'` heredocs for anything non-trivial; port both to `tests/`
 using Copier's Python API (`run_copy`/`run_update`) and pytest
 parametrization. `verify-ci.sh` stays bash. Not urgent — the bash scripts
 work — but the split is arbitrary and costs real things (serial combo runs,
 no per-combo isolation, Windows needing Git Bash).
+
+Also open, not yet scheduled: [#1](https://github.com/Sandsy09/forge-template/issues/1)
+(reintroduce `make`, see Deferred below), [#6](https://github.com/Sandsy09/forge-template/issues/6)
+(Markdown linter in the pre-commit gate), [#7](https://github.com/Sandsy09/forge-template/issues/7)
+(split this file into invariants + agent guidance).
 
 ## Known limitation, documented not fixed
 
@@ -238,13 +245,18 @@ generated `CONTRIBUTING.md`.
 
 ## Deferred, with reasons
 
+Full rationale for each of these lives in `docs/adr/`; this section stays as a
+quick-reference summary rather than restating it.
+
 - **python-semantic-release** — heavy, fights git-cliff over changelog
-  ownership, and a stray `feat!:` can trigger an unintended major.
+  ownership, and a stray `feat!:` can trigger an unintended major. See
+  [docs/adr/0005](docs/adr/0005-git-cliff-for-changelogs.md).
 - **Zensical instead of MkDocs** — MkDocs 2.0 removes the plugin system and
   breaks mkdocstrings; Material is in maintenance mode. Zensical is the
   successor but sits at 0.0.x with preliminary mkdocstrings support. Both
   Renovate and Dependabot configs pin below the breaking versions. Revisit when
-  Zensical reaches 1.0 with mkdocstrings parity.
+  Zensical reaches 1.0 with mkdocstrings parity. See
+  [docs/adr/0007](docs/adr/0007-mkdocs-pinned-below-2.md).
 - **`make` as a `task_runner` choice** — removed entirely (see Current state).
   It was the widest-blast-radius conditional, `make` is absent on Windows by
   default (the author's own dev platform, so it could never be dogfooded), and
@@ -254,4 +266,5 @@ generated `CONTRIBUTING.md`.
   `_message_after_copy`. Reintroduce only as a fully CI-tested option (a real
   Makefile mirroring every Poe task, plus a workflow job that runs `make check`
   on Linux) — tracked as [#1](https://github.com/Sandsy09/forge-template/issues/1),
-  not scheduled yet.
+  not scheduled yet. See
+  [docs/adr/0008](docs/adr/0008-remove-make-task-runner.md).

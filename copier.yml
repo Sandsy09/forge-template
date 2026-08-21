@@ -162,7 +162,7 @@ versioning:
     Git tags via hatch-vcs (breaks archive-tarball installs): vcs
 
 # Forces static when uv_build is chosen, so downstream templates only
-# ever read `versioning` and never re-derive the constraint.
+# ever read `versioning_resolved` and never re-derive the constraint.
 versioning_resolved:
   type: str
   when: false

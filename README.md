@@ -51,6 +51,7 @@ forge-template/
 ├── copier.yml               Question schema for the scaffold
 ├── pyproject.toml           This repo's OWN tooling (not part of the scaffold)
 ├── src/, tests/              ^ same
+├── docs/adr/                 Why this repo is shaped the way it is
 ├── scripts/                 Scaffold every combo, assert, run their checks
 ├── .github/workflows/       This repo's own CI + release automation
 └── template/                Everything here becomes the generated project
@@ -58,10 +59,11 @@ forge-template/
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the human workflow, and
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the human workflow,
 [CLAUDE.md](CLAUDE.md) for the invariants that keep `copier update` working
 across projects generated at different points in this template's history —
-read that before changing anything under `template/`.
+read that before changing anything under `template/` — and
+[docs/adr/](docs/adr/) for why past decisions were made the way they were.
 
 ## License
 

@@ -51,6 +51,15 @@ reproduce the CI runner's environment. After pushing, check the actual run
 (`gh run watch`, or the Actions tab) rather than assuming a green local
 script means the pipeline passed.
 
+## Recording a decision
+
+If a change makes a real architectural call — not just a bugfix — write an
+[ADR](docs/adr/) for it: copy the most recent record, increment the number,
+and follow the same Status/Context/Decision/Consequences shape. Records are
+immutable; a decision that changes later gets a new ADR that supersedes the
+old one, not an edit to it. `uv run poe check` verifies the set stays
+consistent (filenames, numbering, that the index links every record).
+
 ## Commit messages
 
 Conventional Commits (`feat:`, `fix:`, `chore:`, ...); a `commit-msg` hook
