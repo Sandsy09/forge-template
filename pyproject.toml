@@ -175,3 +175,10 @@ combos = "pytest -m combos -n 4"
 update = "pytest -m update"
 "verify-ci" = "bash scripts/verify-ci.sh"
 check = ["format:check", "lint", "typecheck", "test"]
+
+# Reconciles this repo's GitHub labels against .github/labels.toml, shared
+# with create-forge. Idempotent: `gh label create --force` creates or
+# updates. Pass extra args after `--`, e.g.
+# `uv run poe labels:sync -- --dry-run` or `-- --repo OWNER/NAME --prune` --
+# see scripts/labels.py.
+"labels:sync" = "python scripts/labels.py"
