@@ -64,7 +64,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the human workflow and
 across projects generated at different points in this template's history; read
 the latter before changing anything under `template/`. The
 [canonical Forge vocabulary](docs/terminology.md) defines architectural terms,
-and [docs/adr/](docs/adr/) records why significant decisions were made.
+the [Foundation guarantees](docs/foundation-guarantees.md) define the mandatory
+outcomes every generated project receives, and [docs/adr/](docs/adr/) records
+why significant decisions were made.
 
 ## License
 

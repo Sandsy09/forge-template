@@ -40,9 +40,9 @@ project. It owns cross-archetype guarantees rather than a particular project
 shape. Later layers may strengthen those guarantees or use documented
 extension points, but may not weaken them.
 
-The exact guarantees are owned by
-[FT-00.01](https://github.com/Sandsy09/forge-template/issues/19); this vocabulary
-defines Foundation's place in the architecture without pre-empting that issue.
+The exact outcomes are defined by the canonical
+[Foundation guarantees](foundation-guarantees.md), delivered through
+[FT-00.01](https://github.com/Sandsy09/forge-template/issues/19).
 
 ### Archetype
 
@@ -166,7 +166,8 @@ The v0.1.x Library scaffold is monolithic; it does not yet implement these as
 components. Its existing choices can nevertheless be described consistently:
 
 - Foundation is the future shared baseline beneath every archetype; its exact
-  guarantees remain owned by FT-00.01.
+  outcomes are defined by the
+  [Foundation guarantees](foundation-guarantees.md).
 - Library is the single archetype and owns the Python-library project shape.
 - Optional documentation or changelog support are capability-shaped concerns.
 - GitHub Actions support is a platform-shaped integration.

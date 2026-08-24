@@ -6,5 +6,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 
 - [terminology.md](terminology.md) — canonical Forge architectural vocabulary
   and authority rules.
+- [foundation-guarantees.md](foundation-guarantees.md) — mandatory outcomes
+  every generated Forge project receives from Foundation.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

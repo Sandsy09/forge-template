@@ -8,6 +8,9 @@
 
 The [canonical terminology](../terminology.md) defines the ecosystem,
 composition, and authority terms used by this proposal.
+The [Foundation guarantees](../foundation-guarantees.md) define the
+provider- and tool-neutral outcomes every successfully generated project must
+receive regardless of whether this proposed composition model is adopted.
 
 ```text
 ┌─────────────────────────────┐
