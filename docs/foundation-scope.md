@@ -187,7 +187,7 @@ This scope contract does not decide:
   exception conventions owned by Stage 04;
 - the ProjectSpec schema, component manifest, extension points, ordering, or
   conflict algorithms owned by Stage 06;
-- whether the proposed public engine replaces the current thin Copier model,
-  which remains gated by
-  [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41); or
+- the implementation details of the public-engine target accepted by
+  [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
+  including its first package and protocol versions; or
 - the identity of the second reference archetype.

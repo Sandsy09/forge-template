@@ -150,7 +150,7 @@ Foundation does not currently promise:
 Forge supports and how that window advances. The canonical [Foundation
 scope](foundation-scope.md) defines what belongs in Foundation rather than an
 archetype, capability, or platform. The future ProjectSpec and composition
-enforcement remain gated by
-[create-forge#41](https://github.com/Sandsy09/create-forge/issues/41) and the
-Stage 06 roadmap. This contract introduces no schema, rendering API, or
-component engine.
+enforcement are accepted by
+[create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md)
+and remain Stage 06 implementation work. This contract introduces no schema,
+rendering API, or component engine.

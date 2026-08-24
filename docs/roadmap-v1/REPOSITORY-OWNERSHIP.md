@@ -1,9 +1,10 @@
 # Repository Ownership and Integration Model
 
-> **Status:** Template/CLI ownership is current; ProjectSpec, component,
-> composition-engine, and downstream-policy ownership is proposed. Those
-> additions remain gated by
-> [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41).
+> **Status:** Template/CLI ownership is current. ProjectSpec, component,
+> composition-engine, and downstream-policy ownership is the accepted target
+> under
+> [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
+> but remains unimplemented until the coordinated cutover.
 
 The [canonical terminology](../terminology.md) defines the component kinds and
 selection inputs referenced by this ownership model. The
