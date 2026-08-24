@@ -5,7 +5,9 @@
 ### forge-template
 
 - **FT-00.01 — Define Forge Foundation guarantees**
-- **FT-00.02 — Define Forge architectural terminology**
+- ~~[**FT-00.02 — Define Forge architectural terminology**](https://github.com/Sandsy09/forge-template/issues/20)~~ — completed by the
+  [canonical terminology](../../../terminology.md) and
+  [ADR 0010](../../../adr/0010-forge-architectural-terminology.md).
 - **FT-00.03 — Define Foundation scope boundaries**
 - **FT-00.04 — Define Python support policy**
 - **FT-00.05 — Adopt a lightweight architecture decision process**

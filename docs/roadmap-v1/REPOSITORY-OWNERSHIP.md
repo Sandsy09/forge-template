@@ -5,6 +5,9 @@
 > additions remain gated by
 > [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41).
 
+The [canonical terminology](../terminology.md) defines the component kinds and
+selection inputs referenced by this ownership model.
+
 ## `forge-template`
 
 Owns **what a generated project is** and **how it is composed**.
@@ -12,7 +15,8 @@ Owns **what a generated project is** and **how it is composed**.
 It owns:
 
 - Foundation and archetype templates;
-- capability/platform/profile components;
+- capability and platform components;
+- profile and organisation-policy selection inputs;
 - component manifests and compatibility metadata;
 - the canonical ProjectSpec input contract;
 - template variables and validation;
