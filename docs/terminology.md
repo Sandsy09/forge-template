@@ -5,9 +5,10 @@ future downstream integrations such as Blueprint. It defines conceptual
 boundaries and authority; it does not introduce a ProjectSpec schema,
 component engine, or other public API.
 
-The public engine model remains proposed and is gated by
-[create-forge#41](https://github.com/Sandsy09/create-forge/issues/41). Where a
-term describes that proposal, it is marked accordingly.
+The public engine model is the accepted target under
+[create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
+but it is not implemented. Where a term describes that future contract, it is
+marked accordingly.
 
 ## Ecosystem terms
 
@@ -103,23 +104,25 @@ validation errors, and safe extension mechanisms remain owned by Stage 09.
 
 ### Component
 
-A component is a proposed machine-discoverable, composable unit. Archetypes,
-capabilities, and platforms are component kinds. Foundation is the mandatory
-baseline; profiles and organisation policies are inputs that select or
-constrain components, not components themselves.
+A component is a future machine-discoverable, composable unit in the accepted
+public-engine target. Archetypes, capabilities, and platforms are component
+kinds. Foundation is the mandatory baseline; profiles and organisation
+policies are inputs that select or constrain components, not components
+themselves.
 
 Component manifests, compatibility metadata, and composition behaviour remain
 Stage 06 work and do not exist in the v0.1.x implementation.
 
 ### ProjectSpec
 
-ProjectSpec is the proposed serialisable description of a project-generation
-request. It will carry project metadata and the selected archetype,
+ProjectSpec is the future serialisable description of a project-generation
+request in the accepted public-engine target. It will carry project metadata and the selected archetype,
 capabilities, platform information, and profile or policy inputs needed by a
 future composition engine.
 
-Its schema and public API are not defined here. Both remain gated by
-[create-forge#41](https://github.com/Sandsy09/create-forge/issues/41).
+Its schema and public API are not defined here. Both remain Stage 06 work under
+the ownership and compatibility boundary accepted by
+[create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 
 ## Composition and authority
 
@@ -202,7 +205,9 @@ This terminology does not decide:
 - platform cardinality;
 - organisation-policy schema or error types;
 - the identity of the second reference archetype; or
-- whether the proposed public engine supersedes the current thin
-  Copier/bundled-registry model.
+- the concrete engine package range, ProjectSpec protocol number, and source
+  resolution interface.
 
-Those decisions remain with their roadmap issues and the architecture gate.
+Those decisions remain with their Stage 04–09 roadmap issues. The current
+v0.1.x thin Copier/bundled-registry implementation stays operational until the
+accepted target is delivered as a coordinated cutover.

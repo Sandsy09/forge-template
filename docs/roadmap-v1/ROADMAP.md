@@ -1,9 +1,9 @@
 # Forge Foundation Two-Repository Roadmap
 
-> **Planning status:** The existing Copier-based Library scaffold remains the
-> production baseline. Stages 06–09 depend on the integration-model decision in
-> [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41); their
-> issues are filed but blocked. Stage 08 keeps archetype two generic until
+> **Architecture status:** The existing Copier-based Library scaffold remains
+> the production baseline. The public-engine/ProjectSpec target is accepted by
+> [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
+> and Stages 04–09 implement it in dependency order. Stage 08 keeps archetype two generic until
 > [FT-08.03](https://github.com/Sandsy09/forge-template/issues/42) selects and
 > defines it.
 

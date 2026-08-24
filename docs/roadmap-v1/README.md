@@ -18,8 +18,10 @@ The [canonical terminology](../terminology.md) defines the architectural terms
 and authority rules used throughout this roadmap without duplicating them in
 individual stage documents.
 
-The public engine/ProjectSpec model remains a proposal. Stages 06–09 are gated
-by [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41).
+The public engine/ProjectSpec model is the accepted target under
+[create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
+It is not implemented; the existing Copier baseline remains operational until
+Stages 04–09 deliver the coordinated cutover.
 
 ## Structure
 

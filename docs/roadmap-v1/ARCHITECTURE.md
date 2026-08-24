@@ -1,13 +1,13 @@
 # Proposed Forge Two-Repository Architecture
 
-> **Status:** This is the Stage 06 target architecture, not the v0.1.x
-> implementation. The current CLI is a thin Copier client with a bundled
-> registry, and `forge-template` exposes no ProjectSpec/component-engine API.
-> [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41) decides
-> whether this proposal supersedes the accepted baseline ADRs.
+> **Status:** This is the accepted target architecture under
+> [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
+> not the v0.1.x implementation. The current CLI is a thin Copier client with
+> a bundled registry, and `forge-template` exposes no
+> ProjectSpec/component-engine API until the coordinated cutover.
 
 The [canonical terminology](../terminology.md) defines the ecosystem,
-composition, and authority terms used by this proposal.
+composition, and authority terms used by this target.
 The [Foundation guarantees](../foundation-guarantees.md) define the
 provider- and tool-neutral outcomes every successfully generated project must
 receive regardless of whether this proposed composition model is adopted.
