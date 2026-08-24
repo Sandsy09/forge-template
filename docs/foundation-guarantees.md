@@ -1,0 +1,155 @@
+# Forge Foundation Guarantees
+
+This document defines the mandatory outcomes every successfully generated
+Forge project receives from Foundation. It complements the
+[canonical architectural terminology](terminology.md): that reference defines
+what Foundation is, while this one defines what Foundation guarantees.
+
+The guarantees are outcome-based. A tool, provider, or project layout may
+change as Forge evolves, but the replacement must preserve the same outcome.
+The current Library scaffold's implementation is mapped below for clarity; the
+mapping does not make those implementation choices permanent.
+
+## Contract and applicability
+
+A **Foundation guarantee** is a property Forge must provide in every
+successfully generated project. Archetypes, capabilities, platforms, profiles,
+and organisation policies may strengthen a guarantee, but they may not weaken
+or remove one.
+
+The contract applies to the project state produced by Forge and, when the
+future composition model exists, to the result of composition. It does not
+prevent a project owner from changing their independent repository after
+handoff. Foundation provides a sound starting contract rather than a runtime
+enforcement framework inside generated projects.
+
+## Mandatory guarantees
+
+### Reproducible development and validation environment
+
+A clean supported environment can restore the project's development and
+validation environment from version-controlled project metadata and committed
+lock state. Required prerequisites are documented, and routine validation does
+not depend on undeclared tools or configuration from the operator's
+workstation.
+
+This is declared-input repeatability: the same committed project state, lock
+state, and supported environment restore the same dependency selections and
+validation behaviour. It is not a promise of byte-identical generated trees or
+build artifacts across every machine and point in time.
+
+### Dependency locking
+
+Dependencies used to develop, test, analyse, format, lint, and build the
+project have committed, machine-readable lock state. Automation detects when
+declared dependency metadata and that lock state have drifted.
+
+The lock controls the project-owned development and validation environment. A
+distributable Library archetype still declares compatible dependency ranges
+for its consumers; it does not impose the project's development lock on their
+environments.
+
+### Static typing
+
+At least one static type checker is configured for project-owned Python source
+and exposed through a non-interactive command that fails when the configured
+typing policy is violated. An archetype may widen coverage or strengthen the
+policy, but it may not remove the type-checking gate.
+
+### Automated testing
+
+Every generated project includes an automated test suite, an initial
+executable test that proves the generated project can be imported or exercised,
+and a non-interactive failing test command. Archetypes and capabilities add
+tests appropriate to the behaviour they contribute.
+
+### Linting
+
+Every generated project includes a configured linter and a non-interactive
+check that fails on violations in the project-owned source it covers. Added
+components participate in that linting contract or provide an equivalently
+integrated check for their owned content.
+
+### Deterministic formatting
+
+Every generated project includes deterministic formatting configuration, a
+command that applies it, and a non-mutating check that fails when tracked
+content is not formatted. Formatting policy is repository-owned and does not
+depend on an editor's local defaults.
+
+### CI readiness
+
+Every generated project exposes a stable, non-interactive aggregate quality
+contract that can be invoked from a clean environment. It covers formatting,
+linting, type checking, and testing, and returns a failing status when any
+constituent check fails.
+
+Foundation does not require a particular automation provider. When a platform
+integration supplies CI configuration, it runs the same underlying quality
+contract used locally rather than defining a divergent standard. The current
+monolithic Library scaffold includes GitHub Actions as its platform-shaped
+integration.
+
+### Environment and Forge independence
+
+Normal development, testing, building, and runtime operation require only the
+prerequisites documented by the generated project. They do not require the
+`create-forge` package, an installed `forge-template` package, a checkout of
+either Forge repository, or a Forge runtime dependency.
+
+Template maintenance is a separate operation. Pulling template updates or
+regenerating content may invoke Copier and access the template source, but a
+project does not need to perform that maintenance to remain usable.
+
+## Recommended conventions
+
+The following practices reinforce the guarantees but are not themselves
+universal Foundation requirements:
+
+- provide one memorable aggregate command, conventionally named `check`;
+- call the same underlying commands locally, in hooks, and in CI;
+- keep pre-commit feedback fast while retaining comprehensive CI gates;
+- collect coverage even when the project is not ready to enforce a threshold;
+- strengthen typing, coverage thresholds, and test matrices as the project
+  matures; and
+- test additional operating systems when the project claims to support them.
+
+A project may adopt stronger conventions. It may also replace an implementation
+tool, provided the mandatory outcome remains intact.
+
+## Current Library scaffold mapping
+
+The v0.1.x Library scaffold is monolithic rather than composed from Foundation
+and components. Its current behaviour nevertheless satisfies the contract as
+follows:
+
+| Guarantee | Current implementation evidence |
+| --- | --- |
+| Reproducible environment and dependency locking | `pyproject.toml` and `.python-version` declare the environment; generation creates and commits `uv.lock`; CI runs `uv lock --check` before synchronising dependencies. |
+| Static typing | `type_checking` always selects mypy, pyright, or both; the selected checker is configured for source and tests and runs through the `typecheck` task and CI. |
+| Automated testing | pytest, coverage configuration, and an initial import/version smoke test are present; the `test` task and CI run the suite. |
+| Linting and formatting | Ruff owns lint and format policy; Poe exposes check/apply tasks, pre-commit provides local feedback, and CI runs non-mutating checks. |
+| CI readiness | `uv run poe check` is the documented aggregate local contract; the generated GitHub Actions workflow runs the same formatting, linting, typing, and testing concerns and also verifies builds. |
+| Environment and Forge independence | The generated repository owns its source, configuration, tasks, tests, and workflow and documents Python and uv as prerequisites. Neither Forge repository nor package is a development or runtime dependency. |
+
+These named tools describe the current reference implementation. They may be
+replaced by later decisions that preserve the guarantees.
+
+## Non-guarantees and deferred decisions
+
+Foundation does not currently promise:
+
+- byte-identical generated trees or distribution artifacts;
+- dependency installation, testing, or building without network access;
+- support for every operating system;
+- a universal coverage threshold;
+- one type checker or strictness level; or
+- one CI provider.
+
+[FT-00.04](https://github.com/Sandsy09/forge-template/issues/22) owns the exact
+Python support policy. [FT-00.03](https://github.com/Sandsy09/forge-template/issues/21)
+owns the criteria for what belongs in Foundation rather than an archetype or
+capability. The future ProjectSpec and composition enforcement remain gated by
+[create-forge#41](https://github.com/Sandsy09/create-forge/issues/41) and the
+Stage 06 roadmap. This contract introduces no schema, rendering API, or
+component engine.

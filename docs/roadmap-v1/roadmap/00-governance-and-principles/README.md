@@ -4,7 +4,9 @@
 
 ### forge-template
 
-- **FT-00.01 — Define Forge Foundation guarantees**
+- ~~[**FT-00.01 — Define Forge Foundation guarantees**](https://github.com/Sandsy09/forge-template/issues/19)~~ — completed by the
+  [canonical guarantees](../../../foundation-guarantees.md) and
+  [ADR 0011](../../../adr/0011-forge-foundation-guarantees.md).
 - ~~[**FT-00.02 — Define Forge architectural terminology**](https://github.com/Sandsy09/forge-template/issues/20)~~ — completed by the
   [canonical terminology](../../../terminology.md) and
   [ADR 0010](../../../adr/0010-forge-architectural-terminology.md).

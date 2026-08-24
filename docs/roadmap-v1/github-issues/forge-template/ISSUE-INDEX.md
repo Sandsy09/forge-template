@@ -8,7 +8,7 @@ work; completed baseline items were not backfilled as closed issues.
 | ID | GitHub issue / evidence | Status | Parent | Blocked by | Milestone |
 |---|---|---|---|---|---|
 | FT-EPIC-00 | [#11](https://github.com/Sandsy09/forge-template/issues/11) | Open | — | — | Foundation Contract — Stage 00 |
-| FT-00.01 | [#19](https://github.com/Sandsy09/forge-template/issues/19) | Open | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
+| FT-00.01 | [#19](https://github.com/Sandsy09/forge-template/issues/19), [guarantees](../../../foundation-guarantees.md), and [ADR 0011](../../../adr/0011-forge-foundation-guarantees.md) | Complete | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
 | FT-00.02 | [#20](https://github.com/Sandsy09/forge-template/issues/20), [terminology](../../../terminology.md), and [ADR 0010](../../../adr/0010-forge-architectural-terminology.md) | Complete | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
 | FT-00.03 | [#21](https://github.com/Sandsy09/forge-template/issues/21) | Open | [#11](https://github.com/Sandsy09/forge-template/issues/11) | [#20](https://github.com/Sandsy09/forge-template/issues/20) (complete) | Foundation Contract — Stage 00 |
 | FT-00.04 | [#22](https://github.com/Sandsy09/forge-template/issues/22) | Open | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
