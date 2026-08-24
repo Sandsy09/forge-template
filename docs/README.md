@@ -10,5 +10,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   every generated Forge project receives from Foundation.
 - [foundation-scope.md](foundation-scope.md) — inclusion, exclusion, and
   routing rules that keep Foundation conservative and runtime-free.
+- [python-support.md](python-support.md) — supported CPython window, generated
+  project version semantics, and release-transition policy.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

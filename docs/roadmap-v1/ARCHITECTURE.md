@@ -14,6 +14,8 @@ receive regardless of whether this proposed composition model is adopted.
 The [Foundation scope](../foundation-scope.md) limits that baseline to
 universal guarantee, neutral handoff, and update/provenance concerns and keeps
 generated runtime behaviour with its owning archetype or capability.
+The [Python support policy](../python-support.md) defines the rolling CPython
+window in which the generated-project guarantees are claimed.
 
 ```text
 ┌─────────────────────────────┐

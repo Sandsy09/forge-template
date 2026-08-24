@@ -63,8 +63,10 @@ Key mechanics:
   because `copier update` replays stored answers. Full rationale:
   [docs/adr/0004](docs/adr/0004-build-backend-and-versioning.md).
 - **`python_matrix` is computed**, sliced from `python_all` between
-  `python_min_version` and `python_version`. Adding a new Python version is a
-  one-line edit to `python_all`.
+  `python_min_version` and `python_version`. Version additions, default moves,
+  deprecations, and removals follow the
+  [Python support policy](docs/python-support.md); changing `python_all` alone
+  is not a complete support transition.
 - **Computed values use `when: false`** with the value in `default`.
 - **`github_org` has an empty default** deliberately. The CLI supplies it.
 

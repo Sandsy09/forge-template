@@ -13,17 +13,20 @@
 - ~~[**FT-00.03 — Define Foundation scope boundaries**](https://github.com/Sandsy09/forge-template/issues/21)~~ — completed by the
   [canonical scope](../../../foundation-scope.md) and
   [ADR 0012](../../../adr/0012-conservative-foundation-scope.md).
-- **FT-00.04 — Define Python support policy**
-- **FT-00.05 — Adopt a lightweight architecture decision process**
+- ~~[**FT-00.04 — Define Python support policy**](https://github.com/Sandsy09/forge-template/issues/22)~~ — completed by the
+  [canonical policy](../../../python-support.md) and
+  [ADR 0013](../../../adr/0013-python-support-policy.md).
+- ~~[**FT-00.05 — Adopt a lightweight architecture decision process**](https://github.com/Sandsy09/forge-template/issues/3)~~ — completed before the roadmap through the
+  [accepted ADR process](../../../adr/README.md).
 
 ### create-forge
 
 - **CF-00.01 — Define create-forge responsibility boundary**
 - **CF-00.02 — Define cross-repository compatibility policy**
 
-## Stage completion rule
+## forge-template completion rule
 
-- [ ] Repo-local issues are complete or explicitly deferred.
-- [ ] Cross-repository blockers are resolved.
-- [ ] Public contracts changed by this stage are documented/versioned.
-- [ ] No implementation concern is duplicated across repositories.
+- [x] Repo-local issues are complete or explicitly deferred.
+- [x] Cross-repository blockers are resolved.
+- [x] Public contracts changed by this stage are documented/versioned.
+- [x] No implementation concern is duplicated across repositories.

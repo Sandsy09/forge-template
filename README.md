@@ -67,8 +67,9 @@ the latter before changing anything under `template/`. The
 the [Foundation guarantees](docs/foundation-guarantees.md) define the mandatory
 outcomes every generated project receives, the
 [Foundation scope](docs/foundation-scope.md) defines which concerns belong in
-that baseline, and [docs/adr/](docs/adr/) records why significant decisions
-were made.
+that baseline, the [Python support policy](docs/python-support.md) defines the
+supported CPython window and lifecycle, and [docs/adr/](docs/adr/) records why
+significant decisions were made.
 
 ## License
 

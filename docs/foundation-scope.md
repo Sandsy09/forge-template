@@ -181,8 +181,8 @@ through the explicit merge and extension contracts owned by Stage 06.
 
 This scope contract does not decide:
 
-- the exact Python support policy owned by
-  [FT-00.04](https://github.com/Sandsy09/forge-template/issues/22);
+- the supported interpreter window and lifecycle defined by the canonical
+  [Python support policy](python-support.md);
 - the detailed owner-specific configuration, logging, path, resource, or
   exception conventions owned by Stage 04;
 - the ProjectSpec schema, component manifest, extension points, ordering, or
