@@ -8,7 +8,9 @@
 The [canonical terminology](../terminology.md) defines the component kinds and
 selection inputs referenced by this ownership model. The
 [Foundation scope](../foundation-scope.md) defines the concern-level boundary
-between that mandatory baseline and the components listed below.
+between that mandatory baseline and the components listed below. The
+[Python support policy](../python-support.md) is owned here because its choices,
+generated metadata, and validation are part of generated-project behaviour.
 
 ## `forge-template`
 

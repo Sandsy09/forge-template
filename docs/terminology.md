@@ -45,7 +45,10 @@ The exact outcomes are defined by the canonical
 [FT-00.01](https://github.com/Sandsy09/forge-template/issues/19). The
 [Foundation scope](foundation-scope.md), delivered through
 [FT-00.03](https://github.com/Sandsy09/forge-template/issues/21), defines which
-concerns may belong in that baseline and how other concerns are routed.
+concerns may belong in that baseline and how other concerns are routed. The
+[Python support policy](python-support.md), delivered through
+[FT-00.04](https://github.com/Sandsy09/forge-template/issues/22), defines the
+supported interpreter environments in which those outcomes are provided.
 
 ### Archetype
 

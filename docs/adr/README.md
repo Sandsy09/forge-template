@@ -15,6 +15,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0010 — Canonical Forge architectural terminology](0010-forge-architectural-terminology.md)
 - [0011 — Outcome-based Forge Foundation guarantees](0011-forge-foundation-guarantees.md)
 - [0012 — Keep Forge Foundation conservative and runtime-free](0012-conservative-foundation-scope.md)
+- [0013 — Adopt a rolling CPython support policy](0013-python-support-policy.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

@@ -7,11 +7,11 @@ work; completed baseline items were not backfilled as closed issues.
 
 | ID | GitHub issue / evidence | Status | Parent | Blocked by | Milestone |
 |---|---|---|---|---|---|
-| FT-EPIC-00 | [#11](https://github.com/Sandsy09/forge-template/issues/11) | Open | — | — | Foundation Contract — Stage 00 |
+| FT-EPIC-00 | [#11](https://github.com/Sandsy09/forge-template/issues/11) and [Stage 00 record](../../roadmap/00-governance-and-principles/README.md) | Complete | — | — | Foundation Contract — Stage 00 |
 | FT-00.01 | [#19](https://github.com/Sandsy09/forge-template/issues/19), [guarantees](../../../foundation-guarantees.md), and [ADR 0011](../../../adr/0011-forge-foundation-guarantees.md) | Complete | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
 | FT-00.02 | [#20](https://github.com/Sandsy09/forge-template/issues/20), [terminology](../../../terminology.md), and [ADR 0010](../../../adr/0010-forge-architectural-terminology.md) | Complete | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
 | FT-00.03 | [#21](https://github.com/Sandsy09/forge-template/issues/21), [scope](../../../foundation-scope.md), and [ADR 0012](../../../adr/0012-conservative-foundation-scope.md) | Complete | [#11](https://github.com/Sandsy09/forge-template/issues/11) | [#20](https://github.com/Sandsy09/forge-template/issues/20) (complete) | Foundation Contract — Stage 00 |
-| FT-00.04 | [#22](https://github.com/Sandsy09/forge-template/issues/22) | Open | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
+| FT-00.04 | [#22](https://github.com/Sandsy09/forge-template/issues/22), [policy](../../../python-support.md), and [ADR 0013](../../../adr/0013-python-support-policy.md) | Complete | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
 | FT-00.05 | ADR process and closed [#3](https://github.com/Sandsy09/forge-template/issues/3) | Complete before roadmap | — | — | — |
 | FT-01.01 | Existing `src/{{ package_name }}` and smoke-test scaffold | Complete before roadmap | — | — | — |
 | FT-01.02 | Existing generated `pyproject.toml` contract | Complete before roadmap | — | — | — |
