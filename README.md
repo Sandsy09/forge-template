@@ -59,11 +59,12 @@ forge-template/
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the human workflow,
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the human workflow and
 [CLAUDE.md](CLAUDE.md) for the invariants that keep `copier update` working
-across projects generated at different points in this template's history —
-read that before changing anything under `template/` — and
-[docs/adr/](docs/adr/) for why past decisions were made the way they were.
+across projects generated at different points in this template's history; read
+the latter before changing anything under `template/`. The
+[canonical Forge vocabulary](docs/terminology.md) defines architectural terms,
+and [docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License
 

@@ -12,6 +12,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0007 — MkDocs pinned below 2.0](0007-mkdocs-pinned-below-2.md)
 - [0008 — Remove `make` as a task_runner choice](0008-remove-make-task-runner.md)
 - [0009 — Branch and pull request workflow](0009-branch-and-pr-workflow.md)
+- [0010 — Canonical Forge architectural terminology](0010-forge-architectural-terminology.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

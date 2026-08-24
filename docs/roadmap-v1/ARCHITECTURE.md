@@ -6,6 +6,9 @@
 > [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41) decides
 > whether this proposal supersedes the accepted baseline ADRs.
 
+The [canonical terminology](../terminology.md) defines the ecosystem,
+composition, and authority terms used by this proposal.
+
 ```text
 ┌─────────────────────────────┐
 │        create-forge         │

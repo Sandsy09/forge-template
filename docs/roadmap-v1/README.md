@@ -14,6 +14,10 @@ backfilled as closed issues. The
 for completed work and links every open epic and child issue; GitHub issue
 bodies and native relationships are the source of truth for open work.
 
+The [canonical terminology](../terminology.md) defines the architectural terms
+and authority rules used throughout this roadmap without duplicating them in
+individual stage documents.
+
 The public engine/ProjectSpec model remains a proposal. Stages 06–09 are gated
 by [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41).
 
