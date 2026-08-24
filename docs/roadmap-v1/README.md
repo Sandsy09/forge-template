@@ -1,0 +1,37 @@
+# Forge Foundation Roadmap Pack — Two-Repository Edition
+
+This roadmap models Forge as two independent repositories joined by an
+explicit, versioned contract:
+
+- **`forge-template`** owns generated content and, if the Stage 00 architecture
+  decision adopts it, the component/composition engine.
+- **`create-forge`** owns CLI input, presentation, and filesystem orchestration.
+
+The `forge-template` issue drafts were reconciled against the working v0.1.x
+baseline and filed on GitHub on 2026-08-23. Completed baseline work was not
+backfilled as closed issues. The
+[live issue index](github-issues/forge-template/ISSUE-INDEX.md) records evidence
+for completed work and links every open epic and child issue; GitHub issue
+bodies and native relationships are the source of truth for open work.
+
+The public engine/ProjectSpec model remains a proposal. Stages 06–09 are gated
+by [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41).
+
+## Structure
+
+```text
+docs/roadmap-v1/
+├── README.md
+├── REPOSITORY-OWNERSHIP.md
+├── ARCHITECTURE.md
+├── ROADMAP.md
+├── roadmap/<stage>/README.md
+└── github-issues/
+    ├── GITHUB-SETUP.md
+    ├── CROSS-REPO-DEPENDENCIES.md
+    └── forge-template/ISSUE-INDEX.md
+```
+
+Start with `REPOSITORY-OWNERSHIP.md`, then `ROADMAP.md`, then the live issue
+index. Cross-repository work is represented by native GitHub dependencies,
+not duplicated implementation tickets.
