@@ -4,11 +4,11 @@
 
 ### forge-template
 
-- **FT-04.01 — Define configuration module convention**
+- **FT-04.01 — Define configuration ownership and extension conventions**
 - **FT-04.02 — Define environment-variable conventions**
-- **FT-04.03 — Define structured logging baseline**
-- **FT-04.04 — Define path and resource handling conventions**
-- **FT-04.05 — Define exception conventions**
+- **FT-04.03 — Define structured logging capability**
+- **FT-04.04 — Define path and resource ownership conventions**
+- **FT-04.05 — Define exception ownership conventions**
 
 ### create-forge
 

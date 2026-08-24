@@ -14,6 +14,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0009 — Branch and pull request workflow](0009-branch-and-pr-workflow.md)
 - [0010 — Canonical Forge architectural terminology](0010-forge-architectural-terminology.md)
 - [0011 — Outcome-based Forge Foundation guarantees](0011-forge-foundation-guarantees.md)
+- [0012 — Keep Forge Foundation conservative and runtime-free](0012-conservative-foundation-scope.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

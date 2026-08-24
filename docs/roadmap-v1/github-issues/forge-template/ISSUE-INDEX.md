@@ -10,7 +10,7 @@ work; completed baseline items were not backfilled as closed issues.
 | FT-EPIC-00 | [#11](https://github.com/Sandsy09/forge-template/issues/11) | Open | — | — | Foundation Contract — Stage 00 |
 | FT-00.01 | [#19](https://github.com/Sandsy09/forge-template/issues/19), [guarantees](../../../foundation-guarantees.md), and [ADR 0011](../../../adr/0011-forge-foundation-guarantees.md) | Complete | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
 | FT-00.02 | [#20](https://github.com/Sandsy09/forge-template/issues/20), [terminology](../../../terminology.md), and [ADR 0010](../../../adr/0010-forge-architectural-terminology.md) | Complete | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
-| FT-00.03 | [#21](https://github.com/Sandsy09/forge-template/issues/21) | Open | [#11](https://github.com/Sandsy09/forge-template/issues/11) | [#20](https://github.com/Sandsy09/forge-template/issues/20) (complete) | Foundation Contract — Stage 00 |
+| FT-00.03 | [#21](https://github.com/Sandsy09/forge-template/issues/21), [scope](../../../foundation-scope.md), and [ADR 0012](../../../adr/0012-conservative-foundation-scope.md) | Complete | [#11](https://github.com/Sandsy09/forge-template/issues/11) | [#20](https://github.com/Sandsy09/forge-template/issues/20) (complete) | Foundation Contract — Stage 00 |
 | FT-00.04 | [#22](https://github.com/Sandsy09/forge-template/issues/22) | Open | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
 | FT-00.05 | ADR process and closed [#3](https://github.com/Sandsy09/forge-template/issues/3) | Complete before roadmap | — | — | — |
 | FT-01.01 | Existing `src/{{ package_name }}` and smoke-test scaffold | Complete before roadmap | — | — | — |
@@ -29,12 +29,12 @@ work; completed baseline items were not backfilled as closed issues.
 | FT-03.04 | Existing generated pre-commit gate | Complete before roadmap | — | — | — |
 | FT-03.05 | Existing generated and template-repository CI | Complete before roadmap | — | — | — |
 | FT-03.06 | Existing coverage reporting and configurable threshold | Complete before roadmap | — | — | — |
-| FT-EPIC-04 | [#13](https://github.com/Sandsy09/forge-template/issues/13) | Blocked | — | — | Runtime & Security — Stages 04–05 |
-| FT-04.01 | [#24](https://github.com/Sandsy09/forge-template/issues/24) | Blocked | [#13](https://github.com/Sandsy09/forge-template/issues/13) | [#21](https://github.com/Sandsy09/forge-template/issues/21) | Runtime & Security — Stages 04–05 |
+| FT-EPIC-04 | [#13](https://github.com/Sandsy09/forge-template/issues/13) | Open | — | — | Runtime & Security — Stages 04–05 |
+| FT-04.01 | [#24](https://github.com/Sandsy09/forge-template/issues/24) | Open | [#13](https://github.com/Sandsy09/forge-template/issues/13) | [#21](https://github.com/Sandsy09/forge-template/issues/21) (complete) | Runtime & Security — Stages 04–05 |
 | FT-04.02 | [#25](https://github.com/Sandsy09/forge-template/issues/25) | Blocked | [#13](https://github.com/Sandsy09/forge-template/issues/13) | [#24](https://github.com/Sandsy09/forge-template/issues/24) | Runtime & Security — Stages 04–05 |
-| FT-04.03 | [#26](https://github.com/Sandsy09/forge-template/issues/26) | Blocked | [#13](https://github.com/Sandsy09/forge-template/issues/13) | [#21](https://github.com/Sandsy09/forge-template/issues/21) | Runtime & Security — Stages 04–05 |
-| FT-04.04 | [#27](https://github.com/Sandsy09/forge-template/issues/27) | Blocked | [#13](https://github.com/Sandsy09/forge-template/issues/13) | [#21](https://github.com/Sandsy09/forge-template/issues/21) | Runtime & Security — Stages 04–05 |
-| FT-04.05 | [#28](https://github.com/Sandsy09/forge-template/issues/28) | Blocked | [#13](https://github.com/Sandsy09/forge-template/issues/13) | [#21](https://github.com/Sandsy09/forge-template/issues/21) | Runtime & Security — Stages 04–05 |
+| FT-04.03 | [#26](https://github.com/Sandsy09/forge-template/issues/26) | Open | [#13](https://github.com/Sandsy09/forge-template/issues/13) | [#21](https://github.com/Sandsy09/forge-template/issues/21) (complete) | Runtime & Security — Stages 04–05 |
+| FT-04.04 | [#27](https://github.com/Sandsy09/forge-template/issues/27) | Open | [#13](https://github.com/Sandsy09/forge-template/issues/13) | [#21](https://github.com/Sandsy09/forge-template/issues/21) (complete) | Runtime & Security — Stages 04–05 |
+| FT-04.05 | [#28](https://github.com/Sandsy09/forge-template/issues/28) | Open | [#13](https://github.com/Sandsy09/forge-template/issues/13) | [#21](https://github.com/Sandsy09/forge-template/issues/21) (complete) | Runtime & Security — Stages 04–05 |
 | FT-EPIC-05 | [#14](https://github.com/Sandsy09/forge-template/issues/14) | Open | — | — | Runtime & Security — Stages 04–05 |
 | FT-05.01 | Existing Renovate/Dependabot/none template choices | Complete before roadmap | — | — | — |
 | FT-05.02 | Existing explicit least-privilege workflow permissions | Complete before roadmap | — | — | — |

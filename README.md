@@ -65,8 +65,10 @@ across projects generated at different points in this template's history; read
 the latter before changing anything under `template/`. The
 [canonical Forge vocabulary](docs/terminology.md) defines architectural terms,
 the [Foundation guarantees](docs/foundation-guarantees.md) define the mandatory
-outcomes every generated project receives, and [docs/adr/](docs/adr/) records
-why significant decisions were made.
+outcomes every generated project receives, the
+[Foundation scope](docs/foundation-scope.md) defines which concerns belong in
+that baseline, and [docs/adr/](docs/adr/) records why significant decisions
+were made.
 
 ## License
 

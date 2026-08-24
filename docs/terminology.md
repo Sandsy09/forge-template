@@ -42,7 +42,10 @@ extension points, but may not weaken them.
 
 The exact outcomes are defined by the canonical
 [Foundation guarantees](foundation-guarantees.md), delivered through
-[FT-00.01](https://github.com/Sandsy09/forge-template/issues/19).
+[FT-00.01](https://github.com/Sandsy09/forge-template/issues/19). The
+[Foundation scope](foundation-scope.md), delivered through
+[FT-00.03](https://github.com/Sandsy09/forge-template/issues/21), defines which
+concerns may belong in that baseline and how other concerns are routed.
 
 ### Archetype
 
