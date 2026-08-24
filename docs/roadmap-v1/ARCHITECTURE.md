@@ -11,6 +11,9 @@ composition, and authority terms used by this proposal.
 The [Foundation guarantees](../foundation-guarantees.md) define the
 provider- and tool-neutral outcomes every successfully generated project must
 receive regardless of whether this proposed composition model is adopted.
+The [Foundation scope](../foundation-scope.md) limits that baseline to
+universal guarantee, neutral handoff, and update/provenance concerns and keeps
+generated runtime behaviour with its owning archetype or capability.
 
 ```text
 ┌─────────────────────────────┐

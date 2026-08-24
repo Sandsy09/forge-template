@@ -10,7 +10,9 @@
 - ~~[**FT-00.02 — Define Forge architectural terminology**](https://github.com/Sandsy09/forge-template/issues/20)~~ — completed by the
   [canonical terminology](../../../terminology.md) and
   [ADR 0010](../../../adr/0010-forge-architectural-terminology.md).
-- **FT-00.03 — Define Foundation scope boundaries**
+- ~~[**FT-00.03 — Define Foundation scope boundaries**](https://github.com/Sandsy09/forge-template/issues/21)~~ — completed by the
+  [canonical scope](../../../foundation-scope.md) and
+  [ADR 0012](../../../adr/0012-conservative-foundation-scope.md).
 - **FT-00.04 — Define Python support policy**
 - **FT-00.05 — Adopt a lightweight architecture decision process**
 

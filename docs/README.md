@@ -8,5 +8,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   and authority rules.
 - [foundation-guarantees.md](foundation-guarantees.md) — mandatory outcomes
   every generated Forge project receives from Foundation.
+- [foundation-scope.md](foundation-scope.md) — inclusion, exclusion, and
+  routing rules that keep Foundation conservative and runtime-free.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

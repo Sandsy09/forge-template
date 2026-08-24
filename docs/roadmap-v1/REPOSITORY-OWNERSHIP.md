@@ -6,7 +6,9 @@
 > [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41).
 
 The [canonical terminology](../terminology.md) defines the component kinds and
-selection inputs referenced by this ownership model.
+selection inputs referenced by this ownership model. The
+[Foundation scope](../foundation-scope.md) defines the concern-level boundary
+between that mandatory baseline and the components listed below.
 
 ## `forge-template`
 

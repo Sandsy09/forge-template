@@ -147,9 +147,10 @@ Foundation does not currently promise:
 - one CI provider.
 
 [FT-00.04](https://github.com/Sandsy09/forge-template/issues/22) owns the exact
-Python support policy. [FT-00.03](https://github.com/Sandsy09/forge-template/issues/21)
-owns the criteria for what belongs in Foundation rather than an archetype or
-capability. The future ProjectSpec and composition enforcement remain gated by
+Python support policy. The canonical
+[Foundation scope](foundation-scope.md) defines what belongs in Foundation
+rather than an archetype, capability, or platform. The future ProjectSpec and
+composition enforcement remain gated by
 [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41) and the
 Stage 06 roadmap. This contract introduces no schema, rendering API, or
 component engine.
