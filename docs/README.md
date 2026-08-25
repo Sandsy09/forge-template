@@ -12,5 +12,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   routing rules that keep Foundation conservative and runtime-free.
 - [python-support.md](python-support.md) — supported CPython window, generated
   project version semantics, and release-transition policy.
+- [editor-integration.md](editor-integration.md) — editor-neutral Foundation
+  policy and boundaries for future optional editor capabilities.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

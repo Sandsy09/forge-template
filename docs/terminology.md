@@ -65,8 +65,10 @@ replace or weaken Foundation guarantees.
 
 A capability is an optional, reusable project concern that can apply across
 archetypes. A project may select zero or more capabilities. Documentation,
-changelog support, or release provenance are examples of concerns that can be
-modelled as capabilities when the composition engine exists.
+changelog support, release provenance, or an optional editor bridge are
+examples of concerns that can be modelled as capabilities when the composition
+engine exists. Editor-specific integration follows the canonical
+[editor integration strategy](editor-integration.md).
 
 A capability contributes content it owns or participates through an explicit
 extension point. It does not gain a general right to overwrite Foundation or
@@ -91,7 +93,9 @@ authority boundary. Explicit user choices may replace profile defaults.
 
 A profile is distinct from a developer's saved CLI identity or preferences:
 the CLI may use those preferences to choose a profile, but they are not the
-profile itself.
+profile itself. Forge's default profile remains editor-neutral; other named or
+organisation profiles may later default optional editor capabilities without
+making those defaults mandatory.
 
 ### Organisation policy
 

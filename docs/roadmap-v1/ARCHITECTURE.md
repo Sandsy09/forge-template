@@ -16,6 +16,9 @@ universal guarantee, neutral handoff, and update/provenance concerns and keeps
 generated runtime behaviour with its owning archetype or capability.
 The [Python support policy](../python-support.md) defines the rolling CPython
 window in which the generated-project guarantees are claimed.
+The [editor integration strategy](../editor-integration.md) keeps Foundation
+and Forge's default profile vendor-neutral while routing future editor bridges
+to optional capabilities.
 
 ```text
 ┌─────────────────────────────┐

@@ -75,7 +75,8 @@ understood, maintained, and governed independently. Foundation therefore owns:
 - root README, contribution, and security-reporting starters;
 - documented project prerequisites and the first validation workflow; and
 - base repository hygiene such as line-ending, ignore, and editor-neutral text
-  conventions.
+  conventions, including the boundary defined by the
+  [editor integration strategy](editor-integration.md).
 
 Later layers may add owned sections through explicit extension points. They may
 not silently replace the neutral handoff material. Provider-specific links or
@@ -169,7 +170,7 @@ map to the future layers as follows:
 | Declared development environment, lock state, formatting, linting, typing, testing, and aggregate quality commands | **Foundation**, as the current implementation of mandatory outcomes. |
 | Project identity, neutral metadata, licence, root README/contribution/security starters, base repository hygiene, secret-file ignore safeguards, and Copier update state | **Foundation**, as neutral handoff or update/provenance material. |
 | `src/` package layout, distributable-package metadata, build backend, versioning, typed-package marker, build/release behaviour, and the Library-specific smoke target | **Library archetype**. |
-| Coverage reporting, pre-commit feedback, documentation, changelog support, dependency-update automation, and configuration examples | **Capabilities**; a future default profile may select them to preserve today's opinionated experience. |
+| Coverage reporting, pre-commit feedback, documentation, changelog support, dependency-update automation, configuration examples, and editor-specific integration | **Capabilities**; a future profile may select them, while the Forge default profile remains editor-neutral. |
 | Runtime configuration, logging/observability, path/resource behaviour, and exception conventions | The **archetype or capability that contributes the runtime behaviour**; Foundation adds no shared runtime layer. |
 | GitHub Actions, issue and pull-request templates, CODEOWNERS, and other GitHub-specific adapters | **GitHub platform** contributions. Provider-specific files used by a capability are supplied through that platform integration. |
 

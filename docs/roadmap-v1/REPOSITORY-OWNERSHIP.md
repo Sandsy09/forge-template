@@ -12,6 +12,9 @@ selection inputs referenced by this ownership model. The
 between that mandatory baseline and the components listed below. The
 [Python support policy](../python-support.md) is owned here because its choices,
 generated metadata, and validation are part of generated-project behaviour.
+The [editor integration strategy](../editor-integration.md) assigns future
+editor-specific bridges to optional `forge-template` capabilities while
+keeping canonical commands independent of editor state.
 
 ## `forge-template`
 
@@ -21,6 +24,7 @@ It owns:
 
 - Foundation and archetype templates;
 - capability and platform components;
+- optional editor capabilities and their project-scoped contributions;
 - profile and organisation-policy selection inputs;
 - component manifests and compatibility metadata;
 - the canonical ProjectSpec input contract;
