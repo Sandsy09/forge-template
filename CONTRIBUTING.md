@@ -118,6 +118,10 @@ the actual GitHub Actions run passed. After pushing, check the actual run
 (`gh run watch`, or the Actions tab) rather than assuming a green local suite
 means the pipeline passed.
 
+Changes that also modify `create-forge` follow its canonical
+[cross-repository contributor workflow](https://github.com/Sandsy09/create-forge/blob/main/docs/cross-repository-workflow.md)
+for sibling-checkout validation, trust boundaries, and merge/release order.
+
 ## Recording a decision
 
 If a change makes a real architectural call — not just a bugfix — write an
