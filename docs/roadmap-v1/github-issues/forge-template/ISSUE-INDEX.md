@@ -18,11 +18,11 @@ work; completed baseline items were not backfilled as closed issues.
 | FT-01.03 | Existing `.python-version`, uv lock, and CI workflow | Complete before roadmap | — | — | — |
 | FT-01.04 | Existing generated hygiene files | Complete before roadmap | — | — | — |
 | FT-01.05 | Existing generated root documentation | Complete before roadmap | — | — | — |
-| FT-EPIC-02 | [#12](https://github.com/Sandsy09/forge-template/issues/12) | Open | — | — | Foundation Baseline — Stages 01–03 |
+| FT-EPIC-02 | [#12](https://github.com/Sandsy09/forge-template/issues/12) and [Stage 02 record](../../roadmap/02-developer-experience/README.md) | Complete | — | — | Foundation Baseline — Stages 01–03 |
 | FT-02.01 | Existing Poe task and command contract | Complete before roadmap | — | — | — |
 | FT-02.02 | Existing generated setup and first-check workflow | Complete before roadmap | — | — | — |
 | FT-02.03 | Existing Poe orchestration and justified `verify-ci.sh` helper | Complete before roadmap | — | — | — |
-| FT-02.04 | [#23](https://github.com/Sandsy09/forge-template/issues/23) | Open | [#12](https://github.com/Sandsy09/forge-template/issues/12) | — | Foundation Baseline — Stages 01–03 |
+| FT-02.04 | [#23](https://github.com/Sandsy09/forge-template/issues/23), [strategy](../../../editor-integration.md), and [ADR 0014](../../../adr/0014-editor-neutral-foundation.md) | Complete | [#12](https://github.com/Sandsy09/forge-template/issues/12) | — | Foundation Baseline — Stages 01–03 |
 | FT-03.01 | Existing Ruff lint and format configuration | Complete before roadmap | — | — | — |
 | FT-03.02 | Existing pytest baseline and smoke test | Complete before roadmap | — | — | — |
 | FT-03.03 | Existing typing choices and ADR 0006 | Complete before roadmap | — | — | — |

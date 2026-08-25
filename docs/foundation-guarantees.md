@@ -75,7 +75,9 @@ integrated check for their owned content.
 Every generated project includes deterministic formatting configuration, a
 command that applies it, and a non-mutating check that fails when tracked
 content is not formatted. Formatting policy is repository-owned and does not
-depend on an editor's local defaults.
+depend on an editor's local defaults. The
+[editor integration strategy](editor-integration.md) preserves that neutral
+contract while defining a path for future opt-in editor capabilities.
 
 ### CI readiness
 

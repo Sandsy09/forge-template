@@ -12,6 +12,10 @@ uv sync --all-groups
 uv run pre-commit install --install-hooks
 ```
 
+No editor-specific setup is required. Project commands and configuration stay
+authoritative; the [editor integration strategy](docs/editor-integration.md)
+defines the boundary for any future optional editor capability.
+
 ## Branching and pull requests
 
 `main` is never committed to directly. Every change gets its own branch and a
