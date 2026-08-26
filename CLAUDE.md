@@ -30,7 +30,7 @@ Separate because Copier resolves template versions from PEP440 git tags here.
 forge-template/
 ├── copier.yml              Question schema. MUST be at root.
 ├── pyproject.toml          This repo's OWN tooling — NOT part of the scaffold
-├── src/forge_template/     Checks that validate copier.yml/template/ + rendered output
+├── src/forge_template/     Repository checks plus future-engine ProjectSpec models
 ├── tests/                  pytest suite: schema, ADRs, combos (slow), update (slow)
 ├── docs/adr/               Why past decisions were made (Nygard-format ADRs)
 ├── scripts/
@@ -45,8 +45,10 @@ Nothing inside `template/` describes the template itself. `copier.yml`,
 `pyproject.toml`, `src/`, `tests/`, scripts, and this repo's own CI stay at
 root and are excluded via `_subdirectory: template`. `src/forge_template` is
 not scaffold code — it holds the checks (`schema.py`, `adr.py`, `render.py`)
-that both `poe check` and `tests/test_combos.py`/`test_update.py` call;
-see [#5](https://github.com/Sandsy09/forge-template/issues/5), done.
+that both `poe check` and `tests/test_combos.py`/`test_update.py` call, plus the
+strict future-engine [ProjectSpec protocol](docs/project-spec.md) models in
+`project_spec.py`; see [#5](https://github.com/Sandsy09/forge-template/issues/5),
+done, and [#32](https://github.com/Sandsy09/forge-template/issues/32).
 
 ## The question schema
 

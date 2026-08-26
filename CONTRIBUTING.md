@@ -36,6 +36,9 @@ without generating a mandatory scanner. The
 [supply-chain provenance contract](docs/supply-chain-provenance.md) defines
 the SBOM and release-provenance behaviour a future capability must satisfy,
 without generating either until a real release/publish path exists.
+The [ProjectSpec protocol](docs/project-spec.md) defines the strict,
+engine-owned generation request that future clients construct without taking
+ownership of template or composition validation.
 
 ## Branching and pull requests
 

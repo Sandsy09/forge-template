@@ -2,8 +2,9 @@
 
 This document is the canonical vocabulary for Forge, its reference CLI, and
 future downstream integrations such as Blueprint. It defines conceptual
-boundaries and authority; it does not introduce a ProjectSpec schema,
-component engine, or other public API.
+boundaries and authority; the executable
+[ProjectSpec protocol](project-spec.md) now defines the generation-request
+schema without introducing a component engine or stable rendering API.
 
 The public engine model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
@@ -109,9 +110,10 @@ shape. GitHub workflow contributions follow the canonical
 [GitHub Action pinning policy](github-action-pinning.md) without making that
 provider-specific policy part of Foundation.
 
-Whether ProjectSpec permits one or several platform selections remains a Stage
-06 schema decision. A platform follows the same no-implicit-overwrite rule as
-other content-producing layers.
+ProjectSpec permits zero or more platform selections so distinct repository,
+delivery, deployment, and runtime adapters can coexist when later manifest and
+collision contracts declare them compatible. A platform follows the same
+no-implicit-overwrite rule as other content-producing layers.
 
 ### Profile
 
@@ -147,13 +149,17 @@ Stage 06 work and do not exist in the v0.1.x implementation.
 
 ### ProjectSpec
 
-ProjectSpec is the future serialisable description of a project-generation
-request in the accepted public-engine target. It will carry project metadata and the selected archetype,
-capabilities, platform information, and profile or policy inputs needed by a
-future composition engine.
+ProjectSpec is the strict, serialisable description of an effective
+project-generation request in the accepted public-engine target. Its
+[protocol v1 schema](project-spec.md) carries provider-neutral project
+metadata, Python support, exactly one archetype, zero or more capabilities and
+platforms, optional profile/policy provenance, and namespaced component
+options.
 
-Its schema and public API are not defined here. Both remain Stage 06 work under
-the ownership and compatibility boundary accepted by
+The executable schema is owned by `forge-template`; `create-forge` and future
+clients construct it. The current v0.1.x path does not consume it, and the
+stable validation/rendering API remains FT-06.07 work under the ownership and
+compatibility boundary accepted by
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 
 ## Composition and authority
@@ -164,7 +170,7 @@ The structural model is:
 Foundation
   + exactly one archetype
   + zero or more capabilities
-  + platform selection (cardinality deferred to Stage 06)
+  + zero or more platforms
 ```
 
 Profiles and organisation policies influence the requested selection; they do
@@ -232,13 +238,11 @@ archetype.
 
 This terminology does not decide:
 
-- the ProjectSpec wire format or validation API;
+- the stable ProjectSpec validation and engine API;
 - component manifest fields, ordering, merge, or collision algorithms;
-- platform cardinality;
 - organisation-policy schema or error types;
 - the identity of the second reference archetype; or
-- the concrete engine package range, ProjectSpec protocol number, and source
-  resolution interface.
+- the concrete engine package range and supported source-resolution cutover.
 
 Those decisions remain with their Stage 04–09 roadmap issues. The current
 v0.1.x thin Copier/bundled-registry implementation stays operational until the
