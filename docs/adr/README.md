@@ -24,6 +24,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0019 — Keep exceptions owner-local and handle them once](0019-owner-local-exceptions.md)
 - [0020 — Ship neutral secret safeguards and keep scanning optional](0020-generated-project-secret-safeguards.md)
 - [0021 — Defer SBOM and release provenance to an optional capability](0021-defer-sbom-and-release-provenance.md)
+- [0022 — Pin GitHub Actions by full commit SHA](0022-pin-github-actions-by-full-commit-sha.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

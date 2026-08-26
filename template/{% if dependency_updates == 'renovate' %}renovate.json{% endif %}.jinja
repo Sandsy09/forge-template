@@ -3,7 +3,8 @@
   "extends": [
     "config:recommended",
     ":semanticCommits",
-    ":dependencyDashboard"
+    ":dependencyDashboard",
+    "helpers:pinGitHubActionDigests"
   ],
   "timezone": "Europe/London",
   "schedule": ["before 6am on monday"],
@@ -35,10 +36,11 @@
       "semanticCommitType": "fix"
     },
     {
-      "description": "GitHub Actions pinned by major only.",
+      "description": "Group reviewed GitHub Action digest and version updates.",
       "matchManagers": ["github-actions"],
       "groupName": "github actions",
-      "semanticCommitType": "ci"
+      "semanticCommitType": "ci",
+      "automerge": false
     }{% if use_docs %},
     {
       "description": "Hold MkDocs at v1 - v2 removes the plugin system and breaks mkdocstrings. Revisit when Zensical reaches 1.0.",

@@ -23,6 +23,8 @@ from typing import TYPE_CHECKING
 
 import yaml
 
+from forge_template.github_actions import check_action_pins
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
@@ -276,6 +278,7 @@ def check_all(root: Path, *, require_commit: bool = False) -> list[str]:
         *check_no_jinja_suffixes(root),
         *check_gha_expressions(root),
         *check_yaml_parses(root),
+        *check_action_pins(root / ".github" / "workflows"),
         *check_answers_file(root, require_commit=require_commit),
         *check_no_zero_byte_files(root),
         *check_secret_safeguards(root),

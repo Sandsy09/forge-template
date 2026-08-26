@@ -38,6 +38,9 @@ The [supply-chain provenance contract](../supply-chain-provenance.md) defines
 the SBOM and release-provenance behaviour a future capability and GitHub
 platform contribution must satisfy, and the exit criteria that must hold
 before either is generated.
+The [GitHub Action pinning policy](../github-action-pinning.md) defines how
+this repository and its generated GitHub platform contributions consume and
+maintain remote workflow dependencies.
 
 ## `forge-template`
 
@@ -55,6 +58,7 @@ It owns:
 - owner-local runtime configuration, environment-input, structured-logging,
   path/resource ownership, exception ownership, and secret-handling
   safeguard conventions;
+- GitHub platform workflow pins and their generated maintenance configuration;
 - composition, merge/conflict and override rules;
 - rendering/generation logic;
 - structured engine errors and generated-project validation;

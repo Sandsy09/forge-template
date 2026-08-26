@@ -38,6 +38,33 @@ uv run poe check
 
 Runs formatting, lint, type checking, and tests — the same gate CI runs.
 
+## Updating GitHub Actions
+
+Remote actions and reusable workflows are pinned to full commit SHAs. The
+same-line version comment identifies the reviewed upstream release; the SHA,
+not that comment or a tag, is the executable reference.
+{% if dependency_updates == 'renovate' %}
+Renovate proposes GitHub Action updates and preserves these pins. Review the
+upstream release notes and source, confirm that the release tag resolves to the
+proposed SHA, and require CI to pass before merging. Action updates are never
+auto-merged by the generated Renovate configuration.
+{%- elif dependency_updates == 'dependabot' %}
+Dependabot proposes GitHub Action updates and uses the exact version comment to
+update both the release and SHA. Review the upstream release notes and source,
+confirm that the release tag resolves to the proposed SHA, and require CI to
+pass before merging.
+{%- else %}
+This project has no automated dependency updater. Check upstream releases and
+security notices manually. For each update, review the release notes and
+source, resolve the exact release tag to its commit SHA, update both the SHA
+and same-line version comment, and require CI to pass before merging.
+{%- endif %}
+
+Do not replace a full SHA with a branch, moving major tag, exact release tag,
+or shortened SHA. Local `./...` actions and workflows are already bound to the
+calling repository commit. Docker action references remain unsupported until
+the project defines digest pinning and maintenance for them.
+
 ## Commit messages
 
 Commits follow [Conventional Commits](https://www.conventionalcommits.org/)

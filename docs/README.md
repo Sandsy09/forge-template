@@ -32,5 +32,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [supply-chain-provenance.md](supply-chain-provenance.md) — desired SBOM and
   release-provenance behaviour, named reference tooling, and the exit
   criteria implementation must satisfy.
+- [github-action-pinning.md](github-action-pinning.md) — immutable remote
+  workflow references and their reviewed automated or manual update paths.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

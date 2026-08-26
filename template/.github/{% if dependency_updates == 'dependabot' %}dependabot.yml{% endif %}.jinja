@@ -29,6 +29,8 @@ updates:
 
   - package-ecosystem: github-actions
     directory: /
+    # Exact release comments beside full-SHA workflow pins let Dependabot
+    # update both the immutable revision and its human-readable version.
     schedule:
       interval: weekly
       day: monday

@@ -22,10 +22,10 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
         with:
           version: {% raw %}${{ env.UV_VERSION }}{% endraw %}
           enable-cache: true
@@ -46,7 +46,7 @@ jobs:
     name: Type check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 {%- if versioning_resolved == 'vcs' %}
         with:
           # hatch-vcs resolves the version from tags; `uv sync` installs this
@@ -55,7 +55,7 @@ jobs:
 {%- endif %}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
         with:
           version: {% raw %}${{ env.UV_VERSION }}{% endraw %}
           enable-cache: true
@@ -80,14 +80,14 @@ jobs:
       matrix:
         python-version: {{ python_matrix | tojson }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 {%- if versioning_resolved == 'vcs' %}
         with:
           fetch-depth: 0
 {%- endif %}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
         with:
           version: {% raw %}${{ env.UV_VERSION }}{% endraw %}
           enable-cache: true
@@ -100,7 +100,7 @@ jobs:
 
       - name: Upload coverage
         if: {% raw %}${{ matrix.python-version == '{% endraw %}{{ python_version }}{% raw %}' }}{% endraw %}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: coverage-xml
           path: coverage.xml
@@ -110,14 +110,14 @@ jobs:
     name: Build distributions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 {%- if versioning_resolved == 'vcs' %}
         with:
           fetch-depth: 0
 {%- endif %}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
         with:
           version: {% raw %}${{ env.UV_VERSION }}{% endraw %}
           enable-cache: true
@@ -141,7 +141,7 @@ jobs:
           uv tool run twine check dist/*
           ls -la dist/
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: dist
           path: dist/
@@ -152,14 +152,14 @@ jobs:
     name: Build docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 {%- if versioning_resolved == 'vcs' %}
         with:
           fetch-depth: 0
 {%- endif %}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
         with:
           version: {% raw %}${{ env.UV_VERSION }}{% endraw %}
           enable-cache: true

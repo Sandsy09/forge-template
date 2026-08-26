@@ -18,6 +18,8 @@ import yaml
 from jinja2 import Environment
 from jinja2 import meta as jinja_meta
 
+from forge_template.github_actions import check_action_pins
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 # `versioning_resolved` is the only thing template/ may read; a bare
@@ -258,6 +260,8 @@ def check_all(cfg: dict[str, Any] | None = None) -> list[str]:
         *check_versioning_indirection(),
         *check_question_usage(cfg),
         *check_conditional_filenames(cfg),
+        *check_action_pins(REPO_ROOT / ".github" / "workflows"),
+        *check_action_pins(REPO_ROOT / "template" / ".github" / "workflows"),
     ]
 
 

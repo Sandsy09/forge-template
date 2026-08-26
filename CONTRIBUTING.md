@@ -147,6 +147,16 @@ Changes that also modify `create-forge` follow its canonical
 [cross-repository contributor workflow](https://github.com/Sandsy09/create-forge/blob/main/docs/cross-repository-workflow.md)
 for sibling-checkout validation, trust boundaries, and merge/release order.
 
+## Updating GitHub Actions
+
+Remote actions and reusable workflows follow the canonical
+[GitHub Action pinning policy](docs/github-action-pinning.md): use a full
+40-character commit SHA with the exact release tag in a same-line comment.
+Root Dependabot proposes updates weekly, but every update requires human review
+of the upstream release and source, independent tag-to-SHA verification, and a
+green protected status before merge. Never replace a pin with a branch, tag,
+or shortened SHA.
+
 ## Recording a decision
 
 If a change makes a real architectural call — not just a bugfix — write an

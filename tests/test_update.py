@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING
 import pytest
 from copier import run_copy, run_update
 
+from forge_template.github_actions import check_action_pins
 from forge_template.schema import REPO_ROOT
 from tests.conftest import latest_tag, run_cmd
 
@@ -215,6 +216,8 @@ def test_local_edits_survive_update(tmp_path: Path) -> None:
     if conflicted:
         _resolve_conflicts(proj)
 
+    errors += check_action_pins(proj / ".github" / "workflows")
+
     sync = run_cmd(["uv", "sync", "--all-groups"], proj)
     if sync.returncode != 0:
         errors.append(f"sync failed after update:\n{sync.stdout}\n{sync.stderr}")
@@ -267,3 +270,4 @@ def test_latest_tag_to_head(tmp_path: Path) -> None:
 
     check = run_cmd(["uv", "run", "poe", "check"], proj)
     assert check.returncode == 0, check.stdout + check.stderr
+    assert check_action_pins(proj / ".github" / "workflows") == []

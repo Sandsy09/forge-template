@@ -87,7 +87,9 @@ silently dropped or logged repeatedly, the
 files out of version control without generating a mandatory scanner, the
 [supply-chain provenance contract](docs/supply-chain-provenance.md) defines
 desired SBOM and release-provenance behaviour without generating either yet,
-and [docs/adr/](docs/adr/) records why significant decisions were made.
+the [GitHub Action pinning policy](docs/github-action-pinning.md) keeps remote
+workflow dependencies immutable and maintainable, and
+[docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License
 
