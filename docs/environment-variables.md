@@ -127,8 +127,8 @@ Validation errors may identify a variable and source so the user can correct
 them, but must not echo secret-bearing values — the same boundary the
 [exception ownership conventions](exception-ownership.md) apply to exception
 messages generally. Broader generated-project secret safeguards and optional
-scanning remain owned by
-[FT-05.04](https://github.com/Sandsy09/forge-template/issues/30).
+scanning are defined by the
+[secret-handling safeguards](secret-handling.md).
 
 ## Provider-neutral environment identity
 

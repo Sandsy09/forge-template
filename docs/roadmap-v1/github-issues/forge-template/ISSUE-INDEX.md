@@ -39,7 +39,7 @@ work; completed baseline items were not backfilled as closed issues.
 | FT-05.01 | Existing Renovate/Dependabot/none template choices | Complete before roadmap | — | — | — |
 | FT-05.02 | Existing explicit least-privilege workflow permissions | Complete before roadmap | — | — | — |
 | FT-05.03 | [#29](https://github.com/Sandsy09/forge-template/issues/29) | Open | [#14](https://github.com/Sandsy09/forge-template/issues/14) | — | Runtime & Security — Stages 04–05 |
-| FT-05.04 | [#30](https://github.com/Sandsy09/forge-template/issues/30) | Open | [#14](https://github.com/Sandsy09/forge-template/issues/14) | — | Runtime & Security — Stages 04–05 |
+| FT-05.04 | [#30](https://github.com/Sandsy09/forge-template/issues/30), [contract](../../../secret-handling.md), and [ADR 0020](../../../adr/0020-generated-project-secret-safeguards.md) | Complete | [#14](https://github.com/Sandsy09/forge-template/issues/14) | — | Runtime & Security — Stages 04–05 |
 | FT-05.05 | [#31](https://github.com/Sandsy09/forge-template/issues/31) | Deferred | [#14](https://github.com/Sandsy09/forge-template/issues/14) | — | Runtime & Security — Stages 04–05 |
 | FT-EPIC-06 | [#15](https://github.com/Sandsy09/forge-template/issues/15) | Open | — | — | Composition Contract — Stage 06 |
 | FT-06.01 | [#32](https://github.com/Sandsy09/forge-template/issues/32) | Open | [#15](https://github.com/Sandsy09/forge-template/issues/15) | [create-forge#41](https://github.com/Sandsy09/create-forge/issues/41) (complete) | Composition Contract — Stage 06 |

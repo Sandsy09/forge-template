@@ -38,6 +38,10 @@ _ZERO_BYTE_ALLOWLIST = ("py.typed", "tests/__init__.py")
 _WHEEL_BAD_PREFIXES = ("tests/", "docs/", ".github/")
 _DEFAULT_EXCLUDE_DIRS = frozenset({".venv", ".git", "dist", "node_modules"})
 
+# A safe `.env.example` line is a comment, blank, or `NAME=` with an empty
+# (optionally quoted-empty) right-hand side -- never a real value.
+_ENV_EXAMPLE_ASSIGNMENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=(|\"\"|'')$")
+
 
 def _is_excluded(path: Path, root: Path, exclude_dirs: Iterable[str]) -> bool:
     rel_parts = path.relative_to(root).parts
@@ -146,6 +150,77 @@ def check_no_zero_byte_files(root: Path) -> list[str]:
     return errors
 
 
+def check_secret_safeguards(root: Path) -> list[str]:
+    """`.env.example` must carry placeholders only, and `.gitignore` must
+    ignore `.env` without shadowing the tracked example.
+    """  # noqa: D205
+    errors = []
+
+    example = root / ".env.example"
+    if not example.is_file():
+        errors.append(f"{example}: .env.example not generated")
+    else:
+        text = _read_text(example) or ""
+        for lineno, line in enumerate(text.splitlines(), start=1):
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+            if not _ENV_EXAMPLE_ASSIGNMENT_RE.match(stripped):
+                errors.append(
+                    f".env.example:{lineno}: not a safe placeholder line: {stripped!r}"
+                )
+
+    gitignore = root / ".gitignore"
+    if not gitignore.is_file():
+        errors.append(f"{gitignore}: .gitignore not generated")
+    else:
+        lines = {line.strip() for line in (_read_text(gitignore) or "").splitlines()}
+        if ".env" not in lines:
+            errors.append(".gitignore: missing '.env' ignore rule")
+        if "!.env.example" not in lines:
+            errors.append(
+                ".gitignore: missing '!.env.example' negation -- a broader "
+                "'.env.*' rule would silently untrack the tracked example"
+            )
+
+    return errors
+
+
+def check_env_example_tracked(root: Path) -> list[str]:
+    """`.env.example` must be git-tracked and not excluded by `.gitignore`,
+    while `.env` itself must be ignored.
+
+    Exercises the real git ignore-matching engine rather than
+    re-implementing it, catching the specific hazard where a broad `.env.*`
+    rule shadows the tracked example despite `check_secret_safeguards`
+    finding the expected `!.env.example` negation line present in isolation.
+    """  # noqa: D205
+    if not (root / ".env.example").is_file():
+        return []  # check_secret_safeguards already reports the missing file
+    errors = []
+    tracked = subprocess.run(
+        ["git", "ls-files", "--error-unmatch", ".env.example"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if tracked.returncode != 0:
+        errors.append(".env.example: not tracked by git (shadowed by an ignore rule?)")
+
+    ignored = subprocess.run(
+        ["git", "check-ignore", "-q", ".env"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if ignored.returncode != 0:
+        errors.append(".env: not ignored by .gitignore")
+
+    return errors
+
+
 def check_wheel_contents(wheel: Path) -> list[str]:
     """The built wheel must contain only the package -- no tests/docs/CI."""
     errors = []
@@ -203,4 +278,5 @@ def check_all(root: Path, *, require_commit: bool = False) -> list[str]:
         *check_yaml_parses(root),
         *check_answers_file(root, require_commit=require_commit),
         *check_no_zero_byte_files(root),
+        *check_secret_safeguards(root),
     ]

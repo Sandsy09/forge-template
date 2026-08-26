@@ -26,5 +26,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [exception-ownership.md](exception-ownership.md) — owner-local exceptions,
   catch/wrap/log-once discipline, and the entrypoint's failure-translation
   boundary.
+- [secret-handling.md](secret-handling.md) — neutral secret-ignore
+  safeguards, the enforced placeholder-only example, and the optional
+  scanning boundary.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

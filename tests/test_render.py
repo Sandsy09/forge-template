@@ -12,10 +12,12 @@ from pathlib import Path
 from forge_template.render import (
     check_all,
     check_answers_file,
+    check_env_example_tracked,
     check_gha_expressions,
     check_no_jinja_suffixes,
     check_no_unrendered_jinja,
     check_no_zero_byte_files,
+    check_secret_safeguards,
     check_tree_clean,
     check_version_resolved,
     check_wheel_contents,
@@ -175,6 +177,97 @@ def test_check_no_zero_byte_files_allows_tests_init(tmp_path: Path) -> None:
 
 
 # -----------------------------------------------------------------------------
+# check_secret_safeguards
+# -----------------------------------------------------------------------------
+
+
+def _safe_scaffold(root: Path) -> None:
+    (root / ".env.example").write_text("# comment\n\nEXAMPLE_API_KEY=\n")
+    (root / ".gitignore").write_text(".env\n.env.*\n!.env.example\n")
+
+
+def test_check_secret_safeguards_passes_on_safe_scaffold(tmp_path: Path) -> None:
+    _safe_scaffold(tmp_path)
+    assert check_secret_safeguards(tmp_path) == []
+
+
+def test_check_secret_safeguards_flags_missing_env_example(tmp_path: Path) -> None:
+    (tmp_path / ".gitignore").write_text(".env\n!.env.example\n")
+    errors = check_secret_safeguards(tmp_path)
+    assert any(".env.example not generated" in e for e in errors)
+
+
+def test_check_secret_safeguards_flags_real_value(tmp_path: Path) -> None:
+    (tmp_path / ".env.example").write_text("EXAMPLE_API_KEY=sk-live-abc123\n")
+    (tmp_path / ".gitignore").write_text(".env\n!.env.example\n")
+    errors = check_secret_safeguards(tmp_path)
+    assert any("not a safe placeholder line" in e for e in errors)
+
+
+def test_check_secret_safeguards_flags_missing_gitignore(tmp_path: Path) -> None:
+    (tmp_path / ".env.example").write_text("EXAMPLE_API_KEY=\n")
+    errors = check_secret_safeguards(tmp_path)
+    assert any(".gitignore not generated" in e for e in errors)
+
+
+def test_check_secret_safeguards_flags_missing_env_rule(tmp_path: Path) -> None:
+    (tmp_path / ".env.example").write_text("EXAMPLE_API_KEY=\n")
+    (tmp_path / ".gitignore").write_text("!.env.example\n")
+    errors = check_secret_safeguards(tmp_path)
+    assert any("missing '.env' ignore rule" in e for e in errors)
+
+
+def test_check_secret_safeguards_flags_missing_negation(tmp_path: Path) -> None:
+    (tmp_path / ".env.example").write_text("EXAMPLE_API_KEY=\n")
+    (tmp_path / ".gitignore").write_text(".env\n.env.*\n")
+    errors = check_secret_safeguards(tmp_path)
+    assert any("!.env.example" in e for e in errors)
+
+
+# -----------------------------------------------------------------------------
+# check_env_example_tracked
+# -----------------------------------------------------------------------------
+
+
+def test_check_env_example_tracked_passes_when_tracked_and_env_ignored(
+    tmp_path: Path,
+) -> None:
+    _init_repo(tmp_path)
+    _safe_scaffold(tmp_path)
+    (tmp_path / ".env").write_text("EXAMPLE_API_KEY=real-value\n")
+    subprocess.run(["git", "add", "-A"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "init"], cwd=tmp_path, check=True)
+    assert check_env_example_tracked(tmp_path) == []
+
+
+def test_check_env_example_tracked_flags_shadowed_example(tmp_path: Path) -> None:
+    _init_repo(tmp_path)
+    # No `!.env.example` negation -- `.env.*` shadows the tracked example, so
+    # `git add -A` (as `_tasks` runs) silently never tracks it.
+    (tmp_path / ".gitignore").write_text(".env\n.env.*\n")
+    (tmp_path / ".env.example").write_text("EXAMPLE_API_KEY=\n")
+    subprocess.run(["git", "add", "-A"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "init"], cwd=tmp_path, check=True)
+    errors = check_env_example_tracked(tmp_path)
+    assert any("not tracked by git" in e for e in errors)
+
+
+def test_check_env_example_tracked_flags_unignored_env(tmp_path: Path) -> None:
+    _init_repo(tmp_path)
+    (tmp_path / ".gitignore").write_text("!.env.example\n")
+    (tmp_path / ".env.example").write_text("EXAMPLE_API_KEY=\n")
+    subprocess.run(["git", "add", "-A"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "init"], cwd=tmp_path, check=True)
+    errors = check_env_example_tracked(tmp_path)
+    assert any(".env: not ignored" in e for e in errors)
+
+
+def test_check_env_example_tracked_skips_when_no_example(tmp_path: Path) -> None:
+    _init_repo(tmp_path)
+    assert check_env_example_tracked(tmp_path) == []
+
+
+# -----------------------------------------------------------------------------
 # check_wheel_contents
 # -----------------------------------------------------------------------------
 
@@ -260,6 +353,7 @@ def test_check_all_passes_on_a_fully_clean_render(tmp_path: Path) -> None:
     (tmp_path / "README.md").write_text("Hello.\n")
     (tmp_path / ".copier-answers.yml").write_text("_src_path: /template\n")
     _ci_workflow(tmp_path, "run: echo ${{ github.workflow }}\n")
+    _safe_scaffold(tmp_path)
     assert check_all(tmp_path) == []
 
 

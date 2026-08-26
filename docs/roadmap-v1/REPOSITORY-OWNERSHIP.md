@@ -30,6 +30,10 @@ composition must preserve without creating a Foundation path helper.
 The [exception ownership conventions](../exception-ownership.md) define the
 generated-project exception contract that keeps failures owner-local,
 catchable without a Forge import, and handled exactly once.
+The [secret-handling safeguards](../secret-handling.md) define the neutral
+ignore and pre-commit safeguards Foundation applies to secret-bearing files
+and the boundary of the optional secret-scanning capability future
+composition may add.
 
 ## `forge-template`
 
@@ -45,7 +49,8 @@ It owns:
 - the canonical ProjectSpec input contract;
 - template variables and validation;
 - owner-local runtime configuration, environment-input, structured-logging,
-  path/resource ownership, and exception ownership conventions;
+  path/resource ownership, exception ownership, and secret-handling
+  safeguard conventions;
 - composition, merge/conflict and override rules;
 - rendering/generation logic;
 - structured engine errors and generated-project validation;

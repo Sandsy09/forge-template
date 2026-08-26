@@ -154,7 +154,9 @@ entrypoint.
 Foundation may provide neutral safeguards without taking over the runtime
 concern. For example, base ignore rules protect common secret-bearing local
 files such as `.env`, while an `.env.example`, variable names, and a
-configuration schema belong to the component that consumes them.
+configuration schema belong to the component that consumes them. The
+[secret-handling safeguards](secret-handling.md) define the full extent of
+that neutral protection and the boundary of what remains optional.
 
 ## Resolving disputed placement
 
@@ -185,7 +187,7 @@ map to the future layers as follows:
 | Current concern | Conceptual owner |
 | --- | --- |
 | Declared development environment, lock state, formatting, linting, typing, testing, and aggregate quality commands | **Foundation**, as the current implementation of mandatory outcomes. |
-| Project identity, neutral metadata, licence, root README/contribution/security starters, base repository hygiene, secret-file ignore safeguards, and Copier update state | **Foundation**, as neutral handoff or update/provenance material. |
+| Project identity, neutral metadata, licence, root README/contribution/security starters, base repository hygiene, [secret-handling safeguards](secret-handling.md), and Copier update state | **Foundation**, as neutral handoff or update/provenance material. |
 | `src/` package layout, distributable-package metadata, build backend, versioning, typed-package marker, build/release behaviour, and the Library-specific smoke target | **Library archetype**. |
 | Coverage reporting, pre-commit feedback, documentation, changelog support, dependency-update automation, configuration examples, and editor-specific integration | **Capabilities**; a future profile may select them, while the Forge default profile remains editor-neutral. |
 | Runtime configuration, logging/observability, path/resource behaviour, and exception conventions | The **archetype or capability that contributes the runtime behaviour**; Foundation adds no shared runtime layer, configuration follows the [owner-local convention](configuration-ownership.md), logging follows the [structured capability contract](structured-logging.md), path/resource access follows the [path and resource ownership conventions](paths-and-resources.md), and exception handling follows the [exception ownership conventions](exception-ownership.md). |

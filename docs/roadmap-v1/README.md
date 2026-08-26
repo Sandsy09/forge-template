@@ -47,6 +47,12 @@ owner-local, require a failure to be handled, re-raised, or translated exactly
 once, and assign translation of an escaped failure into a process outcome to
 the runtime entrypoint, without adding a Foundation base exception.
 
+The canonical
+[secret-handling safeguards](../secret-handling.md) broaden the neutral
+ignore rules Foundation already applies to `.env`, enforce a placeholder-only
+tracked `.env.example`, and define the properties an optional secret-scanning
+capability must have without generating one.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 It is not implemented; the existing Copier baseline remains operational until
