@@ -84,8 +84,10 @@ context, the
 exceptions owner-local and require failures to be handled once rather than
 silently dropped or logged repeatedly, the
 [secret-handling safeguards](docs/secret-handling.md) keep secret-bearing
-files out of version control without generating a mandatory scanner, and
-[docs/adr/](docs/adr/) records why significant decisions were made.
+files out of version control without generating a mandatory scanner, the
+[supply-chain provenance contract](docs/supply-chain-provenance.md) defines
+desired SBOM and release-provenance behaviour without generating either yet,
+and [docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License
 

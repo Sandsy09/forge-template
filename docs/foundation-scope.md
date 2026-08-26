@@ -156,7 +156,12 @@ concern. For example, base ignore rules protect common secret-bearing local
 files such as `.env`, while an `.env.example`, variable names, and a
 configuration schema belong to the component that consumes them. The
 [secret-handling safeguards](secret-handling.md) define the full extent of
-that neutral protection and the boundary of what remains optional.
+that neutral protection and the boundary of what remains optional. A software
+bill of materials and release-provenance attestation apply this same routing
+one level further: the [supply-chain provenance contract](supply-chain-provenance.md)
+assigns SBOM generation to a future capability and attestation/signing to a
+GitHub platform contribution, because neither can be stated in a
+provider-neutral way today.
 
 ## Resolving disputed placement
 
@@ -214,5 +219,8 @@ This scope contract does not decide:
   conflict algorithms owned by Stage 06;
 - the implementation details of the public-engine target accepted by
   [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
-  including its first package and protocol versions; or
-- the identity of the second reference archetype.
+  including its first package and protocol versions;
+- the identity of the second reference archetype; or
+- the concrete SBOM/attestation implementation and the exit criteria that
+  must hold before it is built, owned by the
+  [supply-chain provenance contract](supply-chain-provenance.md).

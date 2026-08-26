@@ -129,5 +129,5 @@ untested conditional was the exact failure mode
 decision does not reintroduce one. Stage 06 owns the composition mechanics for
 a future optional scanning capability and the GitHub-platform contribution
 that would generate host-native scanning configuration.
-[FT-05.05](https://github.com/Sandsy09/forge-template/issues/31) owns SBOM and
+[Supply-chain provenance](supply-chain-provenance.md) owns SBOM and
 release-provenance planning, a related but distinct supply-chain concern.
