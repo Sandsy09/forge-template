@@ -53,6 +53,13 @@ configuration provides:
   available for intentional program output and machine-readable command
   results.
 
+A future capability or platform contribution that additionally writes log
+records to a file follows the
+[path and resource ownership conventions](paths-and-resources.md): the file
+location is explicit configuration, never a path derived from the process
+working directory or a discovered project root. The provider-neutral stderr
+default above is unaffected.
+
 Invalid levels or formats fail startup validation. Custom levels are outside
 the portable contract. An environment identity must never select or imply a
 level or format. When the logging owner exposes environment-backed settings,

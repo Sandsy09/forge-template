@@ -76,8 +76,11 @@ runtime settings owner-local and explicitly injected, the
 [environment-variable conventions](docs/environment-variables.md) define
 owner-prefixed runtime inputs and explicit local dotenv behaviour, the
 [structured logging capability](docs/structured-logging.md) defines
-owner-local events and one entrypoint-owned logging configuration, and
-[docs/adr/](docs/adr/) records why significant decisions were made.
+owner-local events and one entrypoint-owned logging configuration, the
+[path and resource ownership conventions](docs/paths-and-resources.md) keep
+runtime path and resource access owner-local and free of implicit process
+context, and [docs/adr/](docs/adr/) records why significant decisions were
+made.
 
 ## License
 

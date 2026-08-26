@@ -20,6 +20,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0015 — Keep runtime configuration owner-local and explicitly injected](0015-owner-local-runtime-configuration.md)
 - [0016 — Keep environment inputs owner-local and dotenv explicit](0016-owner-local-environment-inputs.md)
 - [0017 — Keep structured logging owner-local and configure it once](0017-owner-local-structured-logging.md)
+- [0018 — Keep path and resource access owner-local and context-free](0018-owner-local-paths-and-resources.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

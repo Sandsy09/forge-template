@@ -24,6 +24,9 @@ environment-backed components must preserve.
 The [structured logging capability](../structured-logging.md) defines the
 generated runtime event and process-configuration contract; provider exporters
 remain platform contributions.
+The [path and resource ownership conventions](../paths-and-resources.md)
+define the generated-project path and resource access contract that future
+composition must preserve without creating a Foundation path helper.
 
 ## `forge-template`
 
@@ -38,8 +41,8 @@ It owns:
 - component manifests and compatibility metadata;
 - the canonical ProjectSpec input contract;
 - template variables and validation;
-- owner-local runtime configuration, environment-input, and structured-logging
-  conventions;
+- owner-local runtime configuration, environment-input, structured-logging,
+  and path/resource ownership conventions;
 - composition, merge/conflict and override rules;
 - rendering/generation logic;
 - structured engine errors and generated-project validation;

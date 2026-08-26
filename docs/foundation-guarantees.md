@@ -109,6 +109,11 @@ archetype or capability needs settings, it follows the canonical
 preserving this independent-operation guarantee. Environment-backed settings
 also follow the [environment-variable conventions](environment-variables.md),
 which keep deployed inputs provider-neutral and local dotenv loading explicit.
+Runtime code that discovered a project root or read from a source checkout
+would silently reintroduce a Forge-repository dependency; the
+[path and resource ownership conventions](paths-and-resources.md) keep path
+and resource access free of that assumption so a project stays independent
+once installed.
 
 ## Recommended conventions
 

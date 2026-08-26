@@ -29,6 +29,9 @@ The [structured logging capability](../structured-logging.md) keeps event
 vocabularies owner-local while assigning process-wide configuration,
 formatting, redaction, and provider-neutral stream handling to one runtime
 owner.
+The [path and resource ownership conventions](../paths-and-resources.md) keep
+runtime path and resource access owner-local and free of implicit process
+context such as the current working directory or a discovered project root.
 
 ```text
 ┌─────────────────────────────┐

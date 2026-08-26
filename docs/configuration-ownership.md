@@ -90,7 +90,10 @@ Environment-backed fragments follow the canonical
 [environment-variable and local dotenv conventions](environment-variables.md),
 which define owner-prefixed names, source precedence, safe examples, and
 provider-neutral environment identity. Runtime owners that log follow the
-[structured logging capability contract](structured-logging.md). Exception
+[structured logging capability contract](structured-logging.md). A writable
+runtime location, such as a cache or generated-output directory, is itself a
+field on the owner's typed fragment under the
+[path and resource ownership conventions](paths-and-resources.md). Exception
 types, wrapping, and log-once behaviour remain with
 [FT-04.05](https://github.com/Sandsy09/forge-template/issues/28).
 

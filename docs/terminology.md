@@ -84,6 +84,9 @@ define its namespace, precedence, and local dotenv boundary. Runtime owners
 that emit observable events follow the
 [structured logging capability contract](structured-logging.md), which keeps
 event vocabulary owner-local and process configuration at the entrypoint.
+Runtime owners that read or write files follow the
+[path and resource ownership conventions](paths-and-resources.md), which keep
+path and resource access owner-local and free of implicit process context.
 
 ### Platform
 
