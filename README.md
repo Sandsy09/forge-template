@@ -74,7 +74,9 @@ and default profile editor-neutral, the
 [configuration ownership conventions](docs/configuration-ownership.md) keep
 runtime settings owner-local and explicitly injected, the
 [environment-variable conventions](docs/environment-variables.md) define
-owner-prefixed runtime inputs and explicit local dotenv behaviour, and
+owner-prefixed runtime inputs and explicit local dotenv behaviour, the
+[structured logging capability](docs/structured-logging.md) defines
+owner-local events and one entrypoint-owned logging configuration, and
 [docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License

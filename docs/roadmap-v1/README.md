@@ -28,6 +28,12 @@ The canonical
 owner-prefixed runtime inputs, deterministic source precedence, and explicit
 local dotenv behaviour for the owners that need it.
 
+The canonical
+[structured logging capability](../structured-logging.md) defines owner-local
+event vocabularies, one entrypoint-owned process configuration, a portable
+event envelope, and redaction boundaries without adding Foundation runtime
+code.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 It is not implemented; the existing Copier baseline remains operational until

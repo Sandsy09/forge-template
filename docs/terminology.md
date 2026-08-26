@@ -80,7 +80,10 @@ follows the canonical
 stable typed fragment, while the runtime entrypoint assembles and injects
 selected fragments explicitly. If that fragment accepts environment-backed
 input, the [environment-variable conventions](environment-variables.md)
-define its namespace, precedence, and local dotenv boundary.
+define its namespace, precedence, and local dotenv boundary. Runtime owners
+that emit observable events follow the
+[structured logging capability contract](structured-logging.md), which keeps
+event vocabulary owner-local and process configuration at the entrypoint.
 
 ### Platform
 
