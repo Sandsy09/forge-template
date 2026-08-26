@@ -70,8 +70,10 @@ outcomes every generated project receives, the
 that baseline, the [Python support policy](docs/python-support.md) defines the
 supported CPython window and lifecycle, the
 [editor integration strategy](docs/editor-integration.md) keeps the baseline
-and default profile editor-neutral, and [docs/adr/](docs/adr/) records why
-significant decisions were made.
+and default profile editor-neutral, the
+[configuration ownership conventions](docs/configuration-ownership.md) keep
+runtime settings owner-local and explicitly injected, and
+[docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License
 

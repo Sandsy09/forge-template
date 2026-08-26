@@ -74,6 +74,12 @@ A capability contributes content it owns or participates through an explicit
 extension point. It does not gain a general right to overwrite Foundation or
 archetype content.
 
+An archetype or capability that contributes configurable runtime behaviour
+follows the canonical
+[configuration ownership conventions](configuration-ownership.md): it owns a
+stable typed fragment, while the runtime entrypoint assembles and injects
+selected fragments explicitly.
+
 ### Platform
 
 A platform adapts a project to an external hosting, delivery, deployment, or
@@ -207,6 +213,7 @@ This terminology does not decide:
 - the ProjectSpec wire format or validation API;
 - component manifest fields, ordering, merge, or collision algorithms;
 - platform cardinality;
+- environment-variable and other runtime configuration source conventions;
 - organisation-policy schema or error types;
 - the identity of the second reference archetype; or
 - the concrete engine package range, ProjectSpec protocol number, and source

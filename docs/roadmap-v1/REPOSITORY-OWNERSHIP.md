@@ -15,6 +15,9 @@ generated metadata, and validation are part of generated-project behaviour.
 The [editor integration strategy](../editor-integration.md) assigns future
 editor-specific bridges to optional `forge-template` capabilities while
 keeping canonical commands independent of editor state.
+The [configuration ownership conventions](../configuration-ownership.md)
+define the generated-project runtime contract that future composition must
+preserve without creating a Foundation settings module.
 
 ## `forge-template`
 
@@ -29,6 +32,7 @@ It owns:
 - component manifests and compatibility metadata;
 - the canonical ProjectSpec input contract;
 - template variables and validation;
+- owner-local runtime configuration conventions;
 - composition, merge/conflict and override rules;
 - rendering/generation logic;
 - structured engine errors and generated-project validation;

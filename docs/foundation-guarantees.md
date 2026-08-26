@@ -103,6 +103,11 @@ Template maintenance is a separate operation. Pulling template updates or
 regenerating content may invoke Copier and access the template source, but a
 project does not need to perform that maintenance to remain usable.
 
+Runtime configuration is not a Foundation module or dependency. When an
+archetype or capability needs settings, it follows the canonical
+[configuration ownership conventions](configuration-ownership.md) while
+preserving this independent-operation guarantee.
+
 ## Recommended conventions
 
 The following practices reinforce the guarantees but are not themselves
