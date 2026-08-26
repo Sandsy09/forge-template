@@ -44,6 +44,9 @@ The [supply-chain provenance contract](../supply-chain-provenance.md) defines
 desired SBOM and release-provenance behaviour as a future capability and
 platform contribution, deferred until a generated-project release/publish
 path exists.
+The [GitHub Action pinning policy](../github-action-pinning.md) applies
+immutable, updater-readable references to the current GitHub platform
+integration without making GitHub Actions a Foundation requirement.
 
 ```text
 ┌─────────────────────────────┐

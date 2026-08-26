@@ -90,7 +90,9 @@ Foundation does not require a particular automation provider. When a platform
 integration supplies CI configuration, it runs the same underlying quality
 contract used locally rather than defining a divergent standard. The current
 monolithic Library scaffold includes GitHub Actions as its platform-shaped
-integration.
+integration. Its remote workflow dependencies follow the
+[GitHub Action pinning policy](github-action-pinning.md), without turning that
+provider-specific security mechanism into a Foundation guarantee.
 
 ### Environment and Forge independence
 
@@ -146,7 +148,7 @@ follows:
 | Static typing | `type_checking` always selects mypy, pyright, or both; the selected checker is configured for source and tests and runs through the `typecheck` task and CI. |
 | Automated testing | pytest, coverage configuration, and an initial import/version smoke test are present; the `test` task and CI run the suite. |
 | Linting and formatting | Ruff owns lint and format policy; Poe exposes check/apply tasks, pre-commit provides local feedback, and CI runs non-mutating checks. |
-| CI readiness | `uv run poe check` is the documented aggregate local contract; the generated GitHub Actions workflow runs the same formatting, linting, typing, and testing concerns and also verifies builds. |
+| CI readiness | `uv run poe check` is the documented aggregate local contract; the generated GitHub Actions workflow runs the same formatting, linting, typing, and testing concerns, verifies builds, and pins remote actions under the [GitHub platform policy](github-action-pinning.md). |
 | Environment and Forge independence | The generated repository owns its source, configuration, tasks, tests, and workflow and documents Python and uv as prerequisites. Neither Forge repository nor package is a development or runtime dependency. |
 
 These named tools describe the current reference implementation. They may be

@@ -59,6 +59,11 @@ desired SBOM behaviour and provenance/signing considerations for a future
 capability and GitHub platform contribution, deferred until a generated-project
 release/publish path and Stage 06 composition mechanics both exist.
 
+The canonical
+[GitHub Action pinning policy](../github-action-pinning.md) requires immutable
+remote references in repository-owned and generated workflows while retaining
+reviewed Renovate, Dependabot, and manual maintenance paths.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 It is not implemented; the existing Copier baseline remains operational until

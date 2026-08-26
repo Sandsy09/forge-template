@@ -105,7 +105,9 @@ ignore rules.
 A platform adapts a project to an external hosting, delivery, deployment, or
 runtime target. A GitHub Actions integration or a container platform adapter
 is a platform concern, rather than a definition of the project's primary
-shape.
+shape. GitHub workflow contributions follow the canonical
+[GitHub Action pinning policy](github-action-pinning.md) without making that
+provider-specific policy part of Foundation.
 
 Whether ProjectSpec permits one or several platform selections remains a Stage
 06 schema decision. A platform follows the same no-implicit-overwrite rule as
