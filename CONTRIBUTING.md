@@ -24,7 +24,9 @@ namespace owner-local and local dotenv loading explicit. Runtime owners that
 emit logs follow the
 [structured logging capability](docs/structured-logging.md); reusable modules
 emit through standard module loggers while the runtime entrypoint owns
-process-wide configuration.
+process-wide configuration. Runtime owners that read or write files follow
+the [path and resource ownership conventions](docs/paths-and-resources.md),
+which keep resource access free of process-working-directory assumptions.
 
 ## Branching and pull requests
 

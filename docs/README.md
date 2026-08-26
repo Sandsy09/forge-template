@@ -20,5 +20,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   environment inputs, source precedence, and explicit local dotenv behaviour.
 - [structured-logging.md](structured-logging.md) — owner-local events,
   process-wide configuration, structured envelope, and redaction boundaries.
+- [paths-and-resources.md](paths-and-resources.md) — owner-local path and
+  resource access, context-free runtime code, and explicit writable
+  locations.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

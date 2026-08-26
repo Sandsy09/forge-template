@@ -92,9 +92,10 @@ multiline syntax, or other loader-specific behaviour. The entrypoint owner
 documents the selected loader and any literal quoting or escaping its users
 need.
 
-Exact project-root discovery and path handling remain owned by
-[FT-04.04](https://github.com/Sandsy09/forge-template/issues/27). This contract
-defines the single logical location without introducing a path utility.
+The [path and resource ownership conventions](paths-and-resources.md) define
+how the runtime entrypoint locates this single logical location: never by
+runtime project-root discovery, but from a path the entrypoint is explicitly
+given.
 
 ## Safe examples and user documentation
 

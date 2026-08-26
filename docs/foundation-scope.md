@@ -141,7 +141,10 @@ environment-backed inputs also follow the canonical
 that log follow the canonical
 [structured logging capability contract](structured-logging.md), which assigns
 event vocabulary to emitters and process-wide configuration to the runtime
-entrypoint.
+entrypoint. Runtime owners that read or write files follow the canonical
+[path and resource ownership conventions](paths-and-resources.md), which keep
+path and resource access owner-local and free of implicit process context such
+as the current working directory or a discovered project root.
 
 Foundation may provide neutral safeguards without taking over the runtime
 concern. For example, base ignore rules protect common secret-bearing local
@@ -180,7 +183,7 @@ map to the future layers as follows:
 | Project identity, neutral metadata, licence, root README/contribution/security starters, base repository hygiene, secret-file ignore safeguards, and Copier update state | **Foundation**, as neutral handoff or update/provenance material. |
 | `src/` package layout, distributable-package metadata, build backend, versioning, typed-package marker, build/release behaviour, and the Library-specific smoke target | **Library archetype**. |
 | Coverage reporting, pre-commit feedback, documentation, changelog support, dependency-update automation, configuration examples, and editor-specific integration | **Capabilities**; a future profile may select them, while the Forge default profile remains editor-neutral. |
-| Runtime configuration, logging/observability, path/resource behaviour, and exception conventions | The **archetype or capability that contributes the runtime behaviour**; Foundation adds no shared runtime layer, configuration follows the [owner-local convention](configuration-ownership.md), and logging follows the [structured capability contract](structured-logging.md). |
+| Runtime configuration, logging/observability, path/resource behaviour, and exception conventions | The **archetype or capability that contributes the runtime behaviour**; Foundation adds no shared runtime layer, configuration follows the [owner-local convention](configuration-ownership.md), logging follows the [structured capability contract](structured-logging.md), and path/resource access follows the [path and resource ownership conventions](paths-and-resources.md). |
 | GitHub Actions, issue and pull-request templates, CODEOWNERS, and other GitHub-specific adapters | **GitHub platform** contributions. Provider-specific files used by a capability are supplied through that platform integration. |
 
 This mapping does not move files, alter questions, or change generated output.
@@ -193,11 +196,12 @@ This scope contract does not decide:
 
 - the supported interpreter window and lifecycle defined by the canonical
   [Python support policy](python-support.md);
-- path, resource, or exception conventions owned by the remaining Stage 04
-  work; runtime configuration, environment inputs, and logging are defined by
-  the [ownership](configuration-ownership.md),
-  [environment-variable](environment-variables.md), and
-  [structured-logging](structured-logging.md) conventions;
+- exception conventions owned by the remaining Stage 04 work; runtime
+  configuration, environment inputs, logging, and path/resource access are
+  defined by the [ownership](configuration-ownership.md),
+  [environment-variable](environment-variables.md),
+  [structured-logging](structured-logging.md), and
+  [paths-and-resources](paths-and-resources.md) conventions;
 - the ProjectSpec schema, component manifest, extension points, ordering, or
   conflict algorithms owned by Stage 06;
 - the implementation details of the public-engine target accepted by

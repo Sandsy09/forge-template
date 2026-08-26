@@ -13,7 +13,9 @@
 - [x] [**FT-04.03 — Define structured logging capability**](../../../structured-logging.md)
   ([ADR 0017](../../../adr/0017-owner-local-structured-logging.md),
   [#26](https://github.com/Sandsy09/forge-template/issues/26))
-- **FT-04.04 — Define path and resource ownership conventions**
+- [x] [**FT-04.04 — Define path and resource ownership conventions**](../../../paths-and-resources.md)
+  ([ADR 0018](../../../adr/0018-owner-local-paths-and-resources.md),
+  [#27](https://github.com/Sandsy09/forge-template/issues/27))
 - **FT-04.05 — Define exception ownership conventions**
 
 ### create-forge
@@ -28,9 +30,12 @@ deterministic source precedence, one explicitly enabled local dotenv file, and
 provider-neutral environment identity. FT-04.03 assigns event vocabularies to
 runtime owners and process-wide structured logging configuration to one
 entrypoint-owned capability, with a portable envelope and redaction boundary.
-All three are documentation-only decisions; the current Library scaffold
-remains unchanged. The remaining path/resource and exception concerns stay
-with their listed owners.
+FT-04.04 keeps path and resource access owner-local, forbids implicit process
+context such as the current working directory or a discovered project root,
+and resolves FT-04.02's deferred `.env` location by requiring the runtime
+entrypoint to receive it explicitly rather than search for it. All four are
+documentation-only decisions; the current Library scaffold remains unchanged.
+The remaining exception concern stays with its listed owner.
 
 ## Stage completion rule
 
