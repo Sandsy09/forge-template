@@ -18,5 +18,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   runtime configuration and explicit assembly and injection conventions.
 - [environment-variables.md](environment-variables.md) — owner-prefixed
   environment inputs, source precedence, and explicit local dotenv behaviour.
+- [structured-logging.md](structured-logging.md) — owner-local events,
+  process-wide configuration, structured envelope, and redaction boundaries.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

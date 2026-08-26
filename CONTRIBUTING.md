@@ -20,7 +20,11 @@ runtime settings follow the
 template repository itself gains no shared runtime configuration layer. When
 an owner uses environment-backed input, the
 [environment-variable conventions](docs/environment-variables.md) keep its
-namespace owner-local and local dotenv loading explicit.
+namespace owner-local and local dotenv loading explicit. Runtime owners that
+emit logs follow the
+[structured logging capability](docs/structured-logging.md); reusable modules
+emit through standard module loggers while the runtime entrypoint owns
+process-wide configuration.
 
 ## Branching and pull requests
 

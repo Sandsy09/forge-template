@@ -21,6 +21,9 @@ preserve without creating a Foundation settings module.
 The [environment-variable conventions](../environment-variables.md) define
 the owner-local names, precedence, examples, and local dotenv boundary that
 environment-backed components must preserve.
+The [structured logging capability](../structured-logging.md) defines the
+generated runtime event and process-configuration contract; provider exporters
+remain platform contributions.
 
 ## `forge-template`
 
@@ -35,7 +38,8 @@ It owns:
 - component manifests and compatibility metadata;
 - the canonical ProjectSpec input contract;
 - template variables and validation;
-- owner-local runtime configuration and environment-input conventions;
+- owner-local runtime configuration, environment-input, and structured-logging
+  conventions;
 - composition, merge/conflict and override rules;
 - rendering/generation logic;
 - structured engine errors and generated-project validation;

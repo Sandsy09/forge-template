@@ -25,6 +25,10 @@ and require explicit entrypoint assembly and injection.
 The [environment-variable conventions](../environment-variables.md) extend
 that owner-local model with namespacing, source precedence, and an explicit
 local dotenv boundary.
+The [structured logging capability](../structured-logging.md) keeps event
+vocabularies owner-local while assigning process-wide configuration,
+formatting, redaction, and provider-neutral stream handling to one runtime
+owner.
 
 ```text
 ┌─────────────────────────────┐

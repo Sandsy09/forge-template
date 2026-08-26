@@ -89,8 +89,9 @@ diagnostics and representations.
 Environment-backed fragments follow the canonical
 [environment-variable and local dotenv conventions](environment-variables.md),
 which define owner-prefixed names, source precedence, safe examples, and
-provider-neutral environment identity. Exception types, wrapping, and logging
-remain with
+provider-neutral environment identity. Runtime owners that log follow the
+[structured logging capability contract](structured-logging.md). Exception
+types, wrapping, and log-once behaviour remain with
 [FT-04.05](https://github.com/Sandsy09/forge-template/issues/28).
 
 Profiles and organisation policies may select components or supply generation
@@ -123,7 +124,7 @@ or change generated output.
 This contract deliberately does not define:
 
 - a settings library, fixed module path, class name, or wire format;
-- exception hierarchies or structured logging behaviour;
+- exception hierarchies or log-once and wrapping behaviour;
 - ProjectSpec fields, component manifests, dependency declarations, ordering,
   extension-point representation, or collision algorithms; or
 - the identity or runtime shape of the second reference archetype.

@@ -144,6 +144,13 @@ choose credentials, select a dotenv file, or encode a cloud or deployment
 provider. Any behaviour that varies by label is owner-local, explicit, and
 documented.
 
+In particular, the
+[structured logging capability](structured-logging.md) exposes level and
+format through its own typed configuration. An environment identity never
+selects or implies either setting. If the logging owner exposes those settings
+through environment variables, their names and precedence follow this
+contract.
+
 ## Composition and current Library evidence
 
 Future composition will assemble owner-contributed sections into the root
