@@ -23,5 +23,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [paths-and-resources.md](paths-and-resources.md) — owner-local path and
   resource access, context-free runtime code, and explicit writable
   locations.
+- [exception-ownership.md](exception-ownership.md) — owner-local exceptions,
+  catch/wrap/log-once discipline, and the entrypoint's failure-translation
+  boundary.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

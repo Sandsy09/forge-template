@@ -32,6 +32,10 @@ owner.
 The [path and resource ownership conventions](../paths-and-resources.md) keep
 runtime path and resource access owner-local and free of implicit process
 context such as the current working directory or a discovered project root.
+The [exception ownership conventions](../exception-ownership.md) keep
+exceptions owner-local, require a failure to be handled once, and assign
+translation of an escaped failure into a process outcome to the runtime
+entrypoint.
 
 ```text
 ┌─────────────────────────────┐

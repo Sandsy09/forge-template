@@ -113,7 +113,10 @@ Runtime code that discovered a project root or read from a source checkout
 would silently reintroduce a Forge-repository dependency; the
 [path and resource ownership conventions](paths-and-resources.md) keep path
 and resource access free of that assumption so a project stays independent
-once installed.
+once installed. A shared Forge base exception would create the same kind of
+dependency at the point a caller wants to catch a project's own failures; the
+[exception ownership conventions](exception-ownership.md) keep exception
+types owner-local so catching them never requires a Forge import.
 
 ## Recommended conventions
 

@@ -41,6 +41,12 @@ such as the current working directory or a discovered project root, and route
 packaged reads through `importlib.resources` without adding a Foundation path
 helper.
 
+The canonical
+[exception ownership conventions](../exception-ownership.md) keep exceptions
+owner-local, require a failure to be handled, re-raised, or translated exactly
+once, and assign translation of an escaped failure into a process outcome to
+the runtime entrypoint, without adding a Foundation base exception.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 It is not implemented; the existing Copier baseline remains operational until

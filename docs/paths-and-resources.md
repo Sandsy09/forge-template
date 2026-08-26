@@ -137,7 +137,7 @@ This contract does not define a path or resource helper module, a concrete
 resource-loading API, a directory-convention library choice, a
 containment-checking algorithm, a ProjectSpec field, a component manifest, or
 a migration. Stage 06 owns composition and collision mechanics. The exception
-types an owner raises on path or resource failure remain owned by
-[FT-04.05](https://github.com/Sandsy09/forge-template/issues/28). Broader
+types an owner raises on path or resource failure follow the
+[exception ownership conventions](exception-ownership.md). Broader
 secret-file safeguards and optional scanning remain owned by
 [FT-05.04](https://github.com/Sandsy09/forge-template/issues/30).

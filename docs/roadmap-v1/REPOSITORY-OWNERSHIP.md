@@ -27,6 +27,9 @@ remain platform contributions.
 The [path and resource ownership conventions](../paths-and-resources.md)
 define the generated-project path and resource access contract that future
 composition must preserve without creating a Foundation path helper.
+The [exception ownership conventions](../exception-ownership.md) define the
+generated-project exception contract that keeps failures owner-local,
+catchable without a Forge import, and handled exactly once.
 
 ## `forge-template`
 
@@ -42,7 +45,7 @@ It owns:
 - the canonical ProjectSpec input contract;
 - template variables and validation;
 - owner-local runtime configuration, environment-input, structured-logging,
-  and path/resource ownership conventions;
+  path/resource ownership, and exception ownership conventions;
 - composition, merge/conflict and override rules;
 - rendering/generation logic;
 - structured engine errors and generated-project validation;
