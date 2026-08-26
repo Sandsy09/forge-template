@@ -17,7 +17,10 @@ authoritative; the [editor integration strategy](docs/editor-integration.md)
 defines the boundary for any future optional editor capability. Generated
 runtime settings follow the
 [configuration ownership conventions](docs/configuration-ownership.md); the
-template repository itself gains no shared runtime configuration layer.
+template repository itself gains no shared runtime configuration layer. When
+an owner uses environment-backed input, the
+[environment-variable conventions](docs/environment-variables.md) keep its
+namespace owner-local and local dotenv loading explicit.
 
 ## Branching and pull requests
 

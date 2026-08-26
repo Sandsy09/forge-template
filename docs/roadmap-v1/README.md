@@ -23,6 +23,11 @@ The canonical
 how runtime-owning archetypes and capabilities expose, assemble, and inject
 typed settings without adding a Foundation runtime module.
 
+The canonical
+[environment-variable conventions](../environment-variables.md) define
+owner-prefixed runtime inputs, deterministic source precedence, and explicit
+local dotenv behaviour for the owners that need it.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 It is not implemented; the existing Copier baseline remains operational until

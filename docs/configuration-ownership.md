@@ -86,10 +86,10 @@ Secret values are runtime inputs. They must never be committed, embedded in
 generated source or defaults, placed in examples, or exposed through
 diagnostics and representations.
 
-The exact input sources and their precedence are not defined here.
-[FT-04.02](https://github.com/Sandsy09/forge-template/issues/25) owns
-environment-variable naming, local `.env` behaviour, safe example files, and
-provider-neutral environment concepts. Exception types, wrapping, and logging
+Environment-backed fragments follow the canonical
+[environment-variable and local dotenv conventions](environment-variables.md),
+which define owner-prefixed names, source precedence, safe examples, and
+provider-neutral environment identity. Exception types, wrapping, and logging
 remain with
 [FT-04.05](https://github.com/Sandsy09/forge-template/issues/28).
 
@@ -112,15 +112,16 @@ The v0.1.x Library scaffold remains configuration-light:
   runtime configuration contract; and
 - `.env` is ignored by the neutral secret-file safeguard in `.gitignore`.
 
-The eventual ownership and conditional generation of environment examples is
-part of FT-04.02 and later component migration. This decision does not move or
-remove the current file, add a Copier question, or change generated output.
+The canonical environment contract now assigns future example entries to
+their runtime owners and targets conditional assembly into one root
+`.env.example`. Later component migration remains responsible for changing the
+current file. This decision does not move or remove it, add a Copier question,
+or change generated output.
 
 ## Deferred decisions
 
 This contract deliberately does not define:
 
-- environment-variable names, prefixes, files, or source precedence;
 - a settings library, fixed module path, class name, or wire format;
 - exception hierarchies or structured logging behaviour;
 - ProjectSpec fields, component manifests, dependency declarations, ordering,

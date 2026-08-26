@@ -106,7 +106,9 @@ project does not need to perform that maintenance to remain usable.
 Runtime configuration is not a Foundation module or dependency. When an
 archetype or capability needs settings, it follows the canonical
 [configuration ownership conventions](configuration-ownership.md) while
-preserving this independent-operation guarantee.
+preserving this independent-operation guarantee. Environment-backed settings
+also follow the [environment-variable conventions](environment-variables.md),
+which keep deployed inputs provider-neutral and local dotenv loading explicit.
 
 ## Recommended conventions
 
