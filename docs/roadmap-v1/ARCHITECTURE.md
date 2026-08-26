@@ -19,6 +19,9 @@ window in which the generated-project guarantees are claimed.
 The [editor integration strategy](../editor-integration.md) keeps Foundation
 and Forge's default profile vendor-neutral while routing future editor bridges
 to optional capabilities.
+The [configuration ownership conventions](../configuration-ownership.md)
+assign typed runtime settings to the archetype or capability consuming them
+and require explicit entrypoint assembly and injection.
 
 ```text
 ┌─────────────────────────────┐

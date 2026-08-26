@@ -18,6 +18,11 @@ The [canonical terminology](../terminology.md) defines the architectural terms
 and authority rules used throughout this roadmap without duplicating them in
 individual stage documents.
 
+The canonical
+[configuration ownership conventions](../configuration-ownership.md) define
+how runtime-owning archetypes and capabilities expose, assemble, and inject
+typed settings without adding a Foundation runtime module.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 It is not implemented; the existing Copier baseline remains operational until

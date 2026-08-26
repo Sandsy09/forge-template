@@ -14,7 +14,10 @@ uv run pre-commit install --install-hooks
 
 No editor-specific setup is required. Project commands and configuration stay
 authoritative; the [editor integration strategy](docs/editor-integration.md)
-defines the boundary for any future optional editor capability.
+defines the boundary for any future optional editor capability. Generated
+runtime settings follow the
+[configuration ownership conventions](docs/configuration-ownership.md); the
+template repository itself gains no shared runtime configuration layer.
 
 ## Branching and pull requests
 

@@ -17,6 +17,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0012 — Keep Forge Foundation conservative and runtime-free](0012-conservative-foundation-scope.md)
 - [0013 — Adopt a rolling CPython support policy](0013-python-support-policy.md)
 - [0014 — Keep Foundation and the default profile editor-neutral](0014-editor-neutral-foundation.md)
+- [0015 — Keep runtime configuration owner-local and explicitly injected](0015-owner-local-runtime-configuration.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

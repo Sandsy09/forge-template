@@ -132,7 +132,10 @@ contribution, even when it enables the capability.
 Foundation supplies no generated configuration module, logging package,
 resource helper, or base exception. The archetype or capability that
 contributes runtime behaviour owns its configuration schema, environment
-names, logging behaviour, resource access, and exception hierarchy.
+names, logging behaviour, resource access, and exception hierarchy. Runtime
+settings follow the canonical
+[configuration ownership and extension conventions](configuration-ownership.md),
+which keep typed interfaces owner-local and assembly explicit.
 
 Foundation may provide neutral safeguards without taking over the runtime
 concern. For example, base ignore rules protect common secret-bearing local
@@ -171,7 +174,7 @@ map to the future layers as follows:
 | Project identity, neutral metadata, licence, root README/contribution/security starters, base repository hygiene, secret-file ignore safeguards, and Copier update state | **Foundation**, as neutral handoff or update/provenance material. |
 | `src/` package layout, distributable-package metadata, build backend, versioning, typed-package marker, build/release behaviour, and the Library-specific smoke target | **Library archetype**. |
 | Coverage reporting, pre-commit feedback, documentation, changelog support, dependency-update automation, configuration examples, and editor-specific integration | **Capabilities**; a future profile may select them, while the Forge default profile remains editor-neutral. |
-| Runtime configuration, logging/observability, path/resource behaviour, and exception conventions | The **archetype or capability that contributes the runtime behaviour**; Foundation adds no shared runtime layer. |
+| Runtime configuration, logging/observability, path/resource behaviour, and exception conventions | The **archetype or capability that contributes the runtime behaviour**; Foundation adds no shared runtime layer, and configuration follows the [owner-local convention](configuration-ownership.md). |
 | GitHub Actions, issue and pull-request templates, CODEOWNERS, and other GitHub-specific adapters | **GitHub platform** contributions. Provider-specific files used by a capability are supplied through that platform integration. |
 
 This mapping does not move files, alter questions, or change generated output.
@@ -184,8 +187,9 @@ This scope contract does not decide:
 
 - the supported interpreter window and lifecycle defined by the canonical
   [Python support policy](python-support.md);
-- the detailed owner-specific configuration, logging, path, resource, or
-  exception conventions owned by Stage 04;
+- environment-variable, logging, path, resource, or exception conventions
+  owned by Stage 04; runtime configuration ownership is defined separately by
+  the [canonical convention](configuration-ownership.md);
 - the ProjectSpec schema, component manifest, extension points, ordering, or
   conflict algorithms owned by Stage 06;
 - the implementation details of the public-engine target accepted by
