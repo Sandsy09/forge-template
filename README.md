@@ -82,8 +82,10 @@ runtime path and resource access owner-local and free of implicit process
 context, the
 [exception ownership conventions](docs/exception-ownership.md) keep
 exceptions owner-local and require failures to be handled once rather than
-silently dropped or logged repeatedly, and [docs/adr/](docs/adr/) records why
-significant decisions were made.
+silently dropped or logged repeatedly, the
+[secret-handling safeguards](docs/secret-handling.md) keep secret-bearing
+files out of version control without generating a mandatory scanner, and
+[docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License
 

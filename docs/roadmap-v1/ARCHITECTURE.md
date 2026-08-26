@@ -36,6 +36,10 @@ The [exception ownership conventions](../exception-ownership.md) keep
 exceptions owner-local, require a failure to be handled once, and assign
 translation of an escaped failure into a process outcome to the runtime
 entrypoint.
+The [secret-handling safeguards](../secret-handling.md) keep secret-bearing
+files out of version control and enforce a placeholder-only tracked example,
+while leaving broader scanning as an optional capability or platform
+contribution.
 
 ```text
 ┌─────────────────────────────┐

@@ -108,5 +108,6 @@ def test_combo(
             errors.append(f"docs build:\n{docs.stdout}\n{docs.stderr}")
 
     errors += render.check_tree_clean(out)
+    errors += render.check_env_example_tracked(out)
 
     assert not errors, "\n\n".join(errors)

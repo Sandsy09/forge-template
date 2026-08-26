@@ -137,8 +137,8 @@ replace or omit the unsafe value, but must preserve that safety boundary.
 Defensive redaction does not transfer responsibility away from emitters. An
 unknown secret embedded in an opaque string cannot be made safe reliably, so
 owners must structure permitted values and exclude sensitive content at the
-source. Broader secret-file safeguards and optional scanning remain owned by
-[FT-05.04](https://github.com/Sandsy09/forge-template/issues/30).
+source. Broader secret-file safeguards and optional scanning are defined by
+the [secret-handling safeguards](secret-handling.md).
 
 ## Exceptions and provider integrations
 

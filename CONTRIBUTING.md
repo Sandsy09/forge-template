@@ -29,7 +29,10 @@ the [path and resource ownership conventions](docs/paths-and-resources.md),
 which keep resource access free of process-working-directory assumptions. The
 [exception ownership conventions](docs/exception-ownership.md) keep an
 owner's own exceptions catchable without a Forge import and require a failure
-to be handled, re-raised, or translated exactly once.
+to be handled, re-raised, or translated exactly once. The
+[secret-handling safeguards](docs/secret-handling.md) keep secret-bearing
+files out of version control and enforce a placeholder-only `.env.example`
+without generating a mandatory scanner.
 
 ## Branching and pull requests
 

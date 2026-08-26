@@ -90,7 +90,11 @@ path and resource access owner-local and free of implicit process context.
 Runtime owners that raise their own failures follow the
 [exception ownership conventions](exception-ownership.md), which keep
 exceptions catchable without a Forge import and require the runtime entrypoint
-to translate any escaped failure into a documented process outcome.
+to translate any escaped failure into a documented process outcome. A future
+optional secret-scanning capability, such as the gitleaks reference named by
+the [secret-handling safeguards](secret-handling.md), is an example of a
+capability contributing an opt-in safeguard beyond Foundation's neutral
+ignore rules.
 
 ### Platform
 

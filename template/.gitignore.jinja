@@ -13,7 +13,20 @@ htmlcov/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# Local secrets and credentials -- never commit these.
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+id_rsa
+id_rsa.*
+credentials.json
+.direnv/
 
 {%- if versioning_resolved == 'vcs' %}
 src/{{ package_name }}/_version.py
