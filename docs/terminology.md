@@ -78,7 +78,9 @@ An archetype or capability that contributes configurable runtime behaviour
 follows the canonical
 [configuration ownership conventions](configuration-ownership.md): it owns a
 stable typed fragment, while the runtime entrypoint assembles and injects
-selected fragments explicitly.
+selected fragments explicitly. If that fragment accepts environment-backed
+input, the [environment-variable conventions](environment-variables.md)
+define its namespace, precedence, and local dotenv boundary.
 
 ### Platform
 
@@ -213,7 +215,6 @@ This terminology does not decide:
 - the ProjectSpec wire format or validation API;
 - component manifest fields, ordering, merge, or collision algorithms;
 - platform cardinality;
-- environment-variable and other runtime configuration source conventions;
 - organisation-policy schema or error types;
 - the identity of the second reference archetype; or
 - the concrete engine package range, ProjectSpec protocol number, and source

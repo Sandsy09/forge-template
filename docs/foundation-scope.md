@@ -135,7 +135,9 @@ contributes runtime behaviour owns its configuration schema, environment
 names, logging behaviour, resource access, and exception hierarchy. Runtime
 settings follow the canonical
 [configuration ownership and extension conventions](configuration-ownership.md),
-which keep typed interfaces owner-local and assembly explicit.
+which keep typed interfaces owner-local and assembly explicit. Owners that use
+environment-backed inputs also follow the canonical
+[environment-variable conventions](environment-variables.md).
 
 Foundation may provide neutral safeguards without taking over the runtime
 concern. For example, base ignore rules protect common secret-bearing local
@@ -187,9 +189,10 @@ This scope contract does not decide:
 
 - the supported interpreter window and lifecycle defined by the canonical
   [Python support policy](python-support.md);
-- environment-variable, logging, path, resource, or exception conventions
-  owned by Stage 04; runtime configuration ownership is defined separately by
-  the [canonical convention](configuration-ownership.md);
+- logging, path, resource, or exception conventions owned by the remaining
+  Stage 04 work; runtime configuration and environment inputs are defined by
+  the [ownership](configuration-ownership.md) and
+  [environment-variable](environment-variables.md) conventions;
 - the ProjectSpec schema, component manifest, extension points, ordering, or
   conflict algorithms owned by Stage 06;
 - the implementation details of the public-engine target accepted by

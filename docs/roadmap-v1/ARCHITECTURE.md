@@ -22,6 +22,9 @@ to optional capabilities.
 The [configuration ownership conventions](../configuration-ownership.md)
 assign typed runtime settings to the archetype or capability consuming them
 and require explicit entrypoint assembly and injection.
+The [environment-variable conventions](../environment-variables.md) extend
+that owner-local model with namespacing, source precedence, and an explicit
+local dotenv boundary.
 
 ```text
 ┌─────────────────────────────┐

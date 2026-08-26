@@ -16,5 +16,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   policy and boundaries for future optional editor capabilities.
 - [configuration-ownership.md](configuration-ownership.md) — owner-local typed
   runtime configuration and explicit assembly and injection conventions.
+- [environment-variables.md](environment-variables.md) — owner-prefixed
+  environment inputs, source precedence, and explicit local dotenv behaviour.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

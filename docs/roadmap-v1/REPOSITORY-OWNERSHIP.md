@@ -18,6 +18,9 @@ keeping canonical commands independent of editor state.
 The [configuration ownership conventions](../configuration-ownership.md)
 define the generated-project runtime contract that future composition must
 preserve without creating a Foundation settings module.
+The [environment-variable conventions](../environment-variables.md) define
+the owner-local names, precedence, examples, and local dotenv boundary that
+environment-backed components must preserve.
 
 ## `forge-template`
 
@@ -32,7 +35,7 @@ It owns:
 - component manifests and compatibility metadata;
 - the canonical ProjectSpec input contract;
 - template variables and validation;
-- owner-local runtime configuration conventions;
+- owner-local runtime configuration and environment-input conventions;
 - composition, merge/conflict and override rules;
 - rendering/generation logic;
 - structured engine errors and generated-project validation;
