@@ -16,7 +16,9 @@
 - [x] [**FT-04.04 — Define path and resource ownership conventions**](../../../paths-and-resources.md)
   ([ADR 0018](../../../adr/0018-owner-local-paths-and-resources.md),
   [#27](https://github.com/Sandsy09/forge-template/issues/27))
-- **FT-04.05 — Define exception ownership conventions**
+- [x] [**FT-04.05 — Define exception ownership conventions**](../../../exception-ownership.md)
+  ([ADR 0019](../../../adr/0019-owner-local-exceptions.md),
+  [#28](https://github.com/Sandsy09/forge-template/issues/28))
 
 ### create-forge
 
@@ -33,13 +35,18 @@ entrypoint-owned capability, with a portable envelope and redaction boundary.
 FT-04.04 keeps path and resource access owner-local, forbids implicit process
 context such as the current working directory or a discovered project root,
 and resolves FT-04.02's deferred `.env` location by requiring the runtime
-entrypoint to receive it explicitly rather than search for it. All four are
+entrypoint to receive it explicitly rather than search for it. FT-04.05
+completes the catch/wrap/log-once rules FT-04.03 and FT-04.04 deferred here:
+exceptions stay owner-local and catchable without a Forge import, a base
+exception is defined only when an owner's public failure surface needs one, a
+failure is handled or re-raised exactly once, and the runtime entrypoint owns
+translating an escaped failure into a process outcome. All five are
 documentation-only decisions; the current Library scaffold remains unchanged.
-The remaining exception concern stays with its listed owner.
+No Stage 04 concern remains outstanding for `forge-template`.
 
-## Stage completion rule
+## forge-template completion rule
 
-- [ ] Repo-local issues are complete or explicitly deferred.
-- [ ] Cross-repository blockers are resolved.
-- [ ] Public contracts changed by this stage are documented/versioned.
-- [ ] No implementation concern is duplicated across repositories.
+- [x] Repo-local issues are complete or explicitly deferred.
+- [x] Cross-repository blockers are resolved.
+- [x] Public contracts changed by this stage are documented/versioned.
+- [x] No implementation concern is duplicated across repositories.

@@ -94,8 +94,8 @@ provider-neutral environment identity. Runtime owners that log follow the
 runtime location, such as a cache or generated-output directory, is itself a
 field on the owner's typed fragment under the
 [path and resource ownership conventions](paths-and-resources.md). Exception
-types, wrapping, and log-once behaviour remain with
-[FT-04.05](https://github.com/Sandsy09/forge-template/issues/28).
+types, wrapping, and log-once behaviour follow the
+[exception ownership conventions](exception-ownership.md).
 
 Profiles and organisation policies may select components or supply generation
 defaults and constraints under the
@@ -127,10 +127,11 @@ or change generated output.
 This contract deliberately does not define:
 
 - a settings library, fixed module path, class name, or wire format;
-- exception hierarchies or log-once and wrapping behaviour;
+- exception hierarchies or log-once and wrapping behaviour, defined by the
+  [exception ownership conventions](exception-ownership.md);
 - ProjectSpec fields, component manifests, dependency declarations, ordering,
   extension-point representation, or collision algorithms; or
 - the identity or runtime shape of the second reference archetype.
 
-Those decisions remain with their existing Stage 04, Stage 06, and Stage 08
-roadmap issues.
+Those decisions remain with their existing Stage 06 and Stage 08 roadmap
+issues.

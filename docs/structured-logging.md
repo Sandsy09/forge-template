@@ -145,8 +145,8 @@ source. Broader secret-file safeguards and optional scanning remain owned by
 When an owner supplies exception information, the selected logging capability
 preserves it as structured, redacted information rather than requiring string
 interpolation. The rules for catching, wrapping, logging once, re-raising, and
-avoiding duplicate or silent handling remain owned by
-[FT-04.05](https://github.com/Sandsy09/forge-template/issues/28).
+avoiding duplicate or silent handling are defined by the
+[exception ownership conventions](exception-ownership.md).
 
 Network exporters, vendor SDKs, hosted log delivery, and deployment-specific
 handlers are platform contributions. They attach through declared extension
@@ -174,5 +174,6 @@ behaviour.
 This contract does not define a concrete configuration class, formatter,
 redaction library, exporter API, context-propagation mechanism, component
 identifier, ProjectSpec field, manifest, or migration. Stage 06 owns the
-composition mechanics, while FT-04.05 owns exception-handling and log-once
-rules.
+composition mechanics, while the
+[exception ownership conventions](exception-ownership.md) own
+exception-handling and log-once rules.

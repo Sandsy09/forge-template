@@ -26,7 +26,10 @@ emit logs follow the
 emit through standard module loggers while the runtime entrypoint owns
 process-wide configuration. Runtime owners that read or write files follow
 the [path and resource ownership conventions](docs/paths-and-resources.md),
-which keep resource access free of process-working-directory assumptions.
+which keep resource access free of process-working-directory assumptions. The
+[exception ownership conventions](docs/exception-ownership.md) keep an
+owner's own exceptions catchable without a Forge import and require a failure
+to be handled, re-raised, or translated exactly once.
 
 ## Branching and pull requests
 

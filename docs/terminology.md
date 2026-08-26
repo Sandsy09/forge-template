@@ -87,6 +87,10 @@ event vocabulary owner-local and process configuration at the entrypoint.
 Runtime owners that read or write files follow the
 [path and resource ownership conventions](paths-and-resources.md), which keep
 path and resource access owner-local and free of implicit process context.
+Runtime owners that raise their own failures follow the
+[exception ownership conventions](exception-ownership.md), which keep
+exceptions catchable without a Forge import and require the runtime entrypoint
+to translate any escaped failure into a documented process outcome.
 
 ### Platform
 

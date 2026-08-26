@@ -79,8 +79,11 @@ owner-prefixed runtime inputs and explicit local dotenv behaviour, the
 owner-local events and one entrypoint-owned logging configuration, the
 [path and resource ownership conventions](docs/paths-and-resources.md) keep
 runtime path and resource access owner-local and free of implicit process
-context, and [docs/adr/](docs/adr/) records why significant decisions were
-made.
+context, the
+[exception ownership conventions](docs/exception-ownership.md) keep
+exceptions owner-local and require failures to be handled once rather than
+silently dropped or logged repeatedly, and [docs/adr/](docs/adr/) records why
+significant decisions were made.
 
 ## License
 
