@@ -64,10 +64,17 @@ The canonical
 remote references in repository-owned and generated workflows while retaining
 reviewed Renovate, Dependabot, and manual maintenance paths.
 
+The canonical [ProjectSpec protocol](../project-spec.md) defines strict JSON
+protocol v1 for effective generation requests, including provider-neutral
+metadata, Python support, component selections, provenance, and namespaced
+options.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
-It is not implemented; the existing Copier baseline remains operational until
-Stages 04–09 deliver the coordinated cutover.
+ProjectSpec protocol v1 is implemented, but discovery, composition, rendering,
+the stable engine facade, and CLI consumption are not; the existing Copier
+baseline remains operational until Stages 06–09 deliver the coordinated
+cutover.
 
 ## Structure
 

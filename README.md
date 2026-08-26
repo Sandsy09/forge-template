@@ -88,7 +88,9 @@ files out of version control without generating a mandatory scanner, the
 [supply-chain provenance contract](docs/supply-chain-provenance.md) defines
 desired SBOM and release-provenance behaviour without generating either yet,
 the [GitHub Action pinning policy](docs/github-action-pinning.md) keeps remote
-workflow dependencies immutable and maintainable, and
+workflow dependencies immutable and maintainable, the
+[ProjectSpec protocol](docs/project-spec.md) defines the strict, serialisable
+generation request for the future composition engine, and
 [docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License

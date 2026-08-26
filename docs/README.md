@@ -34,5 +34,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   criteria implementation must satisfy.
 - [github-action-pinning.md](github-action-pinning.md) — immutable remote
   workflow references and their reviewed automated or manual update paths.
+- [project-spec.md](project-spec.md) — strict ProjectSpec protocol v1,
+  effective selections, provenance, and schema boundaries for the future
+  composition engine.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

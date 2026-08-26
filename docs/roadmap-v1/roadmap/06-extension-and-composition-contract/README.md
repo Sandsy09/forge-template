@@ -4,7 +4,9 @@
 
 ### forge-template
 
-- **FT-06.01 — Design ProjectSpec schema**
+- [x] [**FT-06.01 — Design ProjectSpec schema**](../../../project-spec.md) —
+  protocol v1 and its executable models are defined by
+  [ADR 0023](../../../adr/0023-projectspec-protocol-v1.md).
 - **FT-06.02 — Define component manifest format**
 - **FT-06.03 — Define deterministic composition order**
 - **FT-06.04 — Define file conflict and override rules**

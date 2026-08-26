@@ -175,8 +175,9 @@ require its own ADR superseding this contract.
 [Python support policy](python-support.md) defines which CPython environments
 Forge supports and how that window advances. The canonical [Foundation
 scope](foundation-scope.md) defines what belongs in Foundation rather than an
-archetype, capability, or platform. The future ProjectSpec and composition
-enforcement are accepted by
+archetype, capability, or platform. The
+[ProjectSpec protocol](project-spec.md) now defines the effective generation
+request, while composition enforcement remains accepted future work under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md)
-and remain Stage 06 implementation work. This contract introduces no schema,
-rendering API, or component engine.
+and Stage 06. This guarantee contract itself introduces no rendering API or
+component engine.

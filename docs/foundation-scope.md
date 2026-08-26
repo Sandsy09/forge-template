@@ -180,9 +180,11 @@ change to this boundary requires a new accepted ADR that supersedes
 [ADR 0012](adr/0012-conservative-foundation-scope.md); the living reference may
 gain examples or clarifications that preserve the decision.
 
-Stage 06 owns component manifests, extension points, composition ordering, and
-file-conflict mechanics. This document assigns conceptual ownership but does
-not define those APIs or algorithms.
+The [ProjectSpec protocol](project-spec.md) now defines the effective
+generation request. The remaining Stage 06 work owns component manifests,
+extension points, composition ordering, and file-conflict mechanics. This
+document assigns conceptual ownership but does not define those APIs or
+algorithms.
 
 ## Current Library scaffold mapping
 
@@ -215,11 +217,11 @@ This scope contract does not decide:
   [structured-logging](structured-logging.md),
   [paths-and-resources](paths-and-resources.md), and
   [exception-ownership](exception-ownership.md) conventions;
-- the ProjectSpec schema, component manifest, extension points, ordering, or
-  conflict algorithms owned by Stage 06;
+- the component manifest, extension points, ordering, or conflict algorithms
+  owned by the remaining Stage 06 work;
 - the implementation details of the public-engine target accepted by
   [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
-  including its first package and protocol versions;
+  including its first supported package range and stable engine facade;
 - the identity of the second reference archetype; or
 - the concrete SBOM/attestation implementation and the exit criteria that
   must hold before it is built, owned by the
