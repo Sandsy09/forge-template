@@ -29,5 +29,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [secret-handling.md](secret-handling.md) — neutral secret-ignore
   safeguards, the enforced placeholder-only example, and the optional
   scanning boundary.
+- [supply-chain-provenance.md](supply-chain-provenance.md) — desired SBOM and
+  release-provenance behaviour, named reference tooling, and the exit
+  criteria implementation must satisfy.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

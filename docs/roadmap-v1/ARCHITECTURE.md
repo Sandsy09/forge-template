@@ -40,6 +40,10 @@ The [secret-handling safeguards](../secret-handling.md) keep secret-bearing
 files out of version control and enforce a placeholder-only tracked example,
 while leaving broader scanning as an optional capability or platform
 contribution.
+The [supply-chain provenance contract](../supply-chain-provenance.md) defines
+desired SBOM and release-provenance behaviour as a future capability and
+platform contribution, deferred until a generated-project release/publish
+path exists.
 
 ```text
 ┌─────────────────────────────┐

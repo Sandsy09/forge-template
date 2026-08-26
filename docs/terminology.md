@@ -68,7 +68,11 @@ archetypes. A project may select zero or more capabilities. Documentation,
 changelog support, release provenance, or an optional editor bridge are
 examples of concerns that can be modelled as capabilities when the composition
 engine exists. Editor-specific integration follows the canonical
-[editor integration strategy](editor-integration.md).
+[editor integration strategy](editor-integration.md). Release provenance is
+defined concretely by the
+[supply-chain provenance contract](supply-chain-provenance.md), which names
+CycloneDX and GitHub attestations as the capability's and platform's future
+reference tooling without generating either yet.
 
 A capability contributes content it owns or participates through an explicit
 extension point. It does not gain a general right to overwrite Foundation or

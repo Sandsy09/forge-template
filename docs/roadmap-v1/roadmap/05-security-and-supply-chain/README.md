@@ -10,7 +10,9 @@
 - [x] [**FT-05.04 — Add secret-handling safeguards**](../../../secret-handling.md)
   ([ADR 0020](../../../adr/0020-generated-project-secret-safeguards.md),
   [#30](https://github.com/Sandsy09/forge-template/issues/30))
-- **FT-05.05 — Plan SBOM and release provenance capability**
+- [x] [**FT-05.05 — Plan SBOM and release provenance capability**](../../../supply-chain-provenance.md)
+  ([ADR 0021](../../../adr/0021-defer-sbom-and-release-provenance.md),
+  [#31](https://github.com/Sandsy09/forge-template/issues/31))
 
 ### create-forge
 
@@ -29,6 +31,14 @@ GitHub push protection / secret scanning as the parallel platform
 contribution, without generating either or adding a Copier question. Unlike
 the Stage 04 decisions, this one changes generated output for new and
 updating projects alike.
+
+FT-05.05 defines desired SBOM behaviour and provenance/signing considerations
+for a future capability and GitHub platform contribution, naming CycloneDX,
+`actions/attest-build-provenance` with Sigstore, and PyPI Trusted Publishing
+as reference tooling. It changes no generated output: the generated project
+has no release or publish workflow to attach either to, and Stage 06's
+composition mechanics do not yet exist. Implementation stays deferred until
+the contract's four exit criteria hold.
 
 ## Stage completion rule
 

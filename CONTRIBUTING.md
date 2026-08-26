@@ -32,7 +32,10 @@ owner's own exceptions catchable without a Forge import and require a failure
 to be handled, re-raised, or translated exactly once. The
 [secret-handling safeguards](docs/secret-handling.md) keep secret-bearing
 files out of version control and enforce a placeholder-only `.env.example`
-without generating a mandatory scanner.
+without generating a mandatory scanner. The
+[supply-chain provenance contract](docs/supply-chain-provenance.md) defines
+the SBOM and release-provenance behaviour a future capability must satisfy,
+without generating either until a real release/publish path exists.
 
 ## Branching and pull requests
 

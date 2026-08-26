@@ -53,6 +53,12 @@ ignore rules Foundation already applies to `.env`, enforce a placeholder-only
 tracked `.env.example`, and define the properties an optional secret-scanning
 capability must have without generating one.
 
+The canonical
+[supply-chain provenance contract](../supply-chain-provenance.md) defines
+desired SBOM behaviour and provenance/signing considerations for a future
+capability and GitHub platform contribution, deferred until a generated-project
+release/publish path and Stage 06 composition mechanics both exist.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 It is not implemented; the existing Copier baseline remains operational until

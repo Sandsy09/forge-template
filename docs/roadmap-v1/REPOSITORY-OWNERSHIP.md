@@ -34,6 +34,10 @@ The [secret-handling safeguards](../secret-handling.md) define the neutral
 ignore and pre-commit safeguards Foundation applies to secret-bearing files
 and the boundary of the optional secret-scanning capability future
 composition may add.
+The [supply-chain provenance contract](../supply-chain-provenance.md) defines
+the SBOM and release-provenance behaviour a future capability and GitHub
+platform contribution must satisfy, and the exit criteria that must hold
+before either is generated.
 
 ## `forge-template`
 

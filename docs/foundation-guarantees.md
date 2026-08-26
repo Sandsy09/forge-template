@@ -163,6 +163,13 @@ Foundation does not currently promise:
 - one type checker or strictness level; or
 - one CI provider.
 
+The first item is load-bearing for a future capability, not incidental: the
+[supply-chain provenance contract](supply-chain-provenance.md)'s planned
+release-provenance attestation records who built a distribution artifact and
+where, but does not and cannot claim that artifact is independently
+rebuildable byte-for-byte. Raising reproducibility to a guarantee would
+require its own ADR superseding this contract.
+
 [Python support policy](python-support.md) defines which CPython environments
 Forge supports and how that window advances. The canonical [Foundation
 scope](foundation-scope.md) defines what belongs in Foundation rather than an
