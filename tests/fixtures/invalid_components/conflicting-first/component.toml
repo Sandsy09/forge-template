@@ -1,0 +1,13 @@
+manifest_version = 1
+id = "conflicting-first"
+name = "Conflicting First"
+description = "A capability that conflicts with conflicting-second."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = [{ id = "conflicting-second" }]
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

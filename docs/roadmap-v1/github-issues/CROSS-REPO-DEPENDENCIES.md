@@ -14,7 +14,7 @@ roadmap view.
 | [create-forge#44 / CF-04.01](https://github.com/Sandsy09/create-forge/issues/44) | [FT-00.03](https://github.com/Sandsy09/forge-template/issues/21) (complete), [create-forge#41 / CF-00.02](https://github.com/Sandsy09/create-forge/issues/41) (complete) |
 | [create-forge#46 / CF-06.01](https://github.com/Sandsy09/create-forge/issues/46) | [FT-06.01](https://github.com/Sandsy09/forge-template/issues/32) (complete), [FT-06.05](https://github.com/Sandsy09/forge-template/issues/36) (complete), [FT-06.07](https://github.com/Sandsy09/forge-template/issues/38) |
 | [create-forge#47 / CF-06.02](https://github.com/Sandsy09/create-forge/issues/47) | [FT-06.02](https://github.com/Sandsy09/forge-template/issues/33) (complete), [FT-06.07](https://github.com/Sandsy09/forge-template/issues/38) |
-| [create-forge#48 / CF-06.03](https://github.com/Sandsy09/create-forge/issues/48) | [FT-06.06](https://github.com/Sandsy09/forge-template/issues/37), [FT-06.07](https://github.com/Sandsy09/forge-template/issues/38) |
+| [create-forge#48 / CF-06.03](https://github.com/Sandsy09/create-forge/issues/48) | [FT-06.06](https://github.com/Sandsy09/forge-template/issues/37) (complete), [FT-06.07](https://github.com/Sandsy09/forge-template/issues/38) |
 | [create-forge#49 / CF-07.01](https://github.com/Sandsy09/create-forge/issues/49) | [FT-06.07](https://github.com/Sandsy09/forge-template/issues/38) |
 | [create-forge#50 / CF-07.04](https://github.com/Sandsy09/create-forge/issues/50) | [FT-06.07](https://github.com/Sandsy09/forge-template/issues/38) |
 | [create-forge#51 / CF-07.06](https://github.com/Sandsy09/create-forge/issues/51) | [FT-06.07](https://github.com/Sandsy09/forge-template/issues/38), [FT-07.05](https://github.com/Sandsy09/forge-template/issues/39) |

@@ -1,0 +1,140 @@
+{
+  "order": [
+    "library",
+    "changelog",
+    "coverage",
+    "documentation",
+    "github"
+  ],
+  "targets": {
+    ".coveragerc": {
+      "base": {
+        "component_id": "coverage",
+        "disposition": "create",
+        "extension_point": null,
+        "source_path": ".coveragerc"
+      },
+      "extensions": [],
+      "target": ".coveragerc"
+    },
+    "a-top.txt": {
+      "base": {
+        "component_id": "changelog",
+        "disposition": "create",
+        "extension_point": null,
+        "source_path": "a-top.txt"
+      },
+      "extensions": [],
+      "target": "a-top.txt"
+    },
+    "ci.yml": {
+      "base": {
+        "component_id": "github",
+        "disposition": "create",
+        "extension_point": null,
+        "source_path": "ci.yml.jinja"
+      },
+      "extensions": [
+        {
+          "component_id": "coverage",
+          "disposition": "extend",
+          "extension_point": "ci-steps",
+          "source_path": "extensions/ci-step.yml.jinja"
+        }
+      ],
+      "target": "ci.yml"
+    },
+    "mkdocs.yml": {
+      "base": {
+        "component_id": "documentation",
+        "disposition": "create",
+        "extension_point": null,
+        "source_path": "mkdocs.yml.jinja"
+      },
+      "extensions": [],
+      "target": "mkdocs.yml"
+    },
+    "nested/a-deep.txt": {
+      "base": {
+        "component_id": "changelog",
+        "disposition": "create",
+        "extension_point": null,
+        "source_path": "nested/a-deep.txt"
+      },
+      "extensions": [],
+      "target": "nested/a-deep.txt"
+    },
+    "pyproject.toml": {
+      "base": {
+        "component_id": "library",
+        "disposition": "create",
+        "extension_point": null,
+        "source_path": "pyproject.toml.jinja"
+      },
+      "extensions": [],
+      "target": "pyproject.toml"
+    },
+    "z-top.txt": {
+      "base": {
+        "component_id": "changelog",
+        "disposition": "create",
+        "extension_point": null,
+        "source_path": "z-top.txt"
+      },
+      "extensions": [],
+      "target": "z-top.txt"
+    }
+  },
+  "tree": {
+    ".coveragerc": "[run]\nbranch = true\n",
+    "a-top.txt": "top-level a\n",
+    "ci.yml": "name: CI",
+    "mkdocs.yml": "site_name: \"Example Project\"",
+    "nested/a-deep.txt": "nested a\n",
+    "pyproject.toml": "[project]\nname = \"example_project\"\nversion = \"0.2.0\"\n\n[build-system]\nbuild-backend = \"uv_build\"",
+    "z-top.txt": "top-level z\n"
+  },
+  "variables": {
+    "components": {
+      "archetype": "library",
+      "capabilities": [
+        "changelog",
+        "coverage",
+        "documentation"
+      ],
+      "platforms": [
+        "github"
+      ]
+    },
+    "options": {
+      "changelog": {},
+      "coverage": {},
+      "documentation": {},
+      "github": {
+        "organisation": "forge-example"
+      },
+      "library": {
+        "build_backend": "uv_build",
+        "initial_version": "0.2.0"
+      }
+    },
+    "project": {
+      "authors": [],
+      "description": "",
+      "licence": "mit",
+      "name": "Example Project",
+      "package_name": "example_project",
+      "repository_name": "example-project"
+    },
+    "python": {
+      "development": "3.13",
+      "minimum": "3.11",
+      "requires_python": ">=3.11",
+      "tested_versions": [
+        "3.11",
+        "3.12",
+        "3.13"
+      ]
+    }
+  }
+}

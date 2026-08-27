@@ -1,2 +1,6 @@
 [project]
-name = "{{ package_name }}"
+name = "{{ project.package_name }}"
+version = "{{ options.library.initial_version }}"
+
+[build-system]
+build-backend = "{{ options.library.build_backend }}"

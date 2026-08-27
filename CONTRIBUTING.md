@@ -126,6 +126,13 @@ and the render-check functions; see
 [src/forge_template](src/forge_template)). This is separate from validating
 the *scaffold* — see below.
 
+A change that intentionally moves the composition, file-conflict, or
+template-variable contracts' composed output should also regenerate the
+golden fixtures those contracts are checked against
+(`uv run pytest tests/test_composition_contract.py --update-goldens`) and
+review the diff — see
+[composition-fixtures.md](docs/composition-fixtures.md).
+
 ## Proposing a template change
 
 Anything under `template/` or `copier.yml` needs to actually render and pass
