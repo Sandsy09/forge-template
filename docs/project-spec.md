@@ -66,8 +66,9 @@ under that policy without duplicating a caller-supplied test matrix.
 `ComponentSelection` requires exactly one `archetype` and accepts zero or more
 `capabilities` and zero or more `platforms`. Component, profile, and policy
 identifiers use lower-case kebab-case and carry no requested version: normal
-discovery is constrained to the installed engine release, whose manifests
-will own component versions and compatibility.
+discovery is constrained to the installed engine release, whose
+[component manifests](component-manifests.md) own globally unique IDs,
+component versions, compatibility, dependencies, and conflicts.
 
 Capability and platform arrays are unique sets and serialise in lexical order.
 That canonical wire ordering is not composition ordering. FT-06.03 remains the
@@ -193,14 +194,16 @@ The second roadmap archetype remains deliberately unnamed:
 
 ## Compatibility and deferred work
 
-Protocol 1 is separate from the `forge-template` package version. A breaking
+Protocol 1 is separate from the `forge-template` package and component
+manifest versions. A breaking
 wire-format, core validation, or semantic change requires a new protocol;
 compatible additions may remain on protocol 1. Component-catalogue versions
 and option validity belong to the installed engine release and manifests.
 
 This issue does not define:
 
-- component manifest fields or catalogue discovery (FT-06.02);
+- component catalogue discovery or a stable discovery API (FT-06.07); the
+  [manifest field contract](component-manifests.md) is now defined;
 - composition order (FT-06.03);
 - file conflicts, ownership, or overrides (FT-06.04);
 - the recognised template-variable catalogue or structured option errors

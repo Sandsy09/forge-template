@@ -4,7 +4,10 @@ This document is the canonical vocabulary for Forge, its reference CLI, and
 future downstream integrations such as Blueprint. It defines conceptual
 boundaries and authority; the executable
 [ProjectSpec protocol](project-spec.md) now defines the generation-request
-schema without introducing a component engine or stable rendering API.
+schema and the
+[component manifest protocol](component-manifests.md) defines component
+metadata without introducing discovery, composition, or a stable rendering
+API.
 
 The public engine model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
@@ -144,8 +147,11 @@ kinds. Foundation is the mandatory baseline; profiles and organisation
 policies are inputs that select or constrain components, not components
 themselves.
 
-Component manifests, compatibility metadata, and composition behaviour remain
-Stage 06 work and do not exist in the v0.1.x implementation.
+The [component manifest protocol](component-manifests.md) now defines strict
+identity, display metadata, version, compatibility, owned-content,
+dependency, and conflict declarations for these units. Production manifests,
+discovery, ordering, collision behaviour, and rendering do not yet exist in
+the v0.1.x implementation.
 
 ### ProjectSpec
 
@@ -239,7 +245,7 @@ archetype.
 This terminology does not decide:
 
 - the stable ProjectSpec validation and engine API;
-- component manifest fields, ordering, merge, or collision algorithms;
+- component discovery, ordering, merge, or collision algorithms;
 - organisation-policy schema or error types;
 - the identity of the second reference archetype; or
 - the concrete engine package range and supported source-resolution cutover.

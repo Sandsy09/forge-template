@@ -38,7 +38,10 @@ the SBOM and release-provenance behaviour a future capability must satisfy,
 without generating either until a real release/publish path exists.
 The [ProjectSpec protocol](docs/project-spec.md) defines the strict,
 engine-owned generation request that future clients construct without taking
-ownership of template or composition validation.
+ownership of template or composition validation. The
+[component manifest protocol](docs/component-manifests.md) defines the strict
+TOML metadata, compatibility, owned resources, dependencies, and conflicts
+that future engine discovery will consume.
 
 ## Branching and pull requests
 

@@ -69,12 +69,17 @@ protocol v1 for effective generation requests, including provider-neutral
 metadata, Python support, component selections, provenance, and namespaced
 options.
 
+The canonical
+[component manifest protocol](../component-manifests.md) defines strict TOML
+protocol v1 for bundled component identity, compatibility, owned content,
+dependencies, and conflicts without migrating the current Library scaffold.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
-ProjectSpec protocol v1 is implemented, but discovery, composition, rendering,
-the stable engine facade, and CLI consumption are not; the existing Copier
-baseline remains operational until Stages 06–09 deliver the coordinated
-cutover.
+ProjectSpec and component manifest protocol v1 are implemented, but production
+manifests, discovery, composition, rendering, the stable engine facade, and CLI
+consumption are not; the existing Copier baseline remains operational until
+Stages 06–09 deliver the coordinated cutover.
 
 ## Structure
 

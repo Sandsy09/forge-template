@@ -37,5 +37,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [project-spec.md](project-spec.md) — strict ProjectSpec protocol v1,
   effective selections, provenance, and schema boundaries for the future
   composition engine.
+- [component-manifests.md](component-manifests.md) — strict TOML component
+  metadata, compatibility, content ownership, dependencies, and conflicts.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

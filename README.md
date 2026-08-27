@@ -90,7 +90,9 @@ desired SBOM and release-provenance behaviour without generating either yet,
 the [GitHub Action pinning policy](docs/github-action-pinning.md) keeps remote
 workflow dependencies immutable and maintainable, the
 [ProjectSpec protocol](docs/project-spec.md) defines the strict, serialisable
-generation request for the future composition engine, and
+generation request for the future composition engine, the
+[component manifest protocol](docs/component-manifests.md) defines strict
+bundled metadata and compatibility for its future component catalogue, and
 [docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License

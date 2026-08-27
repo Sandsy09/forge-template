@@ -1,0 +1,13 @@
+manifest_version = 1
+id = "github"
+name = "GitHub"
+description = "GitHub repository and workflow integration."
+kind = "platform"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
