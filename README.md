@@ -92,7 +92,9 @@ workflow dependencies immutable and maintainable, the
 [ProjectSpec protocol](docs/project-spec.md) defines the strict, serialisable
 generation request for the future composition engine, the
 [component manifest protocol](docs/component-manifests.md) defines strict
-bundled metadata and compatibility for its future component catalogue, and
+bundled metadata and compatibility for its future component catalogue, the
+[composition order contract](docs/composition-order.md) defines the
+deterministic order that future catalogue applies in, and
 [docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License

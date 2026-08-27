@@ -309,14 +309,12 @@ def test_manifest_set_requires_unique_ids_and_resolvable_matching_references() -
         validate_manifest_set((library, mismatched))
 
 
-def test_dependency_cycles_remain_representable_until_ordering_work() -> None:
+def test_manifest_set_rejects_dependency_cycles() -> None:
     first = _manifest("first", requires=({"id": "second"},))
     second = _manifest("second", requires=({"id": "first"},))
 
-    assert [manifest.id for manifest in validate_manifest_set((second, first))] == [
-        "first",
-        "second",
-    ]
+    with pytest.raises(ValueError, match="cycle"):
+        validate_manifest_set((second, first))
 
 
 def test_valid_project_spec_selection_uses_manifest_contract() -> None:

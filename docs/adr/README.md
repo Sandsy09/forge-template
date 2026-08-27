@@ -27,6 +27,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0022 — Pin GitHub Actions by full commit SHA](0022-pin-github-actions-by-full-commit-sha.md)
 - [0023 — Define strict ProjectSpec protocol v1](0023-projectspec-protocol-v1.md)
 - [0024 — Define strict bundled component manifest protocol v1](0024-component-manifest-protocol-v1.md)
+- [0025 — Define deterministic composition order](0025-deterministic-composition-order.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

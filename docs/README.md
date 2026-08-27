@@ -39,5 +39,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   composition engine.
 - [component-manifests.md](component-manifests.md) — strict TOML component
   metadata, compatibility, content ownership, dependencies, and conflicts.
+- [composition-order.md](composition-order.md) — deterministic tier and
+  within-tier application order, cross-tier dependency handling, cycle
+  rejection, and content-path ordering for the future composition engine.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

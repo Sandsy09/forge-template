@@ -11,7 +11,10 @@
   strict TOML protocol v1, resource loading, and provisional compatibility
   validation are defined by
   [ADR 0024](../../../adr/0024-component-manifest-protocol-v1.md).
-- **FT-06.03 — Define deterministic composition order**
+- [x] [**FT-06.03 — Define deterministic composition order**](../../../composition-order.md) —
+  tier and within-tier order, cross-tier dependency handling, and
+  catalogue-wide cycle rejection are defined by
+  [ADR 0025](../../../adr/0025-deterministic-composition-order.md).
 - **FT-06.04 — Define file conflict and override rules**
 - **FT-06.05 — Design template variable contract**
 - **FT-06.06 — Create composition contract tests**

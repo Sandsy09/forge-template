@@ -1,0 +1,13 @@
+manifest_version = 1
+id = "changelog"
+name = "Changelog"
+description = "Automated changelog generation."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
