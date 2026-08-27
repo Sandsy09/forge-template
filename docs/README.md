@@ -52,5 +52,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   fixtures, invalid-catalogue scenarios, and the determinism guarantee they
   prove for the composition, file-conflict, and template-variable contracts
   together.
+- [template-engine-api.md](template-engine-api.md) — supported typed discovery,
+  strict ProjectSpec validation, deterministic planning, in-memory rendering,
+  extension markers, and structured engine failures.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

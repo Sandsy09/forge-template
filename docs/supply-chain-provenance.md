@@ -112,12 +112,12 @@ Two structural facts, not a preference, block implementation today:
 - the generated project has no release or publish workflow at all — see
   [Current Library evidence](#current-library-evidence) — so SBOM and
   provenance generation would attach to nothing; and
-- [Stage 06's composition mechanics](terminology.md#component) do not exist
-  yet, so there is no way to express this as an optional capability plus its
-  platform contribution rather than an unconditional template change.
+- the Stage 06 engine now supplies composition mechanics, but no production
+  capability and platform manifests yet express this concern; that migration
+  must not be folded into the monolithic template as an unconditional change.
 
-Generating either now, ahead of a real release event and real composition
-mechanics, would produce exactly the failure [ADR
+Generating either now, ahead of a real release event and production component
+migration, would produce exactly the failure [ADR
 0008](adr/0008-remove-make-task-runner.md) already removed once: an untested
 conditional guarding a workflow nobody runs.
 
@@ -133,21 +133,24 @@ attest anything, and generates no SBOM.
 
 Implementation should not begin until all of the following hold:
 
-1. a generated-project release or publish path exists and has an identified
-   owner;
-2. Stage 06 composition can express an optional capability plus its platform
-   contribution, so this need not become an unconditional template change;
-3. the result is testable by this repository's own combo suite, not merely
-   rendered and inspected by hand; and
-4. any elevated permissions it needs stay job-scoped, per the [permissions
-   consequence](#provenance-and-signing-considerations) above.
+- [ ] A generated-project release or publish path exists and has an identified
+  owner.
+- [x] Stage 06 composition can express an optional capability plus its
+  platform contribution, so this need not become an unconditional template
+  change.
+- [ ] The result is testable by this repository's own combo suite, not merely
+  rendered and inspected by hand.
+- [ ] Any elevated permissions it needs stay job-scoped, per the [permissions
+  consequence](#provenance-and-signing-considerations) above.
 
 ## Deferred implementation mechanics
 
 This contract adds no Copier question, no CI job, no runtime dependency, no
 committed SBOM file, and no format lock-in beyond the named references above.
-Stage 06 owns the composition mechanics that would let a future capability and
-platform contribution be selected and generated.
+The Stage 06 engine supplies the composition mechanics that let a future
+capability and platform contribution be selected and rendered in memory;
+Stage 08-style production manifests and CLI filesystem orchestration are still
+required before generation.
 [`create-forge`](https://github.com/Sandsy09/create-forge) owns its own
 release posture independently, via its own CF-05.x issues; this contract
 governs generated projects only.

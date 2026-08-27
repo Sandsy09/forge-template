@@ -28,7 +28,10 @@
   golden composed-output fixtures, on-disk invalid-catalogue scenarios, and
   the determinism guarantee are defined by
   [ADR 0028](../../../adr/0028-composition-contract-fixtures.md).
-- **FT-06.07 — Expose stable template-engine API**
+- [x] [**FT-06.07 — Expose stable template-engine API**](../../../template-engine-api.md) —
+  the typed discovery, validation, planning, rendering, and structured-error
+  facade is defined by
+  [ADR 0029](../../../adr/0029-stable-template-engine-api.md).
 
 ### create-forge
 
@@ -38,7 +41,7 @@
 
 ## Stage completion rule
 
-- [ ] Repo-local issues are complete or explicitly deferred.
-- [ ] Cross-repository blockers are resolved.
-- [ ] Public contracts changed by this stage are documented/versioned.
-- [ ] No implementation concern is duplicated across repositories.
+- [x] Repo-local issues are complete or explicitly deferred.
+- [x] Cross-repository blockers are resolved.
+- [x] Public contracts changed by this stage are documented/versioned.
+- [x] No implementation concern is duplicated across repositories.

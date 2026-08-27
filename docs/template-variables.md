@@ -12,9 +12,10 @@ contract, adopted by [ADR
 ## Scope
 
 This contract defines the rendered variable namespace and the component
-option vocabulary only. It does not render anything, define the in-file
-extension-point marker syntax, or expose a stable engine error surface —
-that is [FT-06.07](https://github.com/Sandsy09/forge-template/issues/38). It
+option vocabulary. The
+[stable template-engine API](template-engine-api.md) consumes the namespace,
+defines the in-file extension-marker syntax, renders with strict undefined
+handling, and exposes structured failures. This contract
 does not define output targets, dispositions, or collision safety — that is
 [file-conflicts.md](file-conflicts.md). It does not define
 organisation-policy defaults or constraints — that is Stage 09.
@@ -156,34 +157,29 @@ operation when:
 - a supplied value's type does not match its declaration; or
 - a supplied value is outside its declared `choices`.
 
-Every failure raises a plain `ValueError` naming the component, the option,
-and the rule violated — matching
+The low-level helper raises a plain `ValueError` naming the component, option,
+and violated rule — matching
 [`composition.py`](../src/forge_template/composition.py) and
-[`file_conflicts.py`](../src/forge_template/file_conflicts.py)'s existing
-error convention. A structured, machine-readable engine error type remains
-[FT-06.07](https://github.com/Sandsy09/forge-template/issues/38) work.
+[`file_conflicts.py`](../src/forge_template/file_conflicts.py)'s internal error
+convention. The [stable API](template-engine-api.md#structured-failures)
+translates expected option failures into a machine-readable public error.
 
-This contract also states, normatively, what FT-06.07's renderer must do
-with an *undefined* variable reference — one naming a namespace or option
+An *undefined* variable reference — one naming a namespace or option
 this contract does not resolve at all, as opposed to a value that resolved
-but failed validation: it must fail, naming the reference, rather than
-silently render as an empty string. Recording that rule now, ahead of the
-renderer that must satisfy it, is what keeps it from being quietly skipped
-when FT-06.07 is implemented.
+but failed validation — fails and names the reference rather than silently
+rendering as an empty string. The public renderer enforces this with Jinja
+`StrictUndefined`.
 
 ## Deferred work
 
-This contract does not define:
+Composed-output evidence is defined by
+[composition-fixtures.md](composition-fixtures.md), and discovery, rendering,
+extension-marker syntax, and structured errors by the
+[stable template-engine API](template-engine-api.md). This variable contract
+does not define:
 
-- full composed-output fixtures — now defined by
-  [composition-fixtures.md](composition-fixtures.md)
-  ([FT-06.06](https://github.com/Sandsy09/forge-template/issues/37));
-- component discovery, a stable rendering API, the in-file marker syntax an
-  extension point splices into, or structured engine errors
-  ([FT-06.07](https://github.com/Sandsy09/forge-template/issues/38)); or
 - organisation-policy resolution (Stage 09).
 
-Until those coordinated contracts are complete, v0.1.x continues to pass its
-plain answer mapping directly to Copier, using its own flat `copier.yml`
-variable names unchanged. No generated project depends on
+The current CLI continues to pass its plain answer mapping directly to Copier,
+using its own flat `copier.yml` variable names unchanged. No generated project depends on
 `forge_template.template_variables` during normal development or runtime.

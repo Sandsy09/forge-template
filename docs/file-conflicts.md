@@ -12,11 +12,11 @@ contract, adopted by [ADR
 
 ## Scope
 
-This contract defines output targets, dispositions, and collision safety
-only. It does not perform file operations, render or splice content, define
-the in-file syntax an extension point uses, or expose a stable engine error
-surface — that is
-[FT-06.07](https://github.com/Sandsy09/forge-template/issues/38). The
+This contract defines output targets, dispositions, and collision safety.
+The [stable template-engine API](template-engine-api.md) uses it to plan and
+render in memory, defines extension-marker syntax, and translates expected
+collisions into structured public failures. Destination file operations remain
+outside the engine. The
 option-schema and template-variable vocabulary is now defined by
 [template-variables.md](template-variables.md), delivered through
 [FT-06.05](https://github.com/Sandsy09/forge-template/issues/36). It does not
@@ -158,21 +158,17 @@ authority exists implicitly today.
 
 ## Deferred work
 
-This contract does not define:
+Option validation is defined by
+[template-variables.md](template-variables.md), composed evidence by
+[composition-fixtures.md](composition-fixtures.md), and public planning,
+rendering, marker syntax, and structured failures by the
+[stable template-engine API](template-engine-api.md). This conflict contract
+does not define:
 
-- structured option validation errors (FT-06.07); the recognised
-  template-variable catalogue is now defined by
-  [template-variables.md](template-variables.md)
-  ([FT-06.05](https://github.com/Sandsy09/forge-template/issues/36));
-- full composed-output fixtures — now defined by
-  [composition-fixtures.md](composition-fixtures.md)
-  ([FT-06.06](https://github.com/Sandsy09/forge-template/issues/37));
-- component discovery, a stable rendering API, the in-file marker syntax an
-  extension point splices into, or structured engine errors
-  ([FT-06.07](https://github.com/Sandsy09/forge-template/issues/38)); or
+- destination writes or client filesystem conflict handling; or
 - organisation-policy resolution, including any real `override` grant
   (Stage 09).
 
-Until those coordinated contracts are complete, v0.1.x continues to pass its
-plain answer mapping directly to Copier. No generated project depends on
-`forge_template.file_conflicts` during normal development or runtime.
+The current CLI continues to pass its plain answer mapping directly to Copier.
+No generated project depends on `forge_template.file_conflicts` during normal
+development or runtime.

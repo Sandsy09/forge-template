@@ -49,7 +49,10 @@ target, disposition, and collision-safety rules that composed selection
 resolves against. The
 [template variable contract](docs/template-variables.md) defines the rendered
 variable namespace and the component option vocabulary declared through
-`options_schema`.
+`options_schema`. The
+[stable template-engine API](docs/template-engine-api.md) is the supported
+top-level client boundary; low-level composition helpers are implementation
+details.
 
 ## Branching and pull requests
 
@@ -218,10 +221,13 @@ manifest changes.
 ## Releasing
 
 Untagged commits on `main` are invisible to `copier update` — a project
-scaffolded from `main` right now will never see them. Cutting a release is a
-deliberate act: run `.github/workflows/release.yml` via the Actions tab
-(`workflow_dispatch`), pick the version bump, and use `dry_run: true` first
-if you want to see the computed tag before it's pushed.
+scaffolded from `main` right now will never see them. Before a release, bump
+`project.version` in `pyproject.toml` through a reviewed pull request. The
+manual `.github/workflows/release.yml` derives `v<project-version>` from that
+single source, rejects an existing or non-increasing tag, and has no separate
+bump selector. Run it from the Actions tab (`workflow_dispatch`), using
+`dry_run: true` first when you want to inspect the derived tag without pushing
+it.
 
 If your change renamed or deleted a file under `template/`, the workflow
 warns if no `_migrations` block covers it — existing projects would otherwise

@@ -184,10 +184,12 @@ The [ProjectSpec protocol](project-spec.md), [component manifest
 protocol](component-manifests.md), [composition order](composition-order.md),
 and [file conflict and override rules](file-conflicts.md) now define the
 effective generation request, component metadata and extension points,
-deterministic application order, and collision safety. The remaining Stage 06
-work owns the option-schema and template-variable vocabulary, composition
-fixtures, and a stable discovery and rendering API. This document assigns
-conceptual ownership but does not define those remaining APIs or algorithms.
+deterministic application order, and collision safety. The
+[template variable contract](template-variables.md),
+[composition fixtures](composition-fixtures.md), and
+[stable template-engine API](template-engine-api.md) complete the Stage 06
+implementation boundary. This document assigns conceptual ownership but does
+not duplicate those APIs or algorithms.
 
 ## Current Library scaffold mapping
 
@@ -220,15 +222,10 @@ This scope contract does not decide:
   [structured-logging](structured-logging.md),
   [paths-and-resources](paths-and-resources.md), and
   [exception-ownership](exception-ownership.md) conventions;
-- the option-schema and template-variable vocabulary, composition fixtures, or
-  the stable discovery and rendering API owned by the remaining Stage 06 work
-  — the component manifest, extension-point, ordering, and conflict contracts
-  are now defined by [component-manifests.md](component-manifests.md),
-  [composition-order.md](composition-order.md), and
-  [file-conflicts.md](file-conflicts.md);
-- the implementation details of the public-engine target accepted by
-  [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
-  including its first supported package range and stable engine facade;
+- client construction, destination orchestration, and the first supported
+  `create-forge` package range for the
+  [stable template-engine API](template-engine-api.md), under
+  [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md);
 - the identity of the second reference archetype; or
 - the concrete SBOM/attestation implementation and the exit criteria that
   must hold before it is built, owned by the

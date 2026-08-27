@@ -1,11 +1,12 @@
 """Output targets, dispositions, and collision safety for composed output.
 
-This module decides, for a deterministic
+This low-level module decides, for a deterministic
 :func:`forge_template.composition.composition_plan`, what project-relative
 target each owned content path produces and what happens when more than one
-component's content maps to the same target. It performs no file operations,
-renders and splices no content, and exposes no stable engine error surface;
-those remain later Stage 06 and FT-06.07 work. See docs/file-conflicts.md.
+component's content maps to the same target. It performs no file operations
+and renders or splices no content; the supported facade in
+``forge_template.engine`` composes it with those responsibilities and
+structured errors. See docs/file-conflicts.md.
 
 Composition order decides *when* a component applies; this module decides
 *what happens* when two components' output collides. Being later in

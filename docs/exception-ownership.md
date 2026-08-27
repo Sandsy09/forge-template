@@ -141,9 +141,9 @@ carries no compatibility promise.
 
 This contract governs exceptions raised by generated-project runtime code. The
 errors `forge-template` itself raises while validating a generation request
-and composing a project are a distinct surface, owned by Stage 06's
-[FT-06.07](https://github.com/Sandsy09/forge-template/issues/38) and listed
-under this repository's
+and composing a project are the distinct
+[stable template-engine error surface](template-engine-api.md#structured-failures),
+listed under this repository's
 [structured engine errors and generated-project validation](roadmap-v1/REPOSITORY-OWNERSHIP.md)
 ownership. A generated project never catches an engine error at runtime, and
 the engine never raises a generated project's exception types at generation

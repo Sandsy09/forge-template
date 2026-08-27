@@ -30,7 +30,7 @@ Separate because Copier resolves template versions from PEP440 git tags here.
 forge-template/
 ├── copier.yml              Question schema. MUST be at root.
 ├── pyproject.toml          This repo's OWN tooling — NOT part of the scaffold
-├── src/forge_template/     Repository checks plus future-engine contract models
+├── src/forge_template/     Repository checks plus the public template engine
 ├── tests/                  pytest suite: schema, ADRs, combos (slow), update (slow)
 ├── docs/adr/               Why past decisions were made (Nygard-format ADRs)
 ├── scripts/
@@ -46,7 +46,7 @@ Nothing inside `template/` describes the template itself. `copier.yml`,
 root and are excluded via `_subdirectory: template`. `src/forge_template` is
 not scaffold code — it holds the checks (`schema.py`, `adr.py`, `render.py`)
 that both `poe check` and `tests/test_combos.py`/`test_update.py` call, plus the
-strict future-engine [ProjectSpec protocol](docs/project-spec.md) models in
+strict [ProjectSpec protocol](docs/project-spec.md) models in
 `project_spec.py`,
 [component manifest protocol](docs/component-manifests.md) models and loader
 in `component_manifest.py`,
@@ -55,22 +55,26 @@ in `composition.py`,
 [file conflict and override rules](docs/file-conflicts.md) output target and
 collision resolution in `file_conflicts.py`, and the
 [template variable contract](docs/template-variables.md) rendered namespace
-and option-schema vocabulary in `template_variables.py`. These contracts are
-not yet consumed by the v0.1.x direct-Copier path; see
+and option-schema vocabulary in `template_variables.py`. The supported
+[template-engine API](docs/template-engine-api.md) in `engine.py` exposes
+package-bound discovery, strict validation, deterministic planning, in-memory
+rendering, and structured failures from the top-level package. The production
+catalogue is deliberately empty until Stage 08, and these contracts are not
+yet consumed by the direct-Copier path; see
 [#5](https://github.com/Sandsy09/forge-template/issues/5), done,
 [#32](https://github.com/Sandsy09/forge-template/issues/32),
 [#33](https://github.com/Sandsy09/forge-template/issues/33),
 [#34](https://github.com/Sandsy09/forge-template/issues/34),
 [#35](https://github.com/Sandsy09/forge-template/issues/35),
 [#36](https://github.com/Sandsy09/forge-template/issues/36), and
-[#37](https://github.com/Sandsy09/forge-template/issues/37). The composition,
-file-conflict, and template-variable contracts are proven to compose into one
-deterministic artefact by
+[#37](https://github.com/Sandsy09/forge-template/issues/37), and
+[#38](https://github.com/Sandsy09/forge-template/issues/38). The composition,
+file-conflict, template-variable, and rendering contracts are proven to
+compose into one deterministic artefact by
 [composition-fixtures.md](docs/composition-fixtures.md)'s golden fixtures,
-exercised through a test-only helper
-(`tests/composition_contract.py`) rather than a new `src/forge_template`
-module — that stable facade remains
-[#38](https://github.com/Sandsy09/forge-template/issues/38) work.
+exercised through the public facade with a private fixture-catalogue override.
+Never expose that override or accept arbitrary catalogue roots in the public
+API.
 
 ## The question schema
 
@@ -248,16 +252,18 @@ shellcheck steps) — see backlog item 1, done.
 Working: library archetype, all four combos green locally and in CI, update
 merge validated, root and template `.gitattributes` both in place, no
 byte-empty template files remain, `task_runner`/`make` removed (it was the
-one untested, 100%-broken conditional — see Deferred). **`v0.1.0` is tagged
-(annotated, via `release.yml`) and pushed to `origin`** — the CLI can
-scaffold from this repo. Root repo hygiene (backlog item 1) is done: root
+one untested, 100%-broken conditional — see Deferred). **`v0.1.1` is the
+latest tagged Copier template** — the CLI can scaffold from this repo. The
+root project version is `0.2.0`, the first stable engine compatibility line,
+but remains untagged until a deliberate release. Root repo hygiene is done:
+root
 `pyproject.toml`, `.pre-commit-config.yaml`, and real content for `LICENSE`,
 `README.md`, `CONTRIBUTING.md`, `SECURITY.md` all exist; `src/forge_template`
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` (backlog item 1, done) holds nine ADRs recording the rationale
-behind decisions already made, checked for internal consistency by
+`docs/adr/` holds contiguous ADRs through 0029 recording the rationale behind
+decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
 `src/forge_template/render.py` and run in parallel via `pytest-xdist` (`poe
@@ -267,20 +273,22 @@ done. `copier.yml` also gained two schema checks issue #5 asked for:
 vice versa) and `check_conditional_filenames` (every `{% if %}name{% endif %}`
 path renders to a valid filename or empty, never something in between).
 
-## Backlog, in order
+## Roadmap work
 
-**1. Archetype two** ([#4](https://github.com/Sandsy09/forge-template/issues/4)).
-Extract shared files into a common location, add the new archetype's own
-directory. **This is the `_migrations` moment** — plan it before writing any
-code, and keep the library archetype's paths stable if possible. Candidates
-in rough order of usefulness: `cli`, `service` (FastAPI + Docker), `pipeline`.
+The [live issue index](docs/roadmap-v1/github-issues/forge-template/ISSUE-INDEX.md)
+is the source of truth for roadmap order and blockers. Stage 08 will migrate
+the current Library scaffold into the empty production component catalogue,
+select and define the deliberately unnamed second archetype, and then validate
+parity through repurposed [#4](https://github.com/Sandsy09/forge-template/issues/4).
+That migration is the `_migrations` moment: plan it before moving template
+paths and keep Library paths stable where possible.
 
 Also open, not yet scheduled: [#1](https://github.com/Sandsy09/forge-template/issues/1)
 (reintroduce `make`, see Deferred below), [#6](https://github.com/Sandsy09/forge-template/issues/6)
 (Markdown linter in the pre-commit gate), [#7](https://github.com/Sandsy09/forge-template/issues/7)
 (split this file into invariants + agent guidance), [#8](https://github.com/Sandsy09/forge-template/issues/8)
-(declare `pyyaml`/`jinja2`/`copier` as real `[project] dependencies`, not just
-dev/test-group ones).
+(finish auditing which repository helpers require shipped runtime
+dependencies rather than dev/test-group entries).
 
 ## Known limitation, documented not fixed
 

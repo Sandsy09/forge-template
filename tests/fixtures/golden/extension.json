@@ -6,85 +6,29 @@
   ],
   "targets": {
     ".coveragerc": {
-      "base": {
-        "component_id": "coverage",
-        "disposition": "create",
-        "extension_point": null,
-        "source_path": ".coveragerc"
-      },
       "extensions": [],
+      "owner_component_id": "coverage",
       "target": ".coveragerc"
     },
     "ci.yml": {
-      "base": {
-        "component_id": "github",
-        "disposition": "create",
-        "extension_point": null,
-        "source_path": "ci.yml.jinja"
-      },
       "extensions": [
         {
           "component_id": "coverage",
-          "disposition": "extend",
-          "extension_point": "ci-steps",
-          "source_path": "extensions/ci-step.yml.jinja"
+          "extension_point": "ci-steps"
         }
       ],
+      "owner_component_id": "github",
       "target": "ci.yml"
     },
     "pyproject.toml": {
-      "base": {
-        "component_id": "library",
-        "disposition": "create",
-        "extension_point": null,
-        "source_path": "pyproject.toml.jinja"
-      },
       "extensions": [],
+      "owner_component_id": "library",
       "target": "pyproject.toml"
     }
   },
   "tree": {
     ".coveragerc": "[run]\nbranch = true\n",
-    "ci.yml": "name: CI",
-    "pyproject.toml": "[project]\nname = \"example_project\"\nversion = \"0.1.0\"\n\n[build-system]\nbuild-backend = \"hatchling\""
-  },
-  "variables": {
-    "components": {
-      "archetype": "library",
-      "capabilities": [
-        "coverage"
-      ],
-      "platforms": [
-        "github"
-      ]
-    },
-    "options": {
-      "coverage": {},
-      "github": {
-        "organisation": "forge-example"
-      },
-      "library": {
-        "build_backend": "hatchling",
-        "initial_version": "0.1.0"
-      }
-    },
-    "project": {
-      "authors": [],
-      "description": "",
-      "licence": "mit",
-      "name": "Example Project",
-      "package_name": "example_project",
-      "repository_name": "example-project"
-    },
-    "python": {
-      "development": "3.13",
-      "minimum": "3.11",
-      "requires_python": ">=3.11",
-      "tested_versions": [
-        "3.11",
-        "3.12",
-        "3.13"
-      ]
-    }
+    "ci.yml": "name: CI\njobs:\n  checks:\n    steps:\n      - name: Coverage\n        run: echo coverage\n",
+    "pyproject.toml": "[project]\nname = \"example_project\"\nversion = \"0.1.0\"\n\n[build-system]\nbuild-backend = \"hatchling\"\n"
   }
 }
