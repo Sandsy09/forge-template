@@ -1,44 +1,19 @@
-"""Test-only aggregation of the composition, file-conflict, and
-template-variable contracts into one composed artefact.
+"""Golden-fixture scenarios exercised through the public engine facade.
 
-This module is not part of ``forge_template``'s public surface: it exists so
-``tests/test_composition_contract.py`` can produce one golden-comparable
-artefact per ProjectSpec/catalogue scenario without ``src/forge_template``
-gaining a rendering entry point of its own. Exposing a stable, discoverable
-composition/rendering facade remains FT-06.07
-(https://github.com/Sandsy09/forge-template/issues/38) work; this helper's
-``compose`` is deliberately not exported from ``forge_template`` so that
-ownership boundary stays intact.
-
-Rendering here covers a target's *base* contribution only -- the component
-that owns it. Extension-point contributions are recorded in the composed
-plan (see ``resolve_output_plan``) but never spliced into a base's rendered
-text, because the in-file marker syntax an extension point splices into is
-also FT-06.07 work (docs/file-conflicts.md, docs/composition-order.md). The
-Jinja environment uses ``StrictUndefined`` because
-docs/template-variables.md states, normatively, that an undefined
-template-variable reference must fail rather than silently render empty.
+The fixture-root override remains private and test-only; production discovery
+always reads the installed package catalogue.
 """
 
 from __future__ import annotations
 
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Any
 
-from jinja2 import Environment, StrictUndefined
-
-from forge_template.component_manifest import ComponentManifest, load_component_manifest
-from forge_template.composition import composition_plan
-from forge_template.file_conflicts import TEMPLATE_SUFFIX, resolve_output_plan
+import forge_template.engine as engine_module
+from forge_template import render_project
 from forge_template.project_spec import ProjectSpec
-from forge_template.template_variables import (
-    load_option_schema,
-    resolve_template_variables,
-)
 
 FIXTURES = Path(__file__).parent / "fixtures" / "component_manifests"
-
-_JINJA_ENV = Environment(undefined=StrictUndefined)
 
 
 def project_spec(
@@ -73,57 +48,35 @@ def project_spec(
     )
 
 
-def _content_file(
-    manifest_path: Path, manifest: ComponentManifest, source_path: str
-) -> Path:
-    """Resolve one owned content-relative path to its real file on disk."""
-    component_root = manifest_path.parent.resolve(strict=True)
-    relative = PurePosixPath(manifest.content_root) / PurePosixPath(source_path)
-    return (component_root / Path(*relative.parts)).resolve(strict=True)
-
-
 def compose(spec: ProjectSpec, manifest_paths: dict[str, Path]) -> dict[str, Any]:
     """Return the full composed artefact for spec over manifest_paths.
 
-    Chains ``composition_plan`` -> ``resolve_output_plan`` ->
-    ``resolve_template_variables``, then renders each output target's base
-    contribution. The result is plain, JSON-native data (no tuples), so it
-    compares directly against a golden fixture loaded with ``json.loads``.
+    Calls the supported ``render_project`` facade. The private fixture-root
+    seam is restored even on failure, and the result is converted to plain
+    JSON-native data for comparison with the checked-in goldens.
     """
-    manifests = {
-        identifier: load_component_manifest(path)
-        for identifier, path in manifest_paths.items()
-    }
-    plan = composition_plan(spec, manifest_paths.values())
-    output_files = resolve_output_plan(plan)
+    roots = {path.parent.parent for path in manifest_paths.values()}
+    if len(roots) != 1:
+        msg = "one golden scenario must use exactly one fixture catalogue"
+        raise ValueError(msg)
 
-    schemas = {
-        identifier: load_option_schema(manifest_paths[identifier], manifest)
-        for identifier, manifest in manifests.items()
-    }
-    variables = resolve_template_variables(spec, schemas)
-    context = variables.as_context()
-
-    tree: dict[str, str] = {}
-    for output_file in output_files:
-        component_id = output_file.base.component_id
-        source_path = output_file.base.source_path
-        source = _content_file(
-            manifest_paths[component_id], manifests[component_id], source_path
-        )
-        text = source.read_text(encoding="utf-8")
-        if source_path.endswith(TEMPLATE_SUFFIX):
-            text = _JINJA_ENV.from_string(text).render(**context)
-        tree[output_file.target] = text
+    previous = engine_module._CATALOGUE_ROOT_OVERRIDE
+    engine_module._CATALOGUE_ROOT_OVERRIDE = roots.pop()
+    try:
+        rendered = render_project(spec)
+    finally:
+        engine_module._CATALOGUE_ROOT_OVERRIDE = previous
 
     return {
-        "order": [placement.manifest.id for placement in plan],
+        "order": list(rendered.plan.component_order),
         "targets": {
-            output_file.target: output_file.model_dump(mode="json")
-            for output_file in output_files
+            planned_file.target: planned_file.model_dump(mode="json")
+            for planned_file in rendered.plan.files
         },
-        "variables": context,
-        "tree": tree,
+        "tree": {
+            rendered_file.target: rendered_file.content.decode("utf-8")
+            for rendered_file in rendered.files
+        },
     }
 
 

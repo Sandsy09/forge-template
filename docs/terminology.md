@@ -6,13 +6,14 @@ boundaries and authority; the executable
 [ProjectSpec protocol](project-spec.md) now defines the generation-request
 schema and the
 [component manifest protocol](component-manifests.md) defines component
-metadata without introducing discovery, composition, or a stable rendering
-API.
+metadata. The [stable template-engine API](template-engine-api.md) provides
+package-bound discovery, validation, planning, and in-memory rendering.
 
-The public engine model is the accepted target under
+The public engine model is accepted and its `forge-template` side is
+implemented under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
-but it is not implemented. Where a term describes that future contract, it is
-marked accordingly.
+while CLI consumption and production components remain later work. Where a
+term describes an unimplemented layer, it is marked accordingly.
 
 ## Ecosystem terms
 
@@ -141,8 +142,8 @@ validation errors, and safe extension mechanisms remain owned by Stage 09.
 
 ### Component
 
-A component is a future machine-discoverable, composable unit in the accepted
-public-engine target. Archetypes, capabilities, and platforms are component
+A component is a machine-discoverable, composable unit in the accepted public
+engine. Archetypes, capabilities, and platforms are component
 kinds. Foundation is the mandatory baseline; profiles and organisation
 policies are inputs that select or constrain components, not components
 themselves.
@@ -152,15 +153,16 @@ identity, display metadata, version, compatibility, owned-content,
 dependency, and conflict declarations for these units;
 [composition order](composition-order.md) now defines the deterministic
 order a validated selection of them applies in; and
-[template-variables.md](template-variables.md) now defines the option
-vocabulary a component may declare through its manifest's `options_schema`.
-Production manifests, discovery, collision behaviour, and rendering do not
-yet exist in the v0.1.x implementation.
+[template-variables.md](template-variables.md) defines the option vocabulary a
+component may declare through its manifest's `options_schema`. The
+[stable template-engine API](template-engine-api.md) implements package-bound
+discovery, collision-checked planning, and rendering. The production catalogue
+remains empty until Stage 08 migrates Library.
 
 ### ProjectSpec
 
 ProjectSpec is the strict, serialisable description of an effective
-project-generation request in the accepted public-engine target. Its
+project-generation request consumed by the public engine. Its
 [protocol v1 schema](project-spec.md) carries provider-neutral project
 metadata, Python support, exactly one archetype, zero or more capabilities and
 platforms, optional profile/policy provenance, and namespaced component
@@ -170,8 +172,9 @@ against, are now defined by
 [template-variables.md](template-variables.md).
 
 The executable schema is owned by `forge-template`; `create-forge` and future
-clients construct it. The current v0.1.x path does not consume it, and the
-stable validation/rendering API remains FT-06.07 work under the ownership and
+clients construct it. The [stable template-engine API](template-engine-api.md)
+now parses and validates protocol v1 and renders a validated selection in
+memory. The current CLI path does not yet consume it, under the ownership and
 compatibility boundary accepted by
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 
@@ -256,15 +259,14 @@ archetype.
 
 This terminology does not decide:
 
-- the stable ProjectSpec validation and engine API;
-- component discovery; the `merge` and `override` disposition algorithms,
-  reserved but not yet granted by
-  [file-conflicts.md](file-conflicts.md); or the in-file extension-point
-  marker syntax;
+- production component identities or migrations;
+- the `merge` and `override` disposition algorithms, reserved but not yet
+  granted by [file-conflicts.md](file-conflicts.md);
 - organisation-policy schema, error types, or any real `override` grant;
 - the identity of the second reference archetype; or
-- the concrete engine package range and supported source-resolution cutover.
+- the concrete `create-forge` engine package range and supported
+  source-resolution cutover.
 
-Those decisions remain with their Stage 04–09 roadmap issues. The current
+Those decisions remain with their Stage 07–09 roadmap issues. The current
 v0.1.x thin Copier/bundled-registry implementation stays operational until the
 accepted target is delivered as a coordinated cutover.

@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "forge-template"
-version = "0.1.0"
+version = "0.2.0"
 description = "Copier template that scaffolds modern Python projects."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -22,6 +22,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
+    "jinja2>=3.1,<4",
     "packaging>=26.3,<27",
     "pydantic>=2.10,<3",
 ]
@@ -43,7 +44,6 @@ test = [
     "pytest>=8.3",
     "pytest-cov>=6.0",
     "pytest-xdist>=3.6",
-    "jinja2>=3.1",
     # Needed in-process by tests/test_combos.py and tests/test_update.py,
     # which call copier.run_copy / copier.run_update directly rather than
     # shelling out to `uvx copier`.

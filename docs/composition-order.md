@@ -13,9 +13,8 @@ This contract defines order only. Output targets, dispositions, and collision
 behaviour are now defined by
 [file-conflicts.md](file-conflicts.md), delivered through
 [FT-06.04](https://github.com/Sandsy09/forge-template/issues/35). This
-contract does not define component discovery, a stable rendering API, or
-structured engine errors — that is
-[FT-06.07](https://github.com/Sandsy09/forge-template/issues/38). The
+the [stable template-engine API](template-engine-api.md) applies this order
+during planning and rendering and translates expected failures. The
 option-schema and template-variable vocabulary is now defined by
 [template-variables.md](template-variables.md), delivered through
 [FT-06.05](https://github.com/Sandsy09/forge-template/issues/36).
@@ -131,23 +130,17 @@ reference implementation.
 
 ## Deferred work
 
-This contract does not define:
+Output targets and collisions are defined by
+[file-conflicts.md](file-conflicts.md), options by
+[template-variables.md](template-variables.md), contract evidence by
+[composition-fixtures.md](composition-fixtures.md), and discovery, planning,
+rendering, extension markers, and structured errors by the
+[stable template-engine API](template-engine-api.md). This ordering contract
+does not define:
 
-- file operations, rendering, or the in-file extension-point marker syntax
-  ([FT-06.07](https://github.com/Sandsy09/forge-template/issues/38)); output
-  targets, dispositions, and collision handling are now defined by
-  [file-conflicts.md](file-conflicts.md)
-  ([FT-06.04](https://github.com/Sandsy09/forge-template/issues/35));
-- the option-schema and template-variable vocabulary is now defined by
-  [template-variables.md](template-variables.md)
-  ([FT-06.05](https://github.com/Sandsy09/forge-template/issues/36));
-- full composed-output fixtures — now defined by
-  [composition-fixtures.md](composition-fixtures.md)
-  ([FT-06.06](https://github.com/Sandsy09/forge-template/issues/37));
-- component discovery, a stable rendering API, or structured engine errors
-  ([FT-06.07](https://github.com/Sandsy09/forge-template/issues/38)); or
+- destination writes or filesystem orchestration; or
 - organisation-policy resolution (Stage 09).
 
-Until those coordinated contracts are complete, v0.1.x continues to pass its
-plain answer mapping directly to Copier. No generated project depends on
-`forge_template.composition` during normal development or runtime.
+The current CLI continues to pass its plain answer mapping directly to Copier.
+No generated project depends on `forge_template.composition` during normal
+development or runtime.

@@ -5,10 +5,10 @@ generation request. Protocol v1 is owned by `forge-template` and implemented
 by the strict Pydantic models in
 [`forge_template.project_spec`](../src/forge_template/project_spec.py).
 
-The schema exists before the rest of the composition engine. It does not make
-the current v0.1.x Copier path consume ProjectSpec, expose a stable rendering
-API, or make protocol 1 a supported `create-forge` integration line. Those
-steps remain part of the coordinated Stage 06 cutover.
+The [stable template-engine API](template-engine-api.md) now parses and
+validates this protocol and uses it for deterministic planning and in-memory
+rendering. The current Copier path does not consume ProjectSpec, and protocol
+1 is not yet a supported `create-forge` integration line.
 
 ## Wire contract
 
@@ -204,23 +204,19 @@ wire-format, core validation, or semantic change requires a new protocol;
 compatible additions may remain on protocol 1. Component-catalogue versions
 and option validity belong to the installed engine release and manifests.
 
-This issue does not define:
+The surrounding implementation is defined by the
+[manifest field contract](component-manifests.md),
+[composition order](composition-order.md),
+[file conflict and override rules](file-conflicts.md),
+[template variable contract](template-variables.md),
+[composition fixtures](composition-fixtures.md), and
+[stable template-engine API](template-engine-api.md). This protocol still does
+not define:
 
-- component catalogue discovery or a stable discovery API (FT-06.07); the
-  [manifest field contract](component-manifests.md),
-  [composition order](composition-order.md), and
-  [file conflict and override rules](file-conflicts.md) are now defined;
-- structured option validation errors (FT-06.07); the recognised
-  template-variable and option-schema vocabulary is now defined by
-  [template-variables.md](template-variables.md) (FT-06.05);
-- complete composition contract fixtures — now defined by
-  [composition-fixtures.md](composition-fixtures.md) (FT-06.06);
-- the supported top-level engine facade, rendering calls, or structured engine
-  error API (FT-06.07);
 - organisation-policy documents and resolution (Stage 09); or
 - CLI prompting, ProjectSpec construction, diagnostics, or target filesystem
   orchestration (`create-forge`).
 
-Until those coordinated contracts are complete, v0.1.x continues to pass its
-plain answer mapping directly to Copier. No generated project depends on the
-ProjectSpec model during normal development or runtime.
+The current CLI continues to pass its plain answer mapping directly to Copier.
+No generated project depends on the ProjectSpec model during normal
+development or runtime.

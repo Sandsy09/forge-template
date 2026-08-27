@@ -27,7 +27,7 @@ commit) after copying files.
 
 | Repo | Role |
 | --- | --- |
-| [`forge-template`](https://github.com/Sandsy09/forge-template) | This repo. The templates themselves. |
+| [`forge-template`](https://github.com/Sandsy09/forge-template) | This repo. The templates and side-effect-free composition engine. |
 | [`create-forge`](https://github.com/Sandsy09/create-forge) | The CLI that scaffolds from it. |
 
 They're kept separate because Copier resolves template versions from PEP 440
@@ -98,7 +98,9 @@ deterministic order that future catalogue applies in, the
 [file conflict and override rules](docs/file-conflicts.md) define its output
 target, disposition, and collision-safety rules, the
 [template variable contract](docs/template-variables.md) defines the rendered
-variable namespace and component option vocabulary, and
+variable namespace and component option vocabulary, the
+[stable template-engine API](docs/template-engine-api.md) exposes typed,
+side-effect-free discovery, validation, planning, and in-memory rendering, and
 [docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License

@@ -162,8 +162,9 @@ Future composition will assemble owner-contributed sections into the root
 [composition-order.md](composition-order.md), and
 [file-conflicts.md](file-conflicts.md) now define the component metadata,
 ordering, extension-point, and collision mechanics that target requires; a
-stable discovery and rendering API (FT-06.07) is what remains before it can
-be implemented.
+stable discovery and rendering API is now available through
+[template-engine-api.md](template-engine-api.md). The concrete component
+contributions remain later migration work.
 
 The v0.1.x Library scaffold remains configuration-light and unchanged:
 

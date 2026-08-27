@@ -31,6 +31,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0026 — Define file conflict and override rules](0026-file-conflict-and-override-rules.md)
 - [0027 — Design the template variable contract](0027-template-variable-contract.md)
 - [0028 — Adopt composition-contract fixtures](0028-composition-contract-fixtures.md)
+- [0029 — Expose a stable, side-effect-free template-engine API](0029-stable-template-engine-api.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

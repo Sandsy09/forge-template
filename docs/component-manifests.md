@@ -1,8 +1,8 @@
 # Component Manifest Protocol v1
 
 Component manifests are the machine-readable metadata for the archetypes,
-capabilities, and platforms bundled with a future `forge-template` engine
-release. Protocol v1 is implemented by the strict models and provisional
+capabilities, and platforms bundled with a `forge-template` engine release.
+Protocol v1 is implemented by the strict models and provisional
 validators in
 [`forge_template.component_manifest`](../src/forge_template/component_manifest.py).
 
@@ -21,9 +21,10 @@ does not commit a second generated schema that could drift.
 
 Unknown fields, omitted or unsupported manifest versions, implicit primitive
 type coercion, invalid identifiers, and invalid PEP 440 values fail validation.
-The low-level loader currently exposes standard TOML, Pydantic, filesystem, or
-value failures. The stable structured engine-error surface remains
-[FT-06.07](https://github.com/Sandsy09/forge-template/issues/38) work.
+The low-level loader exposes standard TOML, Pydantic, filesystem, or value
+failures to internal callers. The
+[stable template-engine API](template-engine-api.md) translates expected
+catalogue failures into its structured public error surface.
 
 ```toml
 manifest_version = 1
@@ -207,18 +208,14 @@ overwrite authority.
 
 Protocol v1 does not define:
 
-- production manifests, component discovery, or package-data layout;
+- production manifests; the package-bound discovery and empty production
+  catalogue are defined by the
+  [stable template-engine API](template-engine-api.md);
 - the second roadmap archetype;
 - optional or recommended dependencies;
-- file operations, rendering, or the in-file extension-point marker syntax
-  (FT-06.07); output targets, dispositions, and collision safety are now
-  defined by [file-conflicts.md](file-conflicts.md) (FT-06.04);
-- the option-schema and template-variable vocabulary are now defined by
-  [template-variables.md](template-variables.md) (FT-06.05);
-- full composed-output fixtures — now defined by
-  [composition-fixtures.md](composition-fixtures.md) (FT-06.06);
-- stable engine discovery, rendering functions, or structured errors
-  (FT-06.07); or
+- destination file operations or filesystem orchestration; in-memory
+  rendering and extension-marker semantics are defined by the
+  [stable template-engine API](template-engine-api.md); or
 - CLI prompts, automatic choice guidance, or filesystem orchestration
   (`create-forge`).
 

@@ -51,9 +51,10 @@ Capability identifiers, manifests, ProjectSpec fields, ordering, extension
 points, and collision mechanics are now defined by
 [component-manifests.md](component-manifests.md),
 [composition-order.md](composition-order.md), and
-[file-conflicts.md](file-conflicts.md); discovery and a stable rendering API
-remain Stage 06 work (FT-06.07). Until those contracts exist, editor-specific
-files are not added to the generated scaffold.
+[file-conflicts.md](file-conflicts.md), and the
+[stable template-engine API](template-engine-api.md). No editor component has
+been selected or implemented, so editor-specific files are not added to the
+generated scaffold.
 
 ## Permitted contributions
 
@@ -118,9 +119,9 @@ future editor capability.
 [file-conflicts.md](file-conflicts.md), and
 [template-variables.md](template-variables.md) now define the component,
 composition, and variable mechanics an editor capability would declare
-through; only a stable discovery and rendering API (FT-06.07) remains open.
-A later proposal may define a concrete adapter only after that remaining
-contract exists and must identify its owned paths, extension points,
+through, and the [stable template-engine API](template-engine-api.md) supplies
+discovery and rendering. A later proposal may define a concrete adapter and
+must identify its owned paths, extension points,
 declared options, validation, and collision behaviour per
 [file-conflicts.md](file-conflicts.md) and
 [template-variables.md](template-variables.md). Any development-environment

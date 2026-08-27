@@ -1,18 +1,12 @@
 name: Release template
 
-# Tags are how Copier resolves "latest version", so an untagged commit on main
-# is invisible to `copier update`. Releasing is therefore a deliberate act.
-#
-# Run from the Actions tab: pick the bump, confirm, done.
+# Tags are how Copier resolves "latest version" and how engine clients resolve
+# package compatibility. pyproject.toml is the one version source: bump it in
+# a reviewed PR, then run this workflow to create the matching tag and release.
 
 on:
   workflow_dispatch:
     inputs:
-      bump:
-        description: Version bump
-        required: true
-        type: choice
-        options: [patch, minor, major]
       dry_run:
         description: Print the tag without creating it
         type: boolean
@@ -29,24 +23,30 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Compute next version
+      - name: Read and validate version
         id: version
+        shell: bash
         run: |
-          latest=$(git tag -l 'v*' --sort=-v:refname | head -1)
-          if [ -z "$latest" ]; then
-            next="v0.1.0"
-          else
-            v=${latest#v}
-            IFS='.' read -r major minor patch <<< "$v"
-            case "${{ inputs.bump }}" in
-              major) next="v$((major + 1)).0.0" ;;
-              minor) next="v${major}.$((minor + 1)).0" ;;
-              patch) next="v${major}.${minor}.$((patch + 1))" ;;
-            esac
+          version=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::project.version must be a final SemVer release, found: $version"
+            exit 1
           fi
+
+          next="v$version"
+          latest=$(git tag -l 'v*' --sort=-v:refname | head -1)
+          if git rev-parse --verify --quiet "refs/tags/$next" >/dev/null; then
+            echo "::error::tag already exists: $next"
+            exit 1
+          fi
+          if [ -n "$latest" ] && [ "$(printf '%s\n%s\n' "$latest" "$next" | sort -V | tail -1)" != "$next" ]; then
+            echo "::error::project version $next is not newer than $latest"
+            exit 1
+          fi
+
           echo "latest=${latest:-none}" >> "$GITHUB_OUTPUT"
           echo "next=$next" >> "$GITHUB_OUTPUT"
-          echo "### $latest → $next" >> "$GITHUB_STEP_SUMMARY"
+          echo "### ${latest:-none} → $next" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Changes since last release
         id: notes
@@ -66,8 +66,6 @@ jobs:
         run: |
           latest="${{ steps.version.outputs.latest }}"
           [ "$latest" = "none" ] && exit 0
-          # Renamed or deleted template files break `copier update` for
-          # existing projects unless a migration is declared.
           moved=$(git diff --name-status "$latest..HEAD" -- template/ \
                   | grep -E '^(R|D)' || true)
           if [ -n "$moved" ] && ! grep -q '_migrations' copier.yml; then

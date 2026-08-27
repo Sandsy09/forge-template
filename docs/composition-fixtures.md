@@ -1,8 +1,8 @@
 # Composition contract fixtures
 
 This document describes what the composition-contract golden fixtures prove,
-what "deterministic" is actually verified to mean without a stable rendering
-API, and how to regenerate them when a contract legitimately changes.
+what "deterministic" is verified to mean through the stable rendering API,
+and how to regenerate them when a contract legitimately changes.
 Delivered by [FT-06.06](https://github.com/Sandsy09/forge-template/issues/37)
 through [`tests/test_composition_contract.py`](../tests/test_composition_contract.py)
 and [`tests/composition_contract.py`](../tests/composition_contract.py), this
@@ -11,25 +11,19 @@ document is adopted by [ADR
 
 ## Scope
 
-This is a test methodology, not a sixth engine contract. It exercises
-[`forge_template.composition`](../src/forge_template/composition.py),
-[`forge_template.file_conflicts`](../src/forge_template/file_conflicts.py),
-and [`forge_template.template_variables`](../src/forge_template/template_variables.py)
-together, over the reference fixture catalogue in
-`tests/fixtures/component_manifests/`. It does not expose a public rendering
-function, define the in-file extension-point marker syntax, or splice an
-extension's contribution into its base's rendered text — the rendering
-inside `tests/composition_contract.py` is test-local and deliberately not
-exported from `forge_template`, so
-[FT-06.07](https://github.com/Sandsy09/forge-template/issues/38) keeps
-undivided ownership of the stable engine facade it is chartered to expose.
-It does not define organisation-policy resolution — that is Stage 09.
+This is a test methodology, not another engine contract. It exercises the
+[stable template-engine API](template-engine-api.md) over the reference fixture
+catalogue in `tests/fixtures/component_manifests/`. A private, test-only seam
+redirects package discovery to that catalogue; production clients cannot use
+it. The scenarios now prove real contribution splicing and rendering through
+`render_project`, not a test-local approximation. Organisation-policy
+resolution remains Stage 09.
 
 ## Golden format
 
-Each scenario is one JSON document under `tests/fixtures/golden/`, holding
-the composition order, the resolved output plan, the resolved template
-variables, and every output target's rendered content as a JSON string.
+Each scenario is one JSON document under `tests/fixtures/golden/`, holding the
+public component order, path-free target/owner/extension plan, and every output
+target's rendered content as a JSON string.
 
 Storing rendered content inside a JSON string rather than as real files is
 deliberate: the root `.pre-commit-config.yaml` runs
@@ -95,15 +89,9 @@ deliberateness lives in that review, not in the regeneration step itself.
 `--update-goldens` is a `pytest` option registered in `tests/conftest.py`,
 alongside the existing `--from-git` option.
 
-## Deferred work
+## Remaining boundary
 
-This contract does not define:
-
-- a stable, public rendering or composition-facade API, the in-file
-  extension-point marker syntax, or structured engine errors
-  ([FT-06.07](https://github.com/Sandsy09/forge-template/issues/38));
-- organisation-policy resolution (Stage 09).
-
-Until those coordinated contracts are complete, v0.1.x continues to pass its
-plain answer mapping directly to Copier. No generated project depends on
-`tests/composition_contract.py` — it is test-only and ships in no package.
+These fixtures do not define organisation-policy resolution; that remains
+Stage 09. The current CLI continues to pass its plain answer mapping directly
+to Copier, and no generated project depends on `tests/composition_contract.py`
+— it is test-only and ships in no package.

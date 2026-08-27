@@ -1,11 +1,10 @@
 """The rendered template-variable namespace and component option vocabulary.
 
-This module defines what a template author types, and what a component may
-declare as its own options through ``options_schema``. It deliberately does
-not render anything, perform file operations, define the in-file
-extension-point marker syntax, or expose a stable engine error surface;
-those remain later Stage 06 and FT-06.07 work. See
-docs/template-variables.md.
+This low-level module defines what a template author types, and what a
+component may declare as its own options through ``options_schema``. It does
+not itself render or perform file operations; the supported facade in
+``forge_template.engine`` consumes its context, defines extension-marker
+semantics, and translates expected failures. See docs/template-variables.md.
 
 ``project`` and ``components`` reuse ``ProjectSpec``'s own models directly
 rather than redeclaring parallel ones, so the namespace mirrors ProjectSpec

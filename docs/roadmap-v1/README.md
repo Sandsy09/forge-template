@@ -56,8 +56,9 @@ capability must have without generating one.
 The canonical
 [supply-chain provenance contract](../supply-chain-provenance.md) defines
 desired SBOM behaviour and provenance/signing considerations for a future
-capability and GitHub platform contribution, deferred until a generated-project
-release/publish path and Stage 06 composition mechanics both exist.
+capability and GitHub platform contribution. Stage 06 now supplies the
+composition mechanics; implementation remains deferred until the contract's
+other exit criteria, including a generated-project release/publish path, hold.
 
 The canonical
 [GitHub Action pinning policy](../github-action-pinning.md) requires immutable
@@ -90,13 +91,18 @@ format a component declares its own options through, and the
 required/unknown-option rejection rules that resolution enforces before any
 file operation.
 
+The canonical [stable template-engine API](../template-engine-api.md) exposes
+those contracts through typed, package-bound discovery, strict validation,
+deterministic planning, in-memory rendering, and structured failures. Its
+production catalogue is deliberately empty until Stage 08.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
-ProjectSpec, component manifest protocol v1, composition order, file
-conflict and override rules, and the template variable contract are
-implemented, but production manifests, discovery, rendering, the stable
-engine facade, and CLI consumption are not; the existing Copier baseline
-remains operational until Stages 06–09 deliver the coordinated cutover.
+ProjectSpec, component manifest protocol v1, composition order, file conflict
+and override rules, the template variable contract, and the stable
+`forge-template` `0.2.x` engine facade are implemented. Production manifests
+and CLI consumption are not; the existing Copier baseline remains operational
+until Stages 08–09 and the coordinated CLI cutover are complete.
 
 ## Structure
 
