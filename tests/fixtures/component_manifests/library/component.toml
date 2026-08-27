@@ -1,0 +1,14 @@
+manifest_version = 1
+id = "library"
+name = "Library"
+description = "An installable Python package."
+kind = "archetype"
+version = "1.0.0"
+content_root = "content"
+options_schema = "options.schema.json"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

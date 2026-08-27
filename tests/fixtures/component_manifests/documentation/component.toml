@@ -1,0 +1,13 @@
+manifest_version = 1
+id = "documentation"
+name = "Documentation"
+description = "A project documentation site."
+kind = "capability"
+version = "1.1.0"
+content_root = "content"
+requires = [{ id = "library", version = ">=1,<2" }]
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
