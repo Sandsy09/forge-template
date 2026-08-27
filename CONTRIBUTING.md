@@ -41,7 +41,9 @@ engine-owned generation request that future clients construct without taking
 ownership of template or composition validation. The
 [component manifest protocol](docs/component-manifests.md) defines the strict
 TOML metadata, compatibility, owned resources, dependencies, and conflicts
-that future engine discovery will consume.
+that future engine discovery will consume. The
+[composition order contract](docs/composition-order.md) defines the single
+deterministic order a validated selection of those components applies in.
 
 ## Branching and pull requests
 

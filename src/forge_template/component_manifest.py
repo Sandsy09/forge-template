@@ -8,6 +8,7 @@ those remain later Stage 06 work.
 
 from __future__ import annotations
 
+import graphlib
 import tomllib
 from collections.abc import Iterable
 from pathlib import Path, PurePosixPath, PureWindowsPath
@@ -271,6 +272,29 @@ def load_component_manifest(path: str | Path) -> ComponentManifest:
     return manifest
 
 
+def _reject_dependency_cycles(manifests: Iterable[ComponentManifest]) -> None:
+    """Reject a catalogue whose ``requires`` edges form a cycle.
+
+    This runs catalogue-wide, independent of component kind, so a cyclic
+    bundled catalogue fails at packaging and review time rather than only
+    when some future selection happens to include both ends of the cycle.
+    Composition order itself is decided by
+    ``forge_template.composition``, which orders each kind tier separately;
+    this check only proves the underlying dependency graph is acyclic.
+    """
+    graph = {
+        manifest.id: tuple(reference.id for reference in manifest.requires)
+        for manifest in manifests
+    }
+    sorter: graphlib.TopologicalSorter[str] = graphlib.TopologicalSorter(graph)
+    try:
+        sorter.prepare()
+    except graphlib.CycleError as exc:
+        cycle = " -> ".join(str(node) for node in exc.args[1])
+        msg = f"component dependency graph contains a cycle: {cycle}"
+        raise ValueError(msg) from exc
+
+
 def validate_manifest_set(
     manifests: Iterable[ComponentManifest],
 ) -> tuple[ComponentManifest, ...]:
@@ -301,6 +325,8 @@ def validate_manifest_set(
                     f"with {constraint!r}, found {target.version!r}"
                 )
                 raise ValueError(msg)
+
+    _reject_dependency_cycles(manifest_tuple)
 
     return tuple(sorted(manifest_tuple, key=lambda manifest: manifest.id))
 

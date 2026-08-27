@@ -116,7 +116,8 @@ entry renders or copies literally, its output target, or whether a collision
 creates, extends, merges, or overrides. Those operations and their safety rules
 belong to
 [FT-06.04](https://github.com/Sandsy09/forge-template/issues/35), while
-deterministic ordering belongs to
+deterministic ordering — including this content's own applied order — is now
+defined by [composition-order.md](composition-order.md), delivered through
 [FT-06.03](https://github.com/Sandsy09/forge-template/issues/34).
 
 `options_schema` may name one existing file under the same component directory.
@@ -150,9 +151,10 @@ observable and complete.
 the referenced component are selected, the request is invalid. A declaration
 does not need a duplicated reverse entry.
 
-Dependency cycles remain syntactically valid in protocol v1 so this issue does
-not pre-empt the graph and deterministic-order decision. FT-06.03 must define
-and reject unsupported cycles before any content operation occurs.
+Dependency cycles are rejected catalogue-wide by `validate_manifest_set`,
+independent of component kind, before any content operation occurs. See
+[composition-order.md](composition-order.md#cycles), delivered through
+[FT-06.03](https://github.com/Sandsy09/forge-template/issues/34).
 
 ## ProjectSpec selection validation
 
@@ -178,7 +180,6 @@ Protocol v1 does not define:
 - production manifests, component discovery, or package-data layout;
 - the second roadmap archetype;
 - optional or recommended dependencies;
-- composition order or cycle diagnostics (FT-06.03);
 - output paths, file operations, collision handling, or overrides (FT-06.04);
 - the option-schema and template-variable vocabulary (FT-06.05);
 - full composed-output fixtures (FT-06.06);

@@ -2,10 +2,11 @@
 
 > **Status:** This is the accepted target architecture under
 > [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
-> not the v0.1.x implementation. ProjectSpec and component manifest protocol
-> v1 are now defined, but the current CLI remains a thin Copier client with a
-> bundled registry and `forge-template` exposes no production catalogue or
-> stable component-engine/rendering API until the coordinated cutover.
+> not the v0.1.x implementation. ProjectSpec, component manifest protocol v1,
+> and composition order are now defined, but the current CLI remains a thin
+> Copier client with a bundled registry and `forge-template` exposes no
+> production catalogue or stable component-engine/rendering API until the
+> coordinated cutover.
 
 The [canonical terminology](../terminology.md) defines the ecosystem,
 composition, and authority terms used by this target.
@@ -15,6 +16,8 @@ construction and filesystem orchestration with `create-forge`.
 The [component manifest protocol](../component-manifests.md) defines the
 strict engine-owned metadata and compatibility for every future bundled
 archetype, capability, and platform.
+The [composition order contract](../composition-order.md) defines the single
+deterministic order that future bundled selection applies in.
 The [Foundation guarantees](../foundation-guarantees.md) define the
 provider- and tool-neutral outcomes every successfully generated project must
 receive regardless of whether this proposed composition model is adopted.

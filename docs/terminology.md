@@ -149,9 +149,11 @@ themselves.
 
 The [component manifest protocol](component-manifests.md) now defines strict
 identity, display metadata, version, compatibility, owned-content,
-dependency, and conflict declarations for these units. Production manifests,
-discovery, ordering, collision behaviour, and rendering do not yet exist in
-the v0.1.x implementation.
+dependency, and conflict declarations for these units, and
+[composition order](composition-order.md) now defines the deterministic
+order a validated selection of them applies in. Production manifests,
+discovery, collision behaviour, and rendering do not yet exist in the v0.1.x
+implementation.
 
 ### ProjectSpec
 
@@ -205,8 +207,10 @@ The following rules are normative:
 5. Unsupported component collisions fail rather than silently overwriting
    content.
 
-Stage 06 will define deterministic ordering and collision mechanics in
-[FT-06.03](https://github.com/Sandsy09/forge-template/issues/34) and
+Deterministic ordering is now defined by
+[composition-order.md](composition-order.md), delivered through
+[FT-06.03](https://github.com/Sandsy09/forge-template/issues/34). Stage 06
+will define collision mechanics in
 [FT-06.04](https://github.com/Sandsy09/forge-template/issues/35). Stage 09 will
 define safe downstream extension points in
 [FT-09.02](https://github.com/Sandsy09/forge-template/issues/45).
@@ -245,7 +249,7 @@ archetype.
 This terminology does not decide:
 
 - the stable ProjectSpec validation and engine API;
-- component discovery, ordering, merge, or collision algorithms;
+- component discovery, merge, or collision algorithms;
 - organisation-policy schema or error types;
 - the identity of the second reference archetype; or
 - the concrete engine package range and supported source-resolution cutover.
