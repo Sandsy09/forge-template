@@ -16,8 +16,9 @@ This contract defines output targets, dispositions, and collision safety
 only. It does not perform file operations, render or splice content, define
 the in-file syntax an extension point uses, or expose a stable engine error
 surface — that is
-[FT-06.07](https://github.com/Sandsy09/forge-template/issues/38). It does not
-define the option-schema or template-variable vocabulary — that is
+[FT-06.07](https://github.com/Sandsy09/forge-template/issues/38). The
+option-schema and template-variable vocabulary is now defined by
+[template-variables.md](template-variables.md), delivered through
 [FT-06.05](https://github.com/Sandsy09/forge-template/issues/36). It does not
 define organisation-policy overrides — that is Stage 09.
 
@@ -159,7 +160,9 @@ authority exists implicitly today.
 
 This contract does not define:
 
-- the recognised template-variable catalogue or structured option errors
+- structured option validation errors (FT-06.07); the recognised
+  template-variable catalogue is now defined by
+  [template-variables.md](template-variables.md)
   ([FT-06.05](https://github.com/Sandsy09/forge-template/issues/36));
 - full composed-output fixtures
   ([FT-06.06](https://github.com/Sandsy09/forge-template/issues/37));

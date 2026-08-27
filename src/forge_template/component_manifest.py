@@ -307,7 +307,14 @@ class ComponentManifest(_ManifestModel):
         return self
 
 
-def _resource_path(manifest_path: Path, relative_path: str) -> Path:
+def component_resource_path(manifest_path: Path, relative_path: str) -> Path:
+    """Resolve one component-relative resource path against its manifest.
+
+    Shared by every owned-resource check in this module and reused by
+    ``forge_template.template_variables`` to resolve ``options_schema``
+    through the same symlink-escape-checked containment rule, rather than
+    duplicating it.
+    """
     component_root = manifest_path.parent.resolve(strict=True)
     candidate = (component_root / Path(*PurePosixPath(relative_path).parts)).resolve(
         strict=True
@@ -329,7 +336,7 @@ def load_component_manifest(path: str | Path) -> ComponentManifest:
     with resolved_manifest.open("rb") as manifest_file:
         manifest = ComponentManifest.model_validate(tomllib.load(manifest_file))
 
-    content_root = _resource_path(resolved_manifest, manifest.content_root)
+    content_root = component_resource_path(resolved_manifest, manifest.content_root)
     if not content_root.is_dir():
         msg = f"content_root is not a directory: {manifest.content_root!r}"
         raise ValueError(msg)
@@ -346,13 +353,15 @@ def load_component_manifest(path: str | Path) -> ComponentManifest:
         raise ValueError(msg)
 
     if manifest.options_schema is not None:
-        options_schema = _resource_path(resolved_manifest, manifest.options_schema)
+        options_schema = component_resource_path(
+            resolved_manifest, manifest.options_schema
+        )
         if not options_schema.is_file():
             msg = f"options_schema is not a file: {manifest.options_schema!r}"
             raise ValueError(msg)
 
     for point in manifest.extension_points:
-        point_content = _resource_path(resolved_manifest, point.content)
+        point_content = component_resource_path(resolved_manifest, point.content)
         if not point_content.is_file():
             msg = (
                 f"extension point {point.id!r} content is not a file: {point.content!r}"
@@ -360,7 +369,9 @@ def load_component_manifest(path: str | Path) -> ComponentManifest:
             raise ValueError(msg)
 
     for contribution in manifest.contributions:
-        contribution_content = _resource_path(resolved_manifest, contribution.content)
+        contribution_content = component_resource_path(
+            resolved_manifest, contribution.content
+        )
         if not contribution_content.is_file():
             msg = f"contribution content is not a file: {contribution.content!r}"
             raise ValueError(msg)

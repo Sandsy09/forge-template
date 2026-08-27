@@ -46,7 +46,10 @@ that future engine discovery will consume. The
 deterministic order a validated selection of those components applies in. The
 [file conflict and override rules](docs/file-conflicts.md) define the output
 target, disposition, and collision-safety rules that composed selection
-resolves against.
+resolves against. The
+[template variable contract](docs/template-variables.md) defines the rendered
+variable namespace and the component option vocabulary declared through
+`options_schema`.
 
 ## Branching and pull requests
 

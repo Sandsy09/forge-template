@@ -126,10 +126,10 @@ another component's published point, through the optional
 `extension_points`/`contributions` fields below.
 
 `options_schema` may name one existing file under the same component directory.
-Protocol v1 reserves that owner-local resource without defining or parsing its
-vocabulary. Canonical project/package/Python variables, component option
-schemas, required and unknown options, and structured validation failures remain
-[FT-06.05](https://github.com/Sandsy09/forge-template/issues/36) work.
+The canonical project/package/Python variables, the component option-schema
+format, and required/unknown-option rejection are now defined by
+[template-variables.md](template-variables.md), delivered through
+[FT-06.05](https://github.com/Sandsy09/forge-template/issues/36).
 
 ### Extension points and contributions
 
@@ -213,7 +213,8 @@ Protocol v1 does not define:
 - file operations, rendering, or the in-file extension-point marker syntax
   (FT-06.07); output targets, dispositions, and collision safety are now
   defined by [file-conflicts.md](file-conflicts.md) (FT-06.04);
-- the option-schema and template-variable vocabulary (FT-06.05);
+- the option-schema and template-variable vocabulary are now defined by
+  [template-variables.md](template-variables.md) (FT-06.05);
 - full composed-output fixtures (FT-06.06);
 - stable engine discovery, rendering functions, or structured errors
   (FT-06.07); or

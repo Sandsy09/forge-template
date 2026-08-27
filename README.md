@@ -96,7 +96,9 @@ bundled metadata and compatibility for its future component catalogue, the
 [composition order contract](docs/composition-order.md) defines the
 deterministic order that future catalogue applies in, the
 [file conflict and override rules](docs/file-conflicts.md) define its output
-target, disposition, and collision-safety rules, and
+target, disposition, and collision-safety rules, the
+[template variable contract](docs/template-variables.md) defines the rendered
+variable namespace and component option vocabulary, and
 [docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License

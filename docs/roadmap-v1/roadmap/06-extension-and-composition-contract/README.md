@@ -20,7 +20,10 @@
   extension-point declaration, and catalogue-wide contribution validation
   are defined by
   [ADR 0026](../../../adr/0026-file-conflict-and-override-rules.md).
-- **FT-06.05 — Design template variable contract**
+- [x] [**FT-06.05 — Design template variable contract**](../../../template-variables.md) —
+  the rendered variable namespace, the Forge-owned option-schema format, and
+  required/unknown-option rejection rules are defined by
+  [ADR 0027](../../../adr/0027-template-variable-contract.md).
 - **FT-06.06 — Create composition contract tests**
 - **FT-06.07 — Expose stable template-engine API**
 

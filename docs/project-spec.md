@@ -101,10 +101,12 @@ platform identifier. Each owner receives an object of lower-snake-case keys
 and JSON-compatible values. An option namespace for an unselected component is
 invalid.
 
-Protocol v1 establishes only this structural boundary. FT-06.05 defines the
-canonical project/package/Python variables and the recognised, required, and
-unknown-option behaviour supplied by component manifests. Foundation is
-implicit and is not an option owner in ProjectSpec.
+Protocol v1 establishes only this structural boundary. The canonical
+project/package/Python variables and the recognised, required, and
+unknown-option behaviour supplied by component manifests are now defined by
+[template-variables.md](template-variables.md), delivered through
+[FT-06.05](https://github.com/Sandsy09/forge-template/issues/36). Foundation
+is implicit and is not an option owner in ProjectSpec.
 
 Component options must not contain secrets, credentials, arbitrary file
 content, executable code, destination paths, or organisation-policy
@@ -208,8 +210,9 @@ This issue does not define:
   [manifest field contract](component-manifests.md),
   [composition order](composition-order.md), and
   [file conflict and override rules](file-conflicts.md) are now defined;
-- the recognised template-variable catalogue or structured option errors
-  (FT-06.05);
+- structured option validation errors (FT-06.07); the recognised
+  template-variable and option-schema vocabulary is now defined by
+  [template-variables.md](template-variables.md) (FT-06.05);
 - complete composition contract fixtures (FT-06.06);
 - the supported top-level engine facade, rendering calls, or structured engine
   error API (FT-06.07);

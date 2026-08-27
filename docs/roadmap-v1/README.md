@@ -84,13 +84,19 @@ the output target each owned content path produces, the create/extend
 dispositions protocol v1 grants, and the collision-safety rules an
 unsupported target clash must fail under.
 
+The canonical [template variable contract](../template-variables.md) defines
+the rendered variable namespace a template author reads, the option-schema
+format a component declares its own options through, and the
+required/unknown-option rejection rules that resolution enforces before any
+file operation.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
-ProjectSpec, component manifest protocol v1, composition order, and file
-conflict and override rules are implemented, but production manifests,
-discovery, rendering, the stable engine facade, and CLI consumption are not;
-the existing Copier baseline remains operational until Stages 06–09 deliver
-the coordinated cutover.
+ProjectSpec, component manifest protocol v1, composition order, file
+conflict and override rules, and the template variable contract are
+implemented, but production manifests, discovery, rendering, the stable
+engine facade, and CLI consumption are not; the existing Copier baseline
+remains operational until Stages 06–09 deliver the coordinated cutover.
 
 ## Structure
 
