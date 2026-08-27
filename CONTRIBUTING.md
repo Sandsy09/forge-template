@@ -43,7 +43,10 @@ ownership of template or composition validation. The
 TOML metadata, compatibility, owned resources, dependencies, and conflicts
 that future engine discovery will consume. The
 [composition order contract](docs/composition-order.md) defines the single
-deterministic order a validated selection of those components applies in.
+deterministic order a validated selection of those components applies in. The
+[file conflict and override rules](docs/file-conflicts.md) define the output
+target, disposition, and collision-safety rules that composed selection
+resolves against.
 
 ## Branching and pull requests
 

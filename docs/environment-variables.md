@@ -158,8 +158,12 @@ contract.
 
 Future composition will assemble owner-contributed sections into the root
 `.env.example` and reject duplicate names or incompatible contributions.
-Stage 06 owns the component metadata, ordering, extension points, and collision
-mechanics required to implement that target.
+[component-manifests.md](component-manifests.md),
+[composition-order.md](composition-order.md), and
+[file-conflicts.md](file-conflicts.md) now define the component metadata,
+ordering, extension-point, and collision mechanics that target requires; a
+stable discovery and rendering API (FT-06.07) is what remains before it can
+be implemented.
 
 The v0.1.x Library scaffold remains configuration-light and unchanged:
 

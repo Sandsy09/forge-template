@@ -47,10 +47,13 @@ authority: an explicit user choice may replace them, subject to organisation
 policy. Profiles select capabilities; they do not own or render the
 editor-specific files themselves.
 
-Capability identifiers, manifests, ProjectSpec fields, discovery, ordering,
-extension points, and collision mechanics remain Stage 06 work. Until those
-contracts exist, editor-specific files are not added to the generated
-scaffold.
+Capability identifiers, manifests, ProjectSpec fields, ordering, extension
+points, and collision mechanics are now defined by
+[component-manifests.md](component-manifests.md),
+[composition-order.md](composition-order.md), and
+[file-conflicts.md](file-conflicts.md); discovery and a stable rendering API
+remain Stage 06 work (FT-06.07). Until those contracts exist, editor-specific
+files are not added to the generated scaffold.
 
 ## Permitted contributions
 
@@ -110,8 +113,13 @@ future editor capability.
 
 ## Deferred decisions
 
-Stage 06 owns the component and ProjectSpec mechanics required to implement an
-editor capability. A later proposal may define a concrete adapter only after
-those contracts exist and must identify its owned paths, extension points,
-validation, and collision behaviour. Any development-environment integration
-requires its own classification decision.
+[component-manifests.md](component-manifests.md),
+[composition-order.md](composition-order.md), and
+[file-conflicts.md](file-conflicts.md) now define the component and
+composition mechanics an editor capability would declare through; a stable
+discovery and rendering API (FT-06.07) and the template-variable vocabulary
+(FT-06.05) remain open. A later proposal may define a concrete adapter only
+after those remaining contracts exist and must identify its owned paths,
+extension points, validation, and collision behaviour per
+[file-conflicts.md](file-conflicts.md). Any development-environment
+integration requires its own classification decision.

@@ -13,6 +13,8 @@ from forge_template.component_manifest import (
     ComponentCompatibility,
     ComponentManifest,
     ComponentReference,
+    Contribution,
+    ExtensionPoint,
     load_component_manifest,
     validate_manifest_selection,
     validate_manifest_set,
@@ -30,6 +32,8 @@ def _manifest_payload(
     requires_python: str = ">=3.11",
     requires: tuple[dict[str, object], ...] = (),
     conflicts: tuple[dict[str, object], ...] = (),
+    extension_points: tuple[dict[str, object], ...] = (),
+    contributions: tuple[dict[str, object], ...] = (),
 ) -> dict[str, object]:
     return {
         "manifest_version": 1,
@@ -45,6 +49,8 @@ def _manifest_payload(
         },
         "requires": requires,
         "conflicts": conflicts,
+        "extension_points": extension_points,
+        "contributions": contributions,
     }
 
 
@@ -56,6 +62,8 @@ def _manifest(
     requires_python: str = ">=3.11",
     requires: tuple[dict[str, object], ...] = (),
     conflicts: tuple[dict[str, object], ...] = (),
+    extension_points: tuple[dict[str, object], ...] = (),
+    contributions: tuple[dict[str, object], ...] = (),
 ) -> ComponentManifest:
     return ComponentManifest.model_validate(
         _manifest_payload(
@@ -65,6 +73,8 @@ def _manifest(
             requires_python=requires_python,
             requires=requires,
             conflicts=conflicts,
+            extension_points=extension_points,
+            contributions=contributions,
         )
     )
 
@@ -188,6 +198,22 @@ def test_reference_specifiers_are_validated_and_canonicalised() -> None:
         ComponentReference(id="library", version="")
 
 
+def test_extension_point_and_contribution_are_strict_and_frozen() -> None:
+    point = ExtensionPoint(id="ci-steps", content="content/ci.yml")
+    contribution = Contribution(
+        component="github", extension_point="ci-steps", content="extensions/step.yml"
+    )
+
+    with pytest.raises(ValidationError, match="frozen"):
+        point.id = "changed"
+    with pytest.raises(ValidationError, match="frozen"):
+        contribution.component = "changed"
+    with pytest.raises(ValidationError):
+        ExtensionPoint.model_validate(
+            {"id": "ci-steps", "content": "content/ci.yml", "unexpected": True}
+        )
+
+
 def test_python_compatibility_covers_the_whole_tested_range() -> None:
     spec = _project_spec(minimum="3.11", development="3.13")
 
@@ -278,6 +304,96 @@ def test_loader_rejects_symlink_escape_when_supported(tmp_path: Path) -> None:
         load_component_manifest(manifest_path)
 
 
+def test_loader_rejects_missing_extension_point_and_contribution_files(
+    tmp_path: Path,
+) -> None:
+    missing_point = _copy_fixture(tmp_path / "missing-point", "library")
+    with missing_point.open("a", encoding="utf-8") as manifest_file:
+        manifest_file.write(
+            '\n[[extension_points]]\nid = "ci-steps"\ncontent = "content/absent.yml"\n'
+        )
+    with pytest.raises(FileNotFoundError):
+        load_component_manifest(missing_point)
+
+    missing_contribution = _copy_fixture(
+        tmp_path / "missing-contribution", "documentation"
+    )
+    with missing_contribution.open("a", encoding="utf-8") as manifest_file:
+        manifest_file.write(
+            '\n[[contributions]]\ncomponent = "github"\n'
+            'extension_point = "ci-steps"\ncontent = "extensions/absent.yml"\n'
+        )
+    with pytest.raises(FileNotFoundError):
+        load_component_manifest(missing_contribution)
+
+
+def test_extension_point_content_must_fall_inside_content_root() -> None:
+    with pytest.raises(ValidationError, match="must fall inside content_root"):
+        _manifest(
+            "github",
+            kind="platform",
+            extension_points=({"id": "ci-steps", "content": "outside.yml"},),
+        )
+
+
+def test_contribution_content_must_fall_outside_content_root() -> None:
+    with pytest.raises(ValidationError, match="must fall outside content_root"):
+        _manifest(
+            "documentation",
+            contributions=(
+                {
+                    "component": "github",
+                    "extension_point": "ci-steps",
+                    "content": "content/inside.yml",
+                },
+            ),
+        )
+
+
+def test_extension_point_and_contribution_identifiers_must_be_unique() -> None:
+    with pytest.raises(ValidationError, match="extension point identifiers"):
+        _manifest(
+            "github",
+            kind="platform",
+            extension_points=(
+                {"id": "ci-steps", "content": "content/a.yml"},
+                {"id": "ci-steps", "content": "content/b.yml"},
+            ),
+        )
+    with pytest.raises(ValidationError, match="same extension point twice"):
+        _manifest(
+            "documentation",
+            contributions=(
+                {
+                    "component": "github",
+                    "extension_point": "ci-steps",
+                    "content": "extensions/a.yml",
+                },
+                {
+                    "component": "github",
+                    "extension_point": "ci-steps",
+                    "content": "extensions/b.yml",
+                },
+            ),
+        )
+
+
+def test_component_must_not_contribute_to_its_own_extension_point() -> None:
+    with pytest.raises(ValidationError, match="must not contribute to its own"):
+        _manifest(
+            "github",
+            kind="platform",
+            extension_points=({"id": "ci-steps", "content": "content/ci.yml"},),
+            contributions=(
+                {
+                    "component": "github",
+                    "extension_point": "ci-steps",
+                    "content": "extensions/step.yml",
+                },
+            ),
+        )
+
+
 def test_manifest_references_reject_duplicates_self_and_contradictions() -> None:
     with pytest.raises(ValidationError, match="duplicate"):
         _manifest(
@@ -315,6 +431,53 @@ def test_manifest_set_rejects_dependency_cycles() -> None:
 
     with pytest.raises(ValueError, match="cycle"):
         validate_manifest_set((second, first))
+
+
+def test_manifest_set_rejects_contributions_to_missing_component_or_point() -> None:
+    github = _manifest(
+        "github",
+        kind="platform",
+        extension_points=({"id": "ci-steps", "content": "content/ci.yml"},),
+    )
+
+    unknown_component = _manifest(
+        "documentation",
+        contributions=(
+            {
+                "component": "missing",
+                "extension_point": "ci-steps",
+                "content": "extensions/step.yml",
+            },
+        ),
+    )
+    with pytest.raises(ValueError, match="contributes to missing component"):
+        validate_manifest_set((github, unknown_component))
+
+    unknown_point = _manifest(
+        "documentation",
+        contributions=(
+            {
+                "component": "github",
+                "extension_point": "missing-point",
+                "content": "extensions/step.yml",
+            },
+        ),
+    )
+    with pytest.raises(ValueError, match="undeclared extension point"):
+        validate_manifest_set((github, unknown_point))
+
+    known = _manifest(
+        "documentation",
+        contributions=(
+            {
+                "component": "github",
+                "extension_point": "ci-steps",
+                "content": "extensions/step.yml",
+            },
+        ),
+    )
+    validated = validate_manifest_set((github, known))
+    assert [manifest.id for manifest in validated] == ["documentation", "github"]
 
 
 def test_valid_project_spec_selection_uses_manifest_contract() -> None:

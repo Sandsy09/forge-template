@@ -49,14 +49,17 @@ that both `poe check` and `tests/test_combos.py`/`test_update.py` call, plus the
 strict future-engine [ProjectSpec protocol](docs/project-spec.md) models in
 `project_spec.py`,
 [component manifest protocol](docs/component-manifests.md) models and loader
-in `component_manifest.py`, and
+in `component_manifest.py`,
 [composition order](docs/composition-order.md) tier and within-tier ordering
-in `composition.py`. These contracts are not yet consumed by the v0.1.x
-direct-Copier path; see
+in `composition.py`, and
+[file conflict and override rules](docs/file-conflicts.md) output target and
+collision resolution in `file_conflicts.py`. These contracts are not yet
+consumed by the v0.1.x direct-Copier path; see
 [#5](https://github.com/Sandsy09/forge-template/issues/5), done,
 [#32](https://github.com/Sandsy09/forge-template/issues/32),
-[#33](https://github.com/Sandsy09/forge-template/issues/33), and
-[#34](https://github.com/Sandsy09/forge-template/issues/34).
+[#33](https://github.com/Sandsy09/forge-template/issues/33),
+[#34](https://github.com/Sandsy09/forge-template/issues/34), and
+[#35](https://github.com/Sandsy09/forge-template/issues/35).
 
 ## The question schema
 

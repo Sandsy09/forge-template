@@ -73,10 +73,12 @@ When one component depends on configuration published by another:
 4. unsupported or ambiguous ownership collisions fail rather than using
    implicit last-write-wins replacement.
 
-Stage 06 will define how component manifests declare such dependencies,
-extension points, ordering, compatibility, and collision errors. This contract
-defines the generated-project convention those mechanics must support; it does
-not pre-empt their API.
+[component-manifests.md](component-manifests.md),
+[composition-order.md](composition-order.md), and
+[file-conflicts.md](file-conflicts.md) now define how component manifests
+declare such dependencies, extension points, ordering, compatibility, and
+collision errors. This contract defines the generated-project convention
+those mechanics support; it does not redefine their API.
 
 ## Defaults, schemas, and secrets
 
