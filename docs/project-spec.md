@@ -72,13 +72,14 @@ component versions, compatibility, dependencies, and conflicts.
 
 Capability and platform arrays are unique sets and serialise in lexical order.
 That canonical wire ordering is not composition ordering. Deterministic
-application order is now defined by
+application order is defined by
 [composition-order.md](composition-order.md), delivered through FT-06.03, and
-FT-06.04 remains the owner of collision and override behaviour.
+output targets, dispositions, and collision behaviour are now defined by
+[file-conflicts.md](file-conflicts.md), delivered through FT-06.04.
 
 Multiple platforms are valid. A repository-host adapter and a runtime-target
-adapter can coexist when the later manifest and collision contracts declare
-them compatible.
+adapter can coexist when their extension-point declarations do not collide,
+per [file-conflicts.md](file-conflicts.md).
 
 ### Effective selections and provenance
 
@@ -204,9 +205,9 @@ and option validity belong to the installed engine release and manifests.
 This issue does not define:
 
 - component catalogue discovery or a stable discovery API (FT-06.07); the
-  [manifest field contract](component-manifests.md) and
-  [composition order](composition-order.md) are now defined;
-- file conflicts, ownership, or overrides (FT-06.04);
+  [manifest field contract](component-manifests.md),
+  [composition order](composition-order.md), and
+  [file conflict and override rules](file-conflicts.md) are now defined;
 - the recognised template-variable catalogue or structured option errors
   (FT-06.05);
 - complete composition contract fixtures (FT-06.06);

@@ -117,6 +117,27 @@ class ComponentReference(_ManifestModel):
         )
 
 
+class ExtensionPoint(_ManifestModel):
+    """One named point a component publishes for another to extend."""
+
+    id: _ForgeIdentifier
+    content: _RelativeResourcePath
+    """Component-relative path to the owned file this point lives in. Must
+    fall inside ``content_root``: an extension point extends content the
+    component itself owns and emits, not an arbitrary resource."""
+
+
+class Contribution(_ManifestModel):
+    """An additive contribution into another component's extension point."""
+
+    component: _ForgeIdentifier
+    extension_point: _ForgeIdentifier
+    content: _RelativeResourcePath
+    """Component-relative path to the contributed payload. Must fall outside
+    ``content_root``: a contribution is not itself an owned output file, so it
+    must not also be emitted at its own target."""
+
+
 class ComponentCompatibility(_ManifestModel):
     """ProjectSpec protocol and generated-Python requirements."""
 
@@ -169,6 +190,8 @@ class ComponentManifest(_ManifestModel):
     compatibility: ComponentCompatibility
     requires: tuple[ComponentReference, ...] = ()
     conflicts: tuple[ComponentReference, ...] = ()
+    extension_points: tuple[ExtensionPoint, ...] = ()
+    contributions: tuple[Contribution, ...] = ()
 
     @field_validator("manifest_version", mode="before")
     @classmethod
@@ -190,7 +213,9 @@ class ComponentManifest(_ManifestModel):
             return None
         return _relative_resource_path(value)
 
-    @field_validator("requires", "conflicts", mode="before")
+    @field_validator(
+        "requires", "conflicts", "extension_points", "contributions", mode="before"
+    )
     @classmethod
     def _normalise_reference_array(cls, value: object) -> object:
         if isinstance(value, list):
@@ -208,6 +233,39 @@ class ComponentManifest(_ManifestModel):
             raise ValueError(msg)
         return tuple(sorted(value, key=lambda reference: reference.id))
 
+    @field_validator("extension_points")
+    @classmethod
+    def _canonicalise_extension_points(
+        cls, value: tuple[ExtensionPoint, ...]
+    ) -> tuple[ExtensionPoint, ...]:
+        identifiers = [point.id for point in value]
+        if len(identifiers) != len(set(identifiers)):
+            msg = "extension point identifiers must not contain duplicates"
+            raise ValueError(msg)
+        return tuple(sorted(value, key=lambda point: point.id))
+
+    @field_validator("contributions")
+    @classmethod
+    def _canonicalise_contributions(
+        cls, value: tuple[Contribution, ...]
+    ) -> tuple[Contribution, ...]:
+        targets = [
+            (contribution.component, contribution.extension_point)
+            for contribution in value
+        ]
+        if len(targets) != len(set(targets)):
+            msg = "contributions must not target the same extension point twice"
+            raise ValueError(msg)
+        return tuple(
+            sorted(
+                value,
+                key=lambda contribution: (
+                    contribution.component,
+                    contribution.extension_point,
+                ),
+            )
+        )
+
     @model_validator(mode="after")
     def _validate_reference_relationships(self) -> Self:
         required = {reference.id for reference in self.requires}
@@ -222,6 +280,30 @@ class ComponentManifest(_ManifestModel):
                 contradictory
             )
             raise ValueError(msg)
+        return self
+
+    @model_validator(mode="after")
+    def _validate_extension_relationships(self) -> Self:
+        content_root = PurePosixPath(self.content_root)
+
+        for point in self.extension_points:
+            if not PurePosixPath(point.content).is_relative_to(content_root):
+                msg = (
+                    f"extension point {point.id!r} content {point.content!r} must "
+                    f"fall inside content_root {self.content_root!r}"
+                )
+                raise ValueError(msg)
+
+        for contribution in self.contributions:
+            if contribution.component == self.id:
+                msg = "a component must not contribute to its own extension point"
+                raise ValueError(msg)
+            if PurePosixPath(contribution.content).is_relative_to(content_root):
+                msg = (
+                    f"contribution content {contribution.content!r} must fall "
+                    f"outside content_root {self.content_root!r}"
+                )
+                raise ValueError(msg)
         return self
 
 
@@ -269,6 +351,20 @@ def load_component_manifest(path: str | Path) -> ComponentManifest:
             msg = f"options_schema is not a file: {manifest.options_schema!r}"
             raise ValueError(msg)
 
+    for point in manifest.extension_points:
+        point_content = _resource_path(resolved_manifest, point.content)
+        if not point_content.is_file():
+            msg = (
+                f"extension point {point.id!r} content is not a file: {point.content!r}"
+            )
+            raise ValueError(msg)
+
+    for contribution in manifest.contributions:
+        contribution_content = _resource_path(resolved_manifest, contribution.content)
+        if not contribution_content.is_file():
+            msg = f"contribution content is not a file: {contribution.content!r}"
+            raise ValueError(msg)
+
     return manifest
 
 
@@ -293,6 +389,38 @@ def _reject_dependency_cycles(manifests: Iterable[ComponentManifest]) -> None:
         cycle = " -> ".join(str(node) for node in exc.args[1])
         msg = f"component dependency graph contains a cycle: {cycle}"
         raise ValueError(msg) from exc
+
+
+def _reject_unknown_extension_points(
+    manifests: Iterable[ComponentManifest], by_id: dict[str, ComponentManifest]
+) -> None:
+    """Reject a contribution naming a component or point that does not exist.
+
+    This runs catalogue-wide, independent of any ProjectSpec selection, so a
+    contribution with a typo'd owner or extension point fails at packaging and
+    review time. It is what makes it safe for
+    ``forge_template.file_conflicts.resolve_output_plan`` to silently skip a
+    contribution whose owner happens not to be selected: that path is only
+    ever reached once every contribution is already proven to name a real,
+    published extension point.
+    """
+    for manifest in manifests:
+        for contribution in manifest.contributions:
+            owner = by_id.get(contribution.component)
+            if owner is None:
+                msg = (
+                    f"component {manifest.id!r} contributes to missing component "
+                    f"{contribution.component!r}"
+                )
+                raise ValueError(msg)
+            published = {point.id for point in owner.extension_points}
+            if contribution.extension_point not in published:
+                msg = (
+                    f"component {manifest.id!r} contributes to undeclared "
+                    f"extension point {contribution.extension_point!r} on "
+                    f"{contribution.component!r}"
+                )
+                raise ValueError(msg)
 
 
 def validate_manifest_set(
@@ -327,6 +455,7 @@ def validate_manifest_set(
                 raise ValueError(msg)
 
     _reject_dependency_cycles(manifest_tuple)
+    _reject_unknown_extension_points(manifest_tuple, by_id)
 
     return tuple(sorted(manifest_tuple, key=lambda manifest: manifest.id))
 

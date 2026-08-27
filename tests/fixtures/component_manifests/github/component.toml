@@ -8,6 +8,10 @@ content_root = "content"
 requires = []
 conflicts = []
 
+[[extension_points]]
+id = "ci-steps"
+content = "content/ci.yml.jinja"
+
 [compatibility]
 projectspec_protocols = [1]
 requires_python = ">=3.11"

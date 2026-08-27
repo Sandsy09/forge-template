@@ -180,11 +180,14 @@ change to this boundary requires a new accepted ADR that supersedes
 [ADR 0012](adr/0012-conservative-foundation-scope.md); the living reference may
 gain examples or clarifications that preserve the decision.
 
-The [ProjectSpec protocol](project-spec.md) now defines the effective
-generation request. The remaining Stage 06 work owns component manifests,
-extension points, composition ordering, and file-conflict mechanics. This
-document assigns conceptual ownership but does not define those APIs or
-algorithms.
+The [ProjectSpec protocol](project-spec.md), [component manifest
+protocol](component-manifests.md), [composition order](composition-order.md),
+and [file conflict and override rules](file-conflicts.md) now define the
+effective generation request, component metadata and extension points,
+deterministic application order, and collision safety. The remaining Stage 06
+work owns the option-schema and template-variable vocabulary, composition
+fixtures, and a stable discovery and rendering API. This document assigns
+conceptual ownership but does not define those remaining APIs or algorithms.
 
 ## Current Library scaffold mapping
 
@@ -217,8 +220,12 @@ This scope contract does not decide:
   [structured-logging](structured-logging.md),
   [paths-and-resources](paths-and-resources.md), and
   [exception-ownership](exception-ownership.md) conventions;
-- the component manifest, extension points, ordering, or conflict algorithms
-  owned by the remaining Stage 06 work;
+- the option-schema and template-variable vocabulary, composition fixtures, or
+  the stable discovery and rendering API owned by the remaining Stage 06 work
+  — the component manifest, extension-point, ordering, and conflict contracts
+  are now defined by [component-manifests.md](component-manifests.md),
+  [composition-order.md](composition-order.md), and
+  [file-conflicts.md](file-conflicts.md);
 - the implementation details of the public-engine target accepted by
   [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
   including its first supported package range and stable engine facade;

@@ -207,12 +207,15 @@ The following rules are normative:
 5. Unsupported component collisions fail rather than silently overwriting
    content.
 
-Deterministic ordering is now defined by
+Deterministic ordering is defined by
 [composition-order.md](composition-order.md), delivered through
-[FT-06.03](https://github.com/Sandsy09/forge-template/issues/34). Stage 06
-will define collision mechanics in
-[FT-06.04](https://github.com/Sandsy09/forge-template/issues/35). Stage 09 will
-define safe downstream extension points in
+[FT-06.03](https://github.com/Sandsy09/forge-template/issues/34). Collision
+mechanics — output targets, dispositions, extension points, and collision
+safety — are now defined by
+[file-conflicts.md](file-conflicts.md), delivered through
+[FT-06.04](https://github.com/Sandsy09/forge-template/issues/35). Stage 09
+will define organisation-policy-level extension points, including any real
+`override` grant, in
 [FT-09.02](https://github.com/Sandsy09/forge-template/issues/45).
 
 ## Composition examples
@@ -249,8 +252,11 @@ archetype.
 This terminology does not decide:
 
 - the stable ProjectSpec validation and engine API;
-- component discovery, merge, or collision algorithms;
-- organisation-policy schema or error types;
+- component discovery; the `merge` and `override` disposition algorithms,
+  reserved but not yet granted by
+  [file-conflicts.md](file-conflicts.md); or the in-file extension-point
+  marker syntax;
+- organisation-policy schema, error types, or any real `override` grant;
 - the identity of the second reference archetype; or
 - the concrete engine package range and supported source-resolution cutover.
 

@@ -79,13 +79,18 @@ the single deterministic tier and within-tier order a validated component
 selection applies in, cross-tier dependency handling, and catalogue-wide
 cycle rejection.
 
+The canonical [file conflict and override rules](../file-conflicts.md) define
+the output target each owned content path produces, the create/extend
+dispositions protocol v1 grants, and the collision-safety rules an
+unsupported target clash must fail under.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
-ProjectSpec, component manifest protocol v1, and composition order are
-implemented, but production manifests, discovery, collision handling,
-rendering, the stable engine facade, and CLI consumption are not; the
-existing Copier baseline remains operational until Stages 06–09 deliver the
-coordinated cutover.
+ProjectSpec, component manifest protocol v1, composition order, and file
+conflict and override rules are implemented, but production manifests,
+discovery, rendering, the stable engine facade, and CLI consumption are not;
+the existing Copier baseline remains operational until Stages 06–09 deliver
+the coordinated cutover.
 
 ## Structure
 

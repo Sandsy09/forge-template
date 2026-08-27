@@ -15,7 +15,11 @@
   tier and within-tier order, cross-tier dependency handling, and
   catalogue-wide cycle rejection are defined by
   [ADR 0025](../../../adr/0025-deterministic-composition-order.md).
-- **FT-06.04 — Define file conflict and override rules**
+- [x] [**FT-06.04 — Define file conflict and override rules**](../../../file-conflicts.md) —
+  output targets, the create/extend/merge/override disposition table,
+  extension-point declaration, and catalogue-wide contribution validation
+  are defined by
+  [ADR 0026](../../../adr/0026-file-conflict-and-override-rules.md).
 - **FT-06.05 — Design template variable contract**
 - **FT-06.06 — Create composition contract tests**
 - **FT-06.07 — Expose stable template-engine API**

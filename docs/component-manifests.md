@@ -60,6 +60,8 @@ the Library scaffold is already composed.
 | `compatibility` | table | ProjectSpec protocol and generated-Python compatibility. |
 | `requires` | array of component references | Hard selected-component dependencies. |
 | `conflicts` | array of component references | Incompatible selected components. |
+| `extension_points` | array of extension points, optional | Named points this component publishes for another to extend. |
+| `contributions` | array of contributions, optional | Additive contributions into another component's published extension point. |
 
 ### Identity and kinds
 
@@ -111,20 +113,43 @@ Every file below it is reviewed content owned by that component. Resource paths
 use forward slashes, cannot be absolute or traverse upwards, and must remain
 inside the component directory after symlink resolution.
 
-This contract inventories the source tree only. It does not decide whether an
-entry renders or copies literally, its output target, or whether a collision
-creates, extends, merges, or overrides. Those operations and their safety rules
-belong to
+This contract inventories the source tree only. Whether an entry renders or
+copies literally, its output target, and whether a collision creates,
+extends, merges, or overrides are now defined by
+[file-conflicts.md](file-conflicts.md), delivered through
 [FT-06.04](https://github.com/Sandsy09/forge-template/issues/35), while
-deterministic ordering — including this content's own applied order — is now
+deterministic ordering — including this content's own applied order — is
 defined by [composition-order.md](composition-order.md), delivered through
-[FT-06.03](https://github.com/Sandsy09/forge-template/issues/34).
+[FT-06.03](https://github.com/Sandsy09/forge-template/issues/34). A component
+may publish a named extension point in this content, or contribute into
+another component's published point, through the optional
+`extension_points`/`contributions` fields below.
 
 `options_schema` may name one existing file under the same component directory.
 Protocol v1 reserves that owner-local resource without defining or parsing its
 vocabulary. Canonical project/package/Python variables, component option
 schemas, required and unknown options, and structured validation failures remain
 [FT-06.05](https://github.com/Sandsy09/forge-template/issues/36) work.
+
+### Extension points and contributions
+
+`extension_points` publishes named points a component's own owned content
+exposes for another to extend. Each entry names an `id` and a `content`
+path — component-relative like `options_schema`, and required to fall
+inside this component's own `content_root`.
+
+`contributions` targets another component's published point. Each entry
+names the target `component`, its `extension_point` id, and this
+component's own `content` path — required to fall **outside** this
+component's `content_root`, since a contribution is not itself an owned
+output file. A component may not contribute to its own extension point.
+
+Both are optional and additive: omitting them leaves a manifest identical to
+protocol 1 as accepted by [ADR 0024](adr/0024-component-manifest-protocol-v1.md),
+so `manifest_version` stays `1`. What a contribution does to its target's
+output — creation, extension, and the full disposition and collision rules —
+is defined by [file-conflicts.md](file-conflicts.md), delivered through
+[FT-06.04](https://github.com/Sandsy09/forge-template/issues/35).
 
 ## Dependencies and conflicts
 
@@ -155,6 +180,11 @@ Dependency cycles are rejected catalogue-wide by `validate_manifest_set`,
 independent of component kind, before any content operation occurs. See
 [composition-order.md](composition-order.md#cycles), delivered through
 [FT-06.03](https://github.com/Sandsy09/forge-template/issues/34).
+`validate_manifest_set` also rejects, catalogue-wide, any contribution that
+names a component or extension point that does not exist — independent of
+any ProjectSpec selection. See
+[file-conflicts.md](file-conflicts.md#resolving-contributions), delivered
+through [FT-06.04](https://github.com/Sandsy09/forge-template/issues/35).
 
 ## ProjectSpec selection validation
 
@@ -180,7 +210,9 @@ Protocol v1 does not define:
 - production manifests, component discovery, or package-data layout;
 - the second roadmap archetype;
 - optional or recommended dependencies;
-- output paths, file operations, collision handling, or overrides (FT-06.04);
+- file operations, rendering, or the in-file extension-point marker syntax
+  (FT-06.07); output targets, dispositions, and collision safety are now
+  defined by [file-conflicts.md](file-conflicts.md) (FT-06.04);
 - the option-schema and template-variable vocabulary (FT-06.05);
 - full composed-output fixtures (FT-06.06);
 - stable engine discovery, rendering functions, or structured errors

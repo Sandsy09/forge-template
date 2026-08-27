@@ -9,11 +9,12 @@ document is its canonical contract, adopted by [ADR
 
 ## Scope
 
-This contract defines order only. It does not define output paths, file
-operations, or collision behaviour — that is
-[FT-06.04](https://github.com/Sandsy09/forge-template/issues/35). It does not
-define component discovery, a stable rendering API, or structured engine
-errors — that is
+This contract defines order only. Output targets, dispositions, and collision
+behaviour are now defined by
+[file-conflicts.md](file-conflicts.md), delivered through
+[FT-06.04](https://github.com/Sandsy09/forge-template/issues/35). This
+contract does not define component discovery, a stable rendering API, or
+structured engine errors — that is
 [FT-06.07](https://github.com/Sandsy09/forge-template/issues/38). It does not
 define the option-schema vocabulary — that is
 [FT-06.05](https://github.com/Sandsy09/forge-template/issues/36).
@@ -113,9 +114,10 @@ replace another component's content. This restates, without weakening,
 implicit last-write-wins replacement is forbidden, and unsupported component
 collisions must fail rather than silently overwrite content. A component
 placed later in this order gains no implicit permission over one placed
-earlier. What happens when two components name the same output target is
-entirely [FT-06.04](https://github.com/Sandsy09/forge-template/issues/35)'s
-decision to make.
+earlier. What happens when two components name the same output target —
+targets, dispositions, extension points, and collision safety — is now
+defined by [file-conflicts.md](file-conflicts.md), delivered through
+[FT-06.04](https://github.com/Sandsy09/forge-template/issues/35).
 
 ## Determinism guarantee
 
@@ -130,7 +132,10 @@ reference implementation.
 
 This contract does not define:
 
-- output paths, file operations, or collision handling
+- file operations, rendering, or the in-file extension-point marker syntax
+  ([FT-06.07](https://github.com/Sandsy09/forge-template/issues/38)); output
+  targets, dispositions, and collision handling are now defined by
+  [file-conflicts.md](file-conflicts.md)
   ([FT-06.04](https://github.com/Sandsy09/forge-template/issues/35));
 - the option-schema and template-variable vocabulary
   ([FT-06.05](https://github.com/Sandsy09/forge-template/issues/36));

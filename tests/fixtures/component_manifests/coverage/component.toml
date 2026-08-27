@@ -1,0 +1,18 @@
+manifest_version = 1
+id = "coverage"
+name = "Coverage"
+description = "Test coverage reporting."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[[contributions]]
+component = "github"
+extension_point = "ci-steps"
+content = "extensions/ci-step.yml.jinja"
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
