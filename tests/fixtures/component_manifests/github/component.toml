@@ -5,6 +5,7 @@ description = "GitHub repository and workflow integration."
 kind = "platform"
 version = "1.0.0"
 content_root = "content"
+options_schema = "options.schema.json"
 requires = []
 conflicts = []
 

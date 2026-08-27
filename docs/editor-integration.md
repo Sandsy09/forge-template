@@ -114,12 +114,14 @@ future editor capability.
 ## Deferred decisions
 
 [component-manifests.md](component-manifests.md),
-[composition-order.md](composition-order.md), and
-[file-conflicts.md](file-conflicts.md) now define the component and
-composition mechanics an editor capability would declare through; a stable
-discovery and rendering API (FT-06.07) and the template-variable vocabulary
-(FT-06.05) remain open. A later proposal may define a concrete adapter only
-after those remaining contracts exist and must identify its owned paths,
-extension points, validation, and collision behaviour per
-[file-conflicts.md](file-conflicts.md). Any development-environment
+[composition-order.md](composition-order.md),
+[file-conflicts.md](file-conflicts.md), and
+[template-variables.md](template-variables.md) now define the component,
+composition, and variable mechanics an editor capability would declare
+through; only a stable discovery and rendering API (FT-06.07) remains open.
+A later proposal may define a concrete adapter only after that remaining
+contract exists and must identify its owned paths, extension points,
+declared options, validation, and collision behaviour per
+[file-conflicts.md](file-conflicts.md) and
+[template-variables.md](template-variables.md). Any development-environment
 integration requires its own classification decision.

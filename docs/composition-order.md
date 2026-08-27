@@ -15,8 +15,9 @@ behaviour are now defined by
 [FT-06.04](https://github.com/Sandsy09/forge-template/issues/35). This
 contract does not define component discovery, a stable rendering API, or
 structured engine errors — that is
-[FT-06.07](https://github.com/Sandsy09/forge-template/issues/38). It does not
-define the option-schema vocabulary — that is
+[FT-06.07](https://github.com/Sandsy09/forge-template/issues/38). The
+option-schema and template-variable vocabulary is now defined by
+[template-variables.md](template-variables.md), delivered through
 [FT-06.05](https://github.com/Sandsy09/forge-template/issues/36).
 
 ## Tier order
@@ -137,7 +138,8 @@ This contract does not define:
   targets, dispositions, and collision handling are now defined by
   [file-conflicts.md](file-conflicts.md)
   ([FT-06.04](https://github.com/Sandsy09/forge-template/issues/35));
-- the option-schema and template-variable vocabulary
+- the option-schema and template-variable vocabulary is now defined by
+  [template-variables.md](template-variables.md)
   ([FT-06.05](https://github.com/Sandsy09/forge-template/issues/36));
 - full composed-output fixtures
   ([FT-06.06](https://github.com/Sandsy09/forge-template/issues/37));

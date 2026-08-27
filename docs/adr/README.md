@@ -29,6 +29,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0024 — Define strict bundled component manifest protocol v1](0024-component-manifest-protocol-v1.md)
 - [0025 — Define deterministic composition order](0025-deterministic-composition-order.md)
 - [0026 — Define file conflict and override rules](0026-file-conflict-and-override-rules.md)
+- [0027 — Design the template variable contract](0027-template-variable-contract.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

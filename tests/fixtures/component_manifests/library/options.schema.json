@@ -1,1 +1,16 @@
-{}
+{
+  "schema_version": 1,
+  "options": [
+    {
+      "name": "build_backend",
+      "type": "string",
+      "required": true,
+      "choices": ["uv_build", "hatchling"]
+    },
+    {
+      "name": "initial_version",
+      "type": "string",
+      "default": "0.1.0"
+    }
+  ]
+}

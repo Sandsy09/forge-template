@@ -149,11 +149,13 @@ themselves.
 
 The [component manifest protocol](component-manifests.md) now defines strict
 identity, display metadata, version, compatibility, owned-content,
-dependency, and conflict declarations for these units, and
+dependency, and conflict declarations for these units;
 [composition order](composition-order.md) now defines the deterministic
-order a validated selection of them applies in. Production manifests,
-discovery, collision behaviour, and rendering do not yet exist in the v0.1.x
-implementation.
+order a validated selection of them applies in; and
+[template-variables.md](template-variables.md) now defines the option
+vocabulary a component may declare through its manifest's `options_schema`.
+Production manifests, discovery, collision behaviour, and rendering do not
+yet exist in the v0.1.x implementation.
 
 ### ProjectSpec
 
@@ -162,7 +164,10 @@ project-generation request in the accepted public-engine target. Its
 [protocol v1 schema](project-spec.md) carries provider-neutral project
 metadata, Python support, exactly one archetype, zero or more capabilities and
 platforms, optional profile/policy provenance, and namespaced component
-options.
+options. The rendered template-variable namespace those values populate, and
+the recognised/required/unknown-option rules component options are checked
+against, are now defined by
+[template-variables.md](template-variables.md).
 
 The executable schema is owned by `forge-template`; `create-forge` and future
 clients construct it. The current v0.1.x path does not consume it, and the

@@ -3,10 +3,11 @@
 > **Status:** This is the accepted target architecture under
 > [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
 > not the v0.1.x implementation. ProjectSpec, component manifest protocol v1,
-> composition order, and file conflict and override rules are now defined,
-> but the current CLI remains a thin Copier client with a bundled registry
-> and `forge-template` exposes no production catalogue or stable
-> component-engine/rendering API until the coordinated cutover.
+> composition order, file conflict and override rules, and the template
+> variable contract are now defined, but the current CLI remains a thin
+> Copier client with a bundled registry and `forge-template` exposes no
+> production catalogue or stable component-engine/rendering API until the
+> coordinated cutover.
 
 The [canonical terminology](../terminology.md) defines the ecosystem,
 composition, and authority terms used by this target.
@@ -21,6 +22,9 @@ deterministic order that future bundled selection applies in.
 The [file conflict and override rules](../file-conflicts.md) define the
 output target, disposition, and collision-safety rules that composed
 selection resolves against.
+The [template variable contract](../template-variables.md) defines the
+rendered variable namespace and the component option vocabulary declared
+through `options_schema`.
 The [Foundation guarantees](../foundation-guarantees.md) define the
 provider- and tool-neutral outcomes every successfully generated project must
 receive regardless of whether this proposed composition model is adopted.

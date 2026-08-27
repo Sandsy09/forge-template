@@ -1,10 +1,10 @@
 # Repository Ownership and Integration Model
 
 > **Status:** Template/CLI ownership is current and ProjectSpec, component
-> manifest protocol v1, composition order, and file conflict and override
-> rules are now defined. Production component discovery, rendering, the
-> stable engine facade, and downstream-policy integration remain the
-> accepted target under
+> manifest protocol v1, composition order, file conflict and override
+> rules, and the template variable contract are now defined. Production
+> component discovery, rendering, the stable engine facade, and
+> downstream-policy integration remain the accepted target under
 > [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
 > but remains unimplemented until the coordinated cutover.
 
@@ -19,6 +19,9 @@ metadata that `forge-template` owns rather than the CLI. The
 deterministic order that metadata's validated selections apply in. The
 [file conflict and override rules](../file-conflicts.md) define the output
 target, disposition, and collision-safety rules that order resolves against.
+The [template variable contract](../template-variables.md) defines the
+rendered variable namespace and the component option vocabulary that
+`forge-template` owns rather than the CLI.
 The [Foundation scope](../foundation-scope.md) defines the concern-level boundary
 between that mandatory baseline and the components listed below. The
 [Python support policy](../python-support.md) is owned here because its choices,
