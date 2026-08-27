@@ -1,0 +1,109 @@
+# Composition contract fixtures
+
+This document describes what the composition-contract golden fixtures prove,
+what "deterministic" is actually verified to mean without a stable rendering
+API, and how to regenerate them when a contract legitimately changes.
+Delivered by [FT-06.06](https://github.com/Sandsy09/forge-template/issues/37)
+through [`tests/test_composition_contract.py`](../tests/test_composition_contract.py)
+and [`tests/composition_contract.py`](../tests/composition_contract.py), this
+document is adopted by [ADR
+0028](adr/0028-composition-contract-fixtures.md).
+
+## Scope
+
+This is a test methodology, not a sixth engine contract. It exercises
+[`forge_template.composition`](../src/forge_template/composition.py),
+[`forge_template.file_conflicts`](../src/forge_template/file_conflicts.py),
+and [`forge_template.template_variables`](../src/forge_template/template_variables.py)
+together, over the reference fixture catalogue in
+`tests/fixtures/component_manifests/`. It does not expose a public rendering
+function, define the in-file extension-point marker syntax, or splice an
+extension's contribution into its base's rendered text — the rendering
+inside `tests/composition_contract.py` is test-local and deliberately not
+exported from `forge_template`, so
+[FT-06.07](https://github.com/Sandsy09/forge-template/issues/38) keeps
+undivided ownership of the stable engine facade it is chartered to expose.
+It does not define organisation-policy resolution — that is Stage 09.
+
+## Golden format
+
+Each scenario is one JSON document under `tests/fixtures/golden/`, holding
+the composition order, the resolved output plan, the resolved template
+variables, and every output target's rendered content as a JSON string.
+
+Storing rendered content inside a JSON string rather than as real files is
+deliberate: the root `.pre-commit-config.yaml` runs
+`end-of-file-fixer`/`trailing-whitespace`/`mixed-line-ending` over every file
+with no exclusions, by design (CLAUDE.md invariant 1). A byte a golden fixture
+must pin exactly — a missing trailing newline, deliberate trailing whitespace
+— would otherwise be silently rewritten by the hook, and the resulting test
+failure would look like a renderer bug rather than a hook edit. A newline
+inside a JSON string is escaped (`\n`) and never sits at a physical
+end-of-file or line-end, so the outer file stays a normal, hook-compliant
+JSON document while its content field can pin anything.
+
+## Scenarios
+
+| Scenario | Selection | Proves |
+| --- | --- | --- |
+| `minimal` | `library` only | The floor: one archetype, empty capability and platform tiers, a schema-supplied default alongside a required option. |
+| `extension` | `library`, `coverage`, `github` | The canonical case that runs against tier order: `coverage` (a capability) contributes to `github` (a platform)'s extension point, even though capabilities apply before platforms. |
+| `full` | `library`, `changelog`, `coverage`, `documentation`, `github` | The kitchen-sink pattern that has already caught real bugs the narrower combos missed for the template-scaffolding suite (CLAUDE.md); here it selects every reference component at once. |
+
+## Invalid catalogues
+
+`tests/fixtures/invalid_components/` holds on-disk fixtures for three
+distinct validation layers, each individually well-formed TOML — a checked-in
+malformed-TOML fixture would be rejected outright by the root
+`check-toml` pre-commit hook, so that case stays built in `tmp_path` inside
+`tests/test_component_manifest.py`, as it already was:
+
+- **`cycle-a` / `cycle-b`** — a `requires` cycle, rejected catalogue-wide by
+  `validate_manifest_set` regardless of any particular selection.
+- **`conflicting-first` / `conflicting-second`** — a declared `conflicts`
+  edge, rejected by `validate_manifest_selection` only once both are
+  selected together.
+- **`colliding-first` / `colliding-second`** — two components whose owned
+  content maps to the same output target, with no declared relationship
+  between them at all. Both load and select cleanly; the collision only
+  exists once `resolve_output_plan` resolves the whole plan, proving
+  rejection happens before any file operation even when nothing about the
+  manifests themselves was invalid.
+
+## Determinism
+
+[composition-order.md's determinism
+guarantee](composition-order.md#determinism-guarantee) names manifest input
+order, `dict`/`set` iteration order, `PYTHONHASHSEED`, and the enumerating
+filesystem explicitly. `test_composed_output_is_invariant_to_manifest_input_order`
+covers the first two in-process, over the full composed artefact rather than
+composition order alone. `PYTHONHASHSEED` is fixed for the lifetime of one
+Python process, so no in-process test can vary it — `test_composed_output_is_invariant_to_pythonhashseed`
+instead spawns fresh subprocesses across several explicit seed values and
+compares a hash of each one's composed output, the only way to actually
+exercise that half of the guarantee rather than leave it a prose claim.
+
+## Regenerating goldens
+
+```bash
+uv run pytest tests/test_composition_contract.py --update-goldens
+```
+
+Rewrites every golden fixture from the current composed output, then skips
+the comparison for that run. Review the diff like any other change — the
+deliberateness lives in that review, not in the regeneration step itself.
+`--update-goldens` is a `pytest` option registered in `tests/conftest.py`,
+alongside the existing `--from-git` option.
+
+## Deferred work
+
+This contract does not define:
+
+- a stable, public rendering or composition-facade API, the in-file
+  extension-point marker syntax, or structured engine errors
+  ([FT-06.07](https://github.com/Sandsy09/forge-template/issues/38));
+- organisation-policy resolution (Stage 09).
+
+Until those coordinated contracts are complete, v0.1.x continues to pass its
+plain answer mapping directly to Copier. No generated project depends on
+`tests/composition_contract.py` — it is test-only and ships in no package.

@@ -35,6 +35,17 @@ def pytest_addoption(parser: pytest.Parser) -> None:
             "is what CI passes, since _commit must be recorded."
         ),
     )
+    parser.addoption(
+        "--update-goldens",
+        action="store_true",
+        default=False,
+        help=(
+            "Rewrite tests/fixtures/golden/*.json from the current composed "
+            "output of tests/test_composition_contract.py instead of asserting "
+            "against it. Review the diff like any other change -- see "
+            "docs/composition-fixtures.md."
+        ),
+    )
 
 
 @pytest.fixture(scope="session")
@@ -43,6 +54,14 @@ def from_git(pytestconfig: pytest.Config) -> bool:
     history (--from-git) or an uncommitted snapshot (the default).
     """
     return bool(pytestconfig.getoption("--from-git"))
+
+
+@pytest.fixture(scope="session")
+def update_goldens(pytestconfig: pytest.Config) -> bool:
+    """Whether composition-contract tests should rewrite their golden
+    fixtures (--update-goldens) instead of asserting against them.
+    """
+    return bool(pytestconfig.getoption("--update-goldens"))
 
 
 @pytest.fixture(scope="session", autouse=True)

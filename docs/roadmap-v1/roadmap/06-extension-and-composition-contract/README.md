@@ -24,7 +24,10 @@
   the rendered variable namespace, the Forge-owned option-schema format, and
   required/unknown-option rejection rules are defined by
   [ADR 0027](../../../adr/0027-template-variable-contract.md).
-- **FT-06.06 — Create composition contract tests**
+- [x] [**FT-06.06 — Create composition contract tests**](../../../composition-fixtures.md) —
+  golden composed-output fixtures, on-disk invalid-catalogue scenarios, and
+  the determinism guarantee are defined by
+  [ADR 0028](../../../adr/0028-composition-contract-fixtures.md).
 - **FT-06.07 — Expose stable template-engine API**
 
 ### create-forge

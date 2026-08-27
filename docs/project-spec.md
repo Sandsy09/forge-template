@@ -213,7 +213,8 @@ This issue does not define:
 - structured option validation errors (FT-06.07); the recognised
   template-variable and option-schema vocabulary is now defined by
   [template-variables.md](template-variables.md) (FT-06.05);
-- complete composition contract fixtures (FT-06.06);
+- complete composition contract fixtures — now defined by
+  [composition-fixtures.md](composition-fixtures.md) (FT-06.06);
 - the supported top-level engine facade, rendering calls, or structured engine
   error API (FT-06.07);
 - organisation-policy documents and resolution (Stage 09); or

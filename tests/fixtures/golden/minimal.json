@@ -1,0 +1,51 @@
+{
+  "order": [
+    "library"
+  ],
+  "targets": {
+    "pyproject.toml": {
+      "base": {
+        "component_id": "library",
+        "disposition": "create",
+        "extension_point": null,
+        "source_path": "pyproject.toml.jinja"
+      },
+      "extensions": [],
+      "target": "pyproject.toml"
+    }
+  },
+  "tree": {
+    "pyproject.toml": "[project]\nname = \"example_project\"\nversion = \"0.1.0\"\n\n[build-system]\nbuild-backend = \"uv_build\""
+  },
+  "variables": {
+    "components": {
+      "archetype": "library",
+      "capabilities": [],
+      "platforms": []
+    },
+    "options": {
+      "library": {
+        "build_backend": "uv_build",
+        "initial_version": "0.1.0"
+      }
+    },
+    "project": {
+      "authors": [],
+      "description": "",
+      "licence": "mit",
+      "name": "Example Project",
+      "package_name": "example_project",
+      "repository_name": "example-project"
+    },
+    "python": {
+      "development": "3.13",
+      "minimum": "3.11",
+      "requires_python": ">=3.11",
+      "tested_versions": [
+        "3.11",
+        "3.12",
+        "3.13"
+      ]
+    }
+  }
+}

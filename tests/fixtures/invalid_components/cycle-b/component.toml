@@ -1,0 +1,13 @@
+manifest_version = 1
+id = "cycle-b"
+name = "Cycle B"
+description = "A capability that requires cycle-a, forming a two-node cycle."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = [{ id = "cycle-a" }]
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

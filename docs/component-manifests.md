@@ -215,7 +215,8 @@ Protocol v1 does not define:
   defined by [file-conflicts.md](file-conflicts.md) (FT-06.04);
 - the option-schema and template-variable vocabulary are now defined by
   [template-variables.md](template-variables.md) (FT-06.05);
-- full composed-output fixtures (FT-06.06);
+- full composed-output fixtures — now defined by
+  [composition-fixtures.md](composition-fixtures.md) (FT-06.06);
 - stable engine discovery, rendering functions, or structured errors
   (FT-06.07); or
 - CLI prompts, automatic choice guidance, or filesystem orchestration

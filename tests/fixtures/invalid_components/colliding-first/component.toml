@@ -1,0 +1,13 @@
+manifest_version = 1
+id = "colliding-first"
+name = "Colliding First"
+description = "A capability whose owned content maps to the same output target as colliding-second, independent of any declared conflict."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

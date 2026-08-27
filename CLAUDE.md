@@ -61,8 +61,16 @@ not yet consumed by the v0.1.x direct-Copier path; see
 [#32](https://github.com/Sandsy09/forge-template/issues/32),
 [#33](https://github.com/Sandsy09/forge-template/issues/33),
 [#34](https://github.com/Sandsy09/forge-template/issues/34),
-[#35](https://github.com/Sandsy09/forge-template/issues/35), and
-[#36](https://github.com/Sandsy09/forge-template/issues/36).
+[#35](https://github.com/Sandsy09/forge-template/issues/35),
+[#36](https://github.com/Sandsy09/forge-template/issues/36), and
+[#37](https://github.com/Sandsy09/forge-template/issues/37). The composition,
+file-conflict, and template-variable contracts are proven to compose into one
+deterministic artefact by
+[composition-fixtures.md](docs/composition-fixtures.md)'s golden fixtures,
+exercised through a test-only helper
+(`tests/composition_contract.py`) rather than a new `src/forge_template`
+module — that stable facade remains
+[#38](https://github.com/Sandsy09/forge-template/issues/38) work.
 
 ## The question schema
 

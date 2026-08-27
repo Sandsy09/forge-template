@@ -48,5 +48,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [template-variables.md](template-variables.md) — the rendered
   template-variable namespace, component option declarations, and
   resolution/rejection rules for the future composition engine.
+- [composition-fixtures.md](composition-fixtures.md) — golden composed-output
+  fixtures, invalid-catalogue scenarios, and the determinism guarantee they
+  prove for the composition, file-conflict, and template-variable contracts
+  together.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

@@ -175,7 +175,8 @@ when FT-06.07 is implemented.
 
 This contract does not define:
 
-- full composed-output fixtures
+- full composed-output fixtures — now defined by
+  [composition-fixtures.md](composition-fixtures.md)
   ([FT-06.06](https://github.com/Sandsy09/forge-template/issues/37));
 - component discovery, a stable rendering API, the in-file marker syntax an
   extension point splices into, or structured engine errors

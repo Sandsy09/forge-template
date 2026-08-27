@@ -164,7 +164,8 @@ This contract does not define:
   template-variable catalogue is now defined by
   [template-variables.md](template-variables.md)
   ([FT-06.05](https://github.com/Sandsy09/forge-template/issues/36));
-- full composed-output fixtures
+- full composed-output fixtures — now defined by
+  [composition-fixtures.md](composition-fixtures.md)
   ([FT-06.06](https://github.com/Sandsy09/forge-template/issues/37));
 - component discovery, a stable rendering API, the in-file marker syntax an
   extension point splices into, or structured engine errors
