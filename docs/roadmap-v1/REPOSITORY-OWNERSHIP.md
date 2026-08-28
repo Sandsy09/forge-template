@@ -25,7 +25,10 @@ rendered variable namespace and the component option vocabulary that
 `forge-template` owns rather than the CLI.
 The [stable template-engine API](../template-engine-api.md) exposes those
 contracts through typed, path-free discovery, validation, planning, rendering,
-and structured failures while retaining destination orchestration in the CLI.
+and structured failures. The
+[generated-project validation contract](../generated-project-validation.md)
+checks the in-memory result while retaining destination orchestration in the
+CLI.
 The [Foundation scope](../foundation-scope.md) defines the concern-level boundary
 between that mandatory baseline and the components listed below. The
 [Python support policy](../python-support.md) is owned here because its choices,

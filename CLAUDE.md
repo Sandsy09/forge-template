@@ -58,7 +58,10 @@ collision resolution in `file_conflicts.py`, and the
 and option-schema vocabulary in `template_variables.py`. The supported
 [template-engine API](docs/template-engine-api.md) in `engine.py` exposes
 package-bound discovery, strict validation, deterministic planning, in-memory
-rendering, and structured failures from the top-level package. The production
+rendering, and structured failures from the top-level package. Its
+[generated-project validation](docs/generated-project-validation.md) checks
+plan/output agreement, universal `pyproject.toml` metadata, and completed
+Forge extension rendering before a result is returned. The production
 catalogue is deliberately empty until Stage 08, and these contracts are not
 yet consumed by the direct-Copier path; see
 [#5](https://github.com/Sandsy09/forge-template/issues/5), done,
@@ -74,7 +77,8 @@ compose into one deterministic artefact by
 [composition-fixtures.md](docs/composition-fixtures.md)'s golden fixtures,
 exercised through the public facade with a private fixture-catalogue override.
 Never expose that override or accept arbitrary catalogue roots in the public
-API.
+API. Destination staging and finalisation remain `create-forge`
+responsibilities; keep engine validation in memory.
 
 ## The question schema
 
@@ -262,7 +266,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0029 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0030 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by

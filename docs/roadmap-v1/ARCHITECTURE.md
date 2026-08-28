@@ -27,7 +27,10 @@ rendered variable namespace and the component option vocabulary declared
 through `options_schema`.
 The [stable template-engine API](../template-engine-api.md) is the typed,
 side-effect-free boundary for discovery, validation, planning, and in-memory
-rendering. It deliberately leaves target-directory orchestration with clients.
+rendering. The
+[generated-project validation contract](../generated-project-validation.md)
+checks the immutable result before it crosses that boundary. Target-directory
+orchestration remains with clients.
 The [Foundation guarantees](../foundation-guarantees.md) define the
 provider- and tool-neutral outcomes every successfully generated project must
 receive regardless of whether this proposed composition model is adopted.
@@ -82,6 +85,7 @@ integration without making GitHub Actions a Foundation requirement.
 │ ProjectSpec validation      │
 │ component discovery         │
 │ composition / rendering     │
+│ generated output validation │
 │ generated project content   │
 └──────────────┬──────────────┘
                ▼

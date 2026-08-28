@@ -55,5 +55,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [template-engine-api.md](template-engine-api.md) — supported typed discovery,
   strict ProjectSpec validation, deterministic planning, in-memory rendering,
   extension markers, and structured engine failures.
+- [generated-project-validation.md](generated-project-validation.md) — the
+  side-effect-free plan/output, `pyproject.toml`, and template-completion checks
+  every successful engine render passes.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

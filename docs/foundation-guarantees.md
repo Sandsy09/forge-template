@@ -23,6 +23,12 @@ prevent a project owner from changing their independent repository after
 handoff. Foundation provides a sound starting contract rather than a runtime
 enforcement framework inside generated projects.
 
+The engine's canonical
+[generated-project validation](generated-project-validation.md) enforces the
+universal in-memory plan/output and metadata invariants that can be proved
+before handoff. It does not replace the generated project's own quality
+commands or the client's filesystem finalisation checks.
+
 ## Mandatory guarantees
 
 ### Reproducible development and validation environment

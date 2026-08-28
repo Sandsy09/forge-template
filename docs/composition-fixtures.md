@@ -16,8 +16,11 @@ This is a test methodology, not another engine contract. It exercises the
 catalogue in `tests/fixtures/component_manifests/`. A private, test-only seam
 redirects package discovery to that catalogue; production clients cannot use
 it. The scenarios now prove real contribution splicing and rendering through
-`render_project`, not a test-local approximation. Organisation-policy
-resolution remains Stage 09.
+`render_project`, not a test-local approximation. Their Library-shaped
+`pyproject.toml` also satisfies the canonical
+[generated-project validation](generated-project-validation.md), so the
+goldens exercise the same automatic pre-return boundary as a public client.
+Organisation-policy resolution remains Stage 09.
 
 ## Golden format
 

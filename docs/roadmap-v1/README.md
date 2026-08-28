@@ -96,13 +96,20 @@ those contracts through typed, package-bound discovery, strict validation,
 deterministic planning, in-memory rendering, and structured failures. Its
 production catalogue is deliberately empty until Stage 08.
 
+The canonical
+[generated-project validation contract](../generated-project-validation.md)
+ensures each in-memory render exactly matches its plan, carries universal
+ProjectSpec-aligned metadata, and contains no unresolved Forge extension
+marker before a client receives it.
+
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 ProjectSpec, component manifest protocol v1, composition order, file conflict
 and override rules, the template variable contract, and the stable
-`forge-template` `0.2.x` engine facade are implemented. Production manifests
-and CLI consumption are not; the existing Copier baseline remains operational
-until Stages 08–09 and the coordinated CLI cutover are complete.
+`forge-template` `0.2.x` engine facade, and generated-project validation are
+implemented. Production manifests and CLI consumption are not; the existing
+Copier baseline remains operational until Stages 08–09 and the coordinated CLI
+cutover are complete.
 
 ## Structure
 

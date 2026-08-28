@@ -25,6 +25,7 @@ from forge_template import (
     plan_generation,
     render_project,
     validate_project_spec,
+    validate_rendered_project,
 )
 ```
 
@@ -119,8 +120,17 @@ always bytes:
 - the assembled owner template renders exactly once, so owner and extension
   snippets share the canonical variable context.
 
-Rendering is an in-memory operation. A successful result does not imply that
-a target directory exists or that any file has been written.
+Rendering is an in-memory operation. Before returning, it applies the canonical
+[generated-project validation](generated-project-validation.md) to the result.
+A successful result does not imply that a target directory exists or that any
+file has been written.
+
+`validate_rendered_project(spec, project) -> RenderedProject` exposes that
+same side-effect-free check directly. It proves exact plan/output target
+agreement, the universal ProjectSpec-aligned `pyproject.toml` contract, and
+the absence of unresolved Forge extension markers. It returns the same
+immutable result on success. Destination staging and finalisation remain
+client responsibilities.
 
 ## Extension markers
 
@@ -156,7 +166,8 @@ contains:
 
 The stable categories are invalid ProjectSpec, component discovery or
 catalogue failure, invalid selection, invalid component options,
-generation-plan failure, and template-render failure. TOML, Pydantic,
+generation-plan failure, template-render failure, and invalid generated
+project. TOML, Pydantic,
 package-resource, Unicode, Jinja, selection, option, and expected collision
 failures are translated into this surface. Unexpected programming defects are
 allowed to escape rather than being mislabeled as user input failures.
@@ -173,7 +184,9 @@ change after 1.0, or a new minor compatibility line while the package remains
 pre-1.0, and always requires migration guidance. Additive result fields are
 also treated carefully because strict consumers may serialise these models.
 
-The current Copier Library path and the released `create-forge` CLI do not yet
+The generated-project validator is an additive part of the first, still
+unreleased `0.2.0` API. The current Copier Library path and the released
+`create-forge` CLI do not yet
 consume this facade. `create-forge` must keep its supported engine range and
 protocol support unassigned until its implementation and cross-repository
 contract tests pass. This change creates no component manifest, ProjectSpec

@@ -26,6 +26,7 @@ from forge_template.engine import (
     plan_generation,
     render_project,
     validate_project_spec,
+    validate_rendered_project,
 )
 from forge_template.project_spec import (
     PROJECT_SPEC_PROTOCOL_VERSION,
@@ -65,4 +66,5 @@ __all__ = [
     "plan_generation",
     "render_project",
     "validate_project_spec",
+    "validate_rendered_project",
 ]
