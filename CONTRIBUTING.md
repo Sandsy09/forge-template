@@ -52,7 +52,10 @@ variable namespace and the component option vocabulary declared through
 `options_schema`. The
 [stable template-engine API](docs/template-engine-api.md) is the supported
 top-level client boundary; low-level composition helpers are implementation
-details.
+details. The
+[generated-project validation contract](docs/generated-project-validation.md)
+defines the in-memory checks every successful render passes before a client
+may stage it.
 
 ## Branching and pull requests
 

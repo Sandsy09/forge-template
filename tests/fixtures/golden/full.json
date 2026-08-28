@@ -54,7 +54,7 @@
     "ci.yml": "name: CI\njobs:\n  checks:\n    steps:\n      - name: Coverage\n        run: echo coverage\n",
     "mkdocs.yml": "site_name: \"Example Project\"\n",
     "nested/a-deep.txt": "nested a\n",
-    "pyproject.toml": "[project]\nname = \"example_project\"\nversion = \"0.2.0\"\n\n[build-system]\nbuild-backend = \"uv_build\"\n",
+    "pyproject.toml": "[project]\nname = \"example-project\"\nversion = \"0.2.0\"\nrequires-python = \">=3.11\"\n\n[build-system]\nbuild-backend = \"uv_build\"\n",
     "z-top.txt": "top-level z\n"
   }
 }

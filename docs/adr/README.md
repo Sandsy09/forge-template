@@ -32,6 +32,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0027 — Design the template variable contract](0027-template-variable-contract.md)
 - [0028 — Adopt composition-contract fixtures](0028-composition-contract-fixtures.md)
 - [0029 — Expose a stable, side-effect-free template-engine API](0029-stable-template-engine-api.md)
+- [0030 — Validate rendered projects before exposing engine success](0030-generated-project-validation.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

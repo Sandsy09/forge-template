@@ -4,7 +4,10 @@
 
 ### forge-template
 
-- **FT-07.05 — Add generated-project validation**
+- [x] [**FT-07.05 — Add generated-project validation**](../../../generated-project-validation.md)
+  — the public engine validates each immutable rendered result before return;
+  [ADR 0030](../../../adr/0030-generated-project-validation.md) records the
+  boundary.
 
 ### create-forge
 
@@ -16,7 +19,11 @@
 
 ## Stage completion rule
 
-- [ ] Repo-local issues are complete or explicitly deferred.
-- [ ] Cross-repository blockers are resolved.
-- [ ] Public contracts changed by this stage are documented/versioned.
-- [ ] No implementation concern is duplicated across repositories.
+- [x] Repo-local issues are complete or explicitly deferred.
+- [x] Cross-repository blockers are resolved or retained as completed
+  predecessors for create-forge.
+- [x] Public contracts changed by this stage are documented/versioned.
+- [x] No implementation concern is duplicated across repositories.
+
+The forge-template side of Stage 07 is complete. The shared stage remains open
+in create-forge for pipeline, filesystem-finalisation, and end-to-end work.

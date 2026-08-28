@@ -358,6 +358,20 @@ def test_strict_undefined_is_a_structured_render_error(
     assert "missing" in exc_info.value.details[0].message
 
 
+def test_intentional_downstream_template_syntax_survives_rendering(
+    copied_catalogue: Path,
+) -> None:
+    source = copied_catalogue / "library" / "content" / "downstream.txt.jinja"
+    source.write_text(
+        "{% raw %}{{ downstream_variable }}{% endraw %}\n",
+        encoding="utf-8",
+    )
+
+    files = {item.target: item.content for item in render_project(_spec()).files}
+
+    assert files["downstream.txt"] == b"{{ downstream_variable }}\n"
+
+
 @pytest.mark.parametrize(
     "mutation",
     [

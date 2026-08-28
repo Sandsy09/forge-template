@@ -1,6 +1,7 @@
 [project]
-name = "{{ project.package_name }}"
+name = "{{ project.repository_name }}"
 version = "{{ options.library.initial_version }}"
+requires-python = ">={{ python.minimum }}"
 
 [build-system]
 build-backend = "{{ options.library.build_backend }}"

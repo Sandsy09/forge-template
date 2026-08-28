@@ -100,7 +100,9 @@ target, disposition, and collision-safety rules, the
 [template variable contract](docs/template-variables.md) defines the rendered
 variable namespace and component option vocabulary, the
 [stable template-engine API](docs/template-engine-api.md) exposes typed,
-side-effect-free discovery, validation, planning, and in-memory rendering, and
+side-effect-free discovery, validation, planning, and in-memory rendering, the
+[generated-project validation contract](docs/generated-project-validation.md)
+checks every rendered result before a client receives it, and
 [docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import re
+import tomllib
 from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -20,6 +21,8 @@ from pathlib import Path, PurePosixPath
 from typing import Literal, TypeAlias, overload
 
 from jinja2 import Environment, StrictUndefined, TemplateError
+from packaging.specifiers import InvalidSpecifier, SpecifierSet
+from packaging.utils import InvalidName, canonicalize_name
 from pydantic import BaseModel, ConfigDict, JsonValue, ValidationError
 
 from forge_template.component_manifest import (
@@ -165,6 +168,7 @@ class EngineErrorCode(StrEnum):
     INVALID_COMPONENT_OPTIONS = "invalid-component-options"
     GENERATION_PLAN_FAILED = "generation-plan-failed"
     TEMPLATE_RENDER_FAILED = "template-render-failed"
+    GENERATED_PROJECT_INVALID = "generated-project-invalid"
 
 
 class EngineErrorDetail(_PublicModel):
@@ -249,6 +253,242 @@ def _validation_details(exc: ValidationError) -> tuple[EngineErrorDetail, ...]:
 
 def _single_detail(code: str, message: str) -> tuple[EngineErrorDetail, ...]:
     return (EngineErrorDetail(code=code, message=message),)
+
+
+def _detail_sort_key(
+    detail: EngineErrorDetail,
+) -> tuple[tuple[str, ...], str, str]:
+    return tuple(str(part) for part in detail.path), detail.code, detail.message
+
+
+def _duplicate_targets(targets: tuple[str, ...]) -> tuple[str, ...]:
+    seen: set[str] = set()
+    duplicates: set[str] = set()
+    for target in targets:
+        if target in seen:
+            duplicates.add(target)
+        seen.add(target)
+    return tuple(sorted(duplicates))
+
+
+def _validate_pyproject(
+    spec: ProjectSpec,
+    content: bytes,
+) -> list[EngineErrorDetail]:
+    target = "pyproject.toml"
+    try:
+        text = content.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        return [
+            EngineErrorDetail(
+                code="invalid-pyproject-encoding",
+                path=(target,),
+                message=f"pyproject.toml must be UTF-8: {exc}",
+            )
+        ]
+
+    try:
+        payload = tomllib.loads(text)
+    except tomllib.TOMLDecodeError as exc:
+        return [
+            EngineErrorDetail(
+                code="invalid-pyproject-toml",
+                path=(target,),
+                message=f"pyproject.toml is not valid TOML: {exc}",
+            )
+        ]
+
+    details: list[EngineErrorDetail] = []
+    project = payload.get("project")
+    if not isinstance(project, dict):
+        return [
+            EngineErrorDetail(
+                code="invalid-project-table",
+                path=(target, "project"),
+                message="pyproject.toml must contain a [project] table.",
+            )
+        ]
+
+    name = project.get("name")
+    if not isinstance(name, str) or not name.strip():
+        details.append(
+            EngineErrorDetail(
+                code="invalid-project-name",
+                path=(target, "project", "name"),
+                message="[project].name must be a non-empty distribution name.",
+            )
+        )
+    else:
+        try:
+            actual_name = canonicalize_name(name, validate=True)
+        except InvalidName as exc:
+            details.append(
+                EngineErrorDetail(
+                    code="invalid-project-name",
+                    path=(target, "project", "name"),
+                    message=f"[project].name is not a valid distribution name: {exc}",
+                )
+            )
+        else:
+            expected_name = canonicalize_name(
+                spec.project.repository_name,
+                validate=True,
+            )
+            if actual_name != expected_name:
+                details.append(
+                    EngineErrorDetail(
+                        code="project-name-mismatch",
+                        path=(target, "project", "name"),
+                        message=(
+                            "[project].name must match ProjectSpec "
+                            f"repository_name {spec.project.repository_name!r} after "
+                            "distribution-name normalisation."
+                        ),
+                    )
+                )
+
+    requires_python = project.get("requires-python")
+    if not isinstance(requires_python, str):
+        details.append(
+            EngineErrorDetail(
+                code="invalid-requires-python",
+                path=(target, "project", "requires-python"),
+                message="[project].requires-python must be a string.",
+            )
+        )
+    else:
+        try:
+            SpecifierSet(requires_python)
+        except InvalidSpecifier as exc:
+            details.append(
+                EngineErrorDetail(
+                    code="invalid-requires-python",
+                    path=(target, "project", "requires-python"),
+                    message=f"[project].requires-python is invalid: {exc}",
+                )
+            )
+        else:
+            expected = f">={spec.python.minimum}"
+            if requires_python != expected:
+                details.append(
+                    EngineErrorDetail(
+                        code="python-requires-mismatch",
+                        path=(target, "project", "requires-python"),
+                        message=(
+                            f"[project].requires-python must be exactly {expected!r}."
+                        ),
+                    )
+                )
+
+    return details
+
+
+def validate_rendered_project(
+    spec: ProjectSpec,
+    project: RenderedProject,
+) -> RenderedProject:
+    """Validate an immutable rendered project without filesystem side effects.
+
+    See ``docs/generated-project-validation.md`` for the supported contract.
+    """
+    details: list[EngineErrorDetail] = []
+    planned_targets = tuple(item.target for item in project.plan.files)
+    rendered_targets = tuple(item.target for item in project.files)
+
+    for target in _duplicate_targets(planned_targets):
+        details.append(
+            EngineErrorDetail(
+                code="duplicate-plan-target",
+                path=(target,),
+                message=f"Generation plan contains duplicate target {target!r}.",
+            )
+        )
+    if planned_targets != tuple(sorted(planned_targets)):
+        details.append(
+            EngineErrorDetail(
+                code="unordered-plan-targets",
+                path=("plan", "files"),
+                message="Generation plan targets must be in lexical order.",
+            )
+        )
+
+    for target in _duplicate_targets(rendered_targets):
+        details.append(
+            EngineErrorDetail(
+                code="duplicate-rendered-target",
+                path=(target,),
+                message=f"Rendered project contains duplicate target {target!r}.",
+            )
+        )
+    if rendered_targets != tuple(sorted(rendered_targets)):
+        details.append(
+            EngineErrorDetail(
+                code="unordered-rendered-targets",
+                path=("files",),
+                message="Rendered project targets must be in lexical order.",
+            )
+        )
+
+    planned_set = set(planned_targets)
+    rendered_set = set(rendered_targets)
+    for target in sorted(planned_set - rendered_set):
+        details.append(
+            EngineErrorDetail(
+                code="missing-rendered-file",
+                path=(target,),
+                message=f"Planned target {target!r} is missing from rendered output.",
+            )
+        )
+    for target in sorted(rendered_set - planned_set):
+        details.append(
+            EngineErrorDetail(
+                code="unexpected-rendered-file",
+                path=(target,),
+                message=f"Rendered target {target!r} is not present in the plan.",
+            )
+        )
+
+    if "pyproject.toml" not in planned_set or "pyproject.toml" not in rendered_set:
+        details.append(
+            EngineErrorDetail(
+                code="missing-pyproject",
+                path=("pyproject.toml",),
+                message="A generated project must plan and render pyproject.toml.",
+            )
+        )
+
+    rendered_by_target: dict[str, bytes] = {}
+    for rendered_file in project.files:
+        rendered_by_target.setdefault(rendered_file.target, rendered_file.content)
+        try:
+            text = rendered_file.content.decode("utf-8")
+        except UnicodeDecodeError:
+            continue
+        if _EXTENSION_TOKEN_START in text:
+            details.append(
+                EngineErrorDetail(
+                    code="unresolved-extension-marker",
+                    path=(rendered_file.target,),
+                    message=(
+                        f"Rendered target {rendered_file.target!r} contains an "
+                        "unresolved Forge extension marker."
+                    ),
+                )
+            )
+
+    pyproject = rendered_by_target.get("pyproject.toml")
+    if pyproject is not None:
+        details.extend(_validate_pyproject(spec, pyproject))
+
+    if details:
+        raise ForgeEngineError(
+            code=EngineErrorCode.GENERATED_PROJECT_INVALID,
+            operation="validate-output",
+            message="The generated project is invalid.",
+            details=tuple(sorted(details, key=_detail_sort_key)),
+        )
+
+    return project
 
 
 @overload
@@ -660,4 +900,5 @@ def render_project(spec: ProjectSpec) -> RenderedProject:
             details=_single_detail("template-render-failed", str(exc)),
         ) from exc
 
-    return RenderedProject(plan=prepared.plan, files=tuple(rendered))
+    project = RenderedProject(plan=prepared.plan, files=tuple(rendered))
+    return validate_rendered_project(spec, project)

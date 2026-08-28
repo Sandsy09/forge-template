@@ -10,6 +10,6 @@
     }
   },
   "tree": {
-    "pyproject.toml": "[project]\nname = \"example_project\"\nversion = \"0.1.0\"\n\n[build-system]\nbuild-backend = \"uv_build\"\n"
+    "pyproject.toml": "[project]\nname = \"example-project\"\nversion = \"0.1.0\"\nrequires-python = \">=3.11\"\n\n[build-system]\nbuild-backend = \"uv_build\"\n"
   }
 }

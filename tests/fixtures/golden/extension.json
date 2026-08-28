@@ -29,6 +29,6 @@
   "tree": {
     ".coveragerc": "[run]\nbranch = true\n",
     "ci.yml": "name: CI\njobs:\n  checks:\n    steps:\n      - name: Coverage\n        run: echo coverage\n",
-    "pyproject.toml": "[project]\nname = \"example_project\"\nversion = \"0.1.0\"\n\n[build-system]\nbuild-backend = \"hatchling\"\n"
+    "pyproject.toml": "[project]\nname = \"example-project\"\nversion = \"0.1.0\"\nrequires-python = \">=3.11\"\n\n[build-system]\nbuild-backend = \"hatchling\"\n"
   }
 }
