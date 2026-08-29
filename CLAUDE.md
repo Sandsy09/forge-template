@@ -62,7 +62,11 @@ rendering, and structured failures from the top-level package. Its
 [generated-project validation](docs/generated-project-validation.md) checks
 plan/output agreement, universal `pyproject.toml` metadata, and completed
 Forge extension rendering before a result is returned. The production
-catalogue is deliberately empty until Stage 08, and these contracts are not
+catalogue is deliberately empty until Stage 08. The accepted
+[Library archetype contract](docs/library-archetype.md) defines the first
+production component and the Foundation/owner/protocol changes FT-08.02 must
+implement; it does not change current `0.2.0` engine behaviour. These
+contracts are not
 yet consumed by the direct-Copier path; see
 [#5](https://github.com/Sandsy09/forge-template/issues/5), done,
 [#32](https://github.com/Sandsy09/forge-template/issues/32),
@@ -266,7 +270,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0030 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0031 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -281,7 +285,8 @@ path renders to a valid filename or empty, never something in between).
 
 The [live issue index](docs/roadmap-v1/github-issues/forge-template/ISSUE-INDEX.md)
 is the source of truth for roadmap order and blockers. Stage 08 will migrate
-the current Library scaffold into the empty production component catalogue,
+the current Library scaffold into the empty production component catalogue
+under the [Library archetype contract](docs/library-archetype.md),
 select and define the deliberately unnamed second archetype, and then validate
 parity through repurposed [#4](https://github.com/Sandsy09/forge-template/issues/4).
 That migration is the `_migrations` moment: plan it before moving template

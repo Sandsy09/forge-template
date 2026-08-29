@@ -151,6 +151,11 @@ material](foundation-scope.md#neutral-handoff-material): "Later layers may
 add owned sections through explicit extension points. They may not silently
 replace the neutral handoff material."
 
+The accepted [Library archetype contract](library-archetype.md) now requires
+FT-08.02 to realise that source and identify Foundation or component
+contribution targets through manifest protocol `2`. Protocol v1 and the
+current `0.2.0` planning model remain unchanged until that migration.
+
 A future organisation policy may be granted `override` authority over a
 specific, documented extension point. That grant is Stage 09's decision to
 make; this contract only reserves the vocabulary and states that no such

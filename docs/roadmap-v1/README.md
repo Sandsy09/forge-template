@@ -70,6 +70,10 @@ protocol v1 for effective generation requests, including provider-neutral
 metadata, Python support, component selections, provenance, and namespaced
 options.
 
+The canonical [Library archetype contract](../library-archetype.md) defines
+the distributable-package additions composed over one implicit Foundation
+source and records the protocol and public-API changes FT-08.02 must implement.
+
 The canonical
 [component manifest protocol](../component-manifests.md) defines strict TOML
 protocol v1 for bundled component identity, compatibility, owned content,
@@ -109,7 +113,9 @@ and override rules, the template variable contract, and the stable
 `forge-template` `0.2.x` engine facade, and generated-project validation are
 implemented. Production manifests and CLI consumption are not; the existing
 Copier baseline remains operational until Stages 08–09 and the coordinated CLI
-cutover are complete.
+cutover are complete. Library's contract is accepted, but its manifest,
+Foundation source, option schema, and `0.3.0` planning model remain FT-08.02
+implementation work.
 
 ## Structure
 

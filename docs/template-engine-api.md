@@ -66,7 +66,8 @@ discovered manifests, option schemas, templates, and literal content were all
 reviewed as part of the installed engine distribution.
 
 The production `0.2.0` catalogue is intentionally empty. Stage 08 will add the
-first production manifest when it migrates the Library scaffold. Consequently,
+first production manifest when it implements the accepted
+[Library archetype contract](library-archetype.md). Consequently,
 discovery currently returns an empty tuple and catalogue validation rejects a
 ProjectSpec that selects a component. Test-only fixture injection is private
 and is not a supported client extension mechanism.
@@ -192,3 +193,13 @@ protocol support unassigned until its implementation and cross-repository
 contract tests pass. This change creates no component manifest, ProjectSpec
 field, Copier answer, generated file, destination API, CLI behaviour, tag, or
 release.
+
+FT-08.02 will make an explicitly incompatible pre-1.0 planning-model change:
+`PlannedFile.owner_component_id` becomes a discriminated `owner` containing
+either `FoundationOwner(kind="foundation")` or
+`ComponentOwner(kind="component", id=...)`. Foundation still does not appear
+in `component_order`. The [Library archetype contract](library-archetype.md)
+therefore requires package version `0.3.0` for that implementation while
+keeping ProjectSpec protocol `1`. Version `0.2.0` and the current field remain
+the supported behaviour until FT-08.02 lands; this decision does not alter the
+facade.

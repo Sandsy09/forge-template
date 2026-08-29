@@ -67,7 +67,9 @@ the latter before changing anything under `template/`. The
 the [Foundation guarantees](docs/foundation-guarantees.md) define the mandatory
 outcomes every generated project receives, the
 [Foundation scope](docs/foundation-scope.md) defines which concerns belong in
-that baseline, the [Python support policy](docs/python-support.md) defines the
+that baseline, the [Library archetype contract](docs/library-archetype.md)
+defines the distributable-package additions that will be composed over it,
+the [Python support policy](docs/python-support.md) defines the
 supported CPython window and lifecycle, the
 [editor integration strategy](docs/editor-integration.md) keeps the baseline
 and default profile editor-neutral, the

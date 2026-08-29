@@ -194,7 +194,10 @@ not duplicate those APIs or algorithms.
 ## Current Library scaffold mapping
 
 The v0.1.x Library scaffold emits one combined template. Its current concerns
-map to the future layers as follows:
+map to the future layers as follows. The canonical
+[Library archetype contract](library-archetype.md) now defines the
+distributable-package side of this boundary and the stable Foundation
+extension points required by its future migration.
 
 | Current concern | Conceptual owner |
 | --- | --- |
@@ -207,7 +210,9 @@ map to the future layers as follows:
 
 This mapping does not move files, alter questions, or change generated output.
 Future composition work may split contributions within a file, and must do so
-through the explicit merge and extension contracts owned by Stage 06.
+through the explicit merge and extension contracts owned by Stage 06. The
+accepted Library migration keeps one implicit Foundation content source; it
+does not copy these concerns into the archetype or make Foundation selectable.
 
 ## Deferred decisions
 

@@ -9,7 +9,10 @@ validators in
 This contract defines metadata and validation before production components or
 discovery exist. The current Library scaffold remains the monolithic `template/`
 tree and has no production manifest. Its migration is owned by
-[FT-08.02](https://github.com/Sandsy09/forge-template/issues/41).
+[FT-08.02](https://github.com/Sandsy09/forge-template/issues/41). The accepted
+[Library archetype contract](library-archetype.md) requires that production
+component to use manifest protocol `2`; protocol `1` below remains the current
+implemented behaviour.
 
 ## Authoring and schema source
 
@@ -79,6 +82,10 @@ Only archetypes, capabilities, and platforms are components. Foundation is the
 implicit mandatory baseline. Profiles and organisation policies select,
 default, require, or forbid components; they do not gain component manifests or
 rendering authority.
+
+FT-08.02 will make that implicit baseline a package-bound content source that
+applies before the selected component order while remaining absent from
+discovery and ProjectSpec. The source is not a fourth component kind.
 
 ### Manifest and component versions
 
@@ -152,6 +159,20 @@ output — creation, extension, and the full disposition and collision rules —
 is defined by [file-conflicts.md](file-conflicts.md), delivered through
 [FT-06.04](https://github.com/Sandsy09/forge-template/issues/35).
 
+### Accepted manifest protocol v2 target owner
+
+The [Library archetype contract](library-archetype.md) requires manifest
+protocol `2` to replace the component-only contribution target with a
+discriminated owner: `{ kind = "foundation" }` or
+`{ kind = "component", id = "<component-id>" }`. Production Library will
+use v2 to contribute to Foundation-owned neutral files. Protocol v1 parsing
+will remain available for existing component-to-component fixtures, but v1
+cannot target Foundation.
+
+This is an accepted FT-08.02 requirement, not current loader behaviour.
+Manifest v2 models, loading, catalogue content, and compatibility tests are
+therefore not part of FT-08.01.
+
 ## Dependencies and conflicts
 
 Each entry in `requires` or `conflicts` contains a component `id` and an
@@ -208,9 +229,9 @@ overwrite authority.
 
 Protocol v1 does not define:
 
-- production manifests; the package-bound discovery and empty production
-  catalogue are defined by the
-  [stable template-engine API](template-engine-api.md);
+- production manifests; Library's identity and future protocol are defined by
+  the [Library archetype contract](library-archetype.md), while FT-08.02 owns
+  their implementation in the package-bound catalogue;
 - the second roadmap archetype;
 - optional or recommended dependencies;
 - destination file operations or filesystem orchestration; in-memory

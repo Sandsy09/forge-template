@@ -4,7 +4,10 @@
 > the production baseline. The public-engine/ProjectSpec target is accepted by
 > [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
 > ProjectSpec protocol v1 is now defined, and Stages 06–09 complete the target
-> in dependency order. Stage 08 keeps archetype two generic until
+> in dependency order. The
+> [Library archetype contract](../library-archetype.md) now defines the first
+> production component and Foundation integration that FT-08.02 must implement.
+> Stage 08 keeps archetype two generic until
 > [FT-08.03](https://github.com/Sandsy09/forge-template/issues/42) selects and
 > defines it.
 

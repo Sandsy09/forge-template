@@ -149,7 +149,8 @@ be represented without making GitHub metadata part of the core project model:
   },
   "component_options": {
     "library": {
-      "build_backend": "uv_build"
+      "packaging_mode": "uv-build-static",
+      "initial_version": "0.1.0"
     },
     "documentation": {
       "site_name": "Credit Risk Utils"
@@ -161,8 +162,10 @@ be represented without making GitHub metadata part of the core project model:
 }
 ```
 
-The component and option names illustrate the structural contract; they do
-not claim that manifests or composed rendering exist today.
+The `library` identifier and its two options are accepted by the canonical
+[Library archetype contract](library-archetype.md). They remain future
+production-catalogue inputs until FT-08.02 implements that contract; this
+ProjectSpec example does not claim composed Library rendering exists today.
 
 ## Neutral multi-platform example
 
