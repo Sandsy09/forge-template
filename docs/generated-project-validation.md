@@ -112,4 +112,6 @@ The engine does not make these universal:
 The current monolithic Library scaffold continues to exercise its applicable
 checks through `forge_template.render`, combination tests, update tests, and
 generated CI. Stage 08 will make the first production component catalogue
-available; this contract does not migrate Library or select archetype two.
+available under the accepted
+[Library archetype contract](library-archetype.md); this validator does not
+migrate Library or select archetype two.

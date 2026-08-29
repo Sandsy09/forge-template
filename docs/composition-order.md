@@ -35,6 +35,9 @@ component then applies in kind order: the archetype first, then every
 selected capability, then every selected platform. This mirrors the
 structural model already stated in
 [terminology.md's composition and authority section](terminology.md#composition-and-authority).
+The [Library archetype contract](library-archetype.md) requires FT-08.02 to
+package exactly one such Foundation source while keeping `component_order`
+limited to the selected components.
 
 ## Order within one tier
 

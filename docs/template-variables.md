@@ -30,7 +30,7 @@ Every template author reads from exactly four reserved roots:
 {{ project.repository_name }}   {{ python.tested_versions }}
 {{ project.licence }}           {{ python.requires_python }}
 
-{{ components.archetype }}      {{ options.library.build_backend }}
+{{ components.archetype }}      {{ options.library.packaging_mode }}
 {{ components.capabilities }}   {{ options.secret_scanning.tool }}
 ```
 
@@ -136,6 +136,13 @@ in `options_schema` ([component-manifests.md](component-manifests.md#owned-conte
 | `default` | The value used when not supplied. Mutually exclusive with `required`. |
 | `choices` | A non-empty enumerated set of admissible values. Only meaningful for `string` and `integer`. |
 | `description` | Human-facing documentation only. |
+
+The accepted [Library archetype contract](library-archetype.md) requires
+option-schema protocol `2` to add `format` for string options, with `pep440`
+as its initial supported value. FT-08.02 must validate and canonicalise the
+Library `initial_version` before rendering and expose the format in discovery
+descriptors. Protocol v1 and the table above remain the current implemented
+behaviour; FT-08.01 adds no schema or resolver support.
 
 A component with no `options_schema` at all accepts no options: there is no
 unvalidated passthrough class of option. A schema with no

@@ -55,7 +55,10 @@ top-level client boundary; low-level composition helpers are implementation
 details. The
 [generated-project validation contract](docs/generated-project-validation.md)
 defines the in-memory checks every successful render passes before a client
-may stage it.
+may stage it. The [Library archetype contract](docs/library-archetype.md)
+defines the package-specific boundary and the protocol/API migration that
+must be implemented together in FT-08.02; until then, the current Copier tree
+and empty engine catalogue remain unchanged.
 
 ## Branching and pull requests
 

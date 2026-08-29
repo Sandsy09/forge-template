@@ -10,6 +10,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   every generated Forge project receives from Foundation.
 - [foundation-scope.md](foundation-scope.md) — inclusion, exclusion, and
   routing rules that keep Foundation conservative and runtime-free.
+- [library-archetype.md](library-archetype.md) — the distributable Python
+  package contract and accepted requirements for the Stage 08 migration.
 - [python-support.md](python-support.md) — supported CPython window, generated
   project version semantics, and release-transition policy.
 - [editor-integration.md](editor-integration.md) — editor-neutral Foundation

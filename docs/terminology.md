@@ -66,6 +66,11 @@ project has exactly one archetype.
 An archetype may refine documented Foundation extension points, but it may not
 replace or weaken Foundation guarantees.
 
+The canonical [Library archetype contract](library-archetype.md) applies this
+definition to a distributable Python package. It records the requirements for
+the future production component while leaving the current monolithic Copier
+path and empty engine catalogue unchanged.
+
 ### Capability
 
 A capability is an optional, reusable project concern that can apply across
@@ -157,7 +162,10 @@ order a validated selection of them applies in; and
 component may declare through its manifest's `options_schema`. The
 [stable template-engine API](template-engine-api.md) implements package-bound
 discovery, collision-checked planning, and rendering. The production catalogue
-remains empty until Stage 08 migrates Library.
+remains empty until Stage 08 migrates Library. The accepted
+[Library archetype contract](library-archetype.md) requires that migration to
+use one implicit, non-discoverable Foundation source rather than representing
+Foundation as a component.
 
 ### ProjectSpec
 
@@ -236,7 +244,8 @@ components. Its existing choices can nevertheless be described consistently:
 - Foundation is the future shared baseline beneath every archetype; its exact
   outcomes are defined by the
   [Foundation guarantees](foundation-guarantees.md).
-- Library is the single archetype and owns the Python-library project shape.
+- Library is the single archetype and owns the Python-library project shape,
+  bounded by the canonical [Library contract](library-archetype.md).
 - Optional documentation or changelog support are capability-shaped concerns.
 - GitHub Actions support is a platform-shaped integration.
 - A maintainer profile could default selections such as build backend,
@@ -259,7 +268,8 @@ archetype.
 
 This terminology does not decide:
 
-- production component identities or migrations;
+- production component implementation and migration (the `library` identity
+  and contract are decided, while FT-08.02 owns their implementation);
 - the `merge` and `override` disposition algorithms, reserved but not yet
   granted by [file-conflicts.md](file-conflicts.md);
 - organisation-policy schema, error types, or any real `override` grant;

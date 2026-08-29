@@ -17,6 +17,11 @@ construction and filesystem orchestration with `create-forge`.
 The [component manifest protocol](../component-manifests.md) defines the
 strict engine-owned metadata and compatibility for every future bundled
 archetype, capability, and platform.
+The [Library archetype contract](../library-archetype.md) defines the first
+production archetype and the implicit package-bound Foundation source it will
+extend. Its manifest v2, option-schema v2, discriminated planning owner, and
+`0.3.0` engine facade are accepted requirements for FT-08.02, not current
+behaviour.
 The [composition order contract](../composition-order.md) defines the single
 deterministic order that future bundled selection applies in.
 The [file conflict and override rules](../file-conflicts.md) define the
