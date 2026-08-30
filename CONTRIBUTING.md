@@ -56,12 +56,11 @@ details. The
 [generated-project validation contract](docs/generated-project-validation.md)
 defines the in-memory checks every successful render passes before a client
 may stage it. The [Library archetype contract](docs/library-archetype.md)
-defines the package-specific boundary and the protocol/API migration
-FT-08.02 implements: the manifest and option-schema protocol `2` mechanism,
-the implicit Foundation content source, and the discriminated
-`PlannedFile.owner` (package `0.3.0`) are in place, but the current Copier
-tree and empty engine catalogue remain unchanged until the production
-`library` manifest itself lands.
+defines the package-specific boundary FT-08.02 implements (package `0.3.0`):
+manifest and option-schema protocol `2`, the implicit Foundation content
+source, the discriminated `PlannedFile.owner`, and the production `library`
+manifest itself, now the installed catalogue's one entry. The current Copier
+tree remains unchanged and is what `create-forge` still consumes.
 
 ## Branching and pull requests
 
@@ -133,8 +132,8 @@ uv run poe check
 ```
 
 Runs ruff, mypy, and this repo's own fast test suite (`tests/`, deselecting
-the slow `combos`/`update` markers — checks `copier.yml` itself, `docs/adr/`,
-and the render-check functions; see
+the slow `combos`/`update`/`archetype` markers — checks `copier.yml` itself,
+`docs/adr/`, and the render-check functions; see
 [src/forge_template](src/forge_template)). This is separate from validating
 the *scaffold* — see below.
 
@@ -144,6 +143,12 @@ golden fixtures those contracts are checked against
 (`uv run pytest tests/test_composition_contract.py --update-goldens`) and
 review the diff — see
 [composition-fixtures.md](docs/composition-fixtures.md).
+
+A change to `src/forge_template/foundation/` or
+`src/forge_template/components/*/content` should also run
+`uv run poe archetype`, which builds real wheels and sdists for the
+production Library archetype across all three packaging modes — see
+[library-archetype.md](docs/library-archetype.md).
 
 ## Proposing a template change
 

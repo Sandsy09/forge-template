@@ -2,12 +2,12 @@
 
 > **Status:** This is the accepted target architecture under
 > [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
-> not the current CLI implementation. ProjectSpec, component manifest protocol
-> v1, composition order, file conflict and override rules, the template
-> variable contract, and the stable `forge-template` `0.2.x` engine API are
-> implemented. Its production catalogue remains empty until Stage 08, and the
-> current CLI remains a thin Copier client with a bundled registry until the
-> coordinated cutover.
+> not the current CLI implementation. ProjectSpec, component manifest
+> protocols v1/v2, composition order, file conflict and override rules, the
+> template variable contract, and the stable `forge-template` `0.3.x` engine
+> API are implemented. Its production catalogue now contains the Library
+> archetype (Stage 08's first entry), and the current CLI remains a thin
+> Copier client with a bundled registry until the coordinated cutover.
 
 The [canonical terminology](../terminology.md) defines the ecosystem,
 composition, and authority terms used by this target.

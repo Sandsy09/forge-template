@@ -1,0 +1,19 @@
+{
+  "schema_version": 2,
+  "options": [
+    {
+      "name": "packaging_mode",
+      "type": "string",
+      "default": "uv-build-static",
+      "choices": ["uv-build-static", "hatchling-static", "hatchling-vcs"],
+      "description": "How the package is built and versioned."
+    },
+    {
+      "name": "initial_version",
+      "type": "string",
+      "default": "0.1.0",
+      "format": "pep440",
+      "description": "Initial package version. Ignored when packaging_mode is hatchling-vcs, where the version instead derives from git tags at build time."
+    }
+  ]
+}

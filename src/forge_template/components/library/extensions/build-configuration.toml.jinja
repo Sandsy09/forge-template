@@ -1,0 +1,18 @@
+{% if options.library.packaging_mode == "uv-build-static" -%}
+[tool.uv.build-backend]
+module-name = "{{ project.package_name }}"
+module-root = "src"
+{%- elif options.library.packaging_mode == "hatchling-vcs" -%}
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ project.package_name }}"]
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+# Generated at build time; git-ignored, never committed.
+version-file = "src/{{ project.package_name }}/_version.py"
+{%- else -%}
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ project.package_name }}"]
+{%- endif %}

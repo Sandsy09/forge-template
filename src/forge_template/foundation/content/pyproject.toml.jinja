@@ -1,0 +1,153 @@
+{#- Foundation owns neutral project identity, licence, and the mandatory
+   declared/locked development environment (foundation-guarantees.md). The
+   archetype's own packaging shape attaches through the three named
+   extension points below; see docs/library-archetype.md. #}
+{%- set spdx_license = {
+    "mit": "MIT",
+    "apache-2.0": "Apache-2.0",
+    "proprietary": "LicenseRef-Proprietary",
+}.get(project.licence, project.licence) -%}
+[project]
+name = "{{ project.repository_name }}"
+[[forge:extension pyproject-library-metadata]]
+description = "{{ project.description }}"
+readme = "README.md"
+requires-python = "{{ python.requires_python }}"
+license = "{{ spdx_license }}"
+{%- if project.authors %}
+authors = [
+{%- for author in project.authors %}
+    { name = "{{ author.name }}"{% if author.email %}, email = "{{ author.email }}"{% endif %} },
+{%- endfor %}
+]
+{%- endif %}
+classifiers = [
+    "Typing :: Typed",
+]
+dependencies = []
+
+[build-system]
+[[forge:extension pyproject-build-system]]
+
+[[forge:extension pyproject-build-configuration]]
+
+# -----------------------------------------------------------------------------
+# Dependency groups (PEP 735) -- not shipped to consumers
+# -----------------------------------------------------------------------------
+
+[dependency-groups]
+lint = [
+    "ruff>=0.14",
+    "pre-commit>=4.0",
+]
+test = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+]
+typecheck = [
+    "mypy>=1.14",
+]
+dev = [
+    { include-group = "lint" },
+    { include-group = "test" },
+    { include-group = "typecheck" },
+    "poethepoet>=0.31",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+# -----------------------------------------------------------------------------
+# Ruff
+# -----------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 88
+target-version = "py{{ python.minimum | replace('.', '') }}"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",    # pycodestyle
+    "F",         # pyflakes
+    "I",         # isort
+    "N",         # pep8-naming
+    "UP",        # pyupgrade
+    "B",         # flake8-bugbear
+    "A",         # flake8-builtins
+    "C4",        # flake8-comprehensions
+    "SIM",       # flake8-simplify
+    "PTH",       # flake8-use-pathlib
+    "RUF",       # ruff-specific
+    "ANN",       # flake8-annotations
+    "D",         # pydocstyle
+]
+ignore = [
+    "D107",      # __init__ docstring - covered by the class docstring
+    "ANN401",    # allow Any where deliberately used
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D", "ANN", "S101"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+docstring-code-format = true
+
+# -----------------------------------------------------------------------------
+# Type checking
+# -----------------------------------------------------------------------------
+
+[tool.mypy]
+python_version = "{{ python.minimum }}"
+files = ["src", "tests"]
+strict = true
+warn_unreachable = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+# -----------------------------------------------------------------------------
+# Tests + coverage
+# -----------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--import-mode=importlib",
+    "--cov",
+    "--cov-report=term-missing",
+]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "@(abc\\.)?abstractmethod",
+]
+
+# -----------------------------------------------------------------------------
+# Tasks -- the single definition. Run via `uv run poe <task>`.
+# -----------------------------------------------------------------------------
+
+[tool.poe.tasks]
+lint = "ruff check ."
+format = "ruff format ."
+"lint:fix" = "ruff check --fix ."
+"format:check" = "ruff format --check ."
+typecheck = "mypy"
+test = "pytest"
+check = ["format:check", "lint", "typecheck", "test"]

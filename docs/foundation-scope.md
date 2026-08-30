@@ -7,11 +7,14 @@ outside that boundary is assigned. It complements the
 layers and mandatory outcomes, while this one limits what Foundation may own.
 
 The boundary applies to concerns, not whole files. A generated file such as
-`pyproject.toml` may eventually contain contributions owned by Foundation and
-an archetype without making every setting in that file part of Foundation.
-The current Library scaffold remains monolithic; the mapping below is
-conceptual and does not claim that a component engine or file-level separation
-already exists.
+`pyproject.toml` may contain contributions owned by Foundation and an
+archetype without making every setting in that file part of Foundation --
+exactly what FT-08.02 implemented: Foundation and the production `library`
+component both contribute to `pyproject.toml` through declared extension
+points (see [library-archetype.md](library-archetype.md)). The *released
+Copier scaffold* remains monolithic and unaffected by this; the mapping below
+describes both the conceptual boundary and, since FT-08.02, the real
+package-bound engine catalogue's file-level separation.
 
 ## Inclusion rule
 
@@ -193,11 +196,13 @@ not duplicate those APIs or algorithms.
 
 ## Current Library scaffold mapping
 
-The v0.1.x Library scaffold emits one combined template. Its current concerns
-map to the future layers as follows. The canonical
-[Library archetype contract](library-archetype.md) now defines the
-distributable-package side of this boundary and the stable Foundation
-extension points required by its future migration.
+The v0.1.x Copier Library scaffold still emits one combined template, and
+this table's mapping of ITS concerns to Foundation/archetype/capability/
+platform remains conceptual for that path. The canonical
+[Library archetype contract](library-archetype.md) is now real for the
+*engine* path: FT-08.02 implemented Foundation and the production `library`
+component as genuinely separate content sources composed through the stable
+extension points below.
 
 | Current concern | Conceptual owner |
 | --- | --- |
@@ -208,11 +213,13 @@ extension points required by its future migration.
 | Runtime configuration, logging/observability, path/resource behaviour, and exception conventions | The **archetype or capability that contributes the runtime behaviour**; Foundation adds no shared runtime layer, configuration follows the [owner-local convention](configuration-ownership.md), logging follows the [structured capability contract](structured-logging.md), path/resource access follows the [path and resource ownership conventions](paths-and-resources.md), and exception handling follows the [exception ownership conventions](exception-ownership.md). |
 | GitHub Actions, issue and pull-request templates, CODEOWNERS, and other GitHub-specific adapters | **GitHub platform** contributions. Provider-specific files used by a capability are supplied through that platform integration, and remote workflow dependencies follow the [GitHub Action pinning policy](github-action-pinning.md). |
 
-This mapping does not move files, alter questions, or change generated output.
-Future composition work may split contributions within a file, and must do so
-through the explicit merge and extension contracts owned by Stage 06. The
-accepted Library migration keeps one implicit Foundation content source; it
-does not copy these concerns into the archetype or make Foundation selectable.
+This mapping does not move files, alter questions, or change the *Copier*
+path's generated output. Composition work splits contributions within a file
+through the explicit merge and extension contracts owned by Stage 06 -- for
+`pyproject.toml`, `README.md`, and `.gitignore` in the engine catalogue,
+concretely, not just conceptually. The Library migration keeps one implicit
+Foundation content source; it does not copy these concerns into the
+archetype or make Foundation selectable.
 
 ## Deferred decisions
 

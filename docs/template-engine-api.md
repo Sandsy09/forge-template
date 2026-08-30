@@ -49,9 +49,9 @@ that decides when to invoke it during a stored-answer replay. It raises
 answer pair.
 
 Undocumented names in `forge_template.engine`, `component_manifest`,
-`composition`, `file_conflicts`, `project_spec`, and `template_variables` are
-implementation details. They may change within the `0.2.x` line when the
-supported top-level behaviour remains compatible.
+`composition`, `file_conflicts`, `foundation_source`, `project_spec`, and
+`template_variables` are implementation details. They may change within the
+`0.3.x` line when the supported top-level behaviour remains compatible.
 
 ## Engine and protocol information
 
@@ -80,14 +80,14 @@ entrypoint, or arbitrary directory. This is a deliberate trust boundary:
 discovered manifests, option schemas, templates, and literal content were all
 reviewed as part of the installed engine distribution.
 
-The production catalogue is intentionally empty. Stage 08 will add the
-first production manifest when it implements the accepted
-[Library archetype contract](library-archetype.md). Consequently,
-discovery currently returns an empty tuple and catalogue validation rejects a
-ProjectSpec that selects a component. Test-only fixture injection is private
-and is not a supported client extension mechanism -- this applies equally to
-the implicit Foundation content source, which discovery never exposes at all
-(see "Foundation" below).
+The production catalogue holds exactly one manifest: `library`, the
+[Library archetype contract](library-archetype.md)'s implementation
+(FT-08.02). Discovery returns its descriptor; a ProjectSpec selecting any
+other archetype, capability, or platform is rejected, since none exists yet.
+Test-only fixture injection is private and is not a supported client
+extension mechanism -- this applies equally to the implicit Foundation
+content source, which discovery never exposes at all (see "Foundation"
+below).
 
 ## Parsing and validation
 
@@ -169,7 +169,9 @@ points the same way it reaches another component's, through a manifest
 protocol `2` contribution naming `target.kind = "foundation"`. Foundation
 being absent from the installed engine is not an error by itself -- it
 becomes one only once a selected component's contribution or a rendering
-step actually needs it and finds it missing.
+step actually needs it and finds it missing. The installed engine always
+bundles a real Foundation source today, at
+`src/forge_template/foundation/foundation.toml`.
 
 `validate_rendered_project(spec, project) -> RenderedProject` exposes that
 same side-effect-free check directly. It proves exact plan/output target

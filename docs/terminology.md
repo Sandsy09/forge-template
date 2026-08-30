@@ -67,9 +67,9 @@ An archetype may refine documented Foundation extension points, but it may not
 replace or weaken Foundation guarantees.
 
 The canonical [Library archetype contract](library-archetype.md) applies this
-definition to a distributable Python package. It records the requirements for
-the future production component while leaving the current monolithic Copier
-path and empty engine catalogue unchanged.
+definition to a distributable Python package. FT-08.02 implemented it as the
+production catalogue's first component, while leaving the current monolithic
+Copier path unchanged.
 
 ### Capability
 

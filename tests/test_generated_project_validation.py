@@ -107,6 +107,10 @@ def test_render_project_invokes_public_validation(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", FIXTURES)
+    # Isolate from the real installed Foundation source (FT-08.02): this
+    # fixture's "library" component owns pyproject.toml.jinja directly and
+    # predates Foundation, so a real Foundation source would collide with it.
+    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", FIXTURES)
     calls: list[RenderedProject] = []
     validator = validate_rendered_project
 

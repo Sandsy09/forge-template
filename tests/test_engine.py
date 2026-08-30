@@ -64,6 +64,12 @@ def _spec(**kwargs: Any) -> ProjectSpec:
 @pytest.fixture
 def fixture_catalogue(monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", FIXTURES)
+    # None of these fixture components target Foundation (they predate
+    # FT-08.02), so isolate from the real installed Foundation source the
+    # same way discovery is already isolated from the real installed
+    # catalogue -- FIXTURES has no foundation.toml at its own root, so this
+    # resolves to "no Foundation available" for these tests.
+    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", FIXTURES)
     return FIXTURES
 
 
@@ -72,6 +78,7 @@ def copied_catalogue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     root = tmp_path / "components"
     shutil.copytree(FIXTURES, root)
     monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", root)
+    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", root)
     return root
 
 
@@ -90,8 +97,22 @@ def test_engine_info_reports_package_and_protocols_without_discovery(
     assert info.component_manifest_protocols == (1, 2)
 
 
-def test_installed_catalogue_is_deliberately_empty() -> None:
-    assert discover_components() == ()
+def test_installed_catalogue_contains_the_production_library_archetype() -> None:
+    """FT-08.02 populates the previously-empty production catalogue."""
+    descriptors = discover_components()
+
+    assert [descriptor.id for descriptor in descriptors] == ["library"]
+    library = descriptors[0]
+    assert library.kind == "archetype"
+    assert library.version == "1.0.0"
+    assert [option.name for option in library.options] == [
+        "packaging_mode",
+        "initial_version",
+    ]
+    initial_version = next(
+        option for option in library.options if option.name == "initial_version"
+    )
+    assert initial_version.format == "pep440"
 
 
 def test_discovery_returns_sorted_path_free_descriptors(
@@ -214,11 +235,49 @@ def test_full_validation_classifies_selection_and_option_failures(
     assert option_error.value.code is EngineErrorCode.INVALID_COMPONENT_OPTIONS
 
 
-def test_empty_production_catalogue_rejects_a_real_selection() -> None:
-    with pytest.raises(ForgeEngineError) as exc_info:
-        validate_project_spec(_spec())
+def _real_library_payload(
+    *, component_options: dict[str, dict[str, Any]] | None = None
+) -> dict[str, object]:
+    """A payload shaped for the *real* installed catalogue's ``library`` --
+    ``packaging_mode``/``initial_version``, not the fixture catalogue's
+    legacy ``build_backend`` vocabulary ``_payload`` builds by default."""
+    return {
+        "protocol_version": 1,
+        "project": {
+            "name": "Example Project",
+            "package_name": "example_project",
+            "repository_name": "example-project",
+            "licence": "mit",
+        },
+        "python": {"minimum": "3.11", "development": "3.13"},
+        "components": {"archetype": "library", "capabilities": [], "platforms": []},
+        "component_options": component_options or {},
+    }
 
-    assert exc_info.value.code is EngineErrorCode.INVALID_COMPONENT_SELECTION
+
+def test_real_selection_against_the_installed_catalogue_succeeds() -> None:
+    """The production catalogue is no longer empty (FT-08.02): a real
+    selection against it -- with no options supplied, exercising both
+    options' defaults -- now succeeds rather than being rejected."""
+    spec = parse_project_spec(_real_library_payload())
+
+    assert validate_project_spec(spec) is spec
+
+
+def test_missing_installed_foundation_source_is_a_generation_plan_error(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """``library`` always targets Foundation; a missing installed Foundation
+    source (simulated here, not reachable in a normal installation) fails at
+    planning rather than being silently ignored."""
+    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", tmp_path)
+    spec = parse_project_spec(_real_library_payload())
+
+    with pytest.raises(ForgeEngineError) as exc_info:
+        plan_generation(spec)
+
+    assert exc_info.value.code is EngineErrorCode.GENERATION_PLAN_FAILED
+    assert "none is available" in exc_info.value.details[0].message
 
 
 def test_generation_plan_is_deterministic_and_path_free(

@@ -1,0 +1,3 @@
+{% if options.library.packaging_mode == "hatchling-vcs" -%}
+src/{{ project.package_name }}/_version.py
+{% endif %}

@@ -2,15 +2,17 @@
 
 This document defines the additions the Forge `library` archetype makes to
 the mandatory [Foundation](foundation-scope.md). It is the canonical living
-contract accepted by [ADR 0031](adr/0031-library-archetype-contract.md).
+contract accepted by [ADR 0031](adr/0031-library-archetype-contract.md) and
+implemented by FT-08.02
+([ADR 0033](adr/0033-migrate-library-production-catalogue.md)).
 
-The contract is an implementation requirement for
-[FT-08.02](https://github.com/Sandsy09/forge-template/issues/41), not a claim
-about the current engine catalogue. Today the released Copier path still
-renders one monolithic Library tree, the installed engine catalogue is empty,
-and `forge-template` remains at package version `0.2.0`. This decision changes
-no template, Copier answer, ProjectSpec payload, generated file, or public
-Python API.
+FT-08.02 implements this contract in the installed engine catalogue at
+package version `0.3.0`. It changes no Copier template, question, or
+generated output: the released Copier path still renders one monolithic
+Library tree, unchanged, and remains the only path `create-forge` consumes
+today. `src/forge_template/foundation/` and `src/forge_template/components/library/`
+are additive package content that co-exists with `template/` until a later,
+deliberate cutover -- see "Current evidence and deferred work" below.
 
 ## Archetype boundary
 
@@ -37,9 +39,10 @@ Library does not become a shared runtime layer.
 
 ## Production component contract
 
-FT-08.02 must add a package-bound production manifest with this identity:
+The production manifest at `src/forge_template/components/library/component.toml`
+has this identity:
 
-| Field | Required value |
+| Field | Value |
 | --- | --- |
 | Manifest protocol | `2` |
 | Component ID | `library` |
@@ -47,18 +50,18 @@ FT-08.02 must add a package-bound production manifest with this identity:
 | Component version | `1.0.0` |
 | ProjectSpec protocols | `[1]` |
 | Generated Python compatibility | `>=3.11` |
-| Requirements | none initially |
-| Conflicts | none initially |
+| Requirements | none |
+| Conflicts | none |
 
 Component version `1.0.0`, manifest protocol `2`, ProjectSpec protocol `1`,
-and the `forge-template` package version are independent compatibility axes.
-The production manifest is discoverable as an archetype only after FT-08.02
-implements it. Foundation is never returned as a component descriptor.
+and the `forge-template` package version (`0.3.0`) are independent
+compatibility axes. `discover_components()` returns exactly this one
+descriptor today. Foundation is never returned as a component descriptor.
 
 ## Library options
 
-Library uses option-schema protocol `2` and declares exactly these initial
-options:
+Library uses option-schema protocol `2` and declares exactly these options,
+at `src/forge_template/components/library/options.schema.json`:
 
 | Option | Type | Default | Validation |
 | --- | --- | --- | --- |
@@ -66,16 +69,18 @@ options:
 | `initial_version` | string | `0.1.0` | `format: "pep440"` |
 
 Option-schema protocol `2` adds an optional `format` field for string options.
-Its initial closed vocabulary contains only `pep440`. Resolution must validate
-and canonicalise a PEP 440 value before rendering, and discovery descriptors
-must expose the declared format so clients can present accurate guidance.
-The field does not accept non-string option types, arbitrary regular
-expressions, or application-defined validators.
+Its closed vocabulary contains only `pep440`. Resolution validates and
+canonicalises a supplied `initial_version` before rendering (`"1.0"` stays
+`"1.0"`, `"v1.0.0"` normalises to `"1.0.0"`), and discovery descriptors expose
+the declared format so clients can present accurate guidance. The field does
+not accept non-string option types, arbitrary regular expressions, or
+application-defined validators. See
+[template-variables.md](template-variables.md#declaring-options).
 
 ### Legacy Copier answer mapping
 
-The current `build_backend` and resolved versioning answers map to the new
-single option as follows:
+The released Copier `build_backend` and resolved `versioning` answers map to
+the single `packaging_mode` option as follows:
 
 | Legacy effective answers | `packaging_mode` |
 | --- | --- |
@@ -83,20 +88,27 @@ single option as follows:
 | `build_backend = hatchling` and versioning absent or `static` | `hatchling-static` |
 | `build_backend = hatchling` and versioning `vcs` | `hatchling-vcs` |
 
-FT-08.02 owns replay-compatible migration of stored Copier answers. The
-mapping does not rename or rewrite answers in this decision.
+`forge_template.map_legacy_library_answers(answers)` implements this table as
+a pure, side-effect-free function taking `{"build_backend": ..., "versioning_resolved":
+...}` and returning `{"packaging_mode": ...}` -- see
+[template-engine-api.md](template-engine-api.md). It performs the mapping
+only; replaying it against a specific stored project's answers, and deciding
+when to do so, remains `create-forge`'s responsibility. The mapping does not
+rename or rewrite Copier's own answers.
 
 ## Package and API outcomes
 
-Every Library generation must satisfy all of these outcomes in each supported
-packaging mode:
+Every Library generation satisfies all of these outcomes in each supported
+packaging mode, proven by `tests/test_library_build.py` (the `archetype`
+pytest marker, `uv run poe archetype`) building real wheels and sdists for
+all three modes:
 
 1. The package lives below `src/<package_name>/` and builds through standard
    PEP 517 metadata expressed with PEP 621 project metadata.
 2. The build produces both a wheel and a source distribution.
 3. The wheel contains the importable package and its `py.typed` marker.
 4. The installed distribution metadata has the requested distribution name,
-   canonical initial version, Python floor, and expected dependency metadata.
+   canonical initial version, and Python floor.
 5. Importing the package succeeds, and its package-root `__version__` resolves
    from installed distribution metadata. When metadata is unavailable, it
    retains the deterministic `0.0.0` fallback.
@@ -108,7 +120,9 @@ Library-specific validation therefore covers imports and version behaviour,
 artifact metadata, wheel contents, wheel and sdist construction, and all three
 packaging modes. These checks extend rather than replace the universal
 [generated-project validation](generated-project-validation.md) and Foundation
-quality contract.
+quality contract. `tests/test_library_archetype.py` covers the equivalent
+render-level assertions (plan owners, rendered `pyproject.toml` per mode, the
+composed file set) in the fast suite, without invoking `uv build`.
 
 ## Publication boundary
 
@@ -129,23 +143,28 @@ continues to govern the exit criteria for that future work.
 Optional documentation sites, changelogs, coverage reporting,
 dependency-update automation, pre-commit feedback, configuration examples,
 and GitHub-specific files remain with their existing capability or platform
-owners. Selecting Library alone does not silently select them.
+owners -- none exist in the production catalogue yet. Selecting Library alone
+does not silently select them, and today it is the *only* thing a ProjectSpec
+can select.
 
 ## Implicit Foundation source
 
-Future composition uses exactly one package-bound Foundation content source.
+Composition uses exactly one package-bound Foundation content source,
+declared at `src/forge_template/foundation/foundation.toml` and implemented
+by [`forge_template.foundation_source`](../src/forge_template/foundation_source.py).
 It is:
 
 - mandatory and applied before every selected component;
 - implicit rather than selectable;
 - absent from ProjectSpec component selections and component discovery;
-- the owner of neutral root files such as `pyproject.toml` and `README.md`;
-  and
+- the owner of neutral root files: `pyproject.toml`, `README.md`, `LICENSE`,
+  `CONTRIBUTING.md`, `SECURITY.md`, `.gitignore`, `.gitattributes`,
+  `.editorconfig`, and `.python-version`; and
 - extensible only through reviewed, stable extension points.
 
-`GenerationPlan.component_order` continues to list selected components only;
+`GenerationPlan.component_order` lists selected components only;
 Foundation's earlier application is invariant and is not encoded as a
-pseudo-component.
+pseudo-component -- see [composition-order.md](composition-order.md).
 
 Library contributes to these stable extension-point targets:
 
@@ -155,60 +174,91 @@ Library contributes to these stable extension-point targets:
 | Foundation | `pyproject-library-metadata` | required |
 | Foundation | `pyproject-build-configuration` | required |
 | Foundation | `readme-project-shape` | required |
-| `github` component | `ci-jobs` | only when that optional component is selected |
-| `documentation` component | `api-reference` | only when that optional component is selected |
+| Foundation | `gitignore-project-shape` | required |
+| `github` component | `ci-jobs` | only when that (not yet existing) optional component is selected |
+| `documentation` component | `api-reference` | only when that (not yet existing) optional component is selected |
 
-The optional target names describe stable integration contracts, not
-production manifests introduced by this decision. An unsupported or absent
-target must fail under the composition contract rather than disappear or use
+`gitignore-project-shape` is additive against the original four-point table:
+Library's `hatchling-vcs` packaging mode generates `src/<package_name>/_version.py`
+at build time, and this point is where Library ignores it -- empty in the two
+static modes. The `github`/`documentation` rows describe stable integration
+contracts for components that do not exist in the production catalogue yet;
+selecting `library` alone never requires them. An unsupported or absent
+target fails under the composition contract rather than disappearing or using
 last-write-wins replacement.
 
-## Protocol and public API migration for FT-08.02
+## Manifest protocol 2 and the discriminated planning owner
 
 Manifest protocol `2` replaces a contribution's component-only target with a
 discriminated owner:
 
 ```toml
-[contributions.target]
-kind = "foundation"
+[[contributions]]
+extension_point = "pyproject-build-system"
+content = "extensions/build-system.toml.jinja"
+target.kind = "foundation"
 ```
 
 or:
 
 ```toml
-[contributions.target]
-kind = "component"
-id = "github"
+[[contributions]]
+extension_point = "ci-jobs"
+content = "extensions/ci-jobs.yml.jinja"
+target.kind = "component"
+target.id = "github"
 ```
 
 Protocol `1` parsing remains supported for existing component-to-component
-fixtures. Production Library uses protocol `2`; no v1 manifest may target the
-implicit Foundation source.
+fixtures. Production Library uses protocol `2`; no protocol-`1` manifest may
+target the implicit Foundation source.
 
-The public planning model must likewise replace
-`PlannedFile.owner_component_id` with a discriminated `owner` value:
+The public planning model replaces `PlannedFile.owner_component_id` with a
+discriminated `owner`:
 
 - `FoundationOwner(kind="foundation")`; or
 - `ComponentOwner(kind="component", id="<component-id>")`.
 
-`component_order` remains limited to selected components. The owner-field
-replacement is an incompatible pre-1.0 facade change, so FT-08.02 must move
-the package to `0.3.0`. ProjectSpec remains protocol `1` because its wire
-shape and effective-selection semantics do not change.
+`component_order` remains limited to selected components. This owner-field
+replacement is an incompatible pre-1.0 facade change, moving the package to
+`0.3.0`. ProjectSpec remains protocol `1` because its wire shape and
+effective-selection semantics did not change. See
+[template-engine-api.md](template-engine-api.md#compatibility-and-current-cutover-boundary).
 
-These manifest, option-schema, descriptor, catalogue, planning-model, and
-package-version changes are accepted requirements for FT-08.02. None is
-implemented by FT-08.01.
+A content path may also reference template variables --
+`content/src/{{ project.package_name }}/py.typed` -- rendered through the
+same context as file content before its output target is derived; see
+[ADR 0032](adr/0032-render-component-content-paths.md). This is what makes
+`src/<package_name>/` representable as owned content at all.
 
 ## Current evidence and deferred work
 
-The monolithic Library scaffold already demonstrates the requested package
-shape, three effective packaging modes, artifact builds, inline typing,
-version exposure, and package-focused checks. It does not demonstrate
-Foundation/archetype separation or public-engine production discovery.
+The production catalogue now contains exactly `library`, proven end-to-end:
+`discover_components()` returns its descriptor, `plan_generation`/`render_project`
+compose Foundation and Library into a real project across all three packaging
+modes, and `uv run poe archetype` builds real wheels and sdists from that
+output. `template/`'s monolithic Copier tree is untouched and remains the
+only path the released `create-forge` CLI consumes; the two co-exist as a
+deliberate, documented duplication until a later, separate cutover decision
+retires one in favour of the other.
 
-FT-08.02 owns that migration and its Copier compatibility. FT-08.03 retains
-ownership of selecting and defining the deliberately unnamed second
-archetype. CLI exposure, ProjectSpec construction, filesystem finalisation,
-and the first supported released engine range remain `create-forge`
-responsibilities.
+Known, deliberate gaps against the monolithic Copier scaffold's output,
+tracked as later work rather than silently claimed complete:
+
+- No `.env.example`, secret-scanning, coverage threshold, or documentation
+  site: each belongs to a capability that does not exist in the production
+  catalogue yet (`foundation-scope.md`'s neutral-safeguard boundary already
+  assigns `.env.example` itself to the consuming component, not Foundation).
+- Foundation's quality gate is fixed to `mypy` with no configured coverage
+  threshold, since ProjectSpec carries no field yet to vary type-checker
+  choice or threshold the way the Copier questions do; this is an accepted
+  simplification, not a contract gap, pending a profile or options mechanism
+  to reintroduce that choice.
+- No GitHub-specific files (workflows, `CODEOWNERS`, issue templates): the
+  `github` platform component named in the extension-point table above does
+  not exist in the production catalogue yet.
+
+FT-08.03 retains ownership of selecting and defining the deliberately unnamed
+second archetype. CLI exposure, ProjectSpec construction, filesystem
+finalisation, and the first supported released engine range remain
+`create-forge` responsibilities.
