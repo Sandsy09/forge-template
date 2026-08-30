@@ -122,7 +122,11 @@ def test_loader_rejects_symlink_escape_when_supported(tmp_path: Path) -> None:
     except OSError:
         pytest.skip("creating directory symlinks is unavailable on this platform")
 
-    with pytest.raises(ValueError, match="escapes Foundation directory"):
+    # Caught by component_resource_path's own containment check (shared with
+    # component_manifest.py) while resolving content_root itself, before this
+    # module's own rglob-loop check over content_root's *entries* ever runs --
+    # mirrors component_manifest.py's identical test for the identical reason.
+    with pytest.raises(ValueError, match="escapes component directory"):
         load_foundation_source(manifest_path)
 
 
