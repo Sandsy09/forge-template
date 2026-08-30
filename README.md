@@ -23,6 +23,16 @@ uvx copier copy gh:Sandsy09/forge-template your-project --trust
 `--trust` is required — the scaffold runs a `_tasks` step (git init, first
 commit) after copying files.
 
+The public engine behind both paths is also installable directly —
+`pip install forge-template` or `uv add forge-template` — for clients that
+consume [`docs/template-engine-api.md`](docs/template-engine-api.md)'s typed
+discovery/validation/rendering API without going through Copier or
+`create-forge` at all. The published wheel ships the engine facade and its
+Foundation/component content only; this repository's own tooling
+(`docs/adr/` checks, `copier.yml`/`template/` inspection) is not part of the
+installable package — see
+[ADR 0036](docs/adr/0036-publish-the-engine-to-pypi.md).
+
 ## Two repos
 
 | Repo | Role |

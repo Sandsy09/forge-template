@@ -44,9 +44,21 @@ forge-template/
 Nothing inside `template/` describes the template itself. `copier.yml`,
 `pyproject.toml`, `src/`, `tests/`, scripts, and this repo's own CI stay at
 root and are excluded via `_subdirectory: template`. `src/forge_template` is
-not scaffold code — it holds the checks (`schema.py`, `adr.py`, `render.py`)
-that both `poe check` and `tests/test_combos.py`/`test_update.py` call, plus the
-strict [ProjectSpec protocol](docs/project-spec.md) models in
+not scaffold code — it holds the checks (`schema.py`, `adr.py`, `render.py`,
+`github_actions.py`) that both `poe check` and
+`tests/test_combos.py`/`test_update.py` call, plus the public engine facade.
+Since [ADR 0036](docs/adr/0036-publish-the-engine-to-pypi.md), those two
+halves diverge at the published wheel: `pip install forge-template` ships
+only the facade and the `foundation`/`components` content trees the checks
+modules do not touch — `[tool.hatch.build.targets.wheel]`'s `exclude` list
+names the four checks modules by path, `scripts/check_wheel.py` (`poe
+check:wheel`) verifies the split holds on every CI run, and this is why
+`pyyaml` (needed only by `schema.py`/`render.py`) stays a dev-group-only
+dependency rather than a runtime one — see
+[forge-template#8](https://github.com/Sandsy09/forge-template/issues/8),
+closed by that decision. Editable installs (`uv sync --all-groups`) are
+unaffected; the exclusion applies only to the built wheel. The strict
+[ProjectSpec protocol](docs/project-spec.md) models live in
 `project_spec.py`,
 [component manifest protocol](docs/component-manifests.md) models and loader
 in `component_manifest.py` (manifest protocols `1` and `2`), the implicit
@@ -63,8 +75,9 @@ and option-schema vocabulary (protocols `1` and `2`, `format` support) in
 [template-engine API](docs/template-engine-api.md) in `engine.py` exposes
 package-bound discovery, strict validation, deterministic planning, in-memory
 rendering, structured failures, and the `map_legacy_library_answers` helper
-from the top-level package, at package version `0.3.0` since FT-08.02's
-`PlannedFile.owner` migration. Its
+from the top-level package, at package version `0.3.1` — a packaging-only
+patch (ADR 0036) since FT-08.02's `PlannedFile.owner` migration at `0.3.0`.
+Its
 [generated-project validation](docs/generated-project-validation.md) checks
 plan/output agreement, universal `pyproject.toml` metadata, and completed
 Forge extension rendering before a result is returned. **The production

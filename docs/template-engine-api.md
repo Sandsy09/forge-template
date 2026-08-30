@@ -14,6 +14,15 @@ and renders an immutable in-memory result. It does not choose a destination,
 create directories, write files, resolve target conflicts, run tasks, or
 finalise a generated repository.
 
+Since [ADR 0036](adr/0036-publish-the-engine-to-pypi.md), `forge-template` is
+directly installable — `pip install forge-template` or `uv add
+forge-template` — for clients that want this API without going through
+Copier. The published wheel ships exactly this facade plus the Foundation
+and component content it composes; it does not ship this repository's own
+`docs/adr/`, `copier.yml`, or `template/` checks (`adr.py`, `render.py`,
+`schema.py`, `github_actions.py`), which only make sense inside this
+checkout.
+
 ## Supported imports
 
 Clients import supported names from `forge_template`, not from its low-level

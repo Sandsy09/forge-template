@@ -15,6 +15,9 @@ on:
 permissions:
   contents: write
 
+env:
+  UV_VERSION: "0.12.0"
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -93,3 +96,42 @@ jobs:
 
           ---
           Existing projects can pull this in with \`uvx copier update --trust\`."
+
+  # ---------------------------------------------------------------------------
+  # Publishes the public engine package built from the same commit the tag
+  # above points to. Uses PyPI Trusted Publishing (OIDC) -- no stored token.
+  # ADR 0036: only the public engine facade and content trees ship in this
+  # wheel; scripts/check_wheel.py (already required by CI's `wheel` job)
+  # re-verifies that here as a release-time safety net.
+  # ---------------------------------------------------------------------------
+  publish:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    needs: release
+    if: ${{ !inputs.dry_run }}
+    permissions:
+      id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/p/forge-template
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Check wheel contents
+        run: uv run poe check:wheel
+
+      - name: Build
+        run: uv build
+
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2

@@ -56,7 +56,8 @@ details. The
 [generated-project validation contract](docs/generated-project-validation.md)
 defines the in-memory checks every successful render passes before a client
 may stage it. The [Library archetype contract](docs/library-archetype.md)
-defines the package-specific boundary FT-08.02 implements (package `0.3.0`):
+defines the package-specific boundary FT-08.02 implements (package `0.3.0`,
+now published at `0.3.1` per [ADR 0036](docs/adr/0036-publish-the-engine-to-pypi.md)):
 manifest and option-schema protocol `2`, the implicit Foundation content
 source, the discriminated `PlannedFile.owner`, and the production `library`
 manifest itself. The current Copier tree remains unchanged and is what
@@ -254,3 +255,21 @@ If your change renamed or deleted a file under `template/`, the workflow
 warns if no `_migrations` block covers it — existing projects would otherwise
 get that path deleted plus a new one added on their next `copier update`,
 rather than a clean rename. See CLAUDE.md's invariant 3.
+
+Since [ADR 0036](docs/adr/0036-publish-the-engine-to-pypi.md), the same
+`release.yml` run also publishes the engine package to PyPI — a `publish`
+job, gated by the `pypi` GitHub Environment and PyPI Trusted Publishing
+(OIDC, no stored token), runs after the tag/release job and is skipped
+entirely under `dry_run`. It re-runs `poe check:wheel` as a release-time
+safety net before building and publishing, on top of the same check already
+required by CI's `wheel` job. Before any release, you can run that check
+locally too:
+
+```bash
+uv run poe check:wheel
+```
+
+This builds a wheel into a fresh temporary directory and fails loudly if it
+ships this repository's own CI tooling (`adr.py`, `render.py`, `schema.py`,
+`github_actions.py`) or fails to import cleanly against only its declared
+runtime dependencies — see ADR 0036 for why those modules are excluded.
