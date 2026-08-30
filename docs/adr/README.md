@@ -38,6 +38,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0033 — Migrate the Library archetype to the production catalogue](0033-migrate-library-production-catalogue.md)
 - [0034 — Select CLI Application as the second reference archetype](0034-select-cli-application-reference-archetype.md)
 - [0035 — Implement the CLI Application reference archetype](0035-implement-cli-application-archetype.md)
+- [0036 — Publish the engine to PyPI, excluding repo-local tooling](0036-publish-the-engine-to-pypi.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 from copier import run_copy, run_update
+from packaging.version import Version
 
 from forge_template.github_actions import check_action_pins
 from forge_template.schema import REPO_ROOT
@@ -157,7 +158,12 @@ def test_local_edits_survive_update(tmp_path: Path) -> None:
         cwd=tmpl,
         check=True,
     )
-    new_tag = "v0.2.0"
+    # Derived from base_tag rather than hardcoded: a fixed "v0.2.0" is only
+    # a real upgrade while the repo's actual latest tag stays below it --
+    # exactly the assumption that broke the first time a real v0.3.0 was
+    # cut, since Copier refuses an update that looks like a downgrade.
+    base_version = Version(base_tag.removeprefix("v"))
+    new_tag = f"v{base_version.major}.{base_version.minor}.{base_version.micro + 1}"
     subprocess.run(["git", "tag", new_tag], cwd=tmpl, check=True)
 
     # ---- update ----------------------------------------------------------------

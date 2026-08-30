@@ -6,19 +6,25 @@ build-backend = "hatchling.build"
 
 [project]
 name = "forge-template"
-version = "0.3.0"
+version = "0.3.1"
 description = "Copier template that scaffolds modern Python projects."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Alex" }]
+keywords = ["scaffold", "template", "copier", "engine", "project"]
 classifiers = [
-    # Consumed by git tag via Copier, never published to PyPI.
-    "Private :: Do Not Upload",
+    # Published under create-forge#9 -- see ADR 0036. Only the public engine
+    # facade and its content trees ship in the wheel; the Copier `template/`
+    # tree and this repo's own CI tooling (adr.py, render.py, schema.py,
+    # github_actions.py) are excluded, see [tool.hatch.build.targets.wheel].
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Code Generators",
     "Typing :: Typed",
 ]
 dependencies = [
@@ -28,6 +34,7 @@ dependencies = [
 ]
 
 [project.urls]
+Homepage = "https://github.com/Sandsy09/forge-template"
 Repository = "https://github.com/Sandsy09/forge-template"
 Issues = "https://github.com/Sandsy09/forge-template/issues"
 
@@ -66,6 +73,18 @@ default-groups = ["dev"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/forge_template"]
+# The public engine facade only. adr.py, render.py, schema.py and
+# github_actions.py are this repo's own CI tooling -- they inspect
+# copier.yml/docs/adr paths that don't exist in an installed wheel, and
+# render.py/schema.py need pyyaml, which stays a dev-group-only dependency
+# rather than something every engine consumer downloads. See ADR 0036 and
+# scripts/check_wheel.py, which verifies this exclusion holds.
+exclude = [
+    "src/forge_template/adr.py",
+    "src/forge_template/render.py",
+    "src/forge_template/schema.py",
+    "src/forge_template/github_actions.py",
+]
 
 # -----------------------------------------------------------------------------
 # Ruff
@@ -191,6 +210,12 @@ update = "pytest -m update"
 archetype = "pytest -m archetype"
 "verify-ci" = "bash scripts/verify-ci.sh"
 check = ["format:check", "lint", "typecheck", "test"]
+
+# Verifies the built wheel ships the public engine facade and content trees
+# but excludes this repo's own CI tooling (adr.py, render.py, schema.py,
+# github_actions.py) -- see ADR 0036 and scripts/check_wheel.py. Run before
+# any release, same as create-forge's identically-named task.
+"check:wheel" = "python scripts/check_wheel.py"
 
 # Reconciles this repo's GitHub labels against .github/labels.toml, shared
 # with create-forge. Idempotent: `gh label create --force` creates or
