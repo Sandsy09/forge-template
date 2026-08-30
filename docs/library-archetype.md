@@ -258,7 +258,10 @@ tracked as later work rather than silently claimed complete:
   `github` platform component named in the extension-point table above does
   not exist in the production catalogue yet.
 
-FT-08.03 retains ownership of selecting and defining the deliberately unnamed
-second archetype. CLI exposure, ProjectSpec construction, filesystem
-finalisation, and the first supported released engine range remain
-`create-forge` responsibilities.
+FT-08.03 selected and defined the independent, optionless `cli` reference
+shape in the canonical [CLI Application archetype
+contract](cli-application-archetype.md). FT-08.04 owns its package-bound
+implementation; it neither inherits this component nor changes Library's
+contract. CLI exposure, ProjectSpec construction, filesystem finalisation,
+and the first supported released engine range remain `create-forge`
+responsibilities.

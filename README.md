@@ -68,7 +68,9 @@ the [Foundation guarantees](docs/foundation-guarantees.md) define the mandatory
 outcomes every generated project receives, the
 [Foundation scope](docs/foundation-scope.md) defines which concerns belong in
 that baseline, the [Library archetype contract](docs/library-archetype.md)
-defines the distributable-package additions that will be composed over it,
+defines the distributable-package additions composed over it, and the
+[CLI Application archetype contract](docs/cli-application-archetype.md)
+defines the selected executable reference shape that FT-08.04 will add,
 the [Python support policy](docs/python-support.md) defines the
 supported CPython window and lifecycle, the
 [editor integration strategy](docs/editor-integration.md) keeps the baseline
@@ -92,11 +94,11 @@ desired SBOM and release-provenance behaviour without generating either yet,
 the [GitHub Action pinning policy](docs/github-action-pinning.md) keeps remote
 workflow dependencies immutable and maintainable, the
 [ProjectSpec protocol](docs/project-spec.md) defines the strict, serialisable
-generation request for the future composition engine, the
+generation request for the composition engine, the
 [component manifest protocol](docs/component-manifests.md) defines strict
-bundled metadata and compatibility for its future component catalogue, the
+bundled metadata and compatibility for its component catalogue, the
 [composition order contract](docs/composition-order.md) defines the
-deterministic order that future catalogue applies in, the
+deterministic order that catalogue applies in, the
 [file conflict and override rules](docs/file-conflicts.md) define its output
 target, disposition, and collision-safety rules, the
 [template variable contract](docs/template-variables.md) defines the rendered

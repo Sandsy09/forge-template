@@ -5,11 +5,11 @@
 > [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
 > ProjectSpec protocol v1 is now defined, and Stages 06–09 complete the target
 > in dependency order. The
-> [Library archetype contract](../library-archetype.md) now defines the first
-> production component and Foundation integration that FT-08.02 must implement.
-> Stage 08 keeps archetype two generic until
-> [FT-08.03](https://github.com/Sandsy09/forge-template/issues/42) selects and
-> defines it.
+> [Library archetype contract](../library-archetype.md) defines the first
+> production component, implemented by FT-08.02. The
+> [CLI Application contract](../cli-application-archetype.md) selects `cli`
+> as the optionless second reference archetype and bounds its FT-08.04
+> implementation.
 
 The roadmap remains one product roadmap, with implementation ownership split
 between repository-local epics and issues.

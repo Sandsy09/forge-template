@@ -133,7 +133,7 @@ This contract deliberately does not define:
   [exception ownership conventions](exception-ownership.md);
 - ProjectSpec fields, component manifests, dependency declarations, ordering,
   extension-point representation, or collision algorithms; or
-- the identity or runtime shape of the second reference archetype.
+- implementation of the selected, initially configuration-free
+  [CLI Application archetype](cli-application-archetype.md).
 
-Those decisions remain with their existing Stage 06 and Stage 08 roadmap
-issues.
+Those decisions remain with their existing roadmap owners.

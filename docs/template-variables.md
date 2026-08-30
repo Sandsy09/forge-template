@@ -101,6 +101,13 @@ Every selected component receives an `options` entry, empty when it declares
 no options, so a template never has to test whether its own namespace exists
 before reading from it.
 
+The ProjectSpec need not carry an owner entry when that owner declares no
+options. The accepted [CLI Application
+contract](cli-application-archetype.md) therefore supplies no
+`component_options.cli` field; resolution still exposes an empty
+`options.cli` mapping to its own templates, and derives the command name from
+`project.repository_name` rather than duplicated option state.
+
 ## Declaring options
 
 A component declares its accepted options by naming a strict JSON document

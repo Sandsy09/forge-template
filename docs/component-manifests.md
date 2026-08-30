@@ -19,7 +19,10 @@ FT-08.02 populated the installed production catalogue with the first real
 manifest: `discover_components()` returns exactly `library`. The released
 Copier path remains the monolithic `template/` tree and is unaffected --
 `create-forge` continues to consume only that path until a later, separate
-cutover decision.
+cutover decision. The accepted [CLI Application archetype
+contract](cli-application-archetype.md) reserves the optionless `cli`
+manifest as the second production entry, but FT-08.04 owns its implementation;
+discovery does not return it yet.
 
 ## Authoring and schema source
 
@@ -307,8 +310,9 @@ overwrite authority.
 
 Neither protocol yet defines:
 
-- the second roadmap archetype -- FT-08.02's `library` manifest is the
-  installed catalogue's only entry so far;
+- the accepted `cli` archetype's implementation -- FT-08.02's `library`
+  manifest remains the installed catalogue's only entry until FT-08.04 (see
+  the [CLI Application contract](cli-application-archetype.md));
 - optional or recommended dependencies;
 - destination file operations or filesystem orchestration; in-memory
   rendering and extension-marker semantics are defined by the

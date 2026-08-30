@@ -60,7 +60,10 @@ defines the package-specific boundary FT-08.02 implements (package `0.3.0`):
 manifest and option-schema protocol `2`, the implicit Foundation content
 source, the discriminated `PlannedFile.owner`, and the production `library`
 manifest itself, now the installed catalogue's one entry. The current Copier
-tree remains unchanged and is what `create-forge` still consumes.
+tree remains unchanged and is what `create-forge` still consumes. The
+[CLI Application archetype contract](docs/cli-application-archetype.md)
+selects the optionless `cli` executable shape and bounds FT-08.04; no CLI
+component, dependency, Foundation extension, or generated file exists yet.
 
 ## Branching and pull requests
 
