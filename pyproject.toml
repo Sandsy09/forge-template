@@ -161,7 +161,7 @@ addopts = [
 markers = [
     "combos: scaffolds every answer combination and runs its full toolchain (slow; `poe combos`)",
     "update: exercises `copier update` end-to-end (slow; `poe update`)",
-    "archetype: builds real wheels/sdists for the production Library archetype (slow; `poe archetype`)",
+    "archetype: builds real wheels/sdists for the production Library and CLI archetypes (slow; `poe archetype`)",
 ]
 
 [tool.coverage.run]

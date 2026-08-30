@@ -47,11 +47,11 @@ def _payload(
     }
 
 
-def test_discovery_exposes_exactly_the_production_library() -> None:
+def test_discovery_exposes_the_production_library_alongside_cli() -> None:
     descriptors = discover_components()
-    assert [descriptor.id for descriptor in descriptors] == ["library"]
+    assert [descriptor.id for descriptor in descriptors] == ["cli", "library"]
 
-    library = descriptors[0]
+    library = next(d for d in descriptors if d.id == "library")
     assert library.kind == "archetype"
     assert library.version == "1.0.0"
     assert library.requires == ()

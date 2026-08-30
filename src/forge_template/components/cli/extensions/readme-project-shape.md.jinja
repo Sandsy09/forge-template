@@ -1,0 +1,20 @@
+## Usage
+
+```bash
+{{ project.repository_name }} --help
+{{ project.repository_name }} hello
+{{ project.repository_name }} hello Ada
+```
+
+`python -m {{ project.package_name }}` behaves identically to the
+`{{ project.repository_name }}` console script.
+
+## Project structure
+
+```text
+src/{{ project.package_name }}/   Package source
+tests/                            Test suite
+```
+
+Add new commands as functions decorated with `@app.command()` in
+`src/{{ project.package_name }}/cli.py`.

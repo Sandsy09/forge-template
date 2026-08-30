@@ -165,11 +165,11 @@ order a validated selection of them applies in; and
 component may declare through its manifest's `options_schema`. The
 [stable template-engine API](template-engine-api.md) implements package-bound
 discovery, collision-checked planning, and rendering. The production catalogue
-contains `library`; the accepted [Library archetype
-contract](library-archetype.md) uses one implicit, non-discoverable Foundation
-source rather than representing Foundation as a component. The accepted
-[CLI Application contract](cli-application-archetype.md) reserves `cli` for
-the second production archetype but adds no manifest until FT-08.04.
+contains `library` and `cli`, the two independent reference archetypes
+implemented by the [Library](library-archetype.md) and
+[CLI Application](cli-application-archetype.md) contracts; both compose over
+one implicit, non-discoverable Foundation source rather than representing
+Foundation as a component.
 
 ### ProjectSpec
 
@@ -260,12 +260,14 @@ components. Its existing choices can nevertheless be described consistently:
 This mapping is explanatory only; it does not claim that the current files are
 already separated into components.
 
-### Selected future CLI composition
+### A future combined CLI composition
 
-The selected second reference archetype lets a future request combine
-Foundation, `cli`,
-`<capability-a>`, and `<platform>`, with `<profile>` supplying convenient
-defaults and `<organisation-policy>` constraining allowed selections. The
+`cli` is implemented (FT-08.04): a ProjectSpec selecting it composes
+Foundation and `cli` into a real project today. A future request combining
+Foundation, `cli`, `<capability-a>`, and `<platform>`, with `<profile>`
+supplying convenient defaults and `<organisation-policy>` constraining
+allowed selections, still depends on capability, platform, profile, and
+policy concepts that do not exist in the production catalogue yet. The
 canonical [CLI Application contract](cli-application-archetype.md) assigns
 the executable project shape to `cli`; the other placeholders remain neutral.
 
@@ -273,8 +275,6 @@ the executable project shape to `cli`; the other placeholders remain neutral.
 
 This terminology does not decide:
 
-- production implementation of the accepted `cli` component, owned by
-  FT-08.04;
 - the `merge` and `override` disposition algorithms, reserved but not yet
   granted by [file-conflicts.md](file-conflicts.md);
 - organisation-policy schema, error types, or any real `override` grant;

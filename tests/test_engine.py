@@ -98,11 +98,12 @@ def test_engine_info_reports_package_and_protocols_without_discovery(
 
 
 def test_installed_catalogue_contains_the_production_library_archetype() -> None:
-    """FT-08.02 populates the previously-empty production catalogue."""
+    """FT-08.02 populates the previously-empty production catalogue; FT-08.04
+    adds the second, independent CLI Application archetype beside it."""
     descriptors = discover_components()
 
-    assert [descriptor.id for descriptor in descriptors] == ["library"]
-    library = descriptors[0]
+    assert [descriptor.id for descriptor in descriptors] == ["cli", "library"]
+    library = next(d for d in descriptors if d.id == "library")
     assert library.kind == "archetype"
     assert library.version == "1.0.0"
     assert [option.name for option in library.options] == [

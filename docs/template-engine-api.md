@@ -80,13 +80,12 @@ entrypoint, or arbitrary directory. This is a deliberate trust boundary:
 discovered manifests, option schemas, templates, and literal content were all
 reviewed as part of the installed engine distribution.
 
-The production catalogue holds exactly one manifest: `library`, the
-[Library archetype contract](library-archetype.md)'s implementation
-(FT-08.02). Discovery returns its descriptor; a ProjectSpec selecting any
-other archetype, capability, or platform is rejected, since none exists yet.
-The [CLI Application archetype contract](cli-application-archetype.md) has
-selected `cli` as the second entry, but FT-08.04 owns the future manifest and
-content; this documentation decision does not change discovery.
+The production catalogue holds two independent archetype manifests: `library`
+(FT-08.02, the [Library archetype contract](library-archetype.md)) and `cli`
+(FT-08.04, the [CLI Application archetype contract](cli-application-archetype.md)).
+Discovery returns both descriptors in lexical order (`cli` then `library`); a
+ProjectSpec selects exactly one archetype, and selecting any capability or
+platform is rejected, since none exists yet.
 Test-only fixture injection is private and is not a supported client
 extension mechanism -- this applies equally to the implicit Foundation
 content source, which discovery never exposes at all (see "Foundation"
@@ -246,9 +245,7 @@ protocol `1`; a client on the prior `0.2.x` line reading `owner_component_id`
 must migrate to `owner` before adopting `0.3.x`.
 
 The generated-project validator, Foundation/protocol-`2` mechanism, and
-production `library` manifest above are part of the `0.3.x` line. The current
-Copier Library path and released `create-forge` CLI do not consume this facade
-until `create-forge` assigns a supported engine range. The accepted `cli`
-contract changes no discovery result before FT-08.04 and creates no Copier
-answer, generated file, destination API, CLI behaviour, tag, or
-release.
+production `library`/`cli` manifests above are all part of the still-unreleased
+`0.3.x` line. The current Copier Library path and released `create-forge` CLI
+do not consume this facade until `create-forge` assigns a supported engine
+range.

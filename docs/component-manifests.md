@@ -16,13 +16,13 @@ rather than only another component. Protocol `1` parsing remains supported
 unchanged for existing component-to-component manifests.
 
 FT-08.02 populated the installed production catalogue with the first real
-manifest: `discover_components()` returns exactly `library`. The released
-Copier path remains the monolithic `template/` tree and is unaffected --
-`create-forge` continues to consume only that path until a later, separate
-cutover decision. The accepted [CLI Application archetype
-contract](cli-application-archetype.md) reserves the optionless `cli`
-manifest as the second production entry, but FT-08.04 owns its implementation;
-discovery does not return it yet.
+manifest, `library`; FT-08.04 added the second, `discover_components()` now
+returning `("cli", "library")` per the [CLI Application archetype
+contract](cli-application-archetype.md). The two archetypes are independent
+and compose over the same implicit Foundation source; a ProjectSpec selects
+exactly one. The released Copier path remains the monolithic `template/` tree
+and is unaffected -- `create-forge` continues to consume only that path until
+a later, separate cutover decision.
 
 ## Authoring and schema source
 
@@ -206,8 +206,8 @@ use `target` and may not declare the flat `component` key — each rejected
 outright as a mismatch between a manifest's declared protocol and its own
 contribution shape. Protocol `1` parsing remains available unchanged for
 existing component-to-component fixtures; it simply cannot target Foundation.
-Production Library uses protocol `2` to contribute to Foundation-owned
-neutral files.
+Production Library and CLI Application both use protocol `2` to contribute
+to Foundation-owned neutral files.
 
 ## Foundation content source
 
@@ -310,9 +310,6 @@ overwrite authority.
 
 Neither protocol yet defines:
 
-- the accepted `cli` archetype's implementation -- FT-08.02's `library`
-  manifest remains the installed catalogue's only entry until FT-08.04 (see
-  the [CLI Application contract](cli-application-archetype.md));
 - optional or recommended dependencies;
 - destination file operations or filesystem orchestration; in-memory
   rendering and extension-marker semantics are defined by the
