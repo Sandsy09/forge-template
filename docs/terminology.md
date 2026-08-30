@@ -69,7 +69,10 @@ replace or weaken Foundation guarantees.
 The canonical [Library archetype contract](library-archetype.md) applies this
 definition to a distributable Python package. FT-08.02 implemented it as the
 production catalogue's first component, while leaving the current monolithic
-Copier path unchanged.
+Copier path unchanged. The
+[CLI Application archetype contract](cli-application-archetype.md) selects
+`cli` as the second reference shape: an independent executable distribution
+over the same Foundation, defined now and implemented by FT-08.04.
 
 ### Capability
 
@@ -162,10 +165,11 @@ order a validated selection of them applies in; and
 component may declare through its manifest's `options_schema`. The
 [stable template-engine API](template-engine-api.md) implements package-bound
 discovery, collision-checked planning, and rendering. The production catalogue
-remains empty until Stage 08 migrates Library. The accepted
-[Library archetype contract](library-archetype.md) requires that migration to
-use one implicit, non-discoverable Foundation source rather than representing
-Foundation as a component.
+contains `library`; the accepted [Library archetype
+contract](library-archetype.md) uses one implicit, non-discoverable Foundation
+source rather than representing Foundation as a component. The accepted
+[CLI Application contract](cli-application-archetype.md) reserves `cli` for
+the second production archetype but adds no manifest until FT-08.04.
 
 ### ProjectSpec
 
@@ -256,24 +260,24 @@ components. Its existing choices can nevertheless be described consistently:
 This mapping is explanatory only; it does not claim that the current files are
 already separated into components.
 
-### Neutral future composition
+### Selected future CLI composition
 
-A future request could combine Foundation, `<archetype>`,
+The selected second reference archetype lets a future request combine
+Foundation, `cli`,
 `<capability-a>`, and `<platform>`, with `<profile>` supplying convenient
 defaults and `<organisation-policy>` constraining allowed selections. The
-placeholders deliberately do not name or select the roadmap's second reference
-archetype.
+canonical [CLI Application contract](cli-application-archetype.md) assigns
+the executable project shape to `cli`; the other placeholders remain neutral.
 
 ## Deferred decisions
 
 This terminology does not decide:
 
-- production component implementation and migration (the `library` identity
-  and contract are decided, while FT-08.02 owns their implementation);
+- production implementation of the accepted `cli` component, owned by
+  FT-08.04;
 - the `merge` and `override` disposition algorithms, reserved but not yet
   granted by [file-conflicts.md](file-conflicts.md);
 - organisation-policy schema, error types, or any real `override` grant;
-- the identity of the second reference archetype; or
 - the concrete `create-forge` engine package range and supported
   source-resolution cutover.
 

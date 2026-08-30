@@ -209,6 +209,7 @@ extension points below.
 | Declared development environment, lock state, formatting, linting, typing, testing, and aggregate quality commands | **Foundation**, as the current implementation of mandatory outcomes. |
 | Project identity, neutral metadata, licence, root README/contribution/security starters, base repository hygiene, [secret-handling safeguards](secret-handling.md), and Copier update state | **Foundation**, as neutral handoff or update/provenance material. |
 | `src/` package layout, distributable-package metadata, build backend, versioning, typed-package marker, build/release behaviour, and the Library-specific smoke target | **Library archetype**. |
+| Console-script and module entry points, the Typer runtime, starter command behaviour, and command-specific tests/documentation | **CLI Application archetype**, as defined by the [canonical contract](cli-application-archetype.md); no implementation exists until FT-08.04. |
 | Coverage reporting, pre-commit feedback, documentation, changelog support, dependency-update automation, configuration examples, and editor-specific integration | **Capabilities**; a future profile may select them, while the Forge default profile remains editor-neutral. |
 | Runtime configuration, logging/observability, path/resource behaviour, and exception conventions | The **archetype or capability that contributes the runtime behaviour**; Foundation adds no shared runtime layer, configuration follows the [owner-local convention](configuration-ownership.md), logging follows the [structured capability contract](structured-logging.md), path/resource access follows the [path and resource ownership conventions](paths-and-resources.md), and exception handling follows the [exception ownership conventions](exception-ownership.md). |
 | GitHub Actions, issue and pull-request templates, CODEOWNERS, and other GitHub-specific adapters | **GitHub platform** contributions. Provider-specific files used by a capability are supplied through that platform integration, and remote workflow dependencies follow the [GitHub Action pinning policy](github-action-pinning.md). |
@@ -238,7 +239,8 @@ This scope contract does not decide:
   `create-forge` package range for the
   [stable template-engine API](template-engine-api.md), under
   [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md);
-- the identity of the second reference archetype; or
+- implementation of the selected [CLI Application reference
+  archetype](cli-application-archetype.md); or
 - the concrete SBOM/attestation implementation and the exit criteria that
   must hold before it is built, owned by the
   [supply-chain provenance contract](supply-chain-provenance.md).

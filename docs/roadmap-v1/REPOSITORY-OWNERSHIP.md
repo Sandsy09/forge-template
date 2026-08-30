@@ -17,9 +17,11 @@ request and preserves the one-way client-to-engine boundary. The
 identity, display, version, compatibility, content, dependency, and conflict
 metadata that `forge-template` owns rather than the CLI. The
 [Library archetype contract](../library-archetype.md) applies that ownership
-boundary to the first production archetype and records the future implicit
-Foundation source, option schema, planning owner, and package-version
-migration owned by FT-08.02. The
+boundary to the first production archetype and its implemented Foundation
+source, option schema, planning owner, and package-version migration. The
+[CLI Application contract](../cli-application-archetype.md) applies the same
+boundary to the selected optionless executable shape while leaving every
+manifest and rendered file to FT-08.04. The
 [composition order contract](../composition-order.md) defines the
 deterministic order that metadata's validated selections apply in. The
 [file conflict and override rules](../file-conflicts.md) define the output
@@ -76,6 +78,8 @@ It owns:
 - Foundation and archetype templates;
 - the canonical Library archetype contract and its package-bound production
   implementation;
+- the canonical CLI Application archetype contract and its future
+  package-bound production implementation;
 - capability and platform components;
 - optional editor capabilities and their project-scoped contributions;
 - profile and organisation-policy selection inputs;

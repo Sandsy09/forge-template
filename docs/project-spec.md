@@ -115,8 +115,9 @@ code-execution channel.
 
 ## Library-shaped example
 
-The current Library scaffold is still monolithic, but its future request can
-be represented without making GitHub metadata part of the core project model:
+The direct-Copier Library scaffold remains monolithic, while the engine
+catalogue now composes the same archetype from Foundation and Library content.
+Both use a request that keeps GitHub metadata outside the core project model:
 
 ```json
 {
@@ -163,22 +164,23 @@ be represented without making GitHub metadata part of the core project model:
 ```
 
 The `library` identifier and its two options are accepted by the canonical
-[Library archetype contract](library-archetype.md). They remain future
-production-catalogue inputs until FT-08.02 implements that contract; this
-ProjectSpec example does not claim composed Library rendering exists today.
+[Library archetype contract](library-archetype.md) and implemented in the
+production catalogue by FT-08.02.
 
-## Neutral multi-platform example
+## CLI Application multi-platform example
 
-The second roadmap archetype remains deliberately unnamed:
+The selected second reference archetype has no component options. Its command
+name derives from `project.repository_name` under the canonical
+[CLI Application contract](cli-application-archetype.md):
 
 ```json
 {
   "protocol_version": 1,
   "project": {
-    "name": "Example Project",
-    "package_name": "example_project",
-    "repository_name": "example-project",
-    "description": "",
+    "name": "Example CLI",
+    "package_name": "example_cli",
+    "repository_name": "example-cli",
+    "description": "An example command-line application.",
     "licence": "proprietary",
     "authors": []
   },
@@ -187,7 +189,7 @@ The second roadmap archetype remains deliberately unnamed:
     "development": "3.14"
   },
   "components": {
-    "archetype": "project-shape",
+    "archetype": "cli",
     "capabilities": ["capability-a"],
     "platforms": ["repository-host", "runtime-target"]
   },

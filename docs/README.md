@@ -12,6 +12,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   routing rules that keep Foundation conservative and runtime-free.
 - [library-archetype.md](library-archetype.md) — the distributable Python
   package contract and accepted requirements for the Stage 08 migration.
+- [cli-application-archetype.md](cli-application-archetype.md) — the selected
+  second reference archetype's package, dependency, command, and future
+  composition contract.
 - [python-support.md](python-support.md) — supported CPython window, generated
   project version semantics, and release-transition policy.
 - [editor-integration.md](editor-integration.md) — editor-neutral Foundation

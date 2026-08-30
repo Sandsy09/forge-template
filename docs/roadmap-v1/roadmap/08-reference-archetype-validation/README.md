@@ -13,14 +13,17 @@
   installed production catalogue now contains `library`, proven by real
   `uv build` output across all three packaging modes
   (`tests/test_library_build.py`).
-- **FT-08.03 — Select and define the second reference archetype contract**
-- **FT-08.04 — Implement the selected second reference archetype**
+- **FT-08.03 — Select and define the second reference archetype contract** —
+  complete via the [CLI Application
+  contract](../../../cli-application-archetype.md) and
+  [ADR 0034](../../../adr/0034-select-cli-application-reference-archetype.md).
+- **FT-08.04 — Implement the CLI Application reference archetype**
 - **FT-08.05 — Run composition architecture review**
 
 ### create-forge
 
 - **CF-08.01 — Expose Library archetype through create-forge**
-- **CF-08.02 — Expose the second archetype through create-forge**
+- **CF-08.02 — Expose CLI Application through create-forge**
 - **CF-08.03 — Run CLI archetype-parity review**
 - **CF-08.04 — Extend end-to-end generation to the public engine**
 
@@ -29,9 +32,10 @@ protocol `2`, one implicit Foundation content source, and the `0.3.0` planning
 owner migration as requirements for FT-08.02, implemented in full; none was
 implemented by the documentation-only FT-08.01 decision.
 
-Archetype two remains intentionally generic until
-[FT-08.03](https://github.com/Sandsy09/forge-template/issues/42) records the
-selection and contract.
+FT-08.03 selects `cli` as an independent, optionless executable distribution
+over Foundation. FT-08.04 owns its package-bound implementation; the current
+production catalogue continues to contain only `library`, and the direct
+Copier path remains unchanged.
 
 ## Stage completion rule
 

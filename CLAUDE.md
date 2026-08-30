@@ -73,7 +73,12 @@ manifest, `library`
 ([contract](docs/library-archetype.md)/[ADR 0033](docs/adr/0033-migrate-library-production-catalogue.md)),
 alongside the implicit Foundation source at `src/forge_template/foundation/`
 — proven by `uv run poe archetype` building real wheels/sdists across all
-three packaging modes. These
+three packaging modes. FT-08.03 has now selected and bounded the optionless
+`cli` second reference shape in the
+[CLI Application contract](docs/cli-application-archetype.md) and
+[ADR 0034](docs/adr/0034-select-cli-application-reference-archetype.md), but
+FT-08.04 owns its manifest, content, Foundation extensions, runtime dependency,
+and tests; discovery still returns only `library`. These
 contracts are not
 yet consumed by the direct-Copier path; see
 [#5](https://github.com/Sandsy09/forge-template/issues/5), done,
@@ -154,7 +159,8 @@ _migrations:
 ```
 
 `release.yml` warns at release time when template files moved without one.
-**This will matter when archetype two is added** and shared files get extracted.
+**This will matter if a future cutover moves existing Copier paths.** The
+selected `cli` reference archetype is package-bound and must not move them.
 
 ### 4. Jinja and GitHub Actions both use `${{ }}`
 
@@ -282,7 +288,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0033 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0034 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -299,9 +305,11 @@ The [live issue index](docs/roadmap-v1/github-issues/forge-template/ISSUE-INDEX.
 is the source of truth for roadmap order and blockers. FT-08.02 populated the
 production component catalogue under the
 [Library archetype contract](docs/library-archetype.md) — additive, package-bound
-content that leaves `template/` untouched. Stage 08 still needs to select and
-define the deliberately unnamed second archetype, and then validate parity
-through repurposed [#4](https://github.com/Sandsy09/forge-template/issues/4).
+content that leaves `template/` untouched. The
+[CLI Application contract](docs/cli-application-archetype.md) now selects
+`cli` as the second, optionless package-bound shape. Repurposed
+[#4](https://github.com/Sandsy09/forge-template/issues/4) must implement it
+without touching `template/` or `copier.yml`, then validate both archetypes.
 A future cutover that actually retires `template/` in favour of this catalogue
 is the `_migrations` moment: plan it before moving template paths and keep
 Library paths stable where possible.

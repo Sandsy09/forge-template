@@ -84,6 +84,9 @@ The production catalogue holds exactly one manifest: `library`, the
 [Library archetype contract](library-archetype.md)'s implementation
 (FT-08.02). Discovery returns its descriptor; a ProjectSpec selecting any
 other archetype, capability, or platform is rejected, since none exists yet.
+The [CLI Application archetype contract](cli-application-archetype.md) has
+selected `cli` as the second entry, but FT-08.04 owns the future manifest and
+content; this documentation decision does not change discovery.
 Test-only fixture injection is private and is not a supported client
 extension mechanism -- this applies equally to the implicit Foundation
 content source, which discovery never exposes at all (see "Foundation"
@@ -242,11 +245,10 @@ appears in it. This moved the package to `0.3.0` while ProjectSpec stayed
 protocol `1`; a client on the prior `0.2.x` line reading `owner_component_id`
 must migrate to `owner` before adopting `0.3.x`.
 
-The generated-project validator and the Foundation/protocol-`2` mechanism
-above are both part of the `0.3.x` line. The production catalogue remains
-empty and the current Copier Library path and the released `create-forge`
-CLI do not yet consume this facade -- both are unaffected by any of this
-until FT-08.02's production `library` manifest actually ships and
-`create-forge` assigns a supported engine range. This change creates no
-Copier answer, generated file, destination API, CLI behaviour, tag, or
+The generated-project validator, Foundation/protocol-`2` mechanism, and
+production `library` manifest above are part of the `0.3.x` line. The current
+Copier Library path and released `create-forge` CLI do not consume this facade
+until `create-forge` assigns a supported engine range. The accepted `cli`
+contract changes no discovery result before FT-08.04 and creates no Copier
+answer, generated file, destination API, CLI behaviour, tag, or
 release.
