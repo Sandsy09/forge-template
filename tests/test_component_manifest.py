@@ -9,16 +9,19 @@ import pytest
 from pydantic import ValidationError
 
 from forge_template.component_manifest import (
-    COMPONENT_MANIFEST_PROTOCOL_VERSION,
+    COMPONENT_MANIFEST_PROTOCOL_VERSIONS,
     ComponentCompatibility,
     ComponentManifest,
     ComponentReference,
+    ComponentTarget,
     Contribution,
     ExtensionPoint,
+    FoundationTarget,
     load_component_manifest,
     validate_manifest_selection,
     validate_manifest_set,
 )
+from forge_template.foundation_source import FoundationSource
 from forge_template.project_spec import ProjectSpec
 
 FIXTURES = Path(__file__).parent / "fixtures" / "component_manifests"
@@ -124,7 +127,7 @@ def _fixture_manifests() -> tuple[ComponentManifest, ...]:
 def test_loads_valid_manifest_kinds(identifier: str, kind: str) -> None:
     manifest = load_component_manifest(FIXTURES / identifier / "component.toml")
 
-    assert manifest.manifest_version == COMPONENT_MANIFEST_PROTOCOL_VERSION
+    assert manifest.manifest_version in COMPONENT_MANIFEST_PROTOCOL_VERSIONS
     assert manifest.id == identifier
     assert manifest.kind == kind
 
@@ -133,7 +136,7 @@ def test_models_are_strict_frozen_and_generate_json_schema() -> None:
     manifest = _manifest("example")
     schema = ComponentManifest.model_json_schema()
 
-    assert schema["properties"]["manifest_version"]["const"] == 1
+    assert schema["properties"]["manifest_version"]["enum"] == [1, 2]
     assert schema["additionalProperties"] is False
 
     with pytest.raises(ValidationError, match="frozen"):
@@ -150,7 +153,7 @@ def test_models_are_strict_frozen_and_generate_json_schema() -> None:
     assert "extra_forbidden" in error_types
 
 
-@pytest.mark.parametrize("manifest_version", [None, 2, True])
+@pytest.mark.parametrize("manifest_version", [None, 3, True])
 def test_missing_unsupported_or_coerced_manifest_version_is_rejected(
     manifest_version: object,
 ) -> None:
@@ -200,17 +203,68 @@ def test_reference_specifiers_are_validated_and_canonicalised() -> None:
 
 def test_extension_point_and_contribution_are_strict_and_frozen() -> None:
     point = ExtensionPoint(id="ci-steps", content="content/ci.yml")
-    contribution = Contribution(
-        component="github", extension_point="ci-steps", content="extensions/step.yml"
+    contribution = Contribution.model_validate(
+        {
+            "component": "github",
+            "extension_point": "ci-steps",
+            "content": "extensions/step.yml",
+        }
     )
+
+    assert contribution.target == ComponentTarget(id="github")
 
     with pytest.raises(ValidationError, match="frozen"):
         point.id = "changed"
     with pytest.raises(ValidationError, match="frozen"):
-        contribution.component = "changed"
+        contribution.target = FoundationTarget()
     with pytest.raises(ValidationError):
         ExtensionPoint.model_validate(
             {"id": "ci-steps", "content": "content/ci.yml", "unexpected": True}
+        )
+
+
+def test_contribution_accepts_protocol_1_legacy_component_key() -> None:
+    """Protocol 1's flat ``component = "id"`` key still parses unchanged,
+    normalised into a ``ComponentTarget`` -- see FT-08.02/ADR 0033."""
+    contribution = Contribution.model_validate(
+        {
+            "component": "github",
+            "extension_point": "ci-steps",
+            "content": "extensions/step.yml",
+        }
+    )
+    assert contribution.target == ComponentTarget(kind="component", id="github")
+
+
+def test_contribution_accepts_protocol_2_discriminated_target() -> None:
+    component_target = Contribution.model_validate(
+        {
+            "target": {"kind": "component", "id": "github"},
+            "extension_point": "ci-steps",
+            "content": "extensions/step.yml",
+        }
+    )
+    assert component_target.target == ComponentTarget(id="github")
+
+    foundation_target = Contribution.model_validate(
+        {
+            "target": {"kind": "foundation"},
+            "extension_point": "pyproject-build-system",
+            "content": "extensions/build-system.toml.jinja",
+        }
+    )
+    assert foundation_target.target == FoundationTarget()
+
+
+def test_contribution_rejects_both_legacy_and_discriminated_target() -> None:
+    with pytest.raises(ValidationError, match="not declare both"):
+        Contribution.model_validate(
+            {
+                "component": "github",
+                "target": {"kind": "foundation"},
+                "extension_point": "ci-steps",
+                "content": "extensions/step.yml",
+            }
         )
 
 
@@ -561,3 +615,119 @@ def test_reference_order_is_canonical_not_composition_order() -> None:
     assert validate_manifest_set((consumer_a, second, first)) == validate_manifest_set(
         (first, consumer_b, second)
     )
+
+
+def _manifest_v2(
+    identifier: str,
+    *,
+    kind: str = "capability",
+    contributions: tuple[dict[str, object], ...] = (),
+) -> ComponentManifest:
+    payload = _manifest_payload(identifier, kind=kind, contributions=contributions)
+    payload["manifest_version"] = 2
+    return ComponentManifest.model_validate(payload)
+
+
+def _foundation_source(*, points: tuple[dict[str, object], ...]) -> FoundationSource:
+    return FoundationSource.model_validate(
+        {"foundation_version": 1, "content_root": "content", "extension_points": points}
+    )
+
+
+def test_protocol_1_manifest_rejects_discriminated_target_table() -> None:
+    payload = _manifest_payload(
+        "example",
+        contributions=(
+            {
+                "target": {"kind": "foundation"},
+                "extension_point": "pyproject-build-system",
+                "content": "extensions/build-system.toml.jinja",
+            },
+        ),
+    )
+    with pytest.raises(ValidationError, match="must use 'component', not 'target'"):
+        ComponentManifest.model_validate(payload)
+
+
+def test_protocol_2_manifest_rejects_legacy_component_key() -> None:
+    payload = _manifest_payload(
+        "example",
+        contributions=(
+            {
+                "component": "github",
+                "extension_point": "ci-steps",
+                "content": "extensions/step.yml",
+            },
+        ),
+    )
+    payload["manifest_version"] = 2
+    with pytest.raises(ValidationError, match="must use 'target', not 'component'"):
+        ComponentManifest.model_validate(payload)
+
+
+def test_component_may_contribute_to_foundation_without_self_contribution_error() -> (
+    None
+):
+    """A component contributing to Foundation is never mistaken for a
+    self-contribution -- Foundation is never ``self.id``."""
+    manifest = _manifest_v2(
+        "library-v2",
+        kind="archetype",
+        contributions=(
+            {
+                "target": {"kind": "foundation"},
+                "extension_point": "pyproject-build-system",
+                "content": "extensions/build-system.toml.jinja",
+            },
+        ),
+    )
+    assert manifest.contributions[0].target == FoundationTarget()
+
+
+def test_foundation_target_is_unchecked_without_a_foundation_source() -> None:
+    """Catalogue-wide validation defers a Foundation-targeted contribution's
+    published-point check to whichever caller actually has the installed
+    Foundation source (``forge_template.engine``); it is not an error by
+    itself for ``validate_manifest_set`` to be called without one."""
+    contributor = _manifest_v2(
+        "library-v2",
+        kind="archetype",
+        contributions=(
+            {
+                "target": {"kind": "foundation"},
+                "extension_point": "pyproject-build-system",
+                "content": "extensions/build-system.toml.jinja",
+            },
+        ),
+    )
+    validated = validate_manifest_set((contributor,))
+    assert [manifest.id for manifest in validated] == ["library-v2"]
+
+
+def test_foundation_targeted_contribution_is_checked_against_a_supplied_source() -> (
+    None
+):
+    contributor = _manifest_v2(
+        "library-v2",
+        kind="archetype",
+        contributions=(
+            {
+                "target": {"kind": "foundation"},
+                "extension_point": "pyproject-build-system",
+                "content": "extensions/build-system.toml.jinja",
+            },
+        ),
+    )
+
+    matching = _foundation_source(
+        points=(
+            {"id": "pyproject-build-system", "content": "content/pyproject.toml.jinja"},
+        )
+    )
+    validate_manifest_set((contributor,), matching)
+
+    mismatched = _foundation_source(
+        points=({"id": "readme-project-shape", "content": "content/README.md.jinja"},)
+    )
+    with pytest.raises(ValueError, match="undeclared extension point"):
+        validate_manifest_set((contributor,), mismatched)

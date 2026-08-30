@@ -1,9 +1,17 @@
 """Strict component manifest protocol models and provisional validators.
 
 This module defines the low-level, machine-readable metadata consumed by
-Forge's future composition engine.  It deliberately does not discover
-components, order them, render their content, or expose stable engine errors;
-those remain later Stage 06 work.
+Forge's composition engine.  It deliberately does not discover components,
+order them, render their content, or expose stable engine errors; those
+remain later Stage 06/08 work.
+
+Two manifest protocols are understood. Protocol 1 (FT-06.02/ADR 0024) models
+component-to-component contributions only. Protocol 2 (FT-08.02/ADR 0031, ADR
+0033) adds a discriminated contribution ``target`` so a contribution can also
+name the implicit Foundation content source -- see
+``forge_template.foundation_source`` -- rather than only another component.
+Protocol 1 parsing remains supported unchanged for existing
+component-to-component fixtures; see docs/component-manifests.md.
 """
 
 from __future__ import annotations
@@ -12,7 +20,7 @@ import graphlib
 import tomllib
 from collections.abc import Iterable
 from pathlib import Path, PurePosixPath, PureWindowsPath
-from typing import Annotated, Literal, Self
+from typing import TYPE_CHECKING, Annotated, Literal, Self
 
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import InvalidVersion, Version
@@ -27,8 +35,17 @@ from pydantic import (
 
 from forge_template.project_spec import ProjectSpec
 
-COMPONENT_MANIFEST_PROTOCOL_VERSION = 1
-"""The only component manifest protocol understood by this engine line."""
+if TYPE_CHECKING:
+    from forge_template.foundation_source import FoundationSource
+
+COMPONENT_MANIFEST_PROTOCOL_VERSIONS: tuple[Literal[1, 2], ...] = (1, 2)
+"""Every component manifest protocol this engine line understands.
+
+Protocol 1 predates the Foundation content source and models
+component-to-component contributions only. Protocol 2, added by FT-08.02,
+adds the discriminated Foundation/component contribution target. Both remain
+valid input on one manifest_version-keyed model.
+"""
 
 _NonEmptyString = Annotated[
     str,
@@ -38,10 +55,15 @@ _ForgeIdentifier = Annotated[
     str,
     StringConstraints(pattern=r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"),
 ]
-_RelativeResourcePath = Annotated[
+RelativeResourcePath = Annotated[
     str,
     StringConstraints(strip_whitespace=True, min_length=1),
 ]
+"""One component- or Foundation-relative resource path. Validated by
+``relative_resource_path`` below; promoted to a public name so
+``forge_template.foundation_source`` and
+``forge_template.file_conflicts.render_output_path`` can reuse both the type
+and the validator rather than duplicating either."""
 _ProtocolSet = Annotated[
     tuple[Literal[1], ...],
     Field(min_length=1),
@@ -79,7 +101,16 @@ def _canonical_specifier(value: str, *, field: str) -> str:
         raise ValueError(msg) from exc
 
 
-def _relative_resource_path(value: str) -> str:
+def relative_resource_path(value: str) -> str:
+    """Validate one component- or Foundation-relative resource path.
+
+    Rejects backslashes, absolute paths (POSIX or Windows), and any ``.`` or
+    ``..`` segment -- the same containment rule ``load_component_manifest``
+    and ``load_foundation_source`` apply to every owned resource, and that
+    ``forge_template.file_conflicts.render_output_path`` applies to a
+    *rendered* output path so a template variable can never redirect output
+    outside the project tree.
+    """
     if "\\" in value:
         msg = "resource paths must use forward slashes"
         raise ValueError(msg)
@@ -118,24 +149,81 @@ class ComponentReference(_ManifestModel):
 
 
 class ExtensionPoint(_ManifestModel):
-    """One named point a component publishes for another to extend."""
+    """One named point an owner publishes for another to extend.
+
+    Shared between a component's own ``[[extension_points]]`` and the
+    Foundation content source's -- both name an ``id`` and an owner-relative
+    ``content`` path, and both are validated the same way, so this one model
+    covers either owner.
+    """
 
     id: _ForgeIdentifier
-    content: _RelativeResourcePath
-    """Component-relative path to the owned file this point lives in. Must
-    fall inside ``content_root``: an extension point extends content the
-    component itself owns and emits, not an arbitrary resource."""
+    content: RelativeResourcePath
+    """Owner-relative path to the owned file this point lives in. Must fall
+    inside the owner's own ``content_root``: an extension point extends
+    content the owner itself emits, not an arbitrary resource."""
+
+
+class ComponentTarget(_ManifestModel):
+    """A contribution targets another component's extension point."""
+
+    kind: Literal["component"] = "component"
+    id: _ForgeIdentifier
+
+
+class FoundationTarget(_ManifestModel):
+    """A contribution targets the implicit Foundation content source."""
+
+    kind: Literal["foundation"] = "foundation"
+
+
+ContributionTarget = Annotated[
+    ComponentTarget | FoundationTarget,
+    Field(discriminator="kind"),
+]
+"""Protocol 2's discriminated contribution owner. Protocol 1's flat
+``component = "id"`` key is normalised into ``ComponentTarget`` by
+``Contribution``'s own before-validator, so every parsed manifest -- either
+protocol -- exposes this one typed field."""
 
 
 class Contribution(_ManifestModel):
-    """An additive contribution into another component's extension point."""
+    """An additive contribution into another owner's extension point."""
 
-    component: _ForgeIdentifier
+    target: ContributionTarget
     extension_point: _ForgeIdentifier
-    content: _RelativeResourcePath
+    content: RelativeResourcePath
     """Component-relative path to the contributed payload. Must fall outside
     ``content_root``: a contribution is not itself an owned output file, so it
     must not also be emitted at its own target."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _normalise_legacy_target(cls, value: object) -> object:
+        """Accept protocol 1's flat ``component = "id"`` key.
+
+        Protocol 1 names a target component directly. Protocol 2 replaces
+        that with a discriminated ``target`` table so a Foundation target
+        becomes representable. Rewriting here keeps every existing protocol-1
+        fixture and manifest parsing unchanged rather than requiring a second
+        code path through the rest of this module.
+        """
+        if not isinstance(value, dict):
+            return value
+        if "target" in value and "component" in value:
+            msg = "a contribution must not declare both 'target' and 'component'"
+            raise ValueError(msg)
+        if "component" in value:
+            value = dict(value)
+            value["target"] = {"kind": "component", "id": value.pop("component")}
+        return value
+
+
+def _contribution_target_key(contribution: Contribution) -> tuple[str, str]:
+    target = contribution.target
+    if isinstance(target, FoundationTarget):
+        return ("foundation", "")
+    return ("component", target.id)
 
 
 class ComponentCompatibility(_ManifestModel):
@@ -179,19 +267,55 @@ class ComponentCompatibility(_ManifestModel):
 class ComponentManifest(_ManifestModel):
     """One bundled archetype, capability, or platform declaration."""
 
-    manifest_version: Literal[1]
+    manifest_version: Literal[1, 2]
     id: _ForgeIdentifier
     name: _NonEmptyString
     description: _NonEmptyString
     kind: Literal["archetype", "capability", "platform"]
     version: str
-    content_root: _RelativeResourcePath
-    options_schema: _RelativeResourcePath | None = None
+    content_root: RelativeResourcePath
+    options_schema: RelativeResourcePath | None = None
     compatibility: ComponentCompatibility
     requires: tuple[ComponentReference, ...] = ()
     conflicts: tuple[ComponentReference, ...] = ()
     extension_points: tuple[ExtensionPoint, ...] = ()
     contributions: tuple[Contribution, ...] = ()
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_protocol_specific_contribution_shape(cls, value: object) -> object:
+        """Reject a contribution's shape mismatched to its own protocol.
+
+        Runs on the raw payload, before ``Contribution``'s own before-
+        validator rewrites a legacy ``component`` key into ``target`` --
+        otherwise that rewrite would erase the distinction this check exists
+        to enforce. A protocol-1 manifest must use the legacy flat key
+        (extending it with a ``target`` table -- and therefore a Foundation
+        target -- is protocol-2-only); a protocol-2 manifest must use the
+        discriminated table so its intent is never ambiguous.
+        """
+        if not isinstance(value, dict):
+            return value
+        manifest_version = value.get("manifest_version")
+        contributions = value.get("contributions")
+        if not isinstance(contributions, (list, tuple)):
+            return value
+        for entry in contributions:
+            if not isinstance(entry, dict):
+                continue
+            if manifest_version == 1 and "target" in entry:
+                msg = (
+                    "manifest protocol 1 contributions must use 'component', "
+                    "not 'target'"
+                )
+                raise ValueError(msg)
+            if manifest_version == 2 and "component" in entry:
+                msg = (
+                    "manifest protocol 2 contributions must use 'target', "
+                    "not 'component'"
+                )
+                raise ValueError(msg)
+        return value
 
     @field_validator("manifest_version", mode="before")
     @classmethod
@@ -211,7 +335,7 @@ class ComponentManifest(_ManifestModel):
     def _validate_resource_path(cls, value: str | None) -> str | None:
         if value is None:
             return None
-        return _relative_resource_path(value)
+        return relative_resource_path(value)
 
     @field_validator(
         "requires", "conflicts", "extension_points", "contributions", mode="before"
@@ -250,7 +374,7 @@ class ComponentManifest(_ManifestModel):
         cls, value: tuple[Contribution, ...]
     ) -> tuple[Contribution, ...]:
         targets = [
-            (contribution.component, contribution.extension_point)
+            (_contribution_target_key(contribution), contribution.extension_point)
             for contribution in value
         ]
         if len(targets) != len(set(targets)):
@@ -260,7 +384,7 @@ class ComponentManifest(_ManifestModel):
             sorted(
                 value,
                 key=lambda contribution: (
-                    contribution.component,
+                    _contribution_target_key(contribution),
                     contribution.extension_point,
                 ),
             )
@@ -295,7 +419,8 @@ class ComponentManifest(_ManifestModel):
                 raise ValueError(msg)
 
         for contribution in self.contributions:
-            if contribution.component == self.id:
+            target = contribution.target
+            if isinstance(target, ComponentTarget) and target.id == self.id:
                 msg = "a component must not contribute to its own extension point"
                 raise ValueError(msg)
             if PurePosixPath(contribution.content).is_relative_to(content_root):
@@ -308,9 +433,11 @@ class ComponentManifest(_ManifestModel):
 
 
 def component_resource_path(manifest_path: Path, relative_path: str) -> Path:
-    """Resolve one component-relative resource path against its manifest.
+    """Resolve one component- or Foundation-relative resource path.
 
-    Shared by every owned-resource check in this module and reused by
+    Shared by every owned-resource check in this module, by
+    ``forge_template.foundation_source`` (a source that is not itself a
+    component but resolves resources the identical way), and by
     ``forge_template.template_variables`` to resolve ``options_schema``
     through the same symlink-escape-checked containment rule, rather than
     duplicating it.
@@ -403,25 +530,49 @@ def _reject_dependency_cycles(manifests: Iterable[ComponentManifest]) -> None:
 
 
 def _reject_unknown_extension_points(
-    manifests: Iterable[ComponentManifest], by_id: dict[str, ComponentManifest]
+    manifests: Iterable[ComponentManifest],
+    by_id: dict[str, ComponentManifest],
+    foundation: FoundationSource | None,
 ) -> None:
-    """Reject a contribution naming a component or point that does not exist.
+    """Reject a contribution naming a target or point that does not exist.
 
     This runs catalogue-wide, independent of any ProjectSpec selection, so a
     contribution with a typo'd owner or extension point fails at packaging and
     review time. It is what makes it safe for
     ``forge_template.file_conflicts.resolve_output_plan`` to silently skip a
-    contribution whose owner happens not to be selected: that path is only
-    ever reached once every contribution is already proven to name a real,
-    published extension point.
+    component-targeted contribution whose owner happens not to be selected:
+    that path is only ever reached once every contribution is already proven
+    to name a real, published extension point.
+
+    A Foundation-targeted contribution is checked against ``foundation`` when
+    supplied. When it is not -- callers that validate a catalogue without
+    knowing the installed Foundation source, such as
+    ``forge_template.composition``'s internal re-validation -- that specific
+    check is deferred rather than assumed to fail; the caller that actually
+    has the Foundation source (``forge_template.engine``) performs the
+    authoritative check.
     """
     for manifest in manifests:
         for contribution in manifest.contributions:
-            owner = by_id.get(contribution.component)
+            target = contribution.target
+            if isinstance(target, FoundationTarget):
+                if foundation is None:
+                    continue
+                published = {point.id for point in foundation.extension_points}
+                if contribution.extension_point not in published:
+                    msg = (
+                        f"component {manifest.id!r} contributes to undeclared "
+                        f"extension point {contribution.extension_point!r} on "
+                        "the Foundation content source"
+                    )
+                    raise ValueError(msg)
+                continue
+
+            owner = by_id.get(target.id)
             if owner is None:
                 msg = (
                     f"component {manifest.id!r} contributes to missing component "
-                    f"{contribution.component!r}"
+                    f"{target.id!r}"
                 )
                 raise ValueError(msg)
             published = {point.id for point in owner.extension_points}
@@ -429,18 +580,22 @@ def _reject_unknown_extension_points(
                 msg = (
                     f"component {manifest.id!r} contributes to undeclared "
                     f"extension point {contribution.extension_point!r} on "
-                    f"{contribution.component!r}"
+                    f"{target.id!r}"
                 )
                 raise ValueError(msg)
 
 
 def validate_manifest_set(
     manifests: Iterable[ComponentManifest],
+    foundation: FoundationSource | None = None,
 ) -> tuple[ComponentManifest, ...]:
     """Validate cross-manifest identity and reference integrity.
 
-    The lexical return order supports deterministic catalogue inspection only;
-    it is explicitly not composition order.
+    ``foundation``, when supplied, lets a Foundation-targeted contribution be
+    checked against its real published extension points; see
+    ``_reject_unknown_extension_points``. The lexical return order supports
+    deterministic catalogue inspection only; it is explicitly not composition
+    order.
     """
     manifest_tuple = tuple(manifests)
     by_id = {manifest.id: manifest for manifest in manifest_tuple}
@@ -466,7 +621,7 @@ def validate_manifest_set(
                 raise ValueError(msg)
 
     _reject_dependency_cycles(manifest_tuple)
-    _reject_unknown_extension_points(manifest_tuple, by_id)
+    _reject_unknown_extension_points(manifest_tuple, by_id, foundation)
 
     return tuple(sorted(manifest_tuple, key=lambda manifest: manifest.id))
 
@@ -474,9 +629,10 @@ def validate_manifest_set(
 def validate_manifest_selection(
     spec: ProjectSpec,
     manifests: Iterable[ComponentManifest],
+    foundation: FoundationSource | None = None,
 ) -> tuple[ComponentManifest, ...]:
     """Validate an effective ProjectSpec against provisional manifest metadata."""
-    catalogue = validate_manifest_set(manifests)
+    catalogue = validate_manifest_set(manifests, foundation)
     by_id = {manifest.id: manifest for manifest in catalogue}
 
     selections = (

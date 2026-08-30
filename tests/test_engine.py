@@ -12,11 +12,15 @@ from pydantic import ValidationError
 
 import forge_template.engine as engine_module
 from forge_template import (
+    ComponentOwner,
     EngineErrorCode,
     ForgeEngineError,
+    FoundationOwner,
+    PlannedExtension,
     ProjectSpec,
     discover_components,
     get_engine_info,
+    map_legacy_library_answers,
     parse_project_spec,
     plan_generation,
     render_project,
@@ -25,6 +29,7 @@ from forge_template import (
 from forge_template.schema import REPO_ROOT
 
 FIXTURES = Path(__file__).parent / "fixtures" / "component_manifests"
+FOUNDATION_FIXTURE = Path(__file__).parent / "fixtures" / "foundation"
 
 
 def _payload(
@@ -80,9 +85,9 @@ def test_engine_info_reports_package_and_protocols_without_discovery(
 
     info = get_engine_info()
 
-    assert info.package_version == "0.2.0"
+    assert info.package_version == "0.3.0"
     assert info.projectspec_protocols == (1,)
-    assert info.component_manifest_protocols == (1,)
+    assert info.component_manifest_protocols == (1, 2)
 
 
 def test_installed_catalogue_is_deliberately_empty() -> None:
@@ -100,8 +105,11 @@ def test_discovery_returns_sorted_path_free_descriptors(
         "documentation",
         "github",
         "library",
+        "library-v2",
     ]
-    library = descriptors[-1]
+    library = next(
+        descriptor for descriptor in descriptors if descriptor.id == "library"
+    )
     assert library.name == "Library"
     assert library.kind == "archetype"
     assert [option.name for option in library.options] == [
@@ -110,6 +118,17 @@ def test_discovery_returns_sorted_path_free_descriptors(
     ]
     assert "path" not in library.model_dump_json()
     assert "content_root" not in library.model_dump_json()
+
+
+def test_discovery_exposes_option_format(fixture_catalogue: Path) -> None:
+    library_v2 = next(
+        descriptor
+        for descriptor in discover_components()
+        if descriptor.id == "library-v2"
+    )
+    option = library_v2.options[0]
+    assert option.name == "initial_version"
+    assert option.format == "pep440"
 
 
 def test_discovery_wraps_missing_and_invalid_catalogues(
@@ -218,7 +237,7 @@ def test_generation_plan_is_deterministic_and_path_free(
 
     assert plan.component_order == ("library", "coverage", "github")
     github_file = next(item for item in plan.files if item.target == "ci.yml")
-    assert github_file.owner_component_id == "github"
+    assert github_file.owner == ComponentOwner(id="github")
     assert github_file.extensions[0].component_id == "coverage"
     assert github_file.extensions[0].extension_point == "ci-steps"
     assert "source" not in plan.model_dump_json()
@@ -450,6 +469,151 @@ def test_invalid_extension_contracts_fail_during_planning(
     assert exc_info.value.code is EngineErrorCode.GENERATION_PLAN_FAILED
 
 
+# --- Foundation (FT-08.02) --------------------------------------------------
+
+
+@pytest.fixture
+def foundation_and_v2_catalogue(monkeypatch: pytest.MonkeyPatch) -> Path:
+    """The whole fixture catalogue (including ``library-v2``) plus a real
+    Foundation source, both via the private test-only override seam."""
+    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", FIXTURES)
+    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", FOUNDATION_FIXTURE)
+    return FIXTURES
+
+
+def _v2_payload(*, initial_version: str = "0.1.0") -> dict[str, object]:
+    return {
+        "protocol_version": 1,
+        "project": {
+            "name": "Example Project",
+            "package_name": "example_project",
+            "repository_name": "example-project",
+            "licence": "mit",
+        },
+        "python": {"minimum": "3.11", "development": "3.13"},
+        "components": {"archetype": "library-v2", "capabilities": [], "platforms": []},
+        "component_options": {"library-v2": {"initial_version": initial_version}},
+    }
+
+
+def test_plan_generation_identifies_a_foundation_owned_target(
+    foundation_and_v2_catalogue: Path,
+) -> None:
+    spec = parse_project_spec(_v2_payload())
+
+    plan = plan_generation(spec)
+
+    assert plan.component_order == ("library-v2",)
+    pyproject = next(item for item in plan.files if item.target == "pyproject.toml")
+    assert pyproject.owner == FoundationOwner()
+    assert pyproject.extensions == (
+        PlannedExtension(
+            component_id="library-v2", extension_point="pyproject-build-system"
+        ),
+    )
+    package_file = next(
+        item for item in plan.files if item.target == "src/example_project/py.typed"
+    )
+    assert package_file.owner == ComponentOwner(id="library-v2")
+
+
+def test_render_project_splices_a_foundation_targeted_contribution(
+    foundation_and_v2_catalogue: Path,
+) -> None:
+    spec = parse_project_spec(_v2_payload())
+
+    files = {item.target: item.content for item in render_project(spec).files}
+
+    assert files["pyproject.toml"].decode() == (
+        "[project]\n"
+        'name = "example-project"\n'
+        'requires-python = ">=3.11"\n\n'
+        "[build-system]\n"
+        'requires = ["fixture-backend"]\n'
+        'build-backend = "fixture_backend"\n'
+    )
+    assert files["src/example_project/py.typed"] == b""
+
+
+def test_render_project_canonicalises_a_pep440_option(
+    foundation_and_v2_catalogue: Path,
+) -> None:
+    spec = parse_project_spec(_v2_payload(initial_version="v0.1.0"))
+
+    # A non-canonical but valid PEP 440 value is accepted and normalised --
+    # not rejected -- at resolution time (docs/library-archetype.md).
+    plan_generation(spec)
+
+
+def test_selection_targeting_foundation_fails_without_a_foundation_source(
+    fixture_catalogue: Path,
+) -> None:
+    """``library-v2``'s catalogue presence never implies Foundation exists --
+    ``_FOUNDATION_ROOT_OVERRIDE`` is deliberately unset by this fixture."""
+    spec = parse_project_spec(_v2_payload())
+
+    with pytest.raises(ForgeEngineError) as exc_info:
+        plan_generation(spec)
+
+    assert exc_info.value.code is EngineErrorCode.GENERATION_PLAN_FAILED
+    assert "none is available" in exc_info.value.details[0].message
+
+
+# --- map_legacy_library_answers (FT-08.02) ----------------------------------
+
+
+@pytest.mark.parametrize(
+    ("build_backend", "versioning_resolved", "packaging_mode"),
+    [
+        ("uv_build", "static", "uv-build-static"),
+        ("hatchling", "static", "hatchling-static"),
+        ("hatchling", "vcs", "hatchling-vcs"),
+    ],
+)
+def test_map_legacy_library_answers_covers_every_documented_row(
+    build_backend: str, versioning_resolved: str, packaging_mode: str
+) -> None:
+    result = map_legacy_library_answers(
+        {"build_backend": build_backend, "versioning_resolved": versioning_resolved}
+    )
+    assert result == {"packaging_mode": packaging_mode}
+
+
+def test_map_legacy_library_answers_rejects_an_unsupported_combination() -> None:
+    with pytest.raises(ForgeEngineError) as exc_info:
+        map_legacy_library_answers(
+            {"build_backend": "uv_build", "versioning_resolved": "vcs"}
+        )
+    assert exc_info.value.code is EngineErrorCode.INVALID_COMPONENT_OPTIONS
+    assert exc_info.value.operation == "map-legacy-answers"
+
+
+def test_map_legacy_library_answers_rejects_missing_or_unexpected_keys() -> None:
+    with pytest.raises(ForgeEngineError) as missing_error:
+        map_legacy_library_answers({"build_backend": "uv_build"})
+    assert "missing legacy Library answer" in missing_error.value.details[0].message
+
+    with pytest.raises(ForgeEngineError) as unexpected_error:
+        map_legacy_library_answers(
+            {
+                "build_backend": "uv_build",
+                "versioning_resolved": "static",
+                "extra": "x",
+            }
+        )
+    assert (
+        "unexpected legacy Library answer" in unexpected_error.value.details[0].message
+    )
+
+
+def test_map_legacy_library_answers_rejects_non_string_values() -> None:
+    with pytest.raises(ForgeEngineError) as exc_info:
+        map_legacy_library_answers(
+            {"build_backend": "uv_build", "versioning_resolved": 1}
+        )
+    assert "must be strings" in exc_info.value.details[0].message
+
+
 def test_public_result_models_are_frozen(fixture_catalogue: Path) -> None:
     plan = plan_generation(_spec())
 
@@ -463,7 +627,7 @@ def test_project_version_and_release_workflow_share_one_source() -> None:
         encoding="utf-8"
     )
 
-    assert 'version = "0.2.0"' in pyproject
+    assert 'version = "0.3.0"' in pyproject
     assert (
         "tomllib.load(open('pyproject.toml', 'rb'))['project']['version']" in workflow
     )

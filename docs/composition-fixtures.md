@@ -47,6 +47,14 @@ JSON document while its content field can pin anything.
 | `extension` | `library`, `coverage`, `github` | The canonical case that runs against tier order: `coverage` (a capability) contributes to `github` (a platform)'s extension point, even though capabilities apply before platforms. |
 | `full` | `library`, `changelog`, `coverage`, `documentation`, `github` | The kitchen-sink pattern that has already caught real bugs the narrower combos missed for the template-scaffolding suite (CLAUDE.md); here it selects every reference component at once. |
 
+None of the three fixture components' manifests contribute to the implicit
+Foundation content source (FT-08.02), so these goldens do not exercise it;
+`PlannedFile.owner` on every entry here is always a `ComponentOwner`. Dedicated
+Foundation-aware fixtures and tests
+(`tests/fixtures/foundation/`, `tests/test_foundation_source.py`,
+`tests/test_engine.py`) cover that mechanism directly instead of extending
+these golden scenarios.
+
 ## Invalid catalogues
 
 `tests/fixtures/invalid_components/` holds on-disk fixtures for three

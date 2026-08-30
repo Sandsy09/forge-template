@@ -23,11 +23,12 @@ from typing import Literal, TypeAlias, overload
 from jinja2 import Environment, StrictUndefined, TemplateError
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.utils import InvalidName, canonicalize_name
-from pydantic import BaseModel, ConfigDict, JsonValue, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, JsonValue, ValidationError
 
 from forge_template.component_manifest import (
-    COMPONENT_MANIFEST_PROTOCOL_VERSION,
+    COMPONENT_MANIFEST_PROTOCOL_VERSIONS,
     ComponentManifest,
+    ExtensionPoint,
     component_resource_path,
     load_component_manifest,
     validate_manifest_selection,
@@ -36,10 +37,14 @@ from forge_template.component_manifest import (
 from forge_template.composition import ComponentPlacement, composition_plan
 from forge_template.file_conflicts import (
     TEMPLATE_SUFFIX,
+    FoundationOwner,
     OutputFile,
+    Owner,
     output_target,
+    render_output_path,
     resolve_output_plan,
 )
+from forge_template.foundation_source import FoundationPlacement, foundation_placement
 from forge_template.project_spec import PROJECT_SPEC_PROTOCOL_VERSION, ProjectSpec
 from forge_template.template_variables import (
     OptionSchema,
@@ -51,11 +56,20 @@ SUPPORTED_PROJECTSPEC_PROTOCOLS: tuple[int, ...] = (PROJECT_SPEC_PROTOCOL_VERSIO
 """ProjectSpec wire protocols accepted by this engine compatibility line."""
 
 SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS: tuple[int, ...] = (
-    COMPONENT_MANIFEST_PROTOCOL_VERSION,
+    COMPONENT_MANIFEST_PROTOCOL_VERSIONS
 )
 """Component manifest protocols accepted by this engine compatibility line."""
 
 _DISTRIBUTION_NAME = "forge-template"
+_LEGACY_PACKAGING_MODE: dict[tuple[str, str], str] = {
+    ("uv_build", "static"): "uv-build-static",
+    ("hatchling", "static"): "hatchling-static",
+    ("hatchling", "vcs"): "hatchling-vcs",
+}
+"""The documented FT-08.02 legacy-answer mapping
+(docs/library-archetype.md#legacy-copier-answer-mapping): every
+``build_backend``/resolved-``versioning`` pair the released Copier scaffold
+can produce, keyed exactly as ``map_legacy_library_answers`` receives them."""
 _EXTENSION_TOKEN_START = "[[forge:extension"
 _EXTENSION_TOKEN_RE = re.compile(
     r"^(?P<indent>[\t ]*)\[\[forge:extension "
@@ -71,6 +85,11 @@ _JINJA_ENVIRONMENT = Environment(
 # Deliberately private: tests replace this with the checked-in fixture
 # catalogue. Public clients cannot redirect discovery to arbitrary content.
 _CATALOGUE_ROOT_OVERRIDE: Path | None = None
+
+# Deliberately private, mirroring _CATALOGUE_ROOT_OVERRIDE: tests replace this
+# with a fixture Foundation source. Public clients cannot redirect Foundation
+# to arbitrary content either.
+_FOUNDATION_ROOT_OVERRIDE: Path | None = None
 
 ProjectSpecPayload: TypeAlias = ProjectSpec | Mapping[str, object] | str | bytes
 """Inputs accepted by :func:`parse_project_spec`."""
@@ -106,6 +125,8 @@ class ComponentOption(_PublicModel):
     default: JsonValue
     choices: tuple[JsonValue, ...]
     description: str
+    format: Literal["pep440"] | None = None
+    """Option-schema protocol 2 only; see ``OPTION_FORMATS``."""
 
 
 class ComponentDescriptor(_PublicModel):
@@ -131,10 +152,22 @@ class PlannedExtension(_PublicModel):
 
 
 class PlannedFile(_PublicModel):
-    """One generated target and its component ownership metadata."""
+    """One generated target and its ownership metadata.
+
+    ``owner`` is discriminated on ``kind``: ``FoundationOwner(kind=
+    "foundation")`` for the implicit Foundation content source, or
+    ``ComponentOwner(kind="component", id=...)`` for a selected component.
+    Both types are ``forge_template.file_conflicts``' own -- reused directly,
+    not redeclared, so this field can never drift from what
+    ``resolve_output_plan`` actually resolved. This replaced
+    ``owner_component_id`` in the ``0.3.0`` line (FT-08.02/ADR 0033): a plain
+    component-id string could not truthfully represent a Foundation-owned
+    file. ``component_order`` still lists selected components only --
+    Foundation is never a member of it, whether or not it owns a file here.
+    """
 
     target: str
-    owner_component_id: str
+    owner: Owner = Field(discriminator="kind")
     extensions: tuple[PlannedExtension, ...] = ()
 
 
@@ -214,8 +247,23 @@ class _ComponentRecord:
 
 
 @dataclass(frozen=True)
+class _FoundationRecord:
+    """The installed Foundation source's manifest path and loaded placement.
+
+    Mirrors ``_ComponentRecord`` for the one content source that is not a
+    component: ``manifest_path`` is what every owned-resource lookup
+    (``_foundation_owned_source``) resolves against, exactly as
+    ``_ComponentRecord.manifest_path`` does for a component.
+    """
+
+    manifest_path: Path
+    placement: FoundationPlacement
+
+
+@dataclass(frozen=True)
 class _PreparedGeneration:
     records: tuple[_ComponentRecord, ...]
+    foundation: _FoundationRecord | None
     placements: tuple[ComponentPlacement, ...]
     outputs: tuple[OutputFile, ...]
     context: dict[str, JsonValue]
@@ -546,6 +594,62 @@ def _catalogue_directory() -> Iterator[Path]:
         yield resolved
 
 
+@contextmanager
+def _foundation_directory() -> Iterator[Path | None]:
+    """Yield the installed Foundation package directory, or ``None``.
+
+    ``None`` means "no Foundation source is bundled at all" -- true of every
+    engine release before FT-08.02 ships production Foundation content, and
+    still not an error by itself: nothing forces a caller to need Foundation
+    unless a real selection's resolved output plan actually requires it (see
+    ``resolve_output_plan``'s own "none is available" failure for that case).
+    """
+    if _FOUNDATION_ROOT_OVERRIDE is not None:
+        yield _FOUNDATION_ROOT_OVERRIDE.resolve(strict=True)
+        return
+
+    try:
+        package_root = resources.files("forge_template.foundation")
+    except ModuleNotFoundError:
+        yield None
+        return
+    with resources.as_file(package_root) as resolved:
+        yield resolved
+
+
+def _load_foundation() -> _FoundationRecord | None:
+    try:
+        with _foundation_directory() as root:
+            if root is None:
+                return None
+            manifest_path = root / "foundation.toml"
+            if not manifest_path.is_file():
+                return None
+            return _FoundationRecord(
+                manifest_path=manifest_path,
+                placement=foundation_placement(manifest_path),
+            )
+    except (FileNotFoundError, OSError) as exc:
+        raise ForgeEngineError(
+            code=EngineErrorCode.COMPONENT_DISCOVERY_FAILED,
+            operation="discover",
+            message="The installed Foundation content source could not be read.",
+            details=_single_detail("foundation-unavailable", str(exc)),
+        ) from exc
+    except (ValueError, ValidationError) as exc:
+        details = (
+            _validation_details(exc)
+            if isinstance(exc, ValidationError)
+            else _single_detail("invalid-foundation", str(exc))
+        )
+        raise ForgeEngineError(
+            code=EngineErrorCode.COMPONENT_DISCOVERY_FAILED,
+            operation="discover",
+            message="The installed Foundation content source is invalid.",
+            details=details,
+        ) from exc
+
+
 def _load_catalogue() -> tuple[_ComponentRecord, ...]:
     try:
         with _catalogue_directory() as root:
@@ -573,8 +677,12 @@ def _load_catalogue() -> tuple[_ComponentRecord, ...]:
             details=details,
         ) from exc
 
+    foundation = _load_foundation()
     try:
-        validate_manifest_set(manifest for _path, manifest in loaded)
+        validate_manifest_set(
+            (manifest for _path, manifest in loaded),
+            foundation.placement.source if foundation is not None else None,
+        )
         return tuple(
             _ComponentRecord(
                 manifest_path=path,
@@ -623,6 +731,7 @@ def _descriptor(record: _ComponentRecord) -> ComponentDescriptor:
                 default=option.default,
                 choices=option.choices,
                 description=option.description,
+                format=option.format,
             )
             for option in record.option_schema.options
         ),
@@ -635,11 +744,17 @@ def discover_components() -> tuple[ComponentDescriptor, ...]:
 
 
 def _validate_against_catalogue(
-    spec: ProjectSpec, records: tuple[_ComponentRecord, ...]
+    spec: ProjectSpec,
+    records: tuple[_ComponentRecord, ...],
+    foundation: _FoundationRecord | None,
 ) -> None:
     manifests = tuple(record.manifest for record in records)
     try:
-        validate_manifest_selection(spec, manifests)
+        validate_manifest_selection(
+            spec,
+            manifests,
+            foundation.placement.source if foundation is not None else None,
+        )
     except (ValueError, ValidationError) as exc:
         details = (
             _validation_details(exc)
@@ -672,8 +787,22 @@ def _validate_against_catalogue(
 
 def validate_project_spec(spec: ProjectSpec) -> ProjectSpec:
     """Validate a parsed ProjectSpec against the installed component catalogue."""
-    _validate_against_catalogue(spec, _load_catalogue())
+    _validate_against_catalogue(spec, _load_catalogue(), _load_foundation())
     return spec
+
+
+def _extension_owner_id(owner: Owner) -> str:
+    """Return an extension contribution's owning component id.
+
+    An ``extend``-disposition ``OutputContribution.owner`` is always a
+    ``ComponentOwner`` -- Foundation is never selectable and never declares
+    its own ``contributions`` -- so this narrows the shared ``Owner`` type
+    ``resolve_output_plan`` uses for both ``create`` and ``extend`` entries.
+    """
+    if isinstance(owner, FoundationOwner):  # pragma: no cover - see docstring
+        msg = "an extension contribution must not be owned by Foundation"
+        raise AssertionError(msg)
+    return owner.id
 
 
 def _public_plan(
@@ -684,10 +813,10 @@ def _public_plan(
         files=tuple(
             PlannedFile(
                 target=output.target,
-                owner_component_id=output.base.component_id,
+                owner=output.base.owner,
                 extensions=tuple(
                     PlannedExtension(
-                        component_id=extension.component_id,
+                        component_id=_extension_owner_id(extension.owner),
                         extension_point=extension.extension_point or "",
                     )
                     for extension in output.extensions
@@ -703,17 +832,70 @@ def _owned_source(record: _ComponentRecord, source_path: str) -> Path:
     return component_resource_path(record.manifest_path, relative.as_posix())
 
 
+def _foundation_owned_source(foundation: _FoundationRecord, source_path: str) -> Path:
+    relative = PurePosixPath(foundation.placement.source.content_root) / PurePosixPath(
+        source_path
+    )
+    return component_resource_path(foundation.manifest_path, relative.as_posix())
+
+
+def _base_source(
+    owner: Owner,
+    source_path: str,
+    records_by_id: dict[str, _ComponentRecord],
+    foundation: _FoundationRecord | None,
+) -> Path:
+    """Resolve one base contribution's actual content file, by owner kind."""
+    if isinstance(owner, FoundationOwner):
+        # resolve_output_plan never claims a Foundation-owned base unless
+        # foundation was supplied to it -- the same foundation in scope here.
+        assert foundation is not None
+        return _foundation_owned_source(foundation, source_path)
+    return _owned_source(records_by_id[owner.id], source_path)
+
+
+def _owner_extension_points(
+    owner: Owner,
+    records_by_id: dict[str, _ComponentRecord],
+    foundation: _FoundationRecord | None,
+) -> tuple[ExtensionPoint, ...]:
+    if isinstance(owner, FoundationOwner):
+        assert foundation is not None
+        return foundation.placement.source.extension_points
+    return records_by_id[owner.id].manifest.extension_points
+
+
+def _owner_content_root(
+    owner: Owner,
+    records_by_id: dict[str, _ComponentRecord],
+    foundation: _FoundationRecord | None,
+) -> str:
+    if isinstance(owner, FoundationOwner):
+        assert foundation is not None
+        return foundation.placement.source.content_root
+    return records_by_id[owner.id].manifest.content_root
+
+
 def _contribution_source(record: _ComponentRecord, source_path: str) -> Path:
     return component_resource_path(record.manifest_path, source_path)
 
 
-def _points_for_output(record: _ComponentRecord, target: str) -> tuple[str, ...]:
-    content_root = PurePosixPath(record.manifest.content_root)
+def _points_for_output(
+    owner: Owner,
+    target: str,
+    context: dict[str, JsonValue],
+    records_by_id: dict[str, _ComponentRecord],
+    foundation: _FoundationRecord | None,
+) -> tuple[str, ...]:
+    content_root = PurePosixPath(_owner_content_root(owner, records_by_id, foundation))
     return tuple(
         point.id
-        for point in record.manifest.extension_points
+        for point in _owner_extension_points(owner, records_by_id, foundation)
         if output_target(
-            PurePosixPath(point.content).relative_to(content_root).as_posix()
+            render_output_path(
+                PurePosixPath(point.content).relative_to(content_root).as_posix(),
+                context,
+            )
         )
         == target
     )
@@ -731,12 +913,17 @@ def _read_extension_text(path: Path, *, role: str) -> str:
 
 
 def _validate_extension_contract(
-    outputs: tuple[OutputFile, ...], records_by_id: dict[str, _ComponentRecord]
+    outputs: tuple[OutputFile, ...],
+    context: dict[str, JsonValue],
+    records_by_id: dict[str, _ComponentRecord],
+    foundation: _FoundationRecord | None,
 ) -> None:
     for output in outputs:
-        owner = records_by_id[output.base.component_id]
-        declared = _points_for_output(owner, output.target)
-        source = _owned_source(owner, output.base.source_path)
+        owner = output.base.owner
+        declared = _points_for_output(
+            owner, output.target, context, records_by_id, foundation
+        )
+        source = _base_source(owner, output.base.source_path, records_by_id, foundation)
 
         if not source.name.endswith(TEMPLATE_SUFFIX):
             if declared or _EXTENSION_TOKEN_START.encode() in source.read_bytes():
@@ -774,24 +961,25 @@ def _validate_extension_contract(
                 raise ValueError(msg)
 
         for extension in output.extensions:
-            contributor = records_by_id[extension.component_id]
+            extension_owner_id = _extension_owner_id(extension.owner)
+            contributor = records_by_id[extension_owner_id]
             contribution = _contribution_source(contributor, extension.source_path)
             text = _read_extension_text(
                 contribution,
                 role=(
-                    f"contribution {extension.component_id!r} to "
+                    f"contribution {extension_owner_id!r} to "
                     f"{extension.extension_point!r}"
                 ),
             )
             if text and not text.endswith("\n"):
                 msg = (
-                    f"contribution {extension.component_id!r} to "
+                    f"contribution {extension_owner_id!r} to "
                     f"{extension.extension_point!r} must end with a newline"
                 )
                 raise ValueError(msg)
             if _EXTENSION_TOKEN_START in text:
                 msg = (
-                    f"contribution {extension.component_id!r} must not contain "
+                    f"contribution {extension_owner_id!r} must not contain "
                     "nested extension tokens"
                 )
                 raise ValueError(msg)
@@ -799,17 +987,23 @@ def _validate_extension_contract(
 
 def _prepare_generation(spec: ProjectSpec) -> _PreparedGeneration:
     records = _load_catalogue()
-    _validate_against_catalogue(spec, records)
+    foundation = _load_foundation()
+    _validate_against_catalogue(spec, records, foundation)
     records_by_id = {record.manifest.id: record for record in records}
 
     try:
         placements = composition_plan(
             spec, (record.manifest_path for record in records)
         )
-        outputs = resolve_output_plan(placements)
         schemas = {record.manifest.id: record.option_schema for record in records}
         variables = resolve_template_variables(spec, schemas)
-        _validate_extension_contract(outputs, records_by_id)
+        context = variables.as_context()
+        outputs = resolve_output_plan(
+            placements,
+            context,
+            foundation=foundation.placement if foundation is not None else None,
+        )
+        _validate_extension_contract(outputs, context, records_by_id, foundation)
     except ForgeEngineError:
         raise
     except (OSError, ValueError, ValidationError) as exc:
@@ -827,9 +1021,10 @@ def _prepare_generation(spec: ProjectSpec) -> _PreparedGeneration:
 
     return _PreparedGeneration(
         records=records,
+        foundation=foundation,
         placements=placements,
         outputs=outputs,
-        context=variables.as_context(),
+        context=context,
         plan=_public_plan(placements, outputs),
     )
 
@@ -849,13 +1044,15 @@ def _indent_contribution(text: str, indent: str) -> str:
 def _assembled_template(
     output: OutputFile,
     records_by_id: dict[str, _ComponentRecord],
+    foundation: _FoundationRecord | None,
 ) -> str:
-    owner = records_by_id[output.base.component_id]
-    source = _owned_source(owner, output.base.source_path)
+    source = _base_source(
+        output.base.owner, output.base.source_path, records_by_id, foundation
+    )
     text = source.read_text(encoding="utf-8")
     by_point: dict[str, list[str]] = {}
     for extension in output.extensions:
-        contributor = records_by_id[extension.component_id]
+        contributor = records_by_id[_extension_owner_id(extension.owner)]
         contribution = _contribution_source(contributor, extension.source_path)
         by_point.setdefault(extension.extension_point or "", []).append(
             contribution.read_text(encoding="utf-8")
@@ -880,10 +1077,16 @@ def render_project(spec: ProjectSpec) -> RenderedProject:
 
     try:
         for output in prepared.outputs:
-            owner = records_by_id[output.base.component_id]
-            source = _owned_source(owner, output.base.source_path)
+            source = _base_source(
+                output.base.owner,
+                output.base.source_path,
+                records_by_id,
+                prepared.foundation,
+            )
             if output.base.source_path.endswith(TEMPLATE_SUFFIX):
-                assembled = _assembled_template(output, records_by_id)
+                assembled = _assembled_template(
+                    output, records_by_id, prepared.foundation
+                )
                 content = (
                     _JINJA_ENVIRONMENT.from_string(assembled)
                     .render(**prepared.context)
@@ -902,3 +1105,69 @@ def render_project(spec: ProjectSpec) -> RenderedProject:
 
     project = RenderedProject(plan=prepared.plan, files=tuple(rendered))
     return validate_rendered_project(spec, project)
+
+
+def map_legacy_library_answers(
+    answers: Mapping[str, JsonValue],
+) -> dict[str, JsonValue]:
+    """Map released Copier Library answers to the ``packaging_mode`` option.
+
+    Implements the mapping documented by
+    docs/library-archetype.md#legacy-copier-answer-mapping: the released
+    ``build_backend``/``versioning_resolved`` pair, unchanged, to the single
+    production ``packaging_mode`` option. Pure and side-effect-free -- it
+    takes a plain answer mapping and returns a plain option mapping, taking on
+    no prompting or ProjectSpec-construction responsibility, which remain
+    ``create-forge``'s. ``answers`` must supply exactly ``build_backend`` and
+    ``versioning_resolved``; any other shape is rejected rather than guessed
+    at.
+    """
+    unknown = sorted(set(answers) - {"build_backend", "versioning_resolved"})
+    if unknown:
+        msg = f"unexpected legacy Library answer(s): {', '.join(unknown)}"
+        raise ForgeEngineError(
+            code=EngineErrorCode.INVALID_COMPONENT_OPTIONS,
+            operation="map-legacy-answers",
+            message="Legacy Library answers are invalid.",
+            details=_single_detail("unexpected-legacy-answer", msg),
+        )
+
+    missing = sorted({"build_backend", "versioning_resolved"} - set(answers))
+    if missing:
+        msg = f"missing legacy Library answer(s): {', '.join(missing)}"
+        raise ForgeEngineError(
+            code=EngineErrorCode.INVALID_COMPONENT_OPTIONS,
+            operation="map-legacy-answers",
+            message="Legacy Library answers are invalid.",
+            details=_single_detail("missing-legacy-answer", msg),
+        )
+
+    build_backend = answers["build_backend"]
+    versioning_resolved = answers["versioning_resolved"]
+    if not isinstance(build_backend, str) or not isinstance(versioning_resolved, str):
+        msg = (
+            "legacy Library answers must be strings: "
+            f"build_backend={build_backend!r}, "
+            f"versioning_resolved={versioning_resolved!r}"
+        )
+        raise ForgeEngineError(
+            code=EngineErrorCode.INVALID_COMPONENT_OPTIONS,
+            operation="map-legacy-answers",
+            message="Legacy Library answers are invalid.",
+            details=_single_detail("invalid-legacy-answer-type", msg),
+        )
+
+    packaging_mode = _LEGACY_PACKAGING_MODE.get((build_backend, versioning_resolved))
+    if packaging_mode is None:
+        msg = (
+            "unsupported legacy Library answer combination: "
+            f"build_backend={build_backend!r}, "
+            f"versioning_resolved={versioning_resolved!r}"
+        )
+        raise ForgeEngineError(
+            code=EngineErrorCode.INVALID_COMPONENT_OPTIONS,
+            operation="map-legacy-answers",
+            message="Legacy Library answers are invalid.",
+            details=_single_detail("unsupported-legacy-answer-combination", msg),
+        )
+    return {"packaging_mode": packaging_mode}

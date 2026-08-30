@@ -1,14 +1,24 @@
 """Deterministic composition order for a validated ProjectSpec selection.
 
 This module defines exactly one application order over an effective
-ProjectSpec's selected components. It partitions a valid selection into the
-Foundation-then-archetype-then-capability-then-platform tiers, orders each
-tier by a lexicographically smallest topological sort over that tier's own
-``requires`` edges, and orders each selected component's owned content by
-ascending POSIX-relative path. It deliberately does not discover components,
-decide output paths or targets, perform file operations, resolve collisions
-between components, or expose a stable engine error surface; those remain
-later Stage 06 work (FT-06.04 and FT-06.07). See docs/composition-order.md.
+ProjectSpec's selected *components*. It partitions a valid selection into the
+archetype-then-capability-then-platform tiers, orders each tier by a
+lexicographically smallest topological sort over that tier's own ``requires``
+edges, and orders each selected component's owned content by ascending
+POSIX-relative path. It deliberately does not discover components, decide
+output paths or targets, perform file operations, resolve collisions between
+components, or expose a stable engine error surface; those remain later
+Stage 06/08 work (FT-06.04, FT-06.07, FT-08.02). See docs/composition-order.md.
+
+Foundation -- the implicit, mandatory, non-selectable content source added by
+FT-08.02 -- always applies before every tier this module orders, but it is
+not a component and is never a member of ``ComponentPlacement`` or this
+module's return value: it has no ``requires`` edges to order by, and
+``GenerationPlan.component_order`` must stay selected-components-only. Every
+function here therefore keeps a signature scoped to components; a caller that
+also needs Foundation's own content order supplies it separately, from
+``forge_template.foundation_source.foundation_placement``, to
+``forge_template.file_conflicts.resolve_output_plan``.
 
 Order alone confers no rendering or overwrite authority. A component placed
 later in this order never gains implicit permission to replace an earlier

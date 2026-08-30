@@ -22,6 +22,7 @@ import json
 from pathlib import Path
 from typing import Annotated, Literal, Self
 
+from packaging.version import InvalidVersion, Version
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -39,8 +40,12 @@ from forge_template.project_spec import (
     ProjectSpec,
 )
 
-TEMPLATE_VARIABLES_PROTOCOL_VERSION: Literal[1] = 1
-"""The only option-schema protocol understood by this engine line."""
+OPTION_SCHEMA_PROTOCOL_VERSIONS: tuple[Literal[1, 2], ...] = (1, 2)
+"""Every option-schema protocol this engine line understands.
+
+Protocol 1 (FT-06.05/ADR 0027) declares an option's type, requiredness,
+default, choices, and description. Protocol 2 (FT-08.02/ADR 0031, ADR 0033)
+additionally adds ``format`` for string options -- see ``OPTION_FORMATS``."""
 
 RESERVED_NAMESPACES: tuple[str, ...] = ("project", "python", "components", "options")
 """The complete, closed set of top-level template-variable roots."""
@@ -48,10 +53,56 @@ RESERVED_NAMESPACES: tuple[str, ...] = ("project", "python", "components", "opti
 OPTION_TYPES: tuple[str, ...] = ("string", "integer", "boolean", "string_list")
 """The complete, closed set of declarable component option value types."""
 
+OPTION_FORMATS: tuple[str, ...] = ("pep440",)
+"""The complete, closed set of ``format`` values option-schema protocol 2
+admits. Only meaningful for ``string`` options; see
+``OptionDeclaration.format``."""
+
 _TYPES_ADMITTING_CHOICES: tuple[str, ...] = ("string", "integer")
 """Option types for which an enumerated ``choices`` set has one unambiguous
 meaning. A ``string_list`` or ``boolean`` enum does not, so declaring
 ``choices`` on either is rejected rather than left to guess a meaning."""
+
+
+def _canonical_pep440(value: JsonValue, *, option_name: str) -> str:
+    """Validate and canonicalise one PEP 440 value at *resolution* time.
+
+    Used when a ProjectSpec supplies a ``format: "pep440"`` option's value: a
+    ProjectSpec-supplied value is user-facing input, not an authored
+    manifest, so ``"1.0"`` silently becoming ``"1.0.0"`` is a normalisation a
+    client should never need to get exactly right by hand -- unlike a
+    component's own ``version`` field, or this same option's authored
+    ``default``/``choices`` (see ``_validate_canonical_pep440``), both of
+    which reject a non-canonical value instead.
+    """
+    if not isinstance(value, str):
+        msg = f"option {option_name!r} format 'pep440' requires a string value"
+        raise ValueError(msg)
+    try:
+        return str(Version(value))
+    except InvalidVersion as exc:
+        msg = f"option {option_name!r} value {value!r} does not satisfy format 'pep440'"
+        raise ValueError(msg) from exc
+
+
+def _validate_canonical_pep440(
+    value: JsonValue, *, option_name: str, role: str
+) -> None:
+    """Reject a non-canonical PEP 440 value at *schema-declaration* time.
+
+    An authored ``default`` or ``choices`` entry follows
+    ``component_manifest``'s own PEP 440 convention for an authored field:
+    canonical or rejected, the same discipline already applied to a
+    component's own ``version``.
+    """
+    canonical = _canonical_pep440(value, option_name=option_name)
+    if value != canonical:
+        msg = (
+            f"option {option_name!r} {role} {value!r} is not canonical PEP "
+            f"440: use {canonical!r}"
+        )
+        raise ValueError(msg)
+
 
 _OptionName = Annotated[
     str,
@@ -98,6 +149,10 @@ class OptionDeclaration(_VariableModel):
     default: JsonValue = None
     choices: tuple[JsonValue, ...] = ()
     description: str = ""
+    format: Literal["pep440"] | None = None
+    """Option-schema protocol 2 only; see ``OPTION_FORMATS``. Constrains and
+    canonicalises a ``string`` option's value; ``OptionSchema`` rejects it on
+    a protocol-1 schema."""
 
     @field_validator("choices", mode="before")
     @classmethod
@@ -156,13 +211,27 @@ class OptionDeclaration(_VariableModel):
                 f"match its declared type {self.type!r}"
             )
             raise ValueError(msg)
+
+        if self.format is not None:
+            if self.type != "string":
+                msg = (
+                    f"option {self.name!r} declares format {self.format!r} for "
+                    f"type {self.type!r}; format is only meaningful for string"
+                )
+                raise ValueError(msg)
+            if self.default is not None:
+                _validate_canonical_pep440(
+                    self.default, option_name=self.name, role="default"
+                )
+            for choice in self.choices:
+                _validate_canonical_pep440(choice, option_name=self.name, role="choice")
         return self
 
 
 class OptionSchema(_VariableModel):
     """One component's complete, optional declared option vocabulary."""
 
-    schema_version: Literal[1]
+    schema_version: Literal[1, 2]
     options: tuple[OptionDeclaration, ...] = ()
 
     @field_validator("options", mode="before")
@@ -180,10 +249,26 @@ class OptionSchema(_VariableModel):
             raise ValueError(msg)
         return self
 
+    @model_validator(mode="after")
+    def _validate_format_requires_protocol_2(self) -> Self:
+        if self.schema_version == 1:
+            formatted = sorted(
+                option.name for option in self.options if option.format is not None
+            )
+            if formatted:
+                msg = (
+                    "option-schema protocol 1 does not support 'format'; use "
+                    "protocol 2: " + ", ".join(formatted)
+                )
+                raise ValueError(msg)
+        return self
 
-_EMPTY_OPTION_SCHEMA = OptionSchema(schema_version=TEMPLATE_VARIABLES_PROTOCOL_VERSION)
+
+_EMPTY_OPTION_SCHEMA = OptionSchema(schema_version=1)
 """The implicit schema of a component that declares no ``options_schema`` at
-all: it accepts no options, per decision 5 in the FT-06.05 design."""
+all: it accepts no options, per decision 5 in the FT-06.05 design. Protocol 1
+is the more conservative choice for this sentinel -- an empty schema has no
+options to ever need ``format`` on."""
 
 
 class PythonVariables(_VariableModel):
@@ -293,6 +378,8 @@ def _resolve_component_options(
                     f"{option.type!r}"
                 )
                 raise ValueError(msg)
+            if option.format is not None:
+                value = _canonical_pep440(value, option_name=f"{component_id}.{name}")
             if option.choices and value not in option.choices:
                 msg = (
                     f"component {component_id!r} option {name!r} value "

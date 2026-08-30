@@ -1,0 +1,6 @@
+foundation_version = 1
+content_root = "content"
+
+[[extension_points]]
+id = "pyproject-build-system"
+content = "content/pyproject.toml.jinja"

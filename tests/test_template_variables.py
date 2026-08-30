@@ -14,9 +14,9 @@ from forge_template.component_manifest import load_component_manifest
 from forge_template.composition import composition_plan
 from forge_template.project_spec import ComponentSelection, ProjectSpec
 from forge_template.template_variables import (
+    OPTION_FORMATS,
     OPTION_TYPES,
     RESERVED_NAMESPACES,
-    TEMPLATE_VARIABLES_PROTOCOL_VERSION,
     OptionDeclaration,
     OptionSchema,
     load_option_schema,
@@ -156,7 +156,7 @@ def test_option_schema_rejects_duplicate_names() -> None:
         )
 
 
-@pytest.mark.parametrize("schema_version", [None, 2, "1"])
+@pytest.mark.parametrize("schema_version", [None, 3, "1"])
 def test_unsupported_schema_version_is_rejected(schema_version: object) -> None:
     payload: dict[str, object] = {"options": []}
     if schema_version is not None:
@@ -169,6 +169,70 @@ def test_unsupported_schema_version_is_rejected(schema_version: object) -> None:
 def test_option_schema_json_schema_forbids_extra_fields() -> None:
     schema = OptionSchema.model_json_schema()
     assert schema["additionalProperties"] is False
+
+
+# -----------------------------------------------------------------------------
+# format (option-schema protocol 2, FT-08.02/ADR 0033)
+# -----------------------------------------------------------------------------
+
+
+def test_format_is_only_meaningful_for_string_options() -> None:
+    with pytest.raises(ValidationError, match="only meaningful for string"):
+        OptionDeclaration(name="count", type="integer", format="pep440")
+
+
+@pytest.mark.parametrize("value", OPTION_FORMATS)
+def test_every_declared_format_is_constructible(value: Literal["pep440"]) -> None:
+    OptionDeclaration(name="initial_version", type="string", format=value)
+
+
+def test_format_pep440_requires_a_canonical_default() -> None:
+    OptionDeclaration(
+        name="initial_version", type="string", format="pep440", default="0.1.0"
+    )
+    with pytest.raises(ValidationError, match="not canonical PEP 440"):
+        OptionDeclaration(
+            name="initial_version", type="string", format="pep440", default="v0.1.0"
+        )
+    with pytest.raises(ValidationError, match="does not satisfy format 'pep440'"):
+        OptionDeclaration(
+            name="initial_version",
+            type="string",
+            format="pep440",
+            default="not-a-version",
+        )
+
+
+def test_format_pep440_requires_canonical_choices() -> None:
+    with pytest.raises(ValidationError, match="not canonical PEP 440"):
+        OptionDeclaration(
+            name="initial_version",
+            type="string",
+            format="pep440",
+            choices=("0.1.0", "v0.2.0"),
+        )
+
+
+def test_option_schema_protocol_1_rejects_format() -> None:
+    with pytest.raises(ValidationError, match="protocol 1 does not support 'format'"):
+        OptionSchema(
+            schema_version=1,
+            options=(
+                OptionDeclaration(
+                    name="initial_version", type="string", format="pep440"
+                ),
+            ),
+        )
+
+
+def test_option_schema_protocol_2_accepts_format() -> None:
+    schema = OptionSchema(
+        schema_version=2,
+        options=(
+            OptionDeclaration(name="initial_version", type="string", format="pep440"),
+        ),
+    )
+    assert schema.options[0].format == "pep440"
 
 
 # -----------------------------------------------------------------------------
@@ -221,7 +285,7 @@ def test_load_option_schema_returns_empty_schema_when_undeclared(
     schema = load_option_schema(manifest_path, manifest)
 
     assert schema.options == ()
-    assert schema.schema_version == TEMPLATE_VARIABLES_PROTOCOL_VERSION
+    assert schema.schema_version == 1
 
 
 def test_load_option_schema_parses_the_real_library_fixture() -> None:
@@ -344,6 +408,38 @@ def test_option_value_outside_choices_is_rejected() -> None:
     spec = _project_spec(component_options={"library": {"build_backend": "setuptools"}})
 
     with pytest.raises(ValueError, match="not among its declared choices"):
+        resolve_template_variables(spec, {"library": schema})
+
+
+def test_pep440_option_value_is_canonicalised_on_resolution() -> None:
+    """Unlike a schema-declared default or choice, a *supplied* value is
+    normalised rather than rejected for being non-canonical -- see
+    docs/library-archetype.md's ``initial_version`` requirement."""
+    schema = OptionSchema(
+        schema_version=2,
+        options=(
+            OptionDeclaration(name="initial_version", type="string", format="pep440"),
+        ),
+    )
+    spec = _project_spec(component_options={"library": {"initial_version": "v0.1.0"}})
+
+    variables = resolve_template_variables(spec, {"library": schema})
+
+    assert variables.options["library"] == {"initial_version": "0.1.0"}
+
+
+def test_pep440_option_value_failing_the_format_is_rejected() -> None:
+    schema = OptionSchema(
+        schema_version=2,
+        options=(
+            OptionDeclaration(name="initial_version", type="string", format="pep440"),
+        ),
+    )
+    spec = _project_spec(
+        component_options={"library": {"initial_version": "not-a-version"}}
+    )
+
+    with pytest.raises(ValueError, match="does not satisfy format 'pep440'"):
         resolve_template_variables(spec, {"library": schema})
 
 

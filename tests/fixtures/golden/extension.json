@@ -7,7 +7,10 @@
   "targets": {
     ".coveragerc": {
       "extensions": [],
-      "owner_component_id": "coverage",
+      "owner": {
+        "id": "coverage",
+        "kind": "component"
+      },
       "target": ".coveragerc"
     },
     "ci.yml": {
@@ -17,12 +20,18 @@
           "extension_point": "ci-steps"
         }
       ],
-      "owner_component_id": "github",
+      "owner": {
+        "id": "github",
+        "kind": "component"
+      },
       "target": "ci.yml"
     },
     "pyproject.toml": {
       "extensions": [],
-      "owner_component_id": "library",
+      "owner": {
+        "id": "library",
+        "kind": "component"
+      },
       "target": "pyproject.toml"
     }
   },

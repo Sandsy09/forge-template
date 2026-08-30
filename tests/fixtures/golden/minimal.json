@@ -5,7 +5,10 @@
   "targets": {
     "pyproject.toml": {
       "extensions": [],
-      "owner_component_id": "library",
+      "owner": {
+        "id": "library",
+        "kind": "component"
+      },
       "target": "pyproject.toml"
     }
   },

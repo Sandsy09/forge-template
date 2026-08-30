@@ -2,8 +2,10 @@
 
 This is the canonical living contract for the supported `forge-template`
 engine facade. [ADR 0029](adr/0029-stable-template-engine-api.md) records the
-decision to expose it. The first compatibility line is package version
-`0.2.x`; ProjectSpec and component-manifest protocol versions remain separate
+decision to expose it. The current compatibility line is package version
+`0.3.x`, following the incompatible `PlannedFile.owner` change FT-08.02 made
+to the still-pre-1.0 planning model (see "Compatibility and cutover boundary"
+below); ProjectSpec and component-manifest protocol versions remain separate
 from the package version.
 
 The facade is side-effect-free. It discovers only reviewed components bundled
@@ -21,6 +23,7 @@ modules. The public functions are:
 from forge_template import (
     discover_components,
     get_engine_info,
+    map_legacy_library_answers,
     parse_project_spec,
     plan_generation,
     render_project,
@@ -30,8 +33,20 @@ from forge_template import (
 ```
 
 The package also re-exports the ProjectSpec models needed by typed clients,
-the immutable discovery, planning, and rendering result models, and the
-structured error types. The wheel includes `py.typed`.
+the immutable discovery, planning, and rendering result models
+(`ComponentOwner`/`FoundationOwner` included), and the structured error
+types. The wheel includes `py.typed`.
+
+`map_legacy_library_answers(answers) -> dict[str, JsonValue]` is a pure,
+side-effect-free helper implementing the documented [legacy Copier answer
+mapping](library-archetype.md#legacy-copier-answer-mapping): the released
+`build_backend`/resolved-`versioning` pair to the production `library`
+component's single `packaging_mode` option. It takes on no prompting or
+ProjectSpec-construction responsibility -- `create-forge` remains the caller
+that decides when to invoke it during a stored-answer replay. It raises
+`ForgeEngineError` with code `invalid-component-options` and operation
+`map-legacy-answers` on a missing, unexpected, non-string, or unmappable
+answer pair.
 
 Undocumented names in `forge_template.engine`, `component_manifest`,
 `composition`, `file_conflicts`, `project_spec`, and `template_variables` are
@@ -65,12 +80,14 @@ entrypoint, or arbitrary directory. This is a deliberate trust boundary:
 discovered manifests, option schemas, templates, and literal content were all
 reviewed as part of the installed engine distribution.
 
-The production `0.2.0` catalogue is intentionally empty. Stage 08 will add the
+The production catalogue is intentionally empty. Stage 08 will add the
 first production manifest when it implements the accepted
 [Library archetype contract](library-archetype.md). Consequently,
 discovery currently returns an empty tuple and catalogue validation rejects a
 ProjectSpec that selects a component. Test-only fixture injection is private
-and is not a supported client extension mechanism.
+and is not a supported client extension mechanism -- this applies equally to
+the implicit Foundation content source, which discovery never exposes at all
+(see "Foundation" below).
 
 ## Parsing and validation
 
@@ -99,8 +116,17 @@ Clients that start with wire data call parsing before catalogue validation.
 
 `plan_generation(spec) -> GenerationPlan` returns the deterministic component
 order and a target-sorted immutable file plan. Every planned file identifies
-its project-relative target, its owning component, and ordered extension
-contributions. It exposes no source or package-resource paths.
+its project-relative target, its owner, and ordered extension contributions.
+It exposes no source or package-resource paths.
+
+`PlannedFile.owner` is discriminated on `kind`:
+`FoundationOwner(kind="foundation")` for the implicit Foundation content
+source, or `ComponentOwner(kind="component", id=...)` for a selected
+component. This replaced `owner_component_id` in the `0.3.0` line
+(FT-08.02): a plain component-id string could not truthfully represent a
+Foundation-owned file. `GenerationPlan.component_order` is unaffected and
+still lists selected components only -- Foundation is never a member of it,
+whether or not it owns a planned file.
 
 Planning applies the canonical [composition order](composition-order.md),
 [file conflict rules](file-conflicts.md), and
@@ -117,14 +143,33 @@ always bytes:
 - a source without a `.jinja` suffix is copied byte-for-byte;
 - a `.jinja` source is decoded and rendered as UTF-8;
 - Jinja uses `StrictUndefined`, preserves trailing newlines, performs no
-  autoescaping, and has no filesystem include loader; and
+  autoescaping, and has no filesystem include loader;
 - the assembled owner template renders exactly once, so owner and extension
-  snippets share the canonical variable context.
+  snippets share the canonical variable context -- true whether the owner is
+  a component or the implicit Foundation content source; and
+- a content path itself may reference template variables (`content/src/
+  {{ project.package_name }}/py.typed`) and is rendered through the same
+  context before its output target is derived -- see
+  [ADR 0032](adr/0032-render-component-content-paths.md).
 
 Rendering is an in-memory operation. Before returning, it applies the canonical
 [generated-project validation](generated-project-validation.md) to the result.
 A successful result does not imply that a target directory exists or that any
 file has been written.
+
+## Foundation
+
+Every generation applies one implicit, mandatory, non-selectable Foundation
+content source before the selected component order -- see
+[component-manifests.md](component-manifests.md#foundation-content-source)
+and [foundation-scope.md](foundation-scope.md). Foundation is never
+discovered, never appears in a ProjectSpec selection, and never appears in
+`GenerationPlan.component_order`; a component reaches its owned extension
+points the same way it reaches another component's, through a manifest
+protocol `2` contribution naming `target.kind = "foundation"`. Foundation
+being absent from the installed engine is not an error by itself -- it
+becomes one only once a selected component's contribution or a rendering
+step actually needs it and finds it missing.
 
 `validate_rendered_project(spec, project) -> RenderedProject` exposes that
 same side-effect-free check directly. It proves exact plan/output target
@@ -178,28 +223,28 @@ code and structured detail paths and may present the safe messages to users.
 
 ## Compatibility and current cutover boundary
 
-Within the `0.2.x` package line, documented top-level names, signatures,
-result fields, error-code values, and their stated semantics are compatibility
-commitments. An incompatible public change requires a package-major version
-change after 1.0, or a new minor compatibility line while the package remains
-pre-1.0, and always requires migration guidance. Additive result fields are
-also treated carefully because strict consumers may serialise these models.
+Within one package compatibility line, documented top-level names,
+signatures, result fields, error-code values, and their stated semantics are
+compatibility commitments. An incompatible public change requires a
+package-major version change after 1.0, or a new minor compatibility line
+while the package remains pre-1.0, and always requires migration guidance.
+Additive result fields are also treated carefully because strict consumers
+may serialise these models.
 
-The generated-project validator is an additive part of the first, still
-unreleased `0.2.0` API. The current Copier Library path and the released
-`create-forge` CLI do not yet
-consume this facade. `create-forge` must keep its supported engine range and
-protocol support unassigned until its implementation and cross-repository
-contract tests pass. This change creates no component manifest, ProjectSpec
-field, Copier answer, generated file, destination API, CLI behaviour, tag, or
+FT-08.02 made exactly one such explicitly incompatible pre-1.0 change:
+`PlannedFile.owner_component_id` became the discriminated `owner` described
+above, required by the accepted [Library archetype
+contract](library-archetype.md) so a Foundation-owned file could be
+represented at all. `component_order` is unaffected -- Foundation still never
+appears in it. This moved the package to `0.3.0` while ProjectSpec stayed
+protocol `1`; a client on the prior `0.2.x` line reading `owner_component_id`
+must migrate to `owner` before adopting `0.3.x`.
+
+The generated-project validator and the Foundation/protocol-`2` mechanism
+above are both part of the `0.3.x` line. The production catalogue remains
+empty and the current Copier Library path and the released `create-forge`
+CLI do not yet consume this facade -- both are unaffected by any of this
+until FT-08.02's production `library` manifest actually ships and
+`create-forge` assigns a supported engine range. This change creates no
+Copier answer, generated file, destination API, CLI behaviour, tag, or
 release.
-
-FT-08.02 will make an explicitly incompatible pre-1.0 planning-model change:
-`PlannedFile.owner_component_id` becomes a discriminated `owner` containing
-either `FoundationOwner(kind="foundation")` or
-`ComponentOwner(kind="component", id=...)`. Foundation still does not appear
-in `component_order`. The [Library archetype contract](library-archetype.md)
-therefore requires package version `0.3.0` for that implementation while
-keeping ProjectSpec protocol `1`. Version `0.2.0` and the current field remain
-the supported behaviour until FT-08.02 lands; this decision does not alter the
-facade.
