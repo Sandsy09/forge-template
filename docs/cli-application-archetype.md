@@ -1,17 +1,18 @@
 # CLI Application Archetype Contract
 
-This document defines the additions the Forge `cli` archetype will make to
-the mandatory [Foundation](foundation-scope.md). It is the canonical living
+This document defines the additions the Forge `cli` archetype makes to the
+mandatory [Foundation](foundation-scope.md). It is the canonical living
 contract accepted by
-[ADR 0034](adr/0034-select-cli-application-reference-archetype.md).
+[ADR 0034](adr/0034-select-cli-application-reference-archetype.md) and
+implemented by FT-08.04
+([ADR 0035](adr/0035-implement-cli-application-archetype.md)).
 
-FT-08.03 selects and defines the archetype only. The installed production
-catalogue still contains only `library`; FT-08.04
-([#4](https://github.com/Sandsy09/forge-template/issues/4)) owns every
-manifest, Foundation extension, rendered file, dependency, and test required
-to implement this contract. This decision changes no engine behavior,
-template, Copier answer, generated output, public API, package version, tag,
-or release.
+FT-08.04 implements this contract in the installed engine catalogue at
+package version `0.3.0`, beside the [Library archetype](library-archetype.md)
+it neither inherits from nor reads resources from. It changes no Copier
+template, question, or generated output: the released Copier path still
+renders only the Library tree, unchanged, and remains the only path
+`create-forge` consumes today.
 
 ## Selection rationale
 
@@ -59,7 +60,8 @@ implicit Foundation source; a ProjectSpec selects exactly one.
 
 ## Production component contract
 
-FT-08.04 will add this package-bound manifest:
+The production manifest at `src/forge_template/components/cli/component.toml`
+has this identity:
 
 | Field | Required value |
 | --- | --- |
@@ -157,16 +159,18 @@ and meaningful content rather than snapshotting framework decoration.
 
 ## Foundation extension requirements
 
-FT-08.04 reuses these existing Foundation extension points:
+CLI Application reuses these existing Foundation extension points:
 
 - `pyproject-build-system`;
 - `pyproject-build-configuration`; and
 - `readme-project-shape`.
 
-It adds these provider- and archetype-neutral points to the Foundation-owned
-`pyproject.toml` source:
+FT-08.04 added these provider- and archetype-neutral points to the
+Foundation-owned `pyproject.toml` source:
 
-- `pyproject-archetype-metadata` for static version metadata;
+- `pyproject-archetype-metadata` for static version metadata -- renamed from
+  the Library-specific `pyproject-library-metadata` FT-08.02 originally
+  published, since both archetypes need the identical job;
 - `pyproject-runtime-dependencies` inside the project dependency array;
 - `pyproject-classifiers` inside the classifier array; and
 - `pyproject-entry-points` after the core project metadata.
@@ -195,7 +199,7 @@ integration, and GitHub files retain their capability or platform owners.
 ## FT-08.04 implementation and acceptance boundary
 
 FT-08.04 implements `cli` only in the package-bound engine catalogue. It
-does not add an archetype question, conditional tree, migration, or answer to
+adds no archetype question, conditional tree, migration, or answer to
 `copier.yml` or `template/`. The direct-Copier path remains Library-only, so
 existing Library updates remain safe by construction. Future `create-forge`
 selection consumes engine discovery rather than duplicating this metadata.
@@ -205,7 +209,9 @@ protocol `1`, manifest protocol `2`, Foundation version `1`, and the public
 engine facade unchanged. The additional descriptor and content are additive
 within the still-unreleased `0.3.x` line.
 
-Acceptance requires:
+Acceptance, proven by `tests/test_cli_archetype.py` (fast, render-level) and
+`tests/test_cli_build.py` (the `archetype` pytest marker, `uv run poe
+archetype`, real `uv build`):
 
 - deterministic discovery, planning, and rendering with both `library` and
   `cli` packaged;
@@ -213,19 +219,23 @@ Acceptance requires:
 - the exact metadata, dependency, entry-point, and command behavior above;
 - isolated wheel and sdist builds, installation, artifact inspection, console
   invocation, and module invocation;
-- successful generated-project validation and aggregate quality checks; and
-- byte-for-byte or explicitly reviewed structural evidence that empty new
-  Foundation extension points do not alter Library output.
+- successful generated-project validation and aggregate quality checks --
+  including the generated `cli.py`/`__main__.py`/`test_cli.py` themselves
+  passing `uv run poe check` (Ruff format/lint, `mypy --strict`, pytest)
+  inside the rendered project, not merely importing; and
+- explicitly reviewed structural evidence (not byte-for-byte, since an empty
+  extension marker line is consumed along with its own newline) that the four
+  new Foundation extension points leave Library output unchanged.
 
 ## Current evidence and deferred work
 
-At FT-08.03 completion, production discovery still returns only `library` and
-the package remains `0.3.0`. No Typer dependency, CLI manifest, Foundation
-extension, rendered CLI file, Copier question, or create-forge branch exists
-yet. This is intentional evidence that the decision and implementation remain
-separate.
+The production catalogue now contains both `cli` and `library`, proven
+end-to-end: `discover_components()` returns both descriptors,
+`plan_generation`/`render_project` compose either one with Foundation into a
+real project, and `uv run poe archetype` builds a real wheel and sdist,
+installs them, and exercises the documented console-script and `python -m`
+command contract for real.
 
-FT-08.04 owns the complete engine-catalogue implementation. `create-forge#10`
-owns generic interactive and non-interactive selection after that component
-exists; it must not recreate the component's questions, defaults, metadata,
-or rendering rules.
+`create-forge#10` owns generic interactive and non-interactive selection now
+that this component exists; it must not recreate the component's questions,
+defaults, metadata, or rendering rules.

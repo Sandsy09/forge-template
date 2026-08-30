@@ -7,9 +7,8 @@
 > in dependency order. The
 > [Library archetype contract](../library-archetype.md) defines the first
 > production component, implemented by FT-08.02. The
-> [CLI Application contract](../cli-application-archetype.md) selects `cli`
-> as the optionless second reference archetype and bounds its FT-08.04
-> implementation.
+> [CLI Application contract](../cli-application-archetype.md) defines `cli`
+> as the optionless second reference archetype, implemented by FT-08.04.
 
 The roadmap remains one product roadmap, with implementation ownership split
 between repository-local epics and issues.

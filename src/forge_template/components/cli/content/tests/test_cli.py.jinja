@@ -1,0 +1,48 @@
+"""Tests for the {{ project.package_name }} command-line interface."""
+
+from typer.testing import CliRunner
+
+from {{ project.package_name }}.cli import app
+
+runner = CliRunner()
+
+
+def test_no_arguments_prints_help_and_exits_zero() -> None:
+    result = runner.invoke(app, [])
+
+    assert result.exit_code == 0
+    assert "Usage" in result.stdout
+
+
+def test_help_flag_prints_help_and_exits_zero() -> None:
+    result = runner.invoke(app, ["--help"])
+
+    assert result.exit_code == 0
+    assert "Usage" in result.stdout
+
+
+def test_version_flag_prints_the_installed_version() -> None:
+    result = runner.invoke(app, ["--version"])
+
+    assert result.exit_code == 0
+    assert result.stdout.startswith("{{ project.repository_name }} ")
+
+
+def test_hello_defaults_to_greeting_the_world() -> None:
+    result = runner.invoke(app, ["hello"])
+
+    assert result.exit_code == 0
+    assert result.stdout == "Hello, World!\n"
+
+
+def test_hello_greets_the_given_name() -> None:
+    result = runner.invoke(app, ["hello", "Ada"])
+
+    assert result.exit_code == 0
+    assert result.stdout == "Hello, Ada!\n"
+
+
+def test_an_unknown_command_exits_non_zero() -> None:
+    result = runner.invoke(app, ["not-a-real-command"])
+
+    assert result.exit_code != 0

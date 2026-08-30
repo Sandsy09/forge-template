@@ -1,0 +1,57 @@
+"""{{ project.name }} command-line interface."""
+
+from __future__ import annotations
+
+from importlib.metadata import PackageNotFoundError, version
+from typing import Annotated
+
+import typer
+
+app = typer.Typer(add_completion=False)
+
+_REPOSITORY_NAME = "{{ project.repository_name }}"
+
+
+def _version_callback(show_version: bool) -> None:
+    """Print the installed distribution version and exit.
+
+    Args:
+        show_version: Whether ``--version`` was passed.
+    """
+    if not show_version:
+        return
+    try:
+        installed = version(_REPOSITORY_NAME)
+    except PackageNotFoundError:  # pragma: no cover
+        installed = "0.0.0"
+    typer.echo(f"{_REPOSITORY_NAME} {installed}")
+    raise typer.Exit
+
+
+@app.callback(invoke_without_command=True)
+def main(
+    ctx: typer.Context,
+    version_: Annotated[
+        bool | None,
+        typer.Option(
+            "--version",
+            callback=_version_callback,
+            is_eager=True,
+            help="Show the version and exit.",
+        ),
+    ] = None,
+) -> None:
+    """{{ project.name }}."""
+    if ctx.invoked_subcommand is None:
+        typer.echo(ctx.get_help())
+        raise typer.Exit
+
+
+@app.command()
+def hello(name: str = typer.Argument("World", help="Name to greet.")) -> None:
+    """Print a greeting.
+
+    Args:
+        name: Who to greet.
+    """
+    typer.echo(f"Hello, {name}!")

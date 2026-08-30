@@ -20,8 +20,8 @@ metadata that `forge-template` owns rather than the CLI. The
 boundary to the first production archetype and its implemented Foundation
 source, option schema, planning owner, and package-version migration. The
 [CLI Application contract](../cli-application-archetype.md) applies the same
-boundary to the selected optionless executable shape while leaving every
-manifest and rendered file to FT-08.04. The
+boundary to the optionless executable shape, implemented by FT-08.04 with its
+own manifest and rendered files. The
 [composition order contract](../composition-order.md) defines the
 deterministic order that metadata's validated selections apply in. The
 [file conflict and override rules](../file-conflicts.md) define the output

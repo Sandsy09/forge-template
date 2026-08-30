@@ -59,11 +59,13 @@ may stage it. The [Library archetype contract](docs/library-archetype.md)
 defines the package-specific boundary FT-08.02 implements (package `0.3.0`):
 manifest and option-schema protocol `2`, the implicit Foundation content
 source, the discriminated `PlannedFile.owner`, and the production `library`
-manifest itself, now the installed catalogue's one entry. The current Copier
-tree remains unchanged and is what `create-forge` still consumes. The
+manifest itself. The current Copier tree remains unchanged and is what
+`create-forge` still consumes. The
 [CLI Application archetype contract](docs/cli-application-archetype.md)
-selects the optionless `cli` executable shape and bounds FT-08.04; no CLI
-component, dependency, Foundation extension, or generated file exists yet.
+defines the package-specific boundary FT-08.04 implements: the optionless
+`cli` executable shape, its one direct runtime dependency, console/module
+entry points, and the four neutral Foundation extension points it shares
+with Library. `discover_components()` now returns both `("cli", "library")`.
 
 ## Branching and pull requests
 
@@ -149,9 +151,11 @@ review the diff — see
 
 A change to `src/forge_template/foundation/` or
 `src/forge_template/components/*/content` should also run
-`uv run poe archetype`, which builds real wheels and sdists for the
-production Library archetype across all three packaging modes — see
-[library-archetype.md](docs/library-archetype.md).
+`uv run poe archetype`, which builds real wheels and sdists for both
+production archetypes -- Library across all three packaging modes, CLI's one
+fixed mode plus its installed console script and `python -m` invocation --
+see [library-archetype.md](docs/library-archetype.md) and
+[cli-application-archetype.md](docs/cli-application-archetype.md).
 
 ## Proposing a template change
 

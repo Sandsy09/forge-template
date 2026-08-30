@@ -68,17 +68,17 @@ from the top-level package, at package version `0.3.0` since FT-08.02's
 [generated-project validation](docs/generated-project-validation.md) checks
 plan/output agreement, universal `pyproject.toml` metadata, and completed
 Forge extension rendering before a result is returned. **The production
-catalogue is no longer empty**: FT-08.02 populated it with the first real
-manifest, `library`
+catalogue now holds two independent reference archetypes**: FT-08.02
+populated it with `library`
 ([contract](docs/library-archetype.md)/[ADR 0033](docs/adr/0033-migrate-library-production-catalogue.md)),
-alongside the implicit Foundation source at `src/forge_template/foundation/`
-— proven by `uv run poe archetype` building real wheels/sdists across all
-three packaging modes. FT-08.03 has now selected and bounded the optionless
-`cli` second reference shape in the
-[CLI Application contract](docs/cli-application-archetype.md) and
-[ADR 0034](docs/adr/0034-select-cli-application-reference-archetype.md), but
-FT-08.04 owns its manifest, content, Foundation extensions, runtime dependency,
-and tests; discovery still returns only `library`. These
+and FT-08.04 added `cli`
+([contract](docs/cli-application-archetype.md)/[ADR 0035](docs/adr/0035-implement-cli-application-archetype.md)),
+both alongside the implicit Foundation source at `src/forge_template/foundation/`
+— proven by `uv run poe archetype` building real wheels/sdists for Library
+across all three packaging modes and for CLI's fixed packaging mode, plus a
+real installed console script and `python -m` invocation. `discover_components()`
+now returns `("cli", "library")`. Neither archetype inherits from or reads
+resources from the other; a ProjectSpec selects exactly one. These
 contracts are not
 yet consumed by the direct-Copier path; see
 [#5](https://github.com/Sandsy09/forge-template/issues/5), done,
@@ -274,7 +274,7 @@ shellcheck steps) — see backlog item 1, done.
 
 ## Current state
 
-Working: library archetype, all four combos green locally and in CI, update
+Working: Library and CLI Application archetypes, all four combos green locally and in CI, update
 merge validated, root and template `.gitattributes` both in place, no
 byte-empty template files remain, `task_runner`/`make` removed (it was the
 one untested, 100%-broken conditional — see Deferred). **`v0.1.1` is the
@@ -288,7 +288,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0034 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0035 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -305,14 +305,16 @@ The [live issue index](docs/roadmap-v1/github-issues/forge-template/ISSUE-INDEX.
 is the source of truth for roadmap order and blockers. FT-08.02 populated the
 production component catalogue under the
 [Library archetype contract](docs/library-archetype.md) — additive, package-bound
-content that leaves `template/` untouched. The
-[CLI Application contract](docs/cli-application-archetype.md) now selects
-`cli` as the second, optionless package-bound shape. Repurposed
-[#4](https://github.com/Sandsy09/forge-template/issues/4) must implement it
-without touching `template/` or `copier.yml`, then validate both archetypes.
-A future cutover that actually retires `template/` in favour of this catalogue
-is the `_migrations` moment: plan it before moving template paths and keep
-Library paths stable where possible.
+content that leaves `template/` untouched. FT-08.04 (repurposed
+[#4](https://github.com/Sandsy09/forge-template/issues/4)) added `cli` beside
+it under the
+[CLI Application contract](docs/cli-application-archetype.md), the second,
+optionless package-bound shape, equally additive and equally untouched by
+`template/` or `copier.yml`. Stage 08's remaining work is FT-08.05
+([#43](https://github.com/Sandsy09/forge-template/issues/43)), a composition
+architecture review. A future cutover that actually retires `template/` in
+favour of this catalogue is the `_migrations` moment: plan it before moving
+template paths and keep Library paths stable where possible.
 
 Also open, not yet scheduled: [#1](https://github.com/Sandsy09/forge-template/issues/1)
 (reintroduce `make`, see Deferred below), [#6](https://github.com/Sandsy09/forge-template/issues/6)

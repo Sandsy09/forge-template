@@ -240,8 +240,9 @@ same context as file content before its output target is derived; see
 
 ## Current evidence and deferred work
 
-The production catalogue now contains exactly `library`, proven end-to-end:
-`discover_components()` returns its descriptor, `plan_generation`/`render_project`
+The production catalogue now contains `library` alongside `cli`
+([CLI Application](cli-application-archetype.md)), proven end-to-end:
+`discover_components()` returns both descriptors, `plan_generation`/`render_project`
 compose Foundation and Library into a real project across all three packaging
 modes, and `uv run poe archetype` builds real wheels and sdists from that
 output. `template/`'s monolithic Copier tree is untouched and remains the
@@ -265,10 +266,10 @@ tracked as later work rather than silently claimed complete:
   `github` platform component named in the extension-point table above does
   not exist in the production catalogue yet.
 
-FT-08.03 selected and defined the independent, optionless `cli` reference
-shape in the canonical [CLI Application archetype
-contract](cli-application-archetype.md). FT-08.04 owns its package-bound
-implementation; it neither inherits this component nor changes Library's
-contract. CLI exposure, ProjectSpec construction, filesystem finalisation,
-and the first supported released engine range remain `create-forge`
-responsibilities.
+FT-08.04 implemented the independent, optionless `cli` reference shape
+defined in the canonical [CLI Application archetype
+contract](cli-application-archetype.md) ([ADR
+0035](adr/0035-implement-cli-application-archetype.md)); it neither inherits
+this component nor changes Library's contract. CLI exposure, ProjectSpec
+construction, filesystem finalisation, and the first supported released
+engine range remain `create-forge` responsibilities.

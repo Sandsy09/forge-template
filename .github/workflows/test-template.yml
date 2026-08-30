@@ -119,11 +119,11 @@ jobs:
         run: uv run pytest -m combos -k c1-uvbuild-static --from-git -v
 
   # ---------------------------------------------------------------------------
-  # Real uv build/install/import proof for the production Library archetype,
-  # across all three packaging modes -- tests/test_library_build.py.
+  # Real uv build/install/import proof for the production Library and CLI
+  # archetypes -- tests/test_library_build.py, tests/test_cli_build.py.
   # ---------------------------------------------------------------------------
   archetype:
-    name: Library archetype build
+    name: Archetype builds
     runs-on: ubuntu-latest
     needs: lint
     steps:
@@ -139,7 +139,7 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups
 
-      - name: Build the Library archetype -- all packaging modes
+      - name: Build every production archetype
         run: uv run poe archetype
 
   # ---------------------------------------------------------------------------

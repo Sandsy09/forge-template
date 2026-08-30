@@ -73,15 +73,15 @@ options.
 The canonical [Library archetype contract](../library-archetype.md) defines
 the distributable-package additions composed over one implicit Foundation
 source, implemented by FT-08.02. The canonical
-[CLI Application archetype contract](../cli-application-archetype.md) selects
-the optionless `cli` executable shape and records the package, dependency,
-command, and Foundation-extension requirements FT-08.04 must implement.
+[CLI Application archetype contract](../cli-application-archetype.md) defines
+the optionless `cli` executable shape's package, dependency, command, and
+Foundation-extension requirements, implemented by FT-08.04.
 
 The canonical
 [component manifest protocol](../component-manifests.md) defines strict TOML
 protocols v1/v2 for bundled component identity, compatibility, owned content,
-Foundation/component contribution targets, dependencies, and conflicts. The
-production Library manifest implements protocol 2.
+Foundation/component contribution targets, dependencies, and conflicts. Both
+production manifests, Library and CLI, implement protocol 2.
 
 The canonical [composition order contract](../composition-order.md) defines
 the single deterministic tier and within-tier order a validated component
@@ -102,9 +102,9 @@ file operation.
 The canonical [stable template-engine API](../template-engine-api.md) exposes
 those contracts through typed, package-bound discovery, strict validation,
 deterministic planning, in-memory rendering, and structured failures. Its
-production catalogue held nothing before Stage 08; Stage 08's FT-08.02
-populated it with the Library archetype. FT-08.03 selects `cli` as the second
-entry without adding it to discovery before FT-08.04.
+production catalogue held nothing before Stage 08; FT-08.02 populated it
+with the Library archetype and FT-08.04 added the CLI Application archetype
+beside it, so `discover_components()` now returns both.
 
 The canonical
 [generated-project validation contract](../generated-project-validation.md)
