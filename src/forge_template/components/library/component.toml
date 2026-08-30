@@ -19,8 +19,8 @@ content = "extensions/build-system.toml.jinja"
 target.kind = "foundation"
 
 [[contributions]]
-extension_point = "pyproject-library-metadata"
-content = "extensions/library-metadata.toml.jinja"
+extension_point = "pyproject-archetype-metadata"
+content = "extensions/archetype-metadata.toml.jinja"
 target.kind = "foundation"
 
 [[contributions]]
