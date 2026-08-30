@@ -277,11 +277,12 @@ shellcheck steps) — see backlog item 1, done.
 Working: Library and CLI Application archetypes, all four combos green locally and in CI, update
 merge validated, root and template `.gitattributes` both in place, no
 byte-empty template files remain, `task_runner`/`make` removed (it was the
-one untested, 100%-broken conditional — see Deferred). **`v0.1.1` is the
-latest tagged Copier template** — the CLI can scaffold from this repo. The
-root project version is `0.3.0` — bumped from `0.2.0` by FT-08.02's
-incompatible pre-1.0 `PlannedFile.owner` planning-model change — but remains
-untagged until a deliberate release. Root repo hygiene is done:
+one untested, 100%-broken conditional — see Deferred). **`v0.3.0` is the
+latest tagged release** — the first to carry the production engine catalogue
+(both `library` and `cli`) alongside the Copier template, which the CLI can
+still scaffold from directly. The root project version is `0.3.0` — bumped
+from `0.2.0` by FT-08.02's incompatible pre-1.0 `PlannedFile.owner`
+planning-model change. Root repo hygiene is done:
 root
 `pyproject.toml`, `.pre-commit-config.yaml`, and real content for `LICENSE`,
 `README.md`, `CONTRIBUTING.md`, `SECURITY.md` all exist; `src/forge_template`

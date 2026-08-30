@@ -207,7 +207,7 @@ selection consumes engine discovery rather than duplicating this metadata.
 Implementation keeps `forge-template` package version `0.3.0`, ProjectSpec
 protocol `1`, manifest protocol `2`, Foundation version `1`, and the public
 engine facade unchanged. The additional descriptor and content are additive
-within the still-unreleased `0.3.x` line.
+within the `0.3.x` line, released at `v0.3.0`.
 
 Acceptance, proven by `tests/test_cli_archetype.py` (fast, render-level) and
 `tests/test_cli_build.py` (the `archetype` pytest marker, `uv run poe

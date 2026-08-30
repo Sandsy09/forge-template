@@ -245,7 +245,7 @@ protocol `1`; a client on the prior `0.2.x` line reading `owner_component_id`
 must migrate to `owner` before adopting `0.3.x`.
 
 The generated-project validator, Foundation/protocol-`2` mechanism, and
-production `library`/`cli` manifests above are all part of the still-unreleased
-`0.3.x` line. The current Copier Library path and released `create-forge` CLI
-do not consume this facade until `create-forge` assigns a supported engine
-range.
+production `library`/`cli` manifests above are all part of the `0.3.x` line,
+released at `v0.3.0`. The current Copier Library path and released
+`create-forge` CLI do not consume this facade until `create-forge` assigns a
+supported engine range.

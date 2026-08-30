@@ -117,11 +117,12 @@ The public engine/ProjectSpec model is the accepted target under
 ProjectSpec, component manifest protocols v1/v2, composition order, file
 conflict and override rules, the template variable contract, the stable
 `forge-template` `0.3.x` engine facade, and generated-project validation are
-implemented, and FT-08.02 populated the production catalogue with the
-Library archetype's manifest, Foundation source, and option schema. FT-08.03
-defines but does not implement the `cli` archetype. `create-forge` engine
-consumption is not released; the existing Copier baseline remains operational
-until Stages 08–09 and the coordinated CLI cutover are complete.
+implemented, and FT-08.02 and FT-08.04 populated the production catalogue
+with the Library and CLI Application archetypes' manifests, Foundation
+source, and (for Library) option schema. `forge-template` released this
+catalogue at `v0.3.0`; `create-forge` engine consumption is not yet released,
+so the existing Copier baseline remains operational until Stages 08–09 and
+the coordinated CLI cutover are complete.
 
 ## Structure
 
