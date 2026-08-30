@@ -171,7 +171,7 @@ Library contributes to these stable extension-point targets:
 | Target owner | Extension point | Requirement |
 | --- | --- | --- |
 | Foundation | `pyproject-build-system` | required |
-| Foundation | `pyproject-library-metadata` | required |
+| Foundation | `pyproject-archetype-metadata` | required |
 | Foundation | `pyproject-build-configuration` | required |
 | Foundation | `readme-project-shape` | required |
 | Foundation | `gitignore-project-shape` | required |
@@ -186,6 +186,13 @@ contracts for components that do not exist in the production catalogue yet;
 selecting `library` alone never requires them. An unsupported or absent
 target fails under the composition contract rather than disappearing or using
 last-write-wins replacement.
+
+`pyproject-library-metadata` was renamed `pyproject-archetype-metadata` when
+FT-08.04 needed the same static-version-metadata point for a second, distinct
+archetype. FT-08.04 also added three further neutral points on the same
+Foundation source -- `pyproject-runtime-dependencies`, `pyproject-classifiers`,
+and `pyproject-entry-points` -- that Library never contributes to; see
+[cli-application-archetype.md](cli-application-archetype.md).
 
 ## Manifest protocol 2 and the discriminated planning owner
 

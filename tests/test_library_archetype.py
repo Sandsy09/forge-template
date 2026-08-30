@@ -102,7 +102,7 @@ def test_plan_identifies_foundation_and_component_owners(packaging_mode: str) ->
     extensions = by_target["pyproject.toml"].extensions
     assert {e.extension_point for e in extensions} == {
         "pyproject-build-system",
-        "pyproject-library-metadata",
+        "pyproject-archetype-metadata",
         "pyproject-build-configuration",
     }
     assert all(e.component_id == "library" for e in extensions)
@@ -146,6 +146,26 @@ def test_rendered_pyproject_is_valid_toml_per_packaging_mode(
         assert "version" not in payload["project"]
         assert payload["build-system"]["requires"] == ["hatchling", "hatch-vcs"]
         assert payload["tool"]["hatch"]["version"]["source"] == "vcs"
+
+
+def test_the_neutral_extension_points_added_for_cli_leave_library_unchanged() -> None:
+    """FT-08.04 adds four Foundation points Library never contributes to.
+
+    Library must keep publishing an empty dependency array and unmodified
+    classifiers, and must gain no ``[project.scripts]`` table -- structural
+    evidence (not byte-for-byte, since an empty extension marker line is
+    consumed along with its own newline) that those points leave Library's
+    own output unchanged. See docs/cli-application-archetype.md.
+    """
+    spec = parse_project_spec(_payload(packaging_mode="uv-build-static"))
+
+    rendered = render_project(spec)
+    files = {item.target: item.content for item in rendered.files}
+    payload = tomllib.loads(files["pyproject.toml"].decode())
+
+    assert payload["project"]["dependencies"] == []
+    assert payload["project"]["classifiers"] == ["Typing :: Typed"]
+    assert "scripts" not in payload["project"]
 
 
 def test_composed_file_set_matches_the_expected_project_shape() -> None:

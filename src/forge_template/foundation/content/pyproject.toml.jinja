@@ -1,7 +1,9 @@
 {#- Foundation owns neutral project identity, licence, and the mandatory
-   declared/locked development environment (foundation-guarantees.md). The
-   archetype's own packaging shape attaches through the three named
-   extension points below; see docs/library-archetype.md. #}
+   declared/locked development environment (foundation-guarantees.md). Each
+   selected archetype's own packaging shape, metadata, runtime dependencies,
+   classifiers, and entry points attach through the named, archetype-neutral
+   extension points below; see docs/library-archetype.md and
+   docs/cli-application-archetype.md. #}
 {%- set spdx_license = {
     "mit": "MIT",
     "apache-2.0": "Apache-2.0",
@@ -9,7 +11,7 @@
 }.get(project.licence, project.licence) -%}
 [project]
 name = "{{ project.repository_name }}"
-[[forge:extension pyproject-library-metadata]]
+[[forge:extension pyproject-archetype-metadata]]
 description = "{{ project.description }}"
 readme = "README.md"
 requires-python = "{{ python.requires_python }}"
@@ -23,8 +25,12 @@ authors = [
 {%- endif %}
 classifiers = [
     "Typing :: Typed",
+    [[forge:extension pyproject-classifiers]]
 ]
-dependencies = []
+dependencies = [
+    [[forge:extension pyproject-runtime-dependencies]]
+]
+[[forge:extension pyproject-entry-points]]
 
 [build-system]
 [[forge:extension pyproject-build-system]]

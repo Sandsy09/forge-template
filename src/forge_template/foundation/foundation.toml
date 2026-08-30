@@ -9,11 +9,23 @@ id = "pyproject-build-system"
 content = "content/pyproject.toml.jinja"
 
 [[extension_points]]
-id = "pyproject-library-metadata"
+id = "pyproject-archetype-metadata"
 content = "content/pyproject.toml.jinja"
 
 [[extension_points]]
 id = "pyproject-build-configuration"
+content = "content/pyproject.toml.jinja"
+
+[[extension_points]]
+id = "pyproject-runtime-dependencies"
+content = "content/pyproject.toml.jinja"
+
+[[extension_points]]
+id = "pyproject-classifiers"
+content = "content/pyproject.toml.jinja"
+
+[[extension_points]]
+id = "pyproject-entry-points"
 content = "content/pyproject.toml.jinja"
 
 [[extension_points]]
