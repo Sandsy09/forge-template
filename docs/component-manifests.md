@@ -1,18 +1,25 @@
-# Component Manifest Protocol v1
+# Component and Foundation manifest protocols
 
 Component manifests are the machine-readable metadata for the archetypes,
 capabilities, and platforms bundled with a `forge-template` engine release.
-Protocol v1 is implemented by the strict models and provisional
+Two protocols are implemented, both by the strict models and provisional
 validators in
-[`forge_template.component_manifest`](../src/forge_template/component_manifest.py).
+[`forge_template.component_manifest`](../src/forge_template/component_manifest.py):
+protocol `1` (FT-06.02/[ADR 0024](adr/0024-component-manifest-protocol-v1.md))
+models component-to-component contributions only; protocol `2`
+(FT-08.02, accepted by the [Library archetype
+contract](library-archetype.md)/[ADR 0031](adr/0031-library-archetype-contract.md))
+adds a discriminated contribution target so a contribution can also name the
+implicit Foundation content source — described below, and implemented by
+[`forge_template.foundation_source`](../src/forge_template/foundation_source.py) —
+rather than only another component. Protocol `1` parsing remains supported
+unchanged for existing component-to-component manifests.
 
 This contract defines metadata and validation before production components or
-discovery exist. The current Library scaffold remains the monolithic `template/`
-tree and has no production manifest. Its migration is owned by
-[FT-08.02](https://github.com/Sandsy09/forge-template/issues/41). The accepted
-[Library archetype contract](library-archetype.md) requires that production
-component to use manifest protocol `2`; protocol `1` below remains the current
-implemented behaviour.
+discovery exist: the mechanism below is fully implemented, but the installed
+production catalogue stays empty until FT-08.02's Library manifest lands. The
+current Library scaffold remains the monolithic `template/` tree and has no
+production manifest yet.
 
 ## Authoring and schema source
 
@@ -53,7 +60,7 @@ the Library scaffold is already composed.
 
 | Field | Type | Meaning |
 | --- | --- | --- |
-| `manifest_version` | integer literal `1` | Component manifest protocol. |
+| `manifest_version` | integer, `1` or `2` | Component manifest protocol. |
 | `id` | lower-case kebab-case string | Canonical globally unique component identifier. |
 | `name` | non-empty string | Human-facing display name. |
 | `description` | non-empty string | Human-facing discovery summary. |
@@ -83,9 +90,11 @@ implicit mandatory baseline. Profiles and organisation policies select,
 default, require, or forbid components; they do not gain component manifests or
 rendering authority.
 
-FT-08.02 will make that implicit baseline a package-bound content source that
-applies before the selected component order while remaining absent from
-discovery and ProjectSpec. The source is not a fourth component kind.
+FT-08.02 makes that implicit baseline a package-bound content source (see
+"Foundation content source" below) that applies before the selected component
+order while remaining absent from discovery and ProjectSpec. The source is
+not a fourth component kind, has no `component.toml`, and never appears in
+`discover_components()` or `GenerationPlan.component_order`.
 
 ### Manifest and component versions
 
@@ -103,7 +112,9 @@ outside the accepted trust model.
 ### Compatibility
 
 `compatibility.projectspec_protocols` is a non-empty, unique set of ProjectSpec
-protocol integers. This engine line understands only protocol `1`.
+protocol integers. This engine line understands only ProjectSpec protocol
+`1` — independent of `manifest_version`, which is the *manifest's own*
+protocol and versions a different axis entirely.
 
 `compatibility.requires_python` is a non-empty PEP 440 specifier for the
 generated project's interpreters. Every minor in
@@ -146,32 +157,92 @@ exposes for another to extend. Each entry names an `id` and a `content`
 path — component-relative like `options_schema`, and required to fall
 inside this component's own `content_root`.
 
-`contributions` targets another component's published point. Each entry
-names the target `component`, its `extension_point` id, and this
-component's own `content` path — required to fall **outside** this
-component's `content_root`, since a contribution is not itself an owned
-output file. A component may not contribute to its own extension point.
+`contributions` targets another owner's published point. Each entry names
+its `extension_point` id and this component's own `content` path — required
+to fall **outside** this component's `content_root`, since a contribution is
+not itself an owned output file. A component may not contribute to its own
+extension point. The target itself is named differently by protocol:
 
-Both are optional and additive: omitting them leaves a manifest identical to
-protocol 1 as accepted by [ADR 0024](adr/0024-component-manifest-protocol-v1.md),
-so `manifest_version` stays `1`. What a contribution does to its target's
-output — creation, extension, and the full disposition and collision rules —
-is defined by [file-conflicts.md](file-conflicts.md), delivered through
+- protocol `1` names the target `component` directly, by ID;
+- protocol `2` names a discriminated `target` — see below.
+
+Both fields are optional and additive: omitting them leaves a manifest
+identical to protocol 1 as accepted by [ADR
+0024](adr/0024-component-manifest-protocol-v1.md). What a contribution does
+to its target's output — creation, extension, and the full disposition and
+collision rules — is defined by
+[file-conflicts.md](file-conflicts.md#extension-points), delivered through
 [FT-06.04](https://github.com/Sandsy09/forge-template/issues/35).
 
-### Accepted manifest protocol v2 target owner
+### Manifest protocol v2 target owner
 
-The [Library archetype contract](library-archetype.md) requires manifest
-protocol `2` to replace the component-only contribution target with a
-discriminated owner: `{ kind = "foundation" }` or
-`{ kind = "component", id = "<component-id>" }`. Production Library will
-use v2 to contribute to Foundation-owned neutral files. Protocol v1 parsing
-will remain available for existing component-to-component fixtures, but v1
-cannot target Foundation.
+Manifest protocol `2` (FT-08.02) replaces protocol `1`'s component-only
+contribution target with a discriminated owner:
 
-This is an accepted FT-08.02 requirement, not current loader behaviour.
-Manifest v2 models, loading, catalogue content, and compatibility tests are
-therefore not part of FT-08.01.
+```toml
+[[contributions]]
+extension_point = "pyproject-build-system"
+content = "extensions/build-system.toml.jinja"
+target.kind = "foundation"
+```
+
+or:
+
+```toml
+[[contributions]]
+extension_point = "ci-jobs"
+content = "extensions/ci-jobs.yml.jinja"
+target.kind = "component"
+target.id = "github"
+```
+
+`{ kind = "component", id = "<component-id>" }` and `{ kind = "foundation" }`
+are the only two shapes. A protocol-`1` manifest must use the flat
+`component` key and may not declare `target`; a protocol-`2` manifest must
+use `target` and may not declare the flat `component` key — each rejected
+outright as a mismatch between a manifest's declared protocol and its own
+contribution shape. Protocol `1` parsing remains available unchanged for
+existing component-to-component fixtures; it simply cannot target Foundation.
+Production Library uses protocol `2` to contribute to Foundation-owned
+neutral files.
+
+## Foundation content source
+
+Foundation is the one implicit, mandatory, non-selectable content source
+every generation applies before the selected component order — see
+[foundation-scope.md](foundation-scope.md) and the accepted [Library
+archetype contract](library-archetype.md). It is declared the same way a
+component is, minus every field that only makes sense for a selectable,
+versioned, relatable component: a strict UTF-8 TOML file named
+`foundation.toml`, loaded by
+[`forge_template.foundation_source`](../src/forge_template/foundation_source.py)
+and reusing `component_manifest`'s own `component_resource_path` and
+`relative_resource_path` containment rules rather than duplicating them.
+
+```toml
+foundation_version = 1
+content_root = "content"
+
+[[extension_points]]
+id = "pyproject-build-system"
+content = "content/pyproject.toml.jinja"
+```
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `foundation_version` | integer literal `1` | Foundation source protocol. |
+| `content_root` | relative path | Required owned content directory, validated the same way a component's is. |
+| `extension_points` | array of extension points, optional | Named points Foundation's own owned content publishes for a component to extend. |
+
+Foundation has no `id`, `kind`, `version`, `options_schema`, `requires`,
+`conflicts`, or `contributions`: it is never selected, never discovered,
+carries no independent version a `requires`/`conflicts` reference could name,
+declares no options, and never contributes to anything else — only
+components contribute, and only ever *to* Foundation or to each other.
+Foundation's own owned content is ordered, rendered, and validated through
+the same mechanism as a component's — `foundation_content_order`, output-path
+rendering ([ADR 0032](adr/0032-render-component-content-paths.md)), and
+containment all apply identically.
 
 ## Dependencies and conflicts
 
@@ -207,6 +278,13 @@ names a component or extension point that does not exist — independent of
 any ProjectSpec selection. See
 [file-conflicts.md](file-conflicts.md#resolving-contributions), delivered
 through [FT-06.04](https://github.com/Sandsy09/forge-template/issues/35).
+`validate_manifest_set` and `validate_manifest_selection` both accept an
+optional Foundation source; a Foundation-targeted contribution's published
+point is checked against it when supplied, and left unverified — not
+rejected — when it is not, since a caller such as
+`forge_template.composition`'s internal re-validation has no reason to know
+the installed Foundation source at all. The caller that actually has it
+(`forge_template.engine`) performs the authoritative check.
 
 ## ProjectSpec selection validation
 
@@ -227,11 +305,13 @@ overwrite authority.
 
 ## Deferred work
 
-Protocol v1 does not define:
+Neither protocol yet defines:
 
-- production manifests; Library's identity and future protocol are defined by
-  the [Library archetype contract](library-archetype.md), while FT-08.02 owns
-  their implementation in the package-bound catalogue;
+- a production manifest in the installed catalogue; Library's identity is
+  defined by the [Library archetype contract](library-archetype.md), and
+  protocol `2`'s mechanism above is what FT-08.02's production `library`
+  manifest will use, but the catalogue itself remains empty until that
+  manifest ships;
 - the second roadmap archetype;
 - optional or recommended dependencies;
 - destination file operations or filesystem orchestration; in-memory

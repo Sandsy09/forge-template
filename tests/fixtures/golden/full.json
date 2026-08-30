@@ -9,12 +9,18 @@
   "targets": {
     ".coveragerc": {
       "extensions": [],
-      "owner_component_id": "coverage",
+      "owner": {
+        "id": "coverage",
+        "kind": "component"
+      },
       "target": ".coveragerc"
     },
     "a-top.txt": {
       "extensions": [],
-      "owner_component_id": "changelog",
+      "owner": {
+        "id": "changelog",
+        "kind": "component"
+      },
       "target": "a-top.txt"
     },
     "ci.yml": {
@@ -24,27 +30,42 @@
           "extension_point": "ci-steps"
         }
       ],
-      "owner_component_id": "github",
+      "owner": {
+        "id": "github",
+        "kind": "component"
+      },
       "target": "ci.yml"
     },
     "mkdocs.yml": {
       "extensions": [],
-      "owner_component_id": "documentation",
+      "owner": {
+        "id": "documentation",
+        "kind": "component"
+      },
       "target": "mkdocs.yml"
     },
     "nested/a-deep.txt": {
       "extensions": [],
-      "owner_component_id": "changelog",
+      "owner": {
+        "id": "changelog",
+        "kind": "component"
+      },
       "target": "nested/a-deep.txt"
     },
     "pyproject.toml": {
       "extensions": [],
-      "owner_component_id": "library",
+      "owner": {
+        "id": "library",
+        "kind": "component"
+      },
       "target": "pyproject.toml"
     },
     "z-top.txt": {
       "extensions": [],
-      "owner_component_id": "changelog",
+      "owner": {
+        "id": "changelog",
+        "kind": "component"
+      },
       "target": "z-top.txt"
     }
   },

@@ -108,26 +108,27 @@ in `options_schema` ([component-manifests.md](component-manifests.md#owned-conte
 
 ```json
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "options": [
     {
-      "name": "build_backend",
+      "name": "packaging_mode",
       "type": "string",
       "required": true,
-      "choices": ["uv_build", "hatchling"]
+      "choices": ["uv-build-static", "hatchling-static", "hatchling-vcs"]
     },
     {
       "name": "initial_version",
       "type": "string",
-      "default": "0.1.0"
+      "default": "0.1.0",
+      "format": "pep440"
     }
   ]
 }
 ```
 
-`schema_version` is currently only `1`. Each option names a lower-snake-case
-`name` (the same rule ProjectSpec's own component options already use), a
-`type` from a closed set, and:
+`schema_version` is `1` or `2`. Each option names a lower-snake-case `name`
+(the same rule ProjectSpec's own component options already use), a `type`
+from a closed set, and:
 
 | Field | Meaning |
 | --- | --- |
@@ -136,13 +137,25 @@ in `options_schema` ([component-manifests.md](component-manifests.md#owned-conte
 | `default` | The value used when not supplied. Mutually exclusive with `required`. |
 | `choices` | A non-empty enumerated set of admissible values. Only meaningful for `string` and `integer`. |
 | `description` | Human-facing documentation only. |
+| `format` | Protocol `2` only. One of `OPTION_FORMATS`, currently only `pep440`. Only meaningful for `string`. |
 
-The accepted [Library archetype contract](library-archetype.md) requires
-option-schema protocol `2` to add `format` for string options, with `pep440`
-as its initial supported value. FT-08.02 must validate and canonicalise the
-Library `initial_version` before rendering and expose the format in discovery
-descriptors. Protocol v1 and the table above remain the current implemented
-behaviour; FT-08.01 adds no schema or resolver support.
+Protocol `2` (FT-08.02) adds `format`, closed to `pep440` for now. It
+constrains a `string` option's value to a parseable PEP 440 version and
+governs two different rules depending on who supplies the value:
+
+- an authored `default` or `choices` entry (`OptionDeclaration` itself) must
+  already be canonical PEP 440 — rejected otherwise, the same discipline
+  `component_manifest` applies to a component's own `version` field;
+- a value a ProjectSpec *supplies* is validated and then **canonicalised**
+  rather than rejected for being non-canonical — `"1.0"` normalises to
+  `"1.0"` and `"v1.0.0"` normalises to `"1.0.0"` before it ever reaches a
+  template, since user-facing input should not need to already be exactly
+  canonical.
+
+`format` on a protocol-`1` schema is rejected outright — declaring it is
+only meaningful once the schema itself opts into protocol `2`. Discovery
+descriptors expose the declared `format` alongside every other option field,
+so a client can present accurate guidance before a value is ever supplied.
 
 A component with no `options_schema` at all accepts no options: there is no
 unvalidated passthrough class of option. A schema with no

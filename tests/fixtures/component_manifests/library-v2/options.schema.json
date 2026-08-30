@@ -1,0 +1,11 @@
+{
+  "schema_version": 2,
+  "options": [
+    {
+      "name": "initial_version",
+      "type": "string",
+      "format": "pep440",
+      "default": "0.1.0"
+    }
+  ]
+}

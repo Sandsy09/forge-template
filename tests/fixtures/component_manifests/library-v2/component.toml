@@ -1,0 +1,21 @@
+# Manifest protocol 2 fixture: exercises a templated content path and a
+# Foundation-targeted contribution. Deliberately a separate id from
+# fixtures/component_manifests/library (protocol 1, unchanged), which proves
+# protocol-1 parsing stays supported rather than replaced.
+manifest_version = 2
+id = "library-v2"
+name = "Library V2 Fixture"
+description = "Exercises manifest protocol 2 against a Foundation source."
+kind = "archetype"
+version = "1.0.0"
+content_root = "content"
+options_schema = "options.schema.json"
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+extension_point = "pyproject-build-system"
+content = "extensions/pyproject-build-system.toml.jinja"
+target.kind = "foundation"

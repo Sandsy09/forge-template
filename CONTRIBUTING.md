@@ -56,9 +56,12 @@ details. The
 [generated-project validation contract](docs/generated-project-validation.md)
 defines the in-memory checks every successful render passes before a client
 may stage it. The [Library archetype contract](docs/library-archetype.md)
-defines the package-specific boundary and the protocol/API migration that
-must be implemented together in FT-08.02; until then, the current Copier tree
-and empty engine catalogue remain unchanged.
+defines the package-specific boundary and the protocol/API migration
+FT-08.02 implements: the manifest and option-schema protocol `2` mechanism,
+the implicit Foundation content source, and the discriminated
+`PlannedFile.owner` (package `0.3.0`) are in place, but the current Copier
+tree and empty engine catalogue remain unchanged until the production
+`library` manifest itself lands.
 
 ## Branching and pull requests
 

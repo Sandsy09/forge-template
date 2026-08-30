@@ -8,6 +8,7 @@ import pytest
 
 import forge_template.engine as engine_module
 from forge_template import (
+    ComponentOwner,
     EngineErrorCode,
     ForgeEngineError,
     GenerationPlan,
@@ -74,7 +75,7 @@ def _rendered_project(
         plan=GenerationPlan(
             component_order=("library",),
             files=tuple(
-                PlannedFile(target=target, owner_component_id="library")
+                PlannedFile(target=target, owner=ComponentOwner(id="library"))
                 for target in planned_targets
             ),
         ),

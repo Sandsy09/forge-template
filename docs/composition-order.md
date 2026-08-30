@@ -35,9 +35,19 @@ component then applies in kind order: the archetype first, then every
 selected capability, then every selected platform. This mirrors the
 structural model already stated in
 [terminology.md's composition and authority section](terminology.md#composition-and-authority).
-The [Library archetype contract](library-archetype.md) requires FT-08.02 to
-package exactly one such Foundation source while keeping `component_order`
-limited to the selected components.
+
+FT-08.02 packages exactly one such Foundation source
+([`forge_template.foundation_source`](../src/forge_template/foundation_source.py))
+while keeping `component_order` limited to the selected components. This
+module's own functions stay scoped to components for exactly that reason:
+`composition_order`, `component_content_order`, and `composition_plan` all
+take and return components only, never Foundation. Foundation is not
+threaded through them as an implicit extra placement; a caller that needs
+its position too supplies it as a *separate* argument directly to
+[`file_conflicts.resolve_output_plan`](file-conflicts.md#foundation-and-policy-overrides),
+which is the one place order and Foundation's content actually meet. Keeping
+this module's signatures component-only is what makes Foundation's absence
+from `component_order` structural rather than a filter someone could forget.
 
 ## Order within one tier
 

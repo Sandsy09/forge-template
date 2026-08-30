@@ -24,20 +24,35 @@ define organisation-policy overrides — that is Stage 09.
 
 ## Output targets
 
-Each file under a component's `content_root` maps to one project-relative
-output target: the same path, with one trailing `.jinja` suffix stripped
-when present. A path ending `.jinja` renders before it lands at the stripped
-path; every other path copies literally at its own path.
+Each file under an owner's `content_root` — a component's own, or the
+implicit Foundation content source's — maps to one project-relative output
+target: the path, first rendered through the same `StrictUndefined`
+template-variable context file content renders with, then with one trailing
+`.jinja` suffix stripped when present. A path ending `.jinja` renders before
+it lands at the stripped path; every other path copies literally at its own
+(still-rendered) path.
 
 ```text
-content/pyproject.toml.jinja   ->   pyproject.toml
-content/py.typed               ->   py.typed
+content/pyproject.toml.jinja                    ->   pyproject.toml
+content/py.typed                                ->   py.typed
+content/src/{{ project.package_name }}/py.typed ->   src/credit_risk_utils/py.typed
 ```
 
-Two of one component's own owned files mapping to the same target — for
-example `foo.txt` and `foo.txt.jinja` both present under one `content_root`
-— is an authoring error inside that component, independent of any other
-component's selection.
+`forge_template.file_conflicts.render_output_path` performs the rendering
+step and validates the result as a normalised relative POSIX path — it must
+not become absolute, escape via `..`, or produce an empty segment, so a path
+variable can never redirect output outside the project tree. A path
+referencing an undefined variable fails before any file operation, exactly
+as undefined content does. This is what makes the accepted [Library
+archetype contract](library-archetype.md)'s `src/<package_name>/` outcome
+representable at all — see [ADR
+0032](adr/0032-render-component-content-paths.md).
+
+Two of one owner's own owned files mapping to the same *rendered* target —
+for example `foo.txt` and `foo.txt.jinja` both present under one
+`content_root`, or two templated paths that happen to render identically —
+is an authoring error inside that owner, independent of any other owner's
+selection.
 
 ## Dispositions
 
@@ -71,10 +86,12 @@ content = "content/ci.yml.jinja"
 ```
 
 Another component contributes to it by declaring `[[contributions]]`,
-naming the target `component`, its `extension_point` id, and its own
-`content` path. A contribution's `content` must fall **outside** its own
-`content_root`: a contribution is not itself an owned output file, so it
-must not also be emitted at its own target under the rule above.
+naming its target, its `extension_point` id, and its own `content` path. A
+contribution's `content` must fall **outside** its own `content_root`: a
+contribution is not itself an owned output file, so it must not also be
+emitted at its own target under the rule above.
+
+Manifest protocol `1` names the target component directly:
 
 ```toml
 [[contributions]]
@@ -83,14 +100,28 @@ extension_point = "ci-steps"
 content = "extensions/ci-step.yml.jinja"
 ```
 
-A component may not contribute to its own extension point, extension point
-IDs are unique within one component, and one component may not declare two
-contributions to the same `(component, extension_point)` pair. All of this
-is enforced by `ComponentManifest`'s model validators, without touching the
-filesystem.
+Manifest protocol `2` (FT-08.02) replaces that flat key with a discriminated
+`target`, naming either a component or the implicit Foundation content
+source — see
+[component-manifests.md](component-manifests.md#accepted-manifest-protocol-v2-target-owner):
 
-`manifest_version` stays `1`. Both fields are optional and additive: every
-existing manifest, with neither field present, remains valid. [ADR
+```toml
+[[contributions]]
+extension_point = "pyproject-build-system"
+content = "extensions/pyproject-build-system.toml.jinja"
+target.kind = "foundation"
+```
+
+A component may not contribute to its own extension point, extension point
+IDs are unique within one owner, and one component may not declare two
+contributions to the same `(target, extension_point)` pair. All of this is
+enforced by `ComponentManifest`'s model validators, without touching the
+filesystem. A manifest may use only its own protocol's shape: protocol `1`
+rejects a `target` table, protocol `2` rejects the flat `component` key.
+
+`manifest_version` stays `1` or becomes `2`. Every existing protocol-`1`
+manifest, with neither field present, remains valid — protocol `1` parsing
+is retained unchanged, not replaced. [ADR
 0024](adr/0024-component-manifest-protocol-v1.md) is not superseded.
 
 ## Resolving contributions
@@ -119,42 +150,55 @@ attach in composition order — the same deterministic order
 never decides whether a target's base exists, only the order among multiple
 contributors once it does.
 
-A contribution whose named `component` is not part of the current selection
-is dropped, not an error: an optional integration (a coverage capability
-extending a CI workflow) stays valid whether or not the platform it would
-extend is also selected. This is safe only because catalogue-wide
+A contribution whose named target component is not part of the current
+selection is dropped, not an error: an optional integration (a coverage
+capability extending a CI workflow) stays valid whether or not the platform
+it would extend is also selected. This is safe only because catalogue-wide
 validation — `component_manifest.validate_manifest_set`, alongside its
 existing cycle rejection — already proves every contribution names a real
 component and a real, published extension point on it, independent of any
 selection. A missing owner at plan-resolution time therefore only ever
-means "not selected", never a typo that silently disappeared.
+means "not selected", never a typo that silently disappeared. A
+Foundation-targeted contribution has no such "not selected" case — Foundation
+is mandatory whenever it is supplied to `resolve_output_plan` at all — so a
+missing Foundation source is a hard error instead.
 
 ## Unsupported collisions
 
-Two selected components both creating the same target is an unsupported
-collision. `resolve_output_plan` raises, naming both components and the
+Two selected owners both creating the same target is an unsupported
+collision — whether both are components, or one is the implicit Foundation
+content source. `resolve_output_plan` raises, naming both owners and the
 shared target — the executable form of [terminology.md's normative
 rules](terminology.md#composition-and-authority): implicit last-write-wins
-replacement is forbidden, and unsupported component collisions fail rather
-than silently overwriting content. Being later in composition order is
-never implicit permission to replace an earlier component's target.
+replacement is forbidden, and unsupported collisions fail rather than
+silently overwriting content. Being later in composition order is never
+implicit permission to replace an earlier owner's target.
 
 ## Foundation and policy overrides
 
-Foundation is the implicit baseline, not a component, so it cannot yet
-collide with a component's target under this contract. Two things are
-stated now regardless: Foundation's targets are never overridable by a
-component, and once Foundation becomes a real content source it publishes
-extension points like any other owner rather than gaining an implicit right
-to be replaced. This is required by [foundation-scope.md's neutral handoff
+Foundation is the implicit baseline, not a component. FT-08.02 makes it a
+real content source: `resolve_output_plan` takes it as its own argument
+(`forge_template.foundation_source.FoundationPlacement`), never as a member
+of the composition placements it also takes, so it structurally cannot
+appear in `component_order`. Foundation's owned content becomes every
+target's `create`-disposition base before any selected component's does;
+Foundation's targets are never overridable by a component, and a component
+creating a target Foundation already owns is an unsupported collision like
+any other. Foundation publishes extension points exactly like a component
+does — a contribution names it through a discriminated `target.kind =
+"foundation"` (manifest protocol `2`; see
+[component-manifests.md](component-manifests.md#accepted-manifest-protocol-v2-target-owner))
+rather than gaining an implicit right to be replaced. This satisfies
+[foundation-scope.md's neutral handoff
 material](foundation-scope.md#neutral-handoff-material): "Later layers may
 add owned sections through explicit extension points. They may not silently
 replace the neutral handoff material."
 
-The accepted [Library archetype contract](library-archetype.md) now requires
-FT-08.02 to realise that source and identify Foundation or component
-contribution targets through manifest protocol `2`. Protocol v1 and the
-current `0.2.0` planning model remain unchanged until that migration.
+`PlannedFile.owner` and `OutputContribution.owner` are discriminated on
+`kind`: `FoundationOwner(kind="foundation")` or `ComponentOwner(kind=
+"component", id=...)`. This replaced `owner_component_id` in the package's
+`0.3.0` line — a plain component-id string could not truthfully represent a
+Foundation-owned file.
 
 A future organisation policy may be granted `override` authority over a
 specific, documented extension point. That grant is Stage 09's decision to

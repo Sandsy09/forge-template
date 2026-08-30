@@ -10,26 +10,34 @@ from pydantic import ValidationError
 from forge_template.component_manifest import ComponentManifest, load_component_manifest
 from forge_template.composition import ComponentPlacement, composition_plan
 from forge_template.file_conflicts import (
+    ComponentOwner,
+    FoundationOwner,
     OutputContribution,
     OutputFile,
     component_targets,
     output_target,
+    render_output_path,
     resolve_output_plan,
 )
+from forge_template.foundation_source import foundation_placement
 from forge_template.project_spec import ProjectSpec
 
 FIXTURES = Path(__file__).parent / "fixtures" / "component_manifests"
+FOUNDATION_FIXTURE = (
+    Path(__file__).parent / "fixtures" / "foundation" / "foundation.toml"
+)
 
 
 def _manifest_payload(
     identifier: str,
     *,
     kind: str = "capability",
+    manifest_version: int = 1,
     extension_points: tuple[dict[str, object], ...] = (),
     contributions: tuple[dict[str, object], ...] = (),
 ) -> dict[str, object]:
     return {
-        "manifest_version": 1,
+        "manifest_version": manifest_version,
         "id": identifier,
         "name": identifier.replace("-", " ").title(),
         "description": f"The {identifier} component.",
@@ -49,6 +57,7 @@ def _manifest(
     identifier: str,
     *,
     kind: str = "capability",
+    manifest_version: int = 1,
     extension_points: tuple[dict[str, object], ...] = (),
     contributions: tuple[dict[str, object], ...] = (),
 ) -> ComponentManifest:
@@ -56,6 +65,7 @@ def _manifest(
         _manifest_payload(
             identifier,
             kind=kind,
+            manifest_version=manifest_version,
             extension_points=extension_points,
             contributions=contributions,
         )
@@ -108,12 +118,36 @@ def test_output_target_keeps_non_template_paths_literal() -> None:
     assert output_target(".coveragerc") == ".coveragerc"
 
 
+def test_render_output_path_substitutes_template_variables() -> None:
+    rendered = render_output_path(
+        "src/{{ project.package_name }}/py.typed",
+        {"project": {"package_name": "widget"}},
+    )
+    assert rendered == "src/widget/py.typed"
+
+
+def test_render_output_path_is_strict_undefined() -> None:
+    with pytest.raises(ValueError, match="failed to render"):
+        render_output_path("src/{{ missing }}/py.typed", {})
+
+
+@pytest.mark.parametrize(
+    "rendered_path",
+    ["/absolute", "../outside", "content/../outside", "a\\b"],
+)
+def test_render_output_path_rejects_an_unsafe_rendered_result(
+    rendered_path: str,
+) -> None:
+    with pytest.raises(ValueError, match="resource paths"):
+        render_output_path("{{ path }}", {"path": rendered_path})
+
+
 def test_component_targets_rejects_within_component_clash() -> None:
     manifest = _manifest("duplicate")
     placement = _placement(manifest, ("foo.txt", "foo.txt.jinja"))
 
     with pytest.raises(ValueError, match="same target"):
-        component_targets(placement)
+        component_targets(placement, {})
 
 
 def test_resolve_output_plan_rejects_two_components_creating_same_target() -> None:
@@ -167,17 +201,17 @@ def test_resolve_output_plan_attaches_extensions_in_composition_order() -> None:
         output_file for output_file in output_files if output_file.target == "ci.yml"
     )
     assert output_file.base == OutputContribution(
-        component_id="github", disposition="create", source_path="ci.yml"
+        owner=ComponentOwner(id="github"), disposition="create", source_path="ci.yml"
     )
     assert output_file.extensions == (
         OutputContribution(
-            component_id="coverage",
+            owner=ComponentOwner(id="coverage"),
             disposition="extend",
             source_path="extensions/coverage-step.yml",
             extension_point="ci-steps",
         ),
         OutputContribution(
-            component_id="linting",
+            owner=ComponentOwner(id="linting"),
             disposition="extend",
             source_path="extensions/lint-step.yml",
             extension_point="ci-steps",
@@ -264,7 +298,7 @@ def test_resolve_output_plan_orders_targets_ascending() -> None:
 
 def test_output_models_are_strict_and_frozen() -> None:
     contribution = OutputContribution(
-        component_id="github", disposition="create", source_path="ci.yml"
+        owner=ComponentOwner(id="github"), disposition="create", source_path="ci.yml"
     )
     output_file = OutputFile(target="ci.yml", base=contribution)
 
@@ -273,7 +307,7 @@ def test_output_models_are_strict_and_frozen() -> None:
     with pytest.raises(ValidationError):
         OutputContribution.model_validate(
             {
-                "component_id": "github",
+                "owner": {"kind": "component", "id": "github"},
                 "disposition": "merge",
                 "source_path": "ci.yml",
             }
@@ -297,6 +331,98 @@ def test_resolve_output_plan_end_to_end_with_real_fixtures() -> None:
     ci_file = next(
         output_file for output_file in output_files if output_file.target == "ci.yml"
     )
-    assert ci_file.base.component_id == "github"
-    assert [extension.component_id for extension in ci_file.extensions] == ["coverage"]
+    assert ci_file.base.owner == ComponentOwner(id="github")
+    assert [extension.owner for extension in ci_file.extensions] == [
+        ComponentOwner(id="coverage")
+    ]
     assert ci_file.extensions[0].source_path == "extensions/ci-step.yml.jinja"
+
+
+# --- Foundation-aware resolution (FT-08.02) ---------------------------------
+
+
+def _foundation_owner_manifest(
+    *, extension_point: str, content: str
+) -> ComponentManifest:
+    return _manifest(
+        "library-v2",
+        kind="archetype",
+        manifest_version=2,
+        contributions=(
+            {
+                "target": {"kind": "foundation"},
+                "extension_point": extension_point,
+                "content": content,
+            },
+        ),
+    )
+
+
+def test_resolve_output_plan_claims_foundation_content_first() -> None:
+    foundation = foundation_placement(FOUNDATION_FIXTURE)
+
+    output_files = resolve_output_plan((), foundation=foundation)
+
+    assert [output_file.target for output_file in output_files] == ["pyproject.toml"]
+    assert output_files[0].base.owner == FoundationOwner()
+
+
+def test_resolve_output_plan_splices_a_foundation_targeted_contribution() -> None:
+    foundation = foundation_placement(FOUNDATION_FIXTURE)
+    contributor = _foundation_owner_manifest(
+        extension_point="pyproject-build-system",
+        content="extensions/build-system.toml.jinja",
+    )
+    placements = (_placement(contributor, ("other.txt",)),)
+
+    output_files = resolve_output_plan(placements, foundation=foundation)
+
+    pyproject = next(
+        output_file
+        for output_file in output_files
+        if output_file.target == "pyproject.toml"
+    )
+    assert pyproject.base.owner == FoundationOwner()
+    assert pyproject.extensions == (
+        OutputContribution(
+            owner=ComponentOwner(id="library-v2"),
+            disposition="extend",
+            source_path="extensions/build-system.toml.jinja",
+            extension_point="pyproject-build-system",
+        ),
+    )
+
+
+def test_resolve_output_plan_rejects_foundation_target_without_a_source() -> None:
+    contributor = _foundation_owner_manifest(
+        extension_point="pyproject-build-system",
+        content="extensions/build-system.toml.jinja",
+    )
+    placements = (_placement(contributor, ("other.txt",)),)
+
+    with pytest.raises(ValueError, match="none is available"):
+        resolve_output_plan(placements)
+
+
+def test_resolve_output_plan_rejects_component_and_foundation_target_collision() -> (
+    None
+):
+    foundation = foundation_placement(FOUNDATION_FIXTURE)
+    colliding = _manifest("colliding", kind="archetype")
+    placements = (_placement(colliding, ("pyproject.toml.jinja",)),)
+
+    with pytest.raises(ValueError, match=r"Foundation.*colliding.*pyproject\.toml"):
+        resolve_output_plan(placements, foundation=foundation)
+
+
+def test_resolve_output_plan_renders_a_templated_content_path() -> None:
+    contributor = _manifest("library-v2", kind="archetype", manifest_version=2)
+    placement = _placement(contributor, ("src/{{ project.package_name }}/py.typed",))
+
+    output_files = resolve_output_plan(
+        (placement,), {"project": {"package_name": "widget"}}
+    )
+
+    assert [output_file.target for output_file in output_files] == [
+        "src/widget/py.typed"
+    ]

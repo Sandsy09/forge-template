@@ -49,23 +49,30 @@ that both `poe check` and `tests/test_combos.py`/`test_update.py` call, plus the
 strict [ProjectSpec protocol](docs/project-spec.md) models in
 `project_spec.py`,
 [component manifest protocol](docs/component-manifests.md) models and loader
-in `component_manifest.py`,
+in `component_manifest.py` (manifest protocols `1` and `2`), the implicit
+[Foundation content source](docs/component-manifests.md#foundation-content-source)
+in `foundation_source.py`,
 [composition order](docs/composition-order.md) tier and within-tier ordering
 in `composition.py`,
-[file conflict and override rules](docs/file-conflicts.md) output target and
+[file conflict and override rules](docs/file-conflicts.md) rendered output
+target ([ADR 0032](docs/adr/0032-render-component-content-paths.md)) and
 collision resolution in `file_conflicts.py`, and the
 [template variable contract](docs/template-variables.md) rendered namespace
-and option-schema vocabulary in `template_variables.py`. The supported
+and option-schema vocabulary (protocols `1` and `2`, `format` support) in
+`template_variables.py`. The supported
 [template-engine API](docs/template-engine-api.md) in `engine.py` exposes
 package-bound discovery, strict validation, deterministic planning, in-memory
-rendering, and structured failures from the top-level package. Its
+rendering, structured failures, and the `map_legacy_library_answers` helper
+from the top-level package, at package version `0.3.0` since FT-08.02's
+`PlannedFile.owner` migration. Its
 [generated-project validation](docs/generated-project-validation.md) checks
 plan/output agreement, universal `pyproject.toml` metadata, and completed
 Forge extension rendering before a result is returned. The production
-catalogue is deliberately empty until Stage 08. The accepted
-[Library archetype contract](docs/library-archetype.md) defines the first
-production component and the Foundation/owner/protocol changes FT-08.02 must
-implement; it does not change current `0.2.0` engine behaviour. These
+catalogue is deliberately still empty: FT-08.02 has landed the protocol-`2`/
+Foundation/discriminated-owner mechanism the accepted [Library archetype
+contract](docs/library-archetype.md) requires, but not yet the production
+`library` manifest that exercises it in the real catalogue — that is a
+second, sequenced change on the same issue. These
 contracts are not
 yet consumed by the direct-Copier path; see
 [#5](https://github.com/Sandsy09/forge-template/issues/5), done,
@@ -73,15 +80,16 @@ yet consumed by the direct-Copier path; see
 [#33](https://github.com/Sandsy09/forge-template/issues/33),
 [#34](https://github.com/Sandsy09/forge-template/issues/34),
 [#35](https://github.com/Sandsy09/forge-template/issues/35),
-[#36](https://github.com/Sandsy09/forge-template/issues/36), and
+[#36](https://github.com/Sandsy09/forge-template/issues/36),
 [#37](https://github.com/Sandsy09/forge-template/issues/37), and
-[#38](https://github.com/Sandsy09/forge-template/issues/38). The composition,
+[#38](https://github.com/Sandsy09/forge-template/issues/38), all done. The composition,
 file-conflict, template-variable, and rendering contracts are proven to
 compose into one deterministic artefact by
 [composition-fixtures.md](docs/composition-fixtures.md)'s golden fixtures,
 exercised through the public facade with a private fixture-catalogue override.
 Never expose that override or accept arbitrary catalogue roots in the public
-API. Destination staging and finalisation remain `create-forge`
+API — the mirrored `_FOUNDATION_ROOT_OVERRIDE` seam carries the identical
+rule. Destination staging and finalisation remain `create-forge`
 responsibilities; keep engine validation in memory.
 
 ## The question schema
@@ -262,15 +270,16 @@ merge validated, root and template `.gitattributes` both in place, no
 byte-empty template files remain, `task_runner`/`make` removed (it was the
 one untested, 100%-broken conditional — see Deferred). **`v0.1.1` is the
 latest tagged Copier template** — the CLI can scaffold from this repo. The
-root project version is `0.2.0`, the first stable engine compatibility line,
-but remains untagged until a deliberate release. Root repo hygiene is done:
+root project version is `0.3.0` — bumped from `0.2.0` by FT-08.02's
+incompatible pre-1.0 `PlannedFile.owner` planning-model change — but remains
+untagged until a deliberate release. Root repo hygiene is done:
 root
 `pyproject.toml`, `.pre-commit-config.yaml`, and real content for `LICENSE`,
 `README.md`, `CONTRIBUTING.md`, `SECURITY.md` all exist; `src/forge_template`
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0031 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0032 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
