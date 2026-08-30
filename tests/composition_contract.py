@@ -59,13 +59,22 @@ def compose(spec: ProjectSpec, manifest_paths: dict[str, Path]) -> dict[str, Any
     if len(roots) != 1:
         msg = "one golden scenario must use exactly one fixture catalogue"
         raise ValueError(msg)
+    catalogue_root = roots.pop()
 
-    previous = engine_module._CATALOGUE_ROOT_OVERRIDE
-    engine_module._CATALOGUE_ROOT_OVERRIDE = roots.pop()
+    previous_catalogue = engine_module._CATALOGUE_ROOT_OVERRIDE
+    previous_foundation = engine_module._FOUNDATION_ROOT_OVERRIDE
+    engine_module._CATALOGUE_ROOT_OVERRIDE = catalogue_root
+    # None of these fixture components target Foundation (they predate
+    # FT-08.02), so isolate from the real installed Foundation source the
+    # same way discovery is already isolated from the real installed
+    # catalogue -- catalogue_root itself has no foundation.toml at its root,
+    # so this resolves to "no Foundation available" for this scenario.
+    engine_module._FOUNDATION_ROOT_OVERRIDE = catalogue_root
     try:
         rendered = render_project(spec)
     finally:
-        engine_module._CATALOGUE_ROOT_OVERRIDE = previous
+        engine_module._CATALOGUE_ROOT_OVERRIDE = previous_catalogue
+        engine_module._FOUNDATION_ROOT_OVERRIDE = previous_foundation
 
     return {
         "order": list(rendered.plan.component_order),

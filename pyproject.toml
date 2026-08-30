@@ -77,8 +77,15 @@ target-version = "py311"
 src = ["src", "tests"]
 # template/ is scaffold content, not this repo's code -- its .py files
 # (template/tests/__init__.py, __init__.py.jinja) are not meant to lint clean
-# against this repo's own rules.
-extend-exclude = ["template"]
+# against this repo's own rules. The same applies to the Foundation and
+# component catalogues' own owned content (e.g.
+# components/library/content/tests/__init__.py) under src/forge_template --
+# Forge-authored scaffold content, not this repo's own source.
+extend-exclude = [
+    "template",
+    "src/forge_template/foundation/content",
+    "src/forge_template/components/*/content",
+]
 
 [tool.ruff.lint]
 select = [
@@ -126,7 +133,11 @@ files = ["src", "tests"]
 strict = true
 warn_unreachable = true
 warn_unused_ignores = true
-exclude = ["^template/"]
+exclude = [
+    "^template/",
+    "^src/forge_template/foundation/content/",
+    "^src/forge_template/components/[^/]+/content/",
+]
 
 [[tool.mypy.overrides]]
 module = "tests.*"
@@ -150,6 +161,7 @@ addopts = [
 markers = [
     "combos: scaffolds every answer combination and runs its full toolchain (slow; `poe combos`)",
     "update: exercises `copier update` end-to-end (slow; `poe update`)",
+    "archetype: builds real wheels/sdists for the production Library archetype (slow; `poe archetype`)",
 ]
 
 [tool.coverage.run]
@@ -173,9 +185,10 @@ format = "ruff format ."
 "lint:fix" = "ruff check --fix ."
 "format:check" = "ruff format --check ."
 typecheck = "mypy"
-test = "pytest -m 'not (combos or update)'"
+test = "pytest -m 'not (combos or update or archetype)'"
 combos = "pytest -m combos -n 4"
 update = "pytest -m update"
+archetype = "pytest -m archetype"
 "verify-ci" = "bash scripts/verify-ci.sh"
 check = ["format:check", "lint", "typecheck", "test"]
 

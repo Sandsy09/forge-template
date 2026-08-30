@@ -1,0 +1,5 @@
+{% if options.library.packaging_mode == "hatchling-vcs" -%}
+dynamic = ["version"]
+{%- else -%}
+version = "{{ options.library.initial_version }}"
+{%- endif %}

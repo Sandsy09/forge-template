@@ -67,12 +67,13 @@ from the top-level package, at package version `0.3.0` since FT-08.02's
 `PlannedFile.owner` migration. Its
 [generated-project validation](docs/generated-project-validation.md) checks
 plan/output agreement, universal `pyproject.toml` metadata, and completed
-Forge extension rendering before a result is returned. The production
-catalogue is deliberately still empty: FT-08.02 has landed the protocol-`2`/
-Foundation/discriminated-owner mechanism the accepted [Library archetype
-contract](docs/library-archetype.md) requires, but not yet the production
-`library` manifest that exercises it in the real catalogue — that is a
-second, sequenced change on the same issue. These
+Forge extension rendering before a result is returned. **The production
+catalogue is no longer empty**: FT-08.02 populated it with the first real
+manifest, `library`
+([contract](docs/library-archetype.md)/[ADR 0033](docs/adr/0033-migrate-library-production-catalogue.md)),
+alongside the implicit Foundation source at `src/forge_template/foundation/`
+— proven by `uv run poe archetype` building real wheels/sdists across all
+three packaging modes. These
 contracts are not
 yet consumed by the direct-Copier path; see
 [#5](https://github.com/Sandsy09/forge-template/issues/5), done,
@@ -210,18 +211,20 @@ Every change is a branch (`<type>/<short-slug>`) and a pull request into
 
 ## Validation
 
-Run in this order. All four currently pass.
+Run in this order. All five currently pass.
 
 ```bash
 uv run poe check             # fast: this repo's own lint/typecheck + schema/ADR/render unit tests
 uv run poe combos            # slow: 4 combos in parallel, render assertions, each combo's own poe check
 ./scripts/verify-ci.sh <org> # pushes poe combos' output to throwaway repos, watches CI
 uv run poe update             # slow: both copier update scenarios (local edits survive; latest tag -> HEAD)
+uv run poe archetype          # slow: real uv build/install/import for the Library archetype, 3 packaging modes
 ```
 
-`poe check`, `poe combos`, and `poe update` are all `pytest` under a marker
-select (`tests/test_combos.py` / `tests/test_update.py` carry the `combos` /
-`update` markers; `poe check` runs everything else). `tests/`, ported from the
+`poe check`, `poe combos`, `poe update`, and `poe archetype` are all `pytest`
+under a marker select (`tests/test_combos.py` / `tests/test_update.py` /
+`tests/test_library_build.py` carry the `combos` / `update` / `archetype`
+markers; `poe check` runs everything else). `tests/`, ported from the
 former `scripts/test-combos.sh` and `scripts/test-update.sh` — see
 [#5](https://github.com/Sandsy09/forge-template/issues/5), done — is a single
 definition of every assertion, called from both here and CI's
@@ -279,7 +282,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0032 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0033 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -293,13 +296,15 @@ path renders to a valid filename or empty, never something in between).
 ## Roadmap work
 
 The [live issue index](docs/roadmap-v1/github-issues/forge-template/ISSUE-INDEX.md)
-is the source of truth for roadmap order and blockers. Stage 08 will migrate
-the current Library scaffold into the empty production component catalogue
-under the [Library archetype contract](docs/library-archetype.md),
-select and define the deliberately unnamed second archetype, and then validate
-parity through repurposed [#4](https://github.com/Sandsy09/forge-template/issues/4).
-That migration is the `_migrations` moment: plan it before moving template
-paths and keep Library paths stable where possible.
+is the source of truth for roadmap order and blockers. FT-08.02 populated the
+production component catalogue under the
+[Library archetype contract](docs/library-archetype.md) — additive, package-bound
+content that leaves `template/` untouched. Stage 08 still needs to select and
+define the deliberately unnamed second archetype, and then validate parity
+through repurposed [#4](https://github.com/Sandsy09/forge-template/issues/4).
+A future cutover that actually retires `template/` in favour of this catalogue
+is the `_migrations` moment: plan it before moving template paths and keep
+Library paths stable where possible.
 
 Also open, not yet scheduled: [#1](https://github.com/Sandsy09/forge-template/issues/1)
 (reintroduce `make`, see Deferred below), [#6](https://github.com/Sandsy09/forge-template/issues/6)

@@ -1,0 +1,25 @@
+# The implicit, mandatory Foundation content source. See
+# docs/component-manifests.md#foundation-content-source and
+# docs/foundation-scope.md.
+foundation_version = 1
+content_root = "content"
+
+[[extension_points]]
+id = "pyproject-build-system"
+content = "content/pyproject.toml.jinja"
+
+[[extension_points]]
+id = "pyproject-library-metadata"
+content = "content/pyproject.toml.jinja"
+
+[[extension_points]]
+id = "pyproject-build-configuration"
+content = "content/pyproject.toml.jinja"
+
+[[extension_points]]
+id = "readme-project-shape"
+content = "content/README.md.jinja"
+
+[[extension_points]]
+id = "gitignore-project-shape"
+content = "content/.gitignore.jinja"

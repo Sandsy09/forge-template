@@ -109,9 +109,11 @@ The engine does not make these universal:
 - generated command execution; or
 - destination filesystem state.
 
-The current monolithic Library scaffold continues to exercise its applicable
+The released Copier Library scaffold continues to exercise its applicable
 checks through `forge_template.render`, combination tests, update tests, and
-generated CI. Stage 08 will make the first production component catalogue
-available under the accepted
-[Library archetype contract](library-archetype.md); this validator does not
-migrate Library or select archetype two.
+generated CI, unaffected by the engine catalogue below. FT-08.02 made the
+first production component catalogue available under the accepted
+[Library archetype contract](library-archetype.md); `tests/test_library_build.py`
+(the `archetype` marker) additionally proves wheel/sdist/import/version
+outcomes this validator does not check itself (wheel and sdist contents are
+explicitly out of this boundary, above). Archetype two remains unselected.

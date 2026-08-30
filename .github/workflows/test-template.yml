@@ -119,6 +119,30 @@ jobs:
         run: uv run pytest -m combos -k c1-uvbuild-static --from-git -v
 
   # ---------------------------------------------------------------------------
+  # Real uv build/install/import proof for the production Library archetype,
+  # across all three packaging modes -- tests/test_library_build.py.
+  # ---------------------------------------------------------------------------
+  archetype:
+    name: Library archetype build
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Build the Library archetype -- all packaging modes
+        run: uv run poe archetype
+
+  # ---------------------------------------------------------------------------
   # copier update from the last release to HEAD must not explode, and local
   # edits survive a merge. tests/test_update.py's two scenarios each skip
   # themselves (not fail) when no tag exists yet -- the very first run.
@@ -151,7 +175,7 @@ jobs:
   all-green:
     name: All checks passed
     runs-on: ubuntu-latest
-    needs: [lint, scaffold, windows, update-compat]
+    needs: [lint, scaffold, windows, archetype, update-compat]
     if: always()
     steps:
       - name: Verify

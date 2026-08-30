@@ -1,0 +1,40 @@
+# {{ project.name }}
+
+{{ project.description }}
+
+## Requirements
+
+- Python {{ python.minimum }}+ (developed against {{ python.development }})
+- [uv](https://docs.astral.sh/uv/)
+
+## Development
+
+```bash
+uv sync --all-groups
+uv run pre-commit install --install-hooks
+```
+
+### Tasks
+
+Tasks are defined once in `pyproject.toml` under `[tool.poe.tasks]`.
+
+| Command | Description |
+| --- | --- |
+| `uv run poe check` | Everything below, in order |
+| `uv run poe lint` | Ruff lint |
+| `uv run poe format` | Ruff format |
+| `uv run poe typecheck` | mypy |
+| `uv run poe test` | pytest with coverage |
+
+Run `check` before pushing.
+
+[[forge:extension readme-project-shape]]
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Security issues: see
+[SECURITY.md](SECURITY.md) -- do not open a public issue.
+
+## License
+
+See [LICENSE](LICENSE).

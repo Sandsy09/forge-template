@@ -1,13 +1,13 @@
 # Repository Ownership and Integration Model
 
 > **Status:** Template/CLI ownership is current and ProjectSpec, component
-> manifest protocol v1, composition order, file conflict and override rules,
-> the template variable contract, and the stable `forge-template` `0.2.x`
-> engine facade are now implemented. The production component catalogue,
-> CLI consumption, and downstream-policy integration remain the accepted
-> target under
-> [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
-> with the catalogue deliberately empty until Stage 08.
+> manifest protocols v1/v2, composition order, file conflict and override
+> rules, the template variable contract, and the stable `forge-template`
+> `0.3.x` engine facade are now implemented, with the Library archetype
+> populating the production catalogue as of Stage 08's FT-08.02. CLI
+> consumption and downstream-policy integration remain the accepted target
+> under
+> [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 
 The [canonical terminology](../terminology.md) defines the component kinds and
 selection inputs referenced by this ownership model. The

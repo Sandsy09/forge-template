@@ -98,7 +98,8 @@ file operation.
 The canonical [stable template-engine API](../template-engine-api.md) exposes
 those contracts through typed, package-bound discovery, strict validation,
 deterministic planning, in-memory rendering, and structured failures. Its
-production catalogue is deliberately empty until Stage 08.
+production catalogue held nothing before Stage 08; Stage 08's FT-08.02
+populated it with the Library archetype.
 
 The canonical
 [generated-project validation contract](../generated-project-validation.md)
@@ -108,14 +109,13 @@ marker before a client receives it.
 
 The public engine/ProjectSpec model is the accepted target under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
-ProjectSpec, component manifest protocol v1, composition order, file conflict
-and override rules, the template variable contract, and the stable
-`forge-template` `0.2.x` engine facade, and generated-project validation are
-implemented. Production manifests and CLI consumption are not; the existing
-Copier baseline remains operational until Stages 08–09 and the coordinated CLI
-cutover are complete. Library's contract is accepted, but its manifest,
-Foundation source, option schema, and `0.3.0` planning model remain FT-08.02
-implementation work.
+ProjectSpec, component manifest protocols v1/v2, composition order, file
+conflict and override rules, the template variable contract, the stable
+`forge-template` `0.3.x` engine facade, and generated-project validation are
+implemented, and FT-08.02 populated the production catalogue with the
+Library archetype's manifest, Foundation source, and option schema. CLI
+consumption is not; the existing Copier baseline remains operational until
+Stages 08–09 and the coordinated CLI cutover are complete.
 
 ## Structure
 

@@ -15,11 +15,11 @@ implicit Foundation content source — described below, and implemented by
 rather than only another component. Protocol `1` parsing remains supported
 unchanged for existing component-to-component manifests.
 
-This contract defines metadata and validation before production components or
-discovery exist: the mechanism below is fully implemented, but the installed
-production catalogue stays empty until FT-08.02's Library manifest lands. The
-current Library scaffold remains the monolithic `template/` tree and has no
-production manifest yet.
+FT-08.02 populated the installed production catalogue with the first real
+manifest: `discover_components()` returns exactly `library`. The released
+Copier path remains the monolithic `template/` tree and is unaffected --
+`create-forge` continues to consume only that path until a later, separate
+cutover decision.
 
 ## Authoring and schema source
 
@@ -307,12 +307,8 @@ overwrite authority.
 
 Neither protocol yet defines:
 
-- a production manifest in the installed catalogue; Library's identity is
-  defined by the [Library archetype contract](library-archetype.md), and
-  protocol `2`'s mechanism above is what FT-08.02's production `library`
-  manifest will use, but the catalogue itself remains empty until that
-  manifest ships;
-- the second roadmap archetype;
+- the second roadmap archetype -- FT-08.02's `library` manifest is the
+  installed catalogue's only entry so far;
 - optional or recommended dependencies;
 - destination file operations or filesystem orchestration; in-memory
   rendering and extension-marker semantics are defined by the
