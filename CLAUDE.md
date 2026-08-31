@@ -293,9 +293,9 @@ shellcheck steps) — see backlog item 1, done.
 Working: Library and CLI Application archetypes, all four combos green locally and in CI, update
 merge validated, root and template `.gitattributes` both in place, no
 byte-empty template files remain, `task_runner`/`make` removed (it was the
-one untested, 100%-broken conditional — see Deferred). **`v0.3.1` is the
-latest tagged release**; the root project version is `0.3.2`, pending the
-reviewed Stage 08 boundary release. `v0.3.0` first carried the production
+one untested, 100%-broken conditional — see Deferred). **`v0.3.2` is the
+latest tagged release**, carrying the reviewed Stage 08 boundary corrections.
+`v0.3.0` first carried the production
 engine catalogue (both `library` and `cli`) alongside the direct-Copier
 template. Root repo hygiene is done:
 root
@@ -330,7 +330,8 @@ optionless package-bound shape, equally additive and equally untouched by
 [composition architecture review](docs/composition-architecture-review.md)
 keeps deliberate archetype-owned duplication while removing layout,
 classifier, coverage, and pre-commit leakage from Foundation; coordinated
-client lock finalisation completes its rollout. A future cutover that actually
+client lock finalisation shipped in `create-forge 0.2.1`, completing Stage 08.
+A future cutover that actually
 retires `template/` in favour of this catalogue is the `_migrations` moment:
 plan it before moving template paths and keep Library paths stable where
 possible.

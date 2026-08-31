@@ -124,7 +124,9 @@ catalogue at `v0.3.0`; released `create-forge` consumes the compatible
 `forge-template>=0.3.1,<0.4` range behind `--engine-preview`, while the
 existing Copier baseline remains operational until a coordinated cutover.
 The [Stage 08 composition review](../composition-architecture-review.md)
-corrects the shared Foundation boundary in `forge-template` `0.3.2`.
+corrects the shared Foundation boundary in `forge-template` `0.3.2`;
+`create-forge 0.2.1` implements dynamic lock finalisation without changing the
+engine facade or protocols. Stage 08 is complete across both repositories.
 
 ## Structure
 
