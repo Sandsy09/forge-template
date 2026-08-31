@@ -15,7 +15,15 @@
   `override` grant is denied; the complete sanctioned extension surface and
   the published, versioned content extension-point inventory are pinned by
   `tests/test_extension_points.py`.
-- **FT-09.03 — Create generic downstream policy reference fixture**
+- **FT-09.03 — Create generic downstream policy reference fixture** —
+  complete via the
+  [canonical fixture doc](../../../organisation-policy-fixtures.md) and
+  [ADR 0040](../../../adr/0040-organisation-policy-reference-fixture.md).
+  Five placeholder policy documents and a test-only reference resolver
+  prove protocol `1`'s full authority order, merge semantics, and all 17
+  structured-failure detail codes, plus one end-to-end resolution rendered
+  through the real production catalogue -- pinned by
+  `tests/test_organisation_policy_fixture.py`.
 - **FT-09.04 — Define Forge-Blueprint compatibility policy**
 - **FT-09.05 — Validate no-copy inheritance model**
 
@@ -32,8 +40,10 @@ explicit-choice tracking, ProjectSpec construction, and diagnostics. The
 FT-09.02 decision closes the question those semantics deliberately left open:
 no policy, client, or component gains `override` authority over another
 owner's content, and the complete safe extension surface is published as a
-versioned contract. The reference fixture and consumption hook will implement
-both contracts later in Stage 09.
+versioned contract. The FT-09.03 fixture proves both decisions executably
+against neutral placeholder data, with no shipped public resolver -- that
+remains unscheduled in this roadmap. The downstream consumption hook is
+create-forge's own work.
 
 ## Stage completion rule
 

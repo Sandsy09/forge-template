@@ -20,7 +20,9 @@ it. The scenarios now prove real contribution splicing and rendering through
 `pyproject.toml` also satisfies the canonical
 [generated-project validation](generated-project-validation.md), so the
 goldens exercise the same automatic pre-return boundary as a public client.
-Organisation-policy resolution remains Stage 09.
+Organisation-policy resolution now has its own executable, test-only proof --
+see [organisation-policy-fixtures.md](organisation-policy-fixtures.md) -- but
+these golden scenarios remain policy-independent.
 
 ## Golden format
 
@@ -102,7 +104,9 @@ alongside the existing `--from-git` option.
 
 ## Remaining boundary
 
-These fixtures do not define organisation-policy resolution; that remains
-Stage 09. The current CLI continues to pass its plain answer mapping directly
-to Copier, and no generated project depends on `tests/composition_contract.py`
+These fixtures do not define organisation-policy resolution; that is
+[organisation-policy-fixtures.md](organisation-policy-fixtures.md)'s own,
+separate test-only proof, and remains no shipped public API either way. The
+current CLI continues to pass its plain answer mapping directly to Copier,
+and no generated project depends on `tests/composition_contract.py`
 — it is test-only and ships in no package.

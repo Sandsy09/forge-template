@@ -1,0 +1,11 @@
+{
+  "policy_version": 1,
+  "id": "example-production-library",
+  "description": "Resolves against the real installed catalogue, not the fixture catalogue.",
+  "required": {
+    "archetype": "library"
+  },
+  "forbidden": {
+    "archetypes": ["cli"]
+  }
+}

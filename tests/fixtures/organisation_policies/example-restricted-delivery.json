@@ -1,0 +1,8 @@
+{
+  "policy_version": 1,
+  "id": "example-restricted-delivery",
+  "description": "Forbids the same platform example-delivery-baseline requires -- an irreconcilable pair by design.",
+  "forbidden": {
+    "platforms": ["github"]
+  }
+}

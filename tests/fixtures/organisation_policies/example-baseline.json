@@ -1,0 +1,17 @@
+{
+  "policy_version": 1,
+  "id": "example-baseline",
+  "description": "Single-document floor: all three rule kinds in one policy.",
+  "defaults": {
+    "archetype": "library",
+    "capabilities": ["coverage"],
+    "platforms": ["github"]
+  },
+  "required": {
+    "capabilities": ["coverage"]
+  },
+  "forbidden": {
+    "archetypes": ["library-v2"],
+    "capabilities": ["documentation"]
+  }
+}

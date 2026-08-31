@@ -153,8 +153,11 @@ selection; it is not a component and does not render arbitrary files.
 The canonical [organisation policy protocol](organisation-policy.md) defines
 strict JSON protocol `1`, order-independent multi-policy resolution, and
 structured failure semantics for archetype, capability, and platform
-selections. Executable parsing/resolution and safe file extension mechanisms
-remain later Stage 09 work.
+selections. Safe file extension mechanisms are defined by
+[extension-points.md](extension-points.md). A test-only reference resolver
+now proves the protocol's parsing and resolution rules executably, per
+[organisation-policy-fixtures.md](organisation-policy-fixtures.md); a
+shipped, public parser/resolver remains unscheduled.
 
 ### Component
 
@@ -288,7 +291,11 @@ This terminology does not decide:
 - the `merge` disposition algorithm, reserved but not granted by
   [file-conflicts.md](file-conflicts.md) (`override` is resolved: denied, by
   [extension-points.md](extension-points.md));
-- executable organisation-policy parsing/resolution;
+- a shipped, public organisation-policy parser/resolver (a test-only
+  reference resolver now proves the protocol executably, per
+  [organisation-policy-fixtures.md](organisation-policy-fixtures.md) and
+  [ADR 0040](adr/0040-organisation-policy-reference-fixture.md); it remains
+  unscheduled as shipped API);
 - the concrete `create-forge` engine package range and supported
   source-resolution cutover.
 

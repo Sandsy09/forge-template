@@ -1,0 +1,8 @@
+{
+  "policy_version": 1,
+  "id": "example-delivery-baseline",
+  "description": "Requires a delivery platform. Combines cleanly with example-quality-baseline.",
+  "required": {
+    "platforms": ["github"]
+  }
+}
