@@ -62,6 +62,9 @@ closed by that decision. Editable installs (`uv sync --all-groups`) are
 unaffected; the exclusion applies only to the built wheel. The strict
 [ProjectSpec protocol](docs/project-spec.md) models live in
 `project_spec.py`,
+[organisation policy protocol](docs/organisation-policy.md) `1` is currently a
+documentation contract only: do not add policy parsing, resolution, public
+exports, or `ForgeEngineError` values until the later Stage 09 implementation,
 [component manifest protocol](docs/component-manifests.md) models and loader
 in `component_manifest.py` (manifest protocols `1` and `2`), the implicit
 [Foundation content source](docs/component-manifests.md#foundation-content-source)
@@ -304,7 +307,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0037 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0038 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by

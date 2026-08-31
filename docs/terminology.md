@@ -5,6 +5,8 @@ future downstream integrations such as Blueprint. It defines conceptual
 boundaries and authority; the executable
 [ProjectSpec protocol](project-spec.md) now defines the generation-request
 schema and the
+[organisation policy protocol](organisation-policy.md) defines strict
+downstream component-selection defaults and constraints. The
 [component manifest protocol](component-manifests.md) defines component
 metadata. The [stable template-engine API](template-engine-api.md) provides
 package-bound discovery, validation, planning, and in-memory rendering.
@@ -148,8 +150,11 @@ Organisation policy is a downstream set of required, default, and forbidden
 constraints applied to a generation request. Policy constrains or defaults
 selection; it is not a component and does not render arbitrary files.
 
-This definition establishes policy authority only. The policy schema,
-validation errors, and safe extension mechanisms remain owned by Stage 09.
+The canonical [organisation policy protocol](organisation-policy.md) defines
+strict JSON protocol `1`, order-independent multi-policy resolution, and
+structured failure semantics for archetype, capability, and platform
+selections. Executable parsing/resolution and safe file extension mechanisms
+remain later Stage 09 work.
 
 ### Component
 
@@ -206,7 +211,8 @@ Foundation
 
 Profiles and organisation policies influence the requested selection; they do
 not form additional rendering layers. Defaults and constraints resolve in this
-order, from lowest to highest authority:
+order, from lowest to highest authority, as specified in full by the
+[organisation policy protocol](organisation-policy.md):
 
 ```text
 profile default
@@ -280,7 +286,8 @@ This terminology does not decide:
 
 - the `merge` and `override` disposition algorithms, reserved but not yet
   granted by [file-conflicts.md](file-conflicts.md);
-- organisation-policy schema, error types, or any real `override` grant;
+- executable organisation-policy parsing/resolution or any real `override`
+  grant;
 - the concrete `create-forge` engine package range and supported
   source-resolution cutover.
 

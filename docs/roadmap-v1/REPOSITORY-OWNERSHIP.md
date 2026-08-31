@@ -14,6 +14,10 @@ The [canonical terminology](../terminology.md) defines the component kinds and
 selection inputs referenced by this ownership model. The
 [ProjectSpec protocol](../project-spec.md) defines their strict serialised
 request and preserves the one-way client-to-engine boundary. The
+[organisation policy protocol](../organisation-policy.md) defines the generic
+selection constraints that `forge-template` owns, while downstream clients
+retain policy-source trust, explicit-choice tracking, ProjectSpec construction,
+and diagnostic presentation. The
 [component manifest protocol](../component-manifests.md) defines the bundled
 identity, display, version, compatibility, content, dependency, and conflict
 metadata that `forge-template` owns rather than the CLI. The

@@ -15,6 +15,10 @@ composition, and authority terms used by this target.
 The [ProjectSpec protocol](../project-spec.md) defines the strict,
 engine-owned request passed across this boundary, while leaving CLI
 construction and filesystem orchestration with `create-forge`.
+The [organisation policy protocol](../organisation-policy.md) defines the
+strict downstream selection defaults, constraints, precedence, and failure
+semantics applied before that effective request is constructed. Executable
+resolution remains later Stage 09 work.
 The [component manifest protocol](../component-manifests.md) defines the
 strict engine-owned metadata and compatibility for every future bundled
 archetype, capability, and platform.

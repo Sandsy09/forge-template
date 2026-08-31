@@ -70,6 +70,12 @@ protocol v1 for effective generation requests, including provider-neutral
 metadata, Python support, component selections, provenance, and namespaced
 options.
 
+The canonical
+[organisation policy protocol](../organisation-policy.md) defines strict JSON
+protocol v1 for downstream component-selection defaults and constraints,
+including order-independent multi-policy conflict and future structured
+failure semantics. Executable resolution remains later Stage 09 work.
+
 The canonical [Library archetype contract](../library-archetype.md) defines
 the distributable-package additions composed over one implicit Foundation
 source, implemented by FT-08.02. The canonical

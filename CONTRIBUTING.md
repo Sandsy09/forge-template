@@ -39,6 +39,10 @@ without generating either until a real release/publish path exists.
 The [ProjectSpec protocol](docs/project-spec.md) defines the strict,
 engine-owned generation request that future clients construct without taking
 ownership of template or composition validation. The
+[organisation policy protocol](docs/organisation-policy.md) defines the
+strict, order-independent defaults and constraints a downstream client applies
+before constructing that effective request, without granting policy rendering
+authority. The
 [component manifest protocol](docs/component-manifests.md) defines the strict
 TOML metadata, compatibility, owned resources, dependencies, and conflicts
 that future engine discovery will consume. The
