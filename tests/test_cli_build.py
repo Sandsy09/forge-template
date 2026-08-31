@@ -202,8 +202,12 @@ def test_generated_cli_project_passes_its_own_check(project_root: Path) -> None:
     that they build and import."""
     _stage(project_root)
 
-    sync = _run(["uv", "sync", "--all-groups"], project_root)
+    lock = _run(["uv", "lock"], project_root)
+    assert lock.returncode == 0, lock.stderr
+    assert (project_root / "uv.lock").is_file()
+
+    sync = _run(["uv", "sync", "--all-groups", "--locked"], project_root)
     assert sync.returncode == 0, sync.stderr
 
-    check = _run(["uv", "run", "poe", "check"], project_root)
+    check = _run(["uv", "run", "--locked", "poe", "check"], project_root)
     assert check.returncode == 0, check.stdout + check.stderr

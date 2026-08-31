@@ -4,8 +4,10 @@ Guidance for Claude Code working in this repository.
 
 ## What this is
 
-A [Copier](https://copier.readthedocs.io/) template that scaffolds modern Python
-projects. Currently one archetype: **library**.
+A [Copier](https://copier.readthedocs.io/) template and public composition
+engine that scaffold modern Python projects. The engine catalogue contains
+independent **library** and **CLI Application** archetypes; the direct-Copier
+compatibility path remains Library-only.
 
 Copier was chosen over Cookiecutter specifically for `copier update`, which
 three-way merges template changes into projects generated months earlier. Every
@@ -75,8 +77,9 @@ and option-schema vocabulary (protocols `1` and `2`, `format` support) in
 [template-engine API](docs/template-engine-api.md) in `engine.py` exposes
 package-bound discovery, strict validation, deterministic planning, in-memory
 rendering, structured failures, and the `map_legacy_library_answers` helper
-from the top-level package, at package version `0.3.1` — a packaging-only
-patch (ADR 0036) since FT-08.02's `PlannedFile.owner` migration at `0.3.0`.
+from the top-level package, at package version `0.3.2`. ADR 0037's Stage 08
+review corrects Foundation ownership and generated quality/lock behavior
+without changing the `0.3.x` public facade.
 Its
 [generated-project validation](docs/generated-project-validation.md) checks
 plan/output agreement, universal `pyproject.toml` metadata, and completed
@@ -290,19 +293,18 @@ shellcheck steps) — see backlog item 1, done.
 Working: Library and CLI Application archetypes, all four combos green locally and in CI, update
 merge validated, root and template `.gitattributes` both in place, no
 byte-empty template files remain, `task_runner`/`make` removed (it was the
-one untested, 100%-broken conditional — see Deferred). **`v0.3.0` is the
-latest tagged release** — the first to carry the production engine catalogue
-(both `library` and `cli`) alongside the Copier template, which the CLI can
-still scaffold from directly. The root project version is `0.3.0` — bumped
-from `0.2.0` by FT-08.02's incompatible pre-1.0 `PlannedFile.owner`
-planning-model change. Root repo hygiene is done:
+one untested, 100%-broken conditional — see Deferred). **`v0.3.1` is the
+latest tagged release**; the root project version is `0.3.2`, pending the
+reviewed Stage 08 boundary release. `v0.3.0` first carried the production
+engine catalogue (both `library` and `cli`) alongside the direct-Copier
+template. Root repo hygiene is done:
 root
 `pyproject.toml`, `.pre-commit-config.yaml`, and real content for `LICENSE`,
 `README.md`, `CONTRIBUTING.md`, `SECURITY.md` all exist; `src/forge_template`
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0035 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0037 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -324,11 +326,14 @@ content that leaves `template/` untouched. FT-08.04 (repurposed
 it under the
 [CLI Application contract](docs/cli-application-archetype.md), the second,
 optionless package-bound shape, equally additive and equally untouched by
-`template/` or `copier.yml`. Stage 08's remaining work is FT-08.05
-([#43](https://github.com/Sandsy09/forge-template/issues/43)), a composition
-architecture review. A future cutover that actually retires `template/` in
-favour of this catalogue is the `_migrations` moment: plan it before moving
-template paths and keep Library paths stable where possible.
+`template/` or `copier.yml`. FT-08.05's
+[composition architecture review](docs/composition-architecture-review.md)
+keeps deliberate archetype-owned duplication while removing layout,
+classifier, coverage, and pre-commit leakage from Foundation; coordinated
+client lock finalisation completes its rollout. A future cutover that actually
+retires `template/` in favour of this catalogue is the `_migrations` moment:
+plan it before moving template paths and keep Library paths stable where
+possible.
 
 Also open, not yet scheduled: [#1](https://github.com/Sandsy09/forge-template/issues/1)
 (reintroduce `make`, see Deferred below), [#6](https://github.com/Sandsy09/forge-template/issues/6)

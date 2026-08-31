@@ -142,6 +142,13 @@ universal Foundation requirements:
 A project may adopt stronger conventions. It may also replace an implementation
 tool, provided the mandatory outcome remains intact.
 
+The composed engine implementation uses `uv run --locked poe check` as its
+aggregate command and exposes `uv lock --check` as `lock:check`. Its reference
+client resolves `uv.lock` in staging before handoff; see the
+[Stage 08 composition review](composition-architecture-review.md). Coverage
+and pre-commit feedback remain optional capability concerns rather than
+Foundation requirements.
+
 ## Current Library scaffold mapping
 
 The v0.1.x Library scaffold is monolithic rather than composed from Foundation

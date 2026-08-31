@@ -92,7 +92,7 @@ def test_engine_info_reports_package_and_protocols_without_discovery(
 
     info = get_engine_info()
 
-    assert info.package_version == "0.3.1"
+    assert info.package_version == "0.3.2"
     assert info.projectspec_protocols == (1,)
     assert info.component_manifest_protocols == (1, 2)
 
@@ -105,7 +105,7 @@ def test_installed_catalogue_contains_the_production_library_archetype() -> None
     assert [descriptor.id for descriptor in descriptors] == ["cli", "library"]
     library = next(d for d in descriptors if d.id == "library")
     assert library.kind == "archetype"
-    assert library.version == "1.0.0"
+    assert library.version == "1.0.1"
     assert [option.name for option in library.options] == [
         "packaging_mode",
         "initial_version",
@@ -687,7 +687,7 @@ def test_project_version_and_release_workflow_share_one_source() -> None:
         encoding="utf-8"
     )
 
-    assert 'version = "0.3.1"' in pyproject
+    assert 'version = "0.3.2"' in pyproject
     assert (
         "tomllib.load(open('pyproject.toml', 'rb'))['project']['version']" in workflow
     )

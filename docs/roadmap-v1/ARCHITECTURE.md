@@ -5,9 +5,10 @@
 > not the current CLI implementation. ProjectSpec, component manifest
 > protocols v1/v2, composition order, file conflict and override rules, the
 > template variable contract, and the stable `forge-template` `0.3.x` engine
-> API are implemented. Its production catalogue now contains the Library
-> archetype (Stage 08's first entry), and the current CLI remains a thin
-> Copier client with a bundled registry until the coordinated cutover.
+> API are implemented. Its production catalogue contains independent Library
+> and CLI Application archetypes. The current CLI exposes the public engine
+> behind `--engine-preview` while retaining its direct-Copier default until a
+> coordinated cutover.
 
 The [canonical terminology](../terminology.md) defines the ecosystem,
 composition, and authority terms used by this target.
@@ -24,6 +25,9 @@ discriminated planning owner, and `0.3.0` engine facade. The
 [CLI Application contract](../cli-application-archetype.md) defines `cli` as
 the second reference archetype, implemented by FT-08.04 beside Library in
 the same catalogue.
+The [composition architecture review](../composition-architecture-review.md)
+uses both shapes to remove accidental Foundation coupling and assigns dynamic
+lock resolution to client finalisation without changing the engine facade.
 The [composition order contract](../composition-order.md) defines the single
 deterministic order that future bundled selection applies in.
 The [file conflict and override rules](../file-conflicts.md) define the

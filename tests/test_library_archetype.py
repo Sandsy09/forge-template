@@ -53,7 +53,7 @@ def test_discovery_exposes_the_production_library_alongside_cli() -> None:
 
     library = next(d for d in descriptors if d.id == "library")
     assert library.kind == "archetype"
-    assert library.version == "1.0.0"
+    assert library.version == "1.0.1"
     assert library.requires == ()
     assert library.conflicts == ()
 
@@ -104,6 +104,7 @@ def test_plan_identifies_foundation_and_component_owners(packaging_mode: str) ->
         "pyproject-build-system",
         "pyproject-archetype-metadata",
         "pyproject-build-configuration",
+        "pyproject-classifiers",
     }
     assert all(e.component_id == "library" for e in extensions)
 
@@ -148,11 +149,11 @@ def test_rendered_pyproject_is_valid_toml_per_packaging_mode(
         assert payload["tool"]["hatch"]["version"]["source"] == "vcs"
 
 
-def test_the_neutral_extension_points_added_for_cli_leave_library_unchanged() -> None:
-    """FT-08.04 adds four Foundation points Library never contributes to.
+def test_neutral_extension_points_preserve_library_output() -> None:
+    """The reviewed neutral points preserve the Library contract.
 
-    Library must keep publishing an empty dependency array and unmodified
-    classifiers, and must gain no ``[project.scripts]`` table -- structural
+    Library must keep publishing an empty dependency array, its owned typed
+    classifier, and no ``[project.scripts]`` table -- structural
     evidence (not byte-for-byte, since an empty extension marker line is
     consumed along with its own newline) that those points leave Library's
     own output unchanged. See docs/cli-application-archetype.md.

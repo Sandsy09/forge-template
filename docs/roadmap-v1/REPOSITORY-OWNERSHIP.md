@@ -3,9 +3,10 @@
 > **Status:** Template/CLI ownership is current and ProjectSpec, component
 > manifest protocols v1/v2, composition order, file conflict and override
 > rules, the template variable contract, and the stable `forge-template`
-> `0.3.x` engine facade are now implemented, with the Library archetype
-> populating the production catalogue as of Stage 08's FT-08.02. CLI
-> consumption and downstream-policy integration remain the accepted target
+> `0.3.x` engine facade are now implemented, with independent Library and CLI
+> Application archetypes populating the production catalogue. Released CLI
+> consumption exists behind `--engine-preview`; downstream-policy integration
+> remains the accepted target
 > under
 > [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 
@@ -35,6 +36,10 @@ and structured failures. The
 [generated-project validation contract](../generated-project-validation.md)
 checks the in-memory result while retaining destination orchestration in the
 CLI.
+The [composition architecture review](../composition-architecture-review.md)
+keeps coincidentally shared package files archetype-owned, removes
+layout-specific Foundation assumptions, and assigns lock resolution to the
+client finalisation boundary.
 The [Foundation scope](../foundation-scope.md) defines the concern-level boundary
 between that mandatory baseline and the components listed below. The
 [Python support policy](../python-support.md) is owned here because its choices,
@@ -58,7 +63,7 @@ The [exception ownership conventions](../exception-ownership.md) define the
 generated-project exception contract that keeps failures owner-local,
 catchable without a Forge import, and handled exactly once.
 The [secret-handling safeguards](../secret-handling.md) define the neutral
-ignore and pre-commit safeguards Foundation applies to secret-bearing files
+ignore safeguards Foundation applies to secret-bearing files
 and the boundary of the optional secret-scanning capability future
 composition may add.
 The [supply-chain provenance contract](../supply-chain-provenance.md) defines
@@ -78,8 +83,8 @@ It owns:
 - Foundation and archetype templates;
 - the canonical Library archetype contract and its package-bound production
   implementation;
-- the canonical CLI Application archetype contract and its future
-  package-bound production implementation;
+- the canonical CLI Application archetype contract and its package-bound
+  production implementation;
 - capability and platform components;
 - optional editor capabilities and their project-scoped contributions;
 - profile and organisation-policy selection inputs;

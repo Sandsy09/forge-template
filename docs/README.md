@@ -65,5 +65,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [generated-project-validation.md](generated-project-validation.md) — the
   side-effect-free plan/output, `pyproject.toml`, and template-completion checks
   every successful engine render passes.
+- [composition-architecture-review.md](composition-architecture-review.md) —
+  the two-archetype duplication, Foundation-boundary, quality, and client
+  finalisation review that closes Stage 08.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

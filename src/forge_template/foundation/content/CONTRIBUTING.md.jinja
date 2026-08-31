@@ -3,9 +3,11 @@
 ## Setup
 
 ```bash
-uv sync --all-groups
-uv run pre-commit install --install-hooks
+uv sync --all-groups --locked
 ```
+
+After an intentional dependency change, run `uv lock`, review the result, and
+commit the updated `uv.lock`.
 
 ## Branching and pull requests
 
@@ -31,10 +33,11 @@ subject rather than leaving the default title.
 ## Before opening a pull request
 
 ```bash
-uv run poe check
+uv run --locked poe check
 ```
 
-Runs formatting, lint, type checking, and tests -- the same gate CI runs.
+Rejects lock drift, then runs formatting, lint, type checking, and tests --
+the same gate automation runs.
 
 ## Commit messages
 

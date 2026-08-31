@@ -168,5 +168,21 @@ def test_library_wheel_installs_and_reports_its_version(
     assert lines[2] == ">=3.11"
 
 
+def test_generated_library_project_passes_its_own_locked_check(
+    project_root: Path,
+) -> None:
+    _stage(_spec(packaging_mode="uv-build-static"), project_root)
+
+    lock = _run(["uv", "lock"], project_root)
+    assert lock.returncode == 0, lock.stderr
+    assert (project_root / "uv.lock").is_file()
+
+    sync = _run(["uv", "sync", "--all-groups", "--locked"], project_root)
+    assert sync.returncode == 0, sync.stderr
+
+    check = _run(["uv", "run", "--locked", "poe", "check"], project_root)
+    assert check.returncode == 0, check.stdout + check.stderr
+
+
 def _is_windows_venv(venv: Path) -> bool:
     return (venv / "Scripts").is_dir()

@@ -22,12 +22,12 @@ You should get an acknowledgement within a few business days.
 Never commit real secrets or credentials. The repository's ignore rules
 already cover `.env` and `.env.*`, common private-key extensions (`*.pem`,
 `*.key`, `*.p12`, `*.pfx`, `*.keystore`), and conventional SSH/token
-filenames (`id_rsa`, `credentials.json`). A local `detect-private-key`
-pre-commit hook blocks committing a recognisable private key. Ignore rules
-and that hook are the last line of defence, not detection: they do not scan
-history or catch secrets embedded in code or logs.
+filenames (`id_rsa`, `credentials.json`). Foundation does not install a
+`detect-private-key` hook. Ignore rules are the last line of
+defence, not detection: they do not scan history or catch secrets embedded in
+code or logs.
 
 For broader coverage, add an optional secret-scanning tool (for example,
-[gitleaks](https://github.com/gitleaks/gitleaks)) to your own pre-commit
-config, or enable your Git host's native scanning where available. Neither
-is enabled by default.
+[gitleaks](https://github.com/gitleaks/gitleaks)) through a selected
+capability, or enable your Git host's native scanning where available.
+Neither is enabled by default.

@@ -120,9 +120,11 @@ conflict and override rules, the template variable contract, the stable
 implemented, and FT-08.02 and FT-08.04 populated the production catalogue
 with the Library and CLI Application archetypes' manifests, Foundation
 source, and (for Library) option schema. `forge-template` released this
-catalogue at `v0.3.0`; `create-forge` engine consumption is not yet released,
-so the existing Copier baseline remains operational until Stages 08–09 and
-the coordinated CLI cutover are complete.
+catalogue at `v0.3.0`; released `create-forge` consumes the compatible
+`forge-template>=0.3.1,<0.4` range behind `--engine-preview`, while the
+existing Copier baseline remains operational until a coordinated cutover.
+The [Stage 08 composition review](../composition-architecture-review.md)
+corrects the shared Foundation boundary in `forge-template` `0.3.2`.
 
 ## Structure
 

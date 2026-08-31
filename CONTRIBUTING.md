@@ -56,17 +56,21 @@ details. The
 [generated-project validation contract](docs/generated-project-validation.md)
 defines the in-memory checks every successful render passes before a client
 may stage it. The [Library archetype contract](docs/library-archetype.md)
-defines the package-specific boundary FT-08.02 implements (package `0.3.0`,
-now published at `0.3.1` per [ADR 0036](docs/adr/0036-publish-the-engine-to-pypi.md)):
+defines the package-specific boundary FT-08.02 introduced at `0.3.0` and the
+Stage 08 review boundary-corrects at `0.3.2`:
 manifest and option-schema protocol `2`, the implicit Foundation content
 source, the discriminated `PlannedFile.owner`, and the production `library`
-manifest itself. The current Copier tree remains unchanged and is what
-`create-forge` still consumes. The
+manifest itself. The current Copier tree remains unchanged while
+`create-forge --engine-preview` consumes the public catalogue. The
 [CLI Application archetype contract](docs/cli-application-archetype.md)
 defines the package-specific boundary FT-08.04 implements: the optionless
 `cli` executable shape, its one direct runtime dependency, console/module
 entry points, and the four neutral Foundation extension points it shares
 with Library. `discover_components()` now returns both `("cli", "library")`.
+The [composition architecture review](docs/composition-architecture-review.md)
+records which duplicated resources remain archetype-owned, which accidental
+Foundation assumptions were removed, and why lock resolution belongs to
+client finalisation.
 
 ## Branching and pull requests
 

@@ -7,12 +7,14 @@ contract accepted by
 implemented by FT-08.04
 ([ADR 0035](adr/0035-implement-cli-application-archetype.md)).
 
-FT-08.04 implements this contract in the installed engine catalogue at
+FT-08.04 introduced this contract in the installed engine catalogue at
 package version `0.3.0`, beside the [Library archetype](library-archetype.md)
 it neither inherits from nor reads resources from. It changes no Copier
 template, question, or generated output: the released Copier path still
-renders only the Library tree, unchanged, and remains the only path
-`create-forge` consumes today.
+renders only the Library tree, unchanged, while `create-forge --engine-preview`
+selects either public-engine archetype. The Stage 08
+[composition review](composition-architecture-review.md) corrects their
+shared Foundation boundary at package `0.3.2` and component `1.0.1`.
 
 ## Selection rationale
 
@@ -69,7 +71,7 @@ has this identity:
 | `id` | `cli` |
 | `name` | `CLI Application` |
 | `kind` | `archetype` |
-| `version` | `1.0.0` |
+| `version` | `1.0.1` |
 | `compatibility.projectspec_protocols` | `[1]` |
 | `compatibility.requires_python` | `>=3.11` |
 | `requires` / `conflicts` | empty |
@@ -204,10 +206,10 @@ adds no archetype question, conditional tree, migration, or answer to
 existing Library updates remain safe by construction. Future `create-forge`
 selection consumes engine discovery rather than duplicating this metadata.
 
-Implementation keeps `forge-template` package version `0.3.0`, ProjectSpec
-protocol `1`, manifest protocol `2`, Foundation version `1`, and the public
-engine facade unchanged. The additional descriptor and content are additive
-within the `0.3.x` line, released at `v0.3.0`.
+Implementation introduced the archetype in `forge-template` `0.3.0` and the
+reviewed boundary correction moves its component version to `1.0.1` in
+package `0.3.2`. ProjectSpec protocol `1`, manifest protocol `2`, Foundation
+version `1`, and the public engine facade remain unchanged.
 
 Acceptance, proven by `tests/test_cli_archetype.py` (fast, render-level) and
 `tests/test_cli_build.py` (the `archetype` pytest marker, `uv run poe
@@ -221,7 +223,8 @@ archetype`, real `uv build`):
   invocation, and module invocation;
 - successful generated-project validation and aggregate quality checks --
   including the generated `cli.py`/`__main__.py`/`test_cli.py` themselves
-  passing `uv run poe check` (Ruff format/lint, `mypy --strict`, pytest)
+  passing `uv run --locked poe check` (lock drift, Ruff format/lint,
+  `mypy --strict`, pytest)
   inside the rendered project, not merely importing; and
 - explicitly reviewed structural evidence (not byte-for-byte, since an empty
   extension marker line is consumed along with its own newline) that the four
@@ -236,6 +239,6 @@ real project, and `uv run poe archetype` builds a real wheel and sdist,
 installs them, and exercises the documented console-script and `python -m`
 command contract for real.
 
-`create-forge#10` owns generic interactive and non-interactive selection now
-that this component exists; it must not recreate the component's questions,
-defaults, metadata, or rendering rules.
+`create-forge#10` completed generic interactive and non-interactive selection
+for this component without recreating its questions, defaults, metadata, or
+rendering rules.

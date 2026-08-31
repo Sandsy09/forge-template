@@ -255,6 +255,8 @@ must migrate to `owner` before adopting `0.3.x`.
 
 The generated-project validator, Foundation/protocol-`2` mechanism, and
 production `library`/`cli` manifests above are all part of the `0.3.x` line,
-released at `v0.3.0`. The current Copier Library path and released
-`create-forge` CLI do not consume this facade until `create-forge` assigns a
-supported engine range.
+released initially at `v0.3.0`. `v0.3.2` applies the accepted
+[two-archetype composition review](composition-architecture-review.md)
+without changing the facade or protocols. Released `create-forge` assigns the
+compatible `forge-template>=0.3.1,<0.4` engine range behind its engine path;
+the direct-Copier Library path remains separately compatible.

@@ -65,8 +65,10 @@ quality contract, and independence from Forge during normal project operation.
 
 Foundation owns the underlying provider-neutral commands and outcomes. A
 platform component may invoke them, but the platform does not redefine them.
-An archetype supplies shape-specific source and test targets through declared
-extension points while preserving every gate.
+The composed implementation uses repository-wide Ruff, mypy, and pytest
+discovery so Foundation needs no knowledge of an archetype's source or test
+layout. The [two-archetype review](composition-architecture-review.md)
+records the concrete correction.
 
 ### Neutral handoff material
 
