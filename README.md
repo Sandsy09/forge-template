@@ -108,6 +108,9 @@ the [GitHub Action pinning policy](docs/github-action-pinning.md) keeps remote
 workflow dependencies immutable and maintainable, the
 [ProjectSpec protocol](docs/project-spec.md) defines the strict, serialisable
 generation request for the composition engine, the
+[organisation policy protocol](docs/organisation-policy.md) defines the
+strict downstream selection constraints applied before that effective request
+is constructed, the
 [component manifest protocol](docs/component-manifests.md) defines strict
 bundled metadata and compatibility for its component catalogue, the
 [composition order contract](docs/composition-order.md) defines the

@@ -42,6 +42,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [project-spec.md](project-spec.md) — strict ProjectSpec protocol v1,
   effective selections, provenance, and schema boundaries for the future
   composition engine.
+- [organisation-policy.md](organisation-policy.md) — strict JSON policy
+  protocol v1, deterministic selection precedence, conflict rules, and future
+  structured failure semantics.
 - [component-manifests.md](component-manifests.md) — strict TOML component
   metadata, compatibility, content ownership, dependencies, and conflicts,
   plus the implicit Foundation content source and manifest protocol `2`'s

@@ -123,6 +123,13 @@ changes a selection.
 Clients that start with wire data call parsing before catalogue validation.
 `plan_generation` and `render_project` perform full validation themselves.
 
+The strict [organisation policy protocol](organisation-policy.md) is applied
+before construction of this effective ProjectSpec. No current public facade
+function parses or resolves policy documents, and the existing error enum and
+`ForgeEngineError` surface are unchanged. Later Stage 09 work must implement
+the accepted policy operation without making `validate_project_spec()` infer
+unresolved user intent or silently mutate selections.
+
 ## Planning
 
 `plan_generation(spec) -> GenerationPlan` returns the deterministic component
