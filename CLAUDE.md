@@ -91,7 +91,14 @@ package-bound discovery, strict validation, deterministic planning, in-memory
 rendering, structured failures, and the `map_legacy_library_answers` helper
 from the top-level package, at package version `0.3.2`. ADR 0037's Stage 08
 review corrects Foundation ownership and generated quality/lock behavior
-without changing the `0.3.x` public facade.
+without changing the `0.3.x` public facade. The
+[Forge-Blueprint compatibility policy](docs/compatibility-policy.md)
+([ADR 0041](docs/adr/0041-forge-blueprint-compatibility-policy.md)) defines
+every versioned axis above (package, both protocols, component versions,
+option-schema and Foundation source protocols), compatible ranges, a
+90-day-plus-one-release deprecation window, and the facts a conformant
+unsupported-version report must carry, pinned by
+`tests/test_compatibility_policy.py`.
 Its
 [generated-project validation](docs/generated-project-validation.md) checks
 plan/output agreement, universal `pyproject.toml` metadata, and completed

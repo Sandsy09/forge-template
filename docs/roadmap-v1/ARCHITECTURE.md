@@ -5,8 +5,9 @@
 > not the current CLI implementation. ProjectSpec, component manifest
 > protocols v1/v2, composition order, file conflict and override rules, the
 > safe override and extension points contract, the organisation policy
-> protocol and its test-only reference fixture, the template variable
-> contract, and the stable `forge-template` `0.3.x` engine API are
+> protocol and its test-only reference fixture, the Forge-Blueprint
+> compatibility policy, the template variable contract, and the stable
+> `forge-template` `0.3.x` engine API are
 > implemented. Its production catalogue contains independent Library
 > and CLI Application archetypes. The current CLI exposes the public engine
 > behind `--engine-preview` while retaining its direct-Copier default until a
@@ -51,8 +52,11 @@ The [stable template-engine API](../template-engine-api.md) is the typed,
 side-effect-free boundary for discovery, validation, planning, and in-memory
 rendering. The
 [generated-project validation contract](../generated-project-validation.md)
-checks the immutable result before it crosses that boundary. Target-directory
-orchestration remains with clients.
+checks the immutable result before it crosses that boundary. The
+[Forge-Blueprint compatibility policy](../compatibility-policy.md), delivered
+by FT-09.04, defines every versioned axis this boundary publishes, compatible
+ranges, deprecation windows, and the facts a conformant unsupported-version
+report must carry. Target-directory orchestration remains with clients.
 The [Foundation guarantees](../foundation-guarantees.md) define the
 provider- and tool-neutral outcomes every successfully generated project must
 receive regardless of whether this proposed composition model is adopted.

@@ -188,8 +188,12 @@ or resolver; that remains unscheduled, per
 [ADR 0040](adr/0040-organisation-policy-reference-fixture.md). Forge/Blueprint
 compatibility policy — including any versioned commitment about what future
 Blueprint releases may assume — is
-[FT-09.04 / #47](https://github.com/Sandsy09/forge-template/issues/47). The
-downstream consumption hook belongs to
+[compatibility-policy.md](compatibility-policy.md), delivered by
+[FT-09.04 / #47](https://github.com/Sandsy09/forge-template/issues/47) and
+adopted by [ADR 0041](adr/0041-forge-blueprint-compatibility-policy.md); it
+governs the engine surfaces named here (component versions, the published
+extension-point inventory) alongside the rest of the versioned axes it
+defines. The downstream consumption hook belongs to
 [create-forge#54](https://github.com/Sandsy09/create-forge/issues/54), which
 already commits to using only the supported engine API and avoiding arbitrary
 file overlays.

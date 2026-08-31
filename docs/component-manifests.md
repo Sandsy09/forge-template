@@ -112,6 +112,11 @@ release determines the one catalogue and concrete component versions available
 for discovery. Runtime remote registries and arbitrary installed plugins remain
 outside the accepted trust model.
 
+[compatibility-policy.md](compatibility-policy.md) defines what a component
+`version` bump means (patch/minor/major) and the deprecation window a
+downstream client may rely on across this axis and every other versioned
+surface the engine publishes.
+
 ### Compatibility
 
 `compatibility.projectspec_protocols` is a non-empty, unique set of ProjectSpec

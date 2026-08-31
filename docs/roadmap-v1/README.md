@@ -82,7 +82,12 @@ reserved, closing the route to arbitrary file replacement a downstream
 Blueprint-style client might otherwise reach for. The canonical
 [organisation-policy reference fixture](../organisation-policy-fixtures.md),
 delivered by FT-09.03, proves both contracts executably against a test-only
-resolver; a shipped, public resolver remains unscheduled.
+resolver; a shipped, public resolver remains unscheduled. The canonical
+[Forge-Blueprint compatibility policy](../compatibility-policy.md), delivered
+by FT-09.04, defines every versioned engine axis, compatible ranges, a
+90-day-plus-one-release deprecation window, and the facts a conformant
+unsupported-version report must carry, without changing the public facade or
+package version.
 
 The canonical [Library archetype contract](../library-archetype.md) defines
 the distributable-package additions composed over one implicit Foundation

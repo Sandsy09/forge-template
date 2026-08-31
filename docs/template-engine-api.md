@@ -252,6 +252,13 @@ code and structured detail paths and may present the safe messages to users.
 
 ## Compatibility and current cutover boundary
 
+[compatibility-policy.md](compatibility-policy.md) is the canonical,
+living compatibility policy across every versioned axis this engine
+publishes -- package, ProjectSpec protocol, component manifest protocol,
+component content versions, and more. This section keeps the `0.3.x`
+narrative specific to this API's own history; it is no longer the only place
+the general compatibility rules live.
+
 Within one package compatibility line, documented top-level names,
 signatures, result fields, error-code values, and their stated semantics are
 compatibility commitments. An incompatible public change requires a

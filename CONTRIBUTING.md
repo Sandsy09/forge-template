@@ -80,7 +80,11 @@ with Library. `discover_components()` now returns both `("cli", "library")`.
 The [composition architecture review](docs/composition-architecture-review.md)
 records which duplicated resources remain archetype-owned, which accidental
 Foundation assumptions were removed, and why lock resolution belongs to
-client finalisation.
+client finalisation. The
+[Forge-Blueprint compatibility policy](docs/compatibility-policy.md) defines
+every versioned engine axis, compatible ranges, deprecation windows, and the
+facts a conformant unsupported-version report must carry, without changing
+the public facade or package version.
 
 ## Branching and pull requests
 
