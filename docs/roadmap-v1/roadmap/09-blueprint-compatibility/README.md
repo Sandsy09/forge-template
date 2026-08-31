@@ -24,7 +24,12 @@
   structured-failure detail codes, plus one end-to-end resolution rendered
   through the real production catalogue -- pinned by
   `tests/test_organisation_policy_fixture.py`.
-- **FT-09.04 — Define Forge-Blueprint compatibility policy**
+- **FT-09.04 — Define Forge-Blueprint compatibility policy** — complete via
+  the [canonical policy](../../../compatibility-policy.md) and
+  [ADR 0041](../../../adr/0041-forge-blueprint-compatibility-policy.md).
+  Every versioned engine axis, compatible ranges, a 90-day-plus-one-release
+  deprecation window, and the facts a conformant unsupported-version report
+  must carry are pinned by `tests/test_compatibility_policy.py`.
 - **FT-09.05 — Validate no-copy inheritance model**
 
 ### create-forge
@@ -42,8 +47,11 @@ no policy, client, or component gains `override` authority over another
 owner's content, and the complete safe extension surface is published as a
 versioned contract. The FT-09.03 fixture proves both decisions executably
 against neutral placeholder data, with no shipped public resolver -- that
-remains unscheduled in this roadmap. The downstream consumption hook is
-create-forge's own work.
+remains unscheduled in this roadmap. The FT-09.04 policy defines the
+compatible ranges and deprecation windows a downstream client may rely on
+across every versioned engine axis, unblocking create-forge#54's
+compatibility negotiation and structured unsupported-version handling. The
+downstream consumption hook is create-forge's own work.
 
 ## Stage completion rule
 

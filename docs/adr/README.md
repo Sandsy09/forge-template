@@ -43,6 +43,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0038 — Define organisation policy as constrained selection input](0038-organisation-policy-selection-model.md)
 - [0039 — Deny policy-granted file overrides; publish the extension-point inventory as a versioned contract](0039-deny-policy-file-overrides.md)
 - [0040 — Prove the organisation-policy protocol with a test-only reference fixture](0040-organisation-policy-reference-fixture.md)
+- [0041 — Define the Forge-Blueprint compatibility policy](0041-forge-blueprint-compatibility-policy.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

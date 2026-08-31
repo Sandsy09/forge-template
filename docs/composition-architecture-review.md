@@ -87,6 +87,10 @@ accepted separately.
 
 ## Compatibility
 
+This is a point-in-time review snapshot at Stage 08's completion;
+[compatibility-policy.md](compatibility-policy.md) is the living table and
+the durable rules governing every axis below.
+
 - `forge-template` package: `0.3.2`;
 - `library` component: `1.0.1`;
 - `cli` component: `1.0.1`;

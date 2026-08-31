@@ -77,5 +77,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [composition-architecture-review.md](composition-architecture-review.md) —
   the two-archetype duplication, Foundation-boundary, quality, and client
   finalisation review that closes Stage 08.
+- [compatibility-policy.md](compatibility-policy.md) — the Forge-Blueprint
+  compatibility policy: every versioned engine axis, compatible ranges,
+  deprecation windows, and unsupported-version reporting requirements.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

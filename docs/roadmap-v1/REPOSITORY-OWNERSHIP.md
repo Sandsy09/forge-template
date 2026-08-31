@@ -50,6 +50,10 @@ The [composition architecture review](../composition-architecture-review.md)
 keeps coincidentally shared package files archetype-owned, removes
 layout-specific Foundation assumptions, and assigns lock resolution to the
 client finalisation boundary.
+The [Forge-Blueprint compatibility policy](../compatibility-policy.md) defines
+the versioned axes, compatible ranges, and deprecation windows
+`forge-template` owns, while a downstream client owns negotiation triggers,
+presentation, and its own response to a failed negotiation.
 The [Foundation scope](../foundation-scope.md) defines the concern-level boundary
 between that mandatory baseline and the components listed below. The
 [Python support policy](../python-support.md) is owned here because its choices,
