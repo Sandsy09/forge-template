@@ -67,6 +67,10 @@ The `create-forge` reference client implements that boundary by running
 lock is a finalisation artefact, not a `GenerationPlan` or `RenderedProject`
 entry. Resolution failure removes staging and leaves the destination
 untouched. It creates no `.git`, `.venv`, hook, or Forge runtime dependency.
+The implementation is recorded by
+[create-forge ADR 0021](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0021-client-finalises-engine-lockfiles.md)
+and [create-forge PR #94](https://github.com/Sandsy09/create-forge/pull/94),
+released as `create-forge 0.2.1` against `forge-template 0.3.2`.
 
 ## Current output contract
 
@@ -90,6 +94,11 @@ accepted separately.
 - component manifests: protocol `2`;
 - option schemas: protocol `2`;
 - Foundation source: protocol `1`.
+
+The engine correction shipped in
+[`forge-template 0.3.2`](https://github.com/Sandsy09/forge-template/releases/tag/v0.3.2),
+and the client finalisation shipped in
+[`create-forge 0.2.1`](https://github.com/Sandsy09/create-forge/releases/tag/v0.2.1).
 
 The package and component patch increments identify corrected generated
 content and ownership. They do not alter selection, schema, planning models,

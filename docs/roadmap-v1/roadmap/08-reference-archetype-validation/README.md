@@ -24,18 +24,24 @@
   installed production catalogue now contains `cli` alongside `library`,
   proven by real `uv build`, install, console-script, and `python -m` output
   (`tests/test_cli_build.py`).
-- **FT-08.05 — Run composition architecture review** — the engine-side
-  implementation is recorded by the
+- **FT-08.05 — Run composition architecture review** — complete. The
+  engine-side implementation is recorded by the
   [canonical review](../../../composition-architecture-review.md) and
-  [ADR 0037](../../../adr/0037-two-archetype-composition-review.md); coordinated
-  `create-forge` lock finalisation remains before administrative closure.
+  [ADR 0037](../../../adr/0037-two-archetype-composition-review.md), merged in
+  [PR #87](https://github.com/Sandsy09/forge-template/pull/87) and released as
+  [`forge-template 0.3.2`](https://github.com/Sandsy09/forge-template/releases/tag/v0.3.2).
+  Coordinated lock finalisation landed in
+  [create-forge PR #94](https://github.com/Sandsy09/create-forge/pull/94)
+  under [ADR 0021](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0021-client-finalises-engine-lockfiles.md)
+  and was released as
+  [`create-forge 0.2.1`](https://github.com/Sandsy09/create-forge/releases/tag/v0.2.1).
 
 ### create-forge
 
-- **CF-08.01 — Expose Library archetype through create-forge**
-- **CF-08.02 — Expose CLI Application through create-forge**
-- **CF-08.03 — Run CLI archetype-parity review**
-- **CF-08.04 — Extend end-to-end generation to the public engine**
+- **CF-08.01 — Expose Library archetype through create-forge** — complete.
+- **CF-08.02 — Expose CLI Application through create-forge** — complete.
+- **CF-08.03 — Run CLI archetype-parity review** — complete.
+- **CF-08.04 — Extend end-to-end generation to the public engine** — complete.
 
 The accepted Library contract defined manifest protocol `2`, option-schema
 protocol `2`, one implicit Foundation content source, and the `0.3.0` planning
@@ -52,10 +58,13 @@ resources independently archetype-owned. It moves typed classifiers to those
 owners, makes the mandatory quality gate layout-neutral, removes optional
 coverage/pre-commit concerns from engine Foundation, and defines resolved
 lock state as a client-finalisation artefact rather than an in-memory render.
+The client now resolves that lock in adjacent staging before atomic placement;
+both archetypes pass `uv lock --check` and `uv run --locked poe check` through
+the released engine/client pair.
 
 ## Stage completion rule
 
-- [ ] Repo-local issues are complete or explicitly deferred.
-- [ ] Cross-repository blockers are resolved.
-- [ ] Public contracts changed by this stage are documented and versioned.
-- [ ] No implementation concern is duplicated across repositories.
+- [x] Repo-local issues are complete or explicitly deferred.
+- [x] Cross-repository blockers are resolved.
+- [x] Public contracts changed by this stage are documented and versioned.
+- [x] No implementation concern is duplicated across repositories.
