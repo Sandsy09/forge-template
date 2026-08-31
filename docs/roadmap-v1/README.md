@@ -74,12 +74,15 @@ The canonical
 [organisation policy protocol](../organisation-policy.md) defines strict JSON
 protocol v1 for downstream component-selection defaults and constraints,
 including order-independent multi-policy conflict and future structured
-failure semantics. Executable resolution remains later Stage 09 work. The
-canonical [safe override and extension points](../extension-points.md)
-contract, delivered by FT-09.02, publishes the complete sanctioned extension
-surface and denies the `override` grant [file-conflicts.md](../file-conflicts.md)
+failure semantics. The canonical
+[safe override and extension points](../extension-points.md) contract,
+delivered by FT-09.02, publishes the complete sanctioned extension surface
+and denies the `override` grant [file-conflicts.md](../file-conflicts.md)
 reserved, closing the route to arbitrary file replacement a downstream
-Blueprint-style client might otherwise reach for.
+Blueprint-style client might otherwise reach for. The canonical
+[organisation-policy reference fixture](../organisation-policy-fixtures.md),
+delivered by FT-09.03, proves both contracts executably against a test-only
+resolver; a shipped, public resolver remains unscheduled.
 
 The canonical [Library archetype contract](../library-archetype.md) defines
 the distributable-package additions composed over one implicit Foundation

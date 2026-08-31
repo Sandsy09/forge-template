@@ -9,9 +9,11 @@ This document defines the strict JSON protocol and resolution semantics
 accepted by [FT-09.01](https://github.com/Sandsy09/forge-template/issues/44).
 [ADR 0038](adr/0038-organisation-policy-selection-model.md) records the
 decision. The protocol is normative, but no parser, resolver, or public Python
-API is implemented yet. The Stage 09 reference fixture and downstream-client
-work will implement and validate this contract without changing ProjectSpec
-protocol `1`.
+API is implemented yet. [FT-09.03](https://github.com/Sandsy09/forge-template/issues/46)'s
+[organisation-policy-fixtures.md](organisation-policy-fixtures.md) validates
+this contract executably against a test-only reference resolver, without
+implementing it as shipped public API or changing ProjectSpec protocol `1`;
+downstream-client work remains create-forge's own.
 
 ## Wire model
 
@@ -234,7 +236,9 @@ and supported extension points are now defined by
 [extension-points.md](extension-points.md), delivered through
 [FT-09.02](https://github.com/Sandsy09/forge-template/issues/45): no override
 grant exists, and the complete sanctioned extension surface is published
-there. The generic reference fixture is owned by
-[FT-09.03](https://github.com/Sandsy09/forge-template/issues/46), and the
-downstream consumption hook by
+there. The generic reference fixture proving both contracts against
+placeholder data is delivered by
+[FT-09.03](https://github.com/Sandsy09/forge-template/issues/46) in
+[organisation-policy-fixtures.md](organisation-policy-fixtures.md); the
+downstream consumption hook remains
 [create-forge#53](https://github.com/Sandsy09/create-forge/issues/53).

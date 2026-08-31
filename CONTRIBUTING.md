@@ -42,7 +42,9 @@ ownership of template or composition validation. The
 [organisation policy protocol](docs/organisation-policy.md) defines the
 strict, order-independent defaults and constraints a downstream client applies
 before constructing that effective request, without granting policy rendering
-authority. The
+authority; the
+[organisation-policy reference fixture](docs/organisation-policy-fixtures.md)
+proves that protocol executably against a test-only resolver. The
 [component manifest protocol](docs/component-manifests.md) defines the strict
 TOML metadata, compatibility, owned resources, dependencies, and conflicts
 that future engine discovery will consume. The

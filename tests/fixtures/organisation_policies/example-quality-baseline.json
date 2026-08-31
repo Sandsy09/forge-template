@@ -1,0 +1,11 @@
+{
+  "policy_version": 1,
+  "id": "example-quality-baseline",
+  "description": "Defaults coverage on and forbids documentation. Combines cleanly with example-delivery-baseline.",
+  "defaults": {
+    "capabilities": ["coverage"]
+  },
+  "forbidden": {
+    "capabilities": ["documentation"]
+  }
+}

@@ -62,9 +62,14 @@ closed by that decision. Editable installs (`uv sync --all-groups`) are
 unaffected; the exclusion applies only to the built wheel. The strict
 [ProjectSpec protocol](docs/project-spec.md) models live in
 `project_spec.py`,
-[organisation policy protocol](docs/organisation-policy.md) `1` is currently a
-documentation contract only: do not add policy parsing, resolution, public
-exports, or `ForgeEngineError` values until the later Stage 09 implementation,
+[organisation policy protocol](docs/organisation-policy.md) `1` is a
+documentation contract with an executable, test-only reference resolver
+([organisation-policy-fixtures.md](docs/organisation-policy-fixtures.md),
+`tests/organisation_policy_contract.py`, [ADR
+0040](docs/adr/0040-organisation-policy-reference-fixture.md)): still do not
+add policy parsing, resolution, public exports, or `ForgeEngineError` values
+to `src/forge_template` itself — a shipped implementation remains
+unscheduled,
 [component manifest protocol](docs/component-manifests.md) models and loader
 in `component_manifest.py` (manifest protocols `1` and `2`), the implicit
 [Foundation content source](docs/component-manifests.md#foundation-content-source)

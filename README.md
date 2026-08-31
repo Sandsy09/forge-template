@@ -110,7 +110,9 @@ workflow dependencies immutable and maintainable, the
 generation request for the composition engine, the
 [organisation policy protocol](docs/organisation-policy.md) defines the
 strict downstream selection constraints applied before that effective request
-is constructed, the
+is constructed, proved executably by the
+[organisation-policy reference fixture](docs/organisation-policy-fixtures.md),
+the
 [component manifest protocol](docs/component-manifests.md) defines strict
 bundled metadata and compatibility for its component catalogue, the
 [composition order contract](docs/composition-order.md) defines the

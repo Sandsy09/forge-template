@@ -126,9 +126,12 @@ Clients that start with wire data call parsing before catalogue validation.
 The strict [organisation policy protocol](organisation-policy.md) is applied
 before construction of this effective ProjectSpec. No current public facade
 function parses or resolves policy documents, and the existing error enum and
-`ForgeEngineError` surface are unchanged. Later Stage 09 work must implement
-the accepted policy operation without making `validate_project_spec()` infer
-unresolved user intent or silently mutate selections. The
+`ForgeEngineError` surface are unchanged.
+[organisation-policy-fixtures.md](organisation-policy-fixtures.md) proves the
+protocol executably against a test-only reference resolver; a shipped public
+policy operation remains unscheduled and must not make `validate_project_spec()`
+infer unresolved user intent or silently mutate selections if it is ever
+built. The
 [safe override and extension points](extension-points.md) contract fixes what
 that policy, or any other downstream input, may extend: policy remains
 selection-only, and the unsupported-collision failure a client may already

@@ -45,6 +45,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [organisation-policy.md](organisation-policy.md) — strict JSON policy
   protocol v1, deterministic selection precedence, conflict rules, and future
   structured failure semantics.
+- [organisation-policy-fixtures.md](organisation-policy-fixtures.md) — the
+  test-only reference resolver and placeholder policy documents proving that
+  protocol executably.
 - [component-manifests.md](component-manifests.md) — strict TOML component
   metadata, compatibility, content ownership, dependencies, and conflicts,
   plus the implicit Foundation content source and manifest protocol `2`'s

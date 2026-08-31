@@ -4,7 +4,8 @@
 > [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
 > not the current CLI implementation. ProjectSpec, component manifest
 > protocols v1/v2, composition order, file conflict and override rules, the
-> safe override and extension points contract, the template variable
+> safe override and extension points contract, the organisation policy
+> protocol and its test-only reference fixture, the template variable
 > contract, and the stable `forge-template` `0.3.x` engine API are
 > implemented. Its production catalogue contains independent Library
 > and CLI Application archetypes. The current CLI exposes the public engine
@@ -18,8 +19,10 @@ engine-owned request passed across this boundary, while leaving CLI
 construction and filesystem orchestration with `create-forge`.
 The [organisation policy protocol](../organisation-policy.md) defines the
 strict downstream selection defaults, constraints, precedence, and failure
-semantics applied before that effective request is constructed. Executable
-resolution remains later Stage 09 work.
+semantics applied before that effective request is constructed. The
+[organisation-policy reference fixture](../organisation-policy-fixtures.md)
+proves it executably against a test-only resolver; a shipped, public
+resolver remains unscheduled.
 The [component manifest protocol](../component-manifests.md) defines the
 strict engine-owned metadata and compatibility for every future bundled
 archetype, capability, and platform.

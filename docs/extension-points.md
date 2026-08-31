@@ -179,13 +179,17 @@ guarantee. A downstream client owns which components it selects, how it
 presents that choice, and all filesystem and finalisation work.
 
 The generic reference fixture proving these rules against a real, neutral
-example is [FT-09.03 / #46](https://github.com/Sandsy09/forge-template/issues/46).
-Forge/Blueprint compatibility policy — including any versioned commitment
-about what future Blueprint releases may assume — is
+example is
+[FT-09.03 / #46](https://github.com/Sandsy09/forge-template/issues/46),
+delivered as
+[organisation-policy-fixtures.md](organisation-policy-fixtures.md)'s
+test-only reference resolver -- executable, but not a shipped public parser
+or resolver; that remains unscheduled, per
+[ADR 0040](adr/0040-organisation-policy-reference-fixture.md). Forge/Blueprint
+compatibility policy — including any versioned commitment about what future
+Blueprint releases may assume — is
 [FT-09.04 / #47](https://github.com/Sandsy09/forge-template/issues/47). The
 downstream consumption hook belongs to
 [create-forge#54](https://github.com/Sandsy09/create-forge/issues/54), which
 already commits to using only the supported engine API and avoiding arbitrary
-file overlays. Executable organisation-policy parsing and resolution remain
-[FT-09.01](organisation-policy.md#ownership-and-deferred-implementation)'s
-standing deferral; this document does not implement it.
+file overlays.
