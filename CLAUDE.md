@@ -73,7 +73,11 @@ in `foundation_source.py`,
 in `composition.py`,
 [file conflict and override rules](docs/file-conflicts.md) rendered output
 target ([ADR 0032](docs/adr/0032-render-component-content-paths.md)) and
-collision resolution in `file_conflicts.py`, and the
+collision resolution in `file_conflicts.py`, the
+[safe override and extension points](docs/extension-points.md) contract
+([ADR 0039](docs/adr/0039-deny-policy-file-overrides.md)) denying any
+`override` grant and publishing the extension-point inventory as a versioned
+contract, pinned by `tests/test_extension_points.py`, and the
 [template variable contract](docs/template-variables.md) rendered namespace
 and option-schema vocabulary (protocols `1` and `2`, `format` support) in
 `template_variables.py`. The supported

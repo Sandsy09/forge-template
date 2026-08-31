@@ -55,6 +55,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [file-conflicts.md](file-conflicts.md) — output targets, dispositions,
   extension points, and collision-safety rules for the future composition
   engine.
+- [extension-points.md](extension-points.md) — the complete sanctioned
+  extension surface, the denial of any `override` grant, and the published,
+  versioned content extension-point inventory.
 - [template-variables.md](template-variables.md) — the rendered
   template-variable namespace, component option declarations, and
   resolution/rejection rules for the future composition engine.

@@ -242,9 +242,10 @@ Deterministic ordering is defined by
 mechanics — output targets, dispositions, extension points, and collision
 safety — are now defined by
 [file-conflicts.md](file-conflicts.md), delivered through
-[FT-06.04](https://github.com/Sandsy09/forge-template/issues/35). Stage 09
-will define organisation-policy-level extension points, including any real
-`override` grant, in
+[FT-06.04](https://github.com/Sandsy09/forge-template/issues/35). The safe
+override and extension-point contract — the complete sanctioned extension
+surface and the denial of any `override` grant — is now defined by
+[extension-points.md](extension-points.md), delivered through
 [FT-09.02](https://github.com/Sandsy09/forge-template/issues/45).
 
 ## Composition examples
@@ -284,10 +285,10 @@ the executable project shape to `cli`; the other placeholders remain neutral.
 
 This terminology does not decide:
 
-- the `merge` and `override` disposition algorithms, reserved but not yet
-  granted by [file-conflicts.md](file-conflicts.md);
-- executable organisation-policy parsing/resolution or any real `override`
-  grant;
+- the `merge` disposition algorithm, reserved but not granted by
+  [file-conflicts.md](file-conflicts.md) (`override` is resolved: denied, by
+  [extension-points.md](extension-points.md));
+- executable organisation-policy parsing/resolution;
 - the concrete `create-forge` engine package range and supported
   source-resolution cutover.
 

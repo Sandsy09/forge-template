@@ -51,6 +51,10 @@ deterministic order a validated selection of those components applies in. The
 [file conflict and override rules](docs/file-conflicts.md) define the output
 target, disposition, and collision-safety rules that composed selection
 resolves against. The
+[safe override and extension points](docs/extension-points.md) contract
+defines the complete sanctioned extension surface, denies any `override`
+grant, and publishes the extension-point inventory as a versioned contract.
+The
 [template variable contract](docs/template-variables.md) defines the rendered
 variable namespace and the component option vocabulary declared through
 `options_schema`. The
