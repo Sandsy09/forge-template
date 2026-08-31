@@ -230,9 +230,11 @@ trust decisions, user interaction, explicit-choice tracking, ProjectSpec
 construction, diagnostics presentation, and filesystem orchestration.
 
 Policy is not an arbitrary overlay. File replacement, merge/override grants,
-and supported extension points remain with
-[FT-09.02](https://github.com/Sandsy09/forge-template/issues/45). The generic
-reference fixture is owned by
+and supported extension points are now defined by
+[extension-points.md](extension-points.md), delivered through
+[FT-09.02](https://github.com/Sandsy09/forge-template/issues/45): no override
+grant exists, and the complete sanctioned extension surface is published
+there. The generic reference fixture is owned by
 [FT-09.03](https://github.com/Sandsy09/forge-template/issues/46), and the
 downstream consumption hook by
 [create-forge#53](https://github.com/Sandsy09/create-forge/issues/53).

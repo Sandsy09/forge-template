@@ -117,6 +117,9 @@ bundled metadata and compatibility for its component catalogue, the
 deterministic order that catalogue applies in, the
 [file conflict and override rules](docs/file-conflicts.md) define its output
 target, disposition, and collision-safety rules, the
+[safe override and extension points](docs/extension-points.md) contract
+denies any `override` grant and publishes the extension-point inventory as a
+versioned contract, the
 [template variable contract](docs/template-variables.md) defines the rendered
 variable namespace and component option vocabulary, the
 [stable template-engine API](docs/template-engine-api.md) exposes typed,

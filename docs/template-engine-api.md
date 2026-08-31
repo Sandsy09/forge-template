@@ -128,7 +128,13 @@ before construction of this effective ProjectSpec. No current public facade
 function parses or resolves policy documents, and the existing error enum and
 `ForgeEngineError` surface are unchanged. Later Stage 09 work must implement
 the accepted policy operation without making `validate_project_spec()` infer
-unresolved user intent or silently mutate selections.
+unresolved user intent or silently mutate selections. The
+[safe override and extension points](extension-points.md) contract fixes what
+that policy, or any other downstream input, may extend: policy remains
+selection-only, and the unsupported-collision failure a client may already
+observe from `plan_generation`/`render_project` — `ForgeEngineError` with
+`code=EngineErrorCode.GENERATION_PLAN_FAILED` and `operation="plan"` — is
+documented there rather than left implicit.
 
 ## Planning
 

@@ -31,7 +31,10 @@ own manifest and rendered files. The
 deterministic order that metadata's validated selections apply in. The
 [file conflict and override rules](../file-conflicts.md) define the output
 target, disposition, and collision-safety rules that order resolves against.
-The [template variable contract](../template-variables.md) defines the
+The [safe override and extension points](../extension-points.md) contract
+defines the closed set of surfaces `forge-template` owns for downstream
+extension, and denies any `override` grant to organisation policy or a
+client. The [template variable contract](../template-variables.md) defines the
 rendered variable namespace and the component option vocabulary that
 `forge-template` owns rather than the CLI.
 The [stable template-engine API](../template-engine-api.md) exposes those

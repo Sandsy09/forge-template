@@ -41,6 +41,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0036 — Publish the engine to PyPI, excluding repo-local tooling](0036-publish-the-engine-to-pypi.md)
 - [0037 — Align Foundation after the two-archetype composition review](0037-two-archetype-composition-review.md)
 - [0038 — Define organisation policy as constrained selection input](0038-organisation-policy-selection-model.md)
+- [0039 — Deny policy-granted file overrides; publish the extension-point inventory as a versioned contract](0039-deny-policy-file-overrides.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

@@ -4,8 +4,9 @@
 > [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
 > not the current CLI implementation. ProjectSpec, component manifest
 > protocols v1/v2, composition order, file conflict and override rules, the
-> template variable contract, and the stable `forge-template` `0.3.x` engine
-> API are implemented. Its production catalogue contains independent Library
+> safe override and extension points contract, the template variable
+> contract, and the stable `forge-template` `0.3.x` engine API are
+> implemented. Its production catalogue contains independent Library
 > and CLI Application archetypes. The current CLI exposes the public engine
 > behind `--engine-preview` while retaining its direct-Copier default until a
 > coordinated cutover.
@@ -37,6 +38,9 @@ deterministic order that future bundled selection applies in.
 The [file conflict and override rules](../file-conflicts.md) define the
 output target, disposition, and collision-safety rules that composed
 selection resolves against.
+The [safe override and extension points](../extension-points.md) contract,
+delivered by FT-09.02, publishes the complete sanctioned extension surface
+and denies any `override` grant.
 The [template variable contract](../template-variables.md) defines the
 rendered variable namespace and the component option vocabulary declared
 through `options_schema`.

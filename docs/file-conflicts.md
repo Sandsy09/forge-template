@@ -200,10 +200,13 @@ replace the neutral handoff material."
 `0.3.0` line — a plain component-id string could not truthfully represent a
 Foundation-owned file.
 
-A future organisation policy may be granted `override` authority over a
-specific, documented extension point. That grant is Stage 09's decision to
-make; this contract only reserves the vocabulary and states that no such
-authority exists implicitly today.
+[FT-09.02](https://github.com/Sandsy09/forge-template/issues/45) resolved the
+reserved `override` grant as a denial: organisation policy never gains
+`override` authority over any extension point, in protocol `1`. See
+[extension-points.md](extension-points.md) and [ADR
+0039](adr/0039-deny-policy-file-overrides.md) for the published extension-point
+inventory and the full rationale. This contract still only reserves the
+vocabulary; no authority to override exists.
 
 ## Deferred work
 
@@ -215,8 +218,9 @@ rendering, marker syntax, and structured failures by the
 does not define:
 
 - destination writes or client filesystem conflict handling; or
-- organisation-policy resolution, including any real `override` grant
-  (Stage 09).
+- organisation-policy selection resolution (defined by
+  [organisation-policy.md](organisation-policy.md), FT-09.01) or executable
+  policy parsing/resolution (still deferred).
 
 The current CLI continues to pass its plain answer mapping directly to Copier.
 No generated project depends on `forge_template.file_conflicts` during normal
