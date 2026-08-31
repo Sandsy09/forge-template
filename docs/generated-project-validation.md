@@ -116,4 +116,7 @@ first production component catalogue available under the accepted
 [Library archetype contract](library-archetype.md); `tests/test_library_build.py`
 (the `archetype` marker) additionally proves wheel/sdist/import/version
 outcomes this validator does not check itself (wheel and sdist contents are
-explicitly out of this boundary, above). Archetype two remains unselected.
+explicitly out of this boundary, above). FT-08.04 added the independent CLI
+Application archetype, and the
+[Stage 08 composition review](composition-architecture-review.md) proves both
+shapes against the same validation and ownership boundary.

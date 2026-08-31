@@ -6,13 +6,13 @@ contract accepted by [ADR 0031](adr/0031-library-archetype-contract.md) and
 implemented by FT-08.02
 ([ADR 0033](adr/0033-migrate-library-production-catalogue.md)).
 
-FT-08.02 implements this contract in the installed engine catalogue at
-package version `0.3.0`. It changes no Copier template, question, or
+FT-08.02 introduced this contract in the installed engine catalogue at
+package version `0.3.0`; the Stage 08
+[composition review](composition-architecture-review.md) corrects its
+Foundation boundary at `0.3.2`. It changes no Copier template, question, or
 generated output: the released Copier path still renders one monolithic
-Library tree, unchanged, and remains the only path `create-forge` consumes
-today. `src/forge_template/foundation/` and `src/forge_template/components/library/`
-are additive package content that co-exists with `template/` until a later,
-deliberate cutover -- see "Current evidence and deferred work" below.
+Library tree, while `create-forge --engine-preview` consumes the public
+catalogue. Both paths coexist until a deliberate cutover.
 
 ## Archetype boundary
 
@@ -47,16 +47,17 @@ has this identity:
 | Manifest protocol | `2` |
 | Component ID | `library` |
 | Kind | `archetype` |
-| Component version | `1.0.0` |
+| Component version | `1.0.1` |
 | ProjectSpec protocols | `[1]` |
 | Generated Python compatibility | `>=3.11` |
 | Requirements | none |
 | Conflicts | none |
 
-Component version `1.0.0`, manifest protocol `2`, ProjectSpec protocol `1`,
-and the `forge-template` package version (`0.3.0`) are independent
-compatibility axes. `discover_components()` returns exactly this one
-descriptor today. Foundation is never returned as a component descriptor.
+Component version `1.0.1`, manifest protocol `2`, ProjectSpec protocol `1`,
+and the `forge-template` package version (`0.3.2`) are independent
+compatibility axes. `discover_components()` returns `library` alongside the
+independent `cli` descriptor. Foundation is never returned as a component
+descriptor.
 
 ## Library options
 
@@ -245,10 +246,9 @@ The production catalogue now contains `library` alongside `cli`
 `discover_components()` returns both descriptors, `plan_generation`/`render_project`
 compose Foundation and Library into a real project across all three packaging
 modes, and `uv run poe archetype` builds real wheels and sdists from that
-output. `template/`'s monolithic Copier tree is untouched and remains the
-only path the released `create-forge` CLI consumes; the two co-exist as a
-deliberate, documented duplication until a later, separate cutover decision
-retires one in favour of the other.
+output. `template/`'s monolithic Copier tree is untouched; the direct-Copier
+and public-engine paths coexist as deliberate, documented compatibility
+surfaces until a later cutover decision retires one in favour of the other.
 
 Known, deliberate gaps against the monolithic Copier scaffold's output,
 tracked as later work rather than silently claimed complete:
@@ -272,4 +272,6 @@ contract](cli-application-archetype.md) ([ADR
 0035](adr/0035-implement-cli-application-archetype.md)); it neither inherits
 this component nor changes Library's contract. CLI exposure, ProjectSpec
 construction, filesystem finalisation, and the first supported released
-engine range remain `create-forge` responsibilities.
+engine range remain `create-forge` responsibilities. Its reference engine
+path now selects either descriptor and resolves lock state during filesystem
+finalisation.

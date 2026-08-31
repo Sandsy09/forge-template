@@ -5,7 +5,7 @@ id = "cli"
 name = "CLI Application"
 description = "An installable, executable Typer application."
 kind = "archetype"
-version = "1.0.0"
+version = "1.0.1"
 content_root = "content"
 
 [compatibility]

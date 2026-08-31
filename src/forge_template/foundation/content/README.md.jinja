@@ -10,9 +10,11 @@
 ## Development
 
 ```bash
-uv sync --all-groups
-uv run pre-commit install --install-hooks
+uv sync --all-groups --locked
 ```
+
+Run `uv lock` deliberately after changing dependency declarations, then
+review and commit the resulting `uv.lock` update.
 
 ### Tasks
 
@@ -20,13 +22,15 @@ Tasks are defined once in `pyproject.toml` under `[tool.poe.tasks]`.
 
 | Command | Description |
 | --- | --- |
-| `uv run poe check` | Everything below, in order |
+| `uv run --locked poe check` | Lock drift and everything below, in order |
+| `uv run poe lock:check` | Verify `uv.lock` matches declared dependencies |
 | `uv run poe lint` | Ruff lint |
 | `uv run poe format` | Ruff format |
 | `uv run poe typecheck` | mypy |
-| `uv run poe test` | pytest with coverage |
+| `uv run poe test` | pytest |
 
-Run `check` before pushing.
+Run `uv run --locked poe check` before pushing. The outer `--locked` prevents
+uv from silently refreshing lock state before the drift check runs.
 
 [[forge:extension readme-project-shape]]
 

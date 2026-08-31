@@ -24,7 +24,6 @@ authors = [
 ]
 {%- endif %}
 classifiers = [
-    "Typing :: Typed",
     [[forge:extension pyproject-classifiers]]
 ]
 dependencies = [
@@ -44,11 +43,9 @@ dependencies = [
 [dependency-groups]
 lint = [
     "ruff>=0.14",
-    "pre-commit>=4.0",
 ]
 test = [
     "pytest>=8.3",
-    "pytest-cov>=6.0",
 ]
 typecheck = [
     "mypy>=1.14",
@@ -70,7 +67,6 @@ default-groups = ["dev"]
 [tool.ruff]
 line-length = 88
 target-version = "py{{ python.minimum | replace('.', '') }}"
-src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = [
@@ -108,41 +104,21 @@ docstring-code-format = true
 
 [tool.mypy]
 python_version = "{{ python.minimum }}"
-files = ["src", "tests"]
 strict = true
 warn_unreachable = true
 warn_unused_ignores = true
 
-[[tool.mypy.overrides]]
-module = "tests.*"
-disallow_untyped_defs = false
-
 # -----------------------------------------------------------------------------
-# Tests + coverage
+# Tests
 # -----------------------------------------------------------------------------
 
 [tool.pytest.ini_options]
 minversion = "8.0"
-testpaths = ["tests"]
 addopts = [
     "-ra",
     "--strict-markers",
     "--strict-config",
     "--import-mode=importlib",
-    "--cov",
-    "--cov-report=term-missing",
-]
-
-[tool.coverage.run]
-source = ["src"]
-branch = true
-
-[tool.coverage.report]
-show_missing = true
-exclude_also = [
-    "if TYPE_CHECKING:",
-    "raise NotImplementedError",
-    "@(abc\\.)?abstractmethod",
 ]
 
 # -----------------------------------------------------------------------------
@@ -150,10 +126,11 @@ exclude_also = [
 # -----------------------------------------------------------------------------
 
 [tool.poe.tasks]
+"lock:check" = "uv lock --check"
 lint = "ruff check ."
 format = "ruff format ."
 "lint:fix" = "ruff check --fix ."
 "format:check" = "ruff format --check ."
-typecheck = "mypy"
+typecheck = "mypy ."
 test = "pytest"
-check = ["format:check", "lint", "typecheck", "test"]
+check = ["lock:check", "format:check", "lint", "typecheck", "test"]

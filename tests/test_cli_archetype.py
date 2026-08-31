@@ -49,7 +49,7 @@ def test_discovery_exposes_both_the_cli_and_library_archetypes() -> None:
 
     cli = descriptors[0]
     assert cli.kind == "archetype"
-    assert cli.version == "1.0.0"
+    assert cli.version == "1.0.1"
     assert cli.requires == ()
     assert cli.conflicts == ()
     assert cli.options == ()

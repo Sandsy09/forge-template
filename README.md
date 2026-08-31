@@ -1,9 +1,10 @@
 # forge-template
 
-A [Copier](https://copier.readthedocs.io/) template that scaffolds modern
-Python projects. It currently offers one archetype — **library** — and is
-built specifically around `copier update`, which lets a project pull in
-template changes months after it was first scaffolded via a three-way merge.
+A [Copier](https://copier.readthedocs.io/) template and public composition
+engine for modern Python projects. The engine catalogue offers independent
+**library** and **CLI Application** archetypes; the compatibility-preserving
+direct-Copier path remains Library-only and supports `copier update` through
+three-way merges.
 
 ## Quick start
 
@@ -23,8 +24,8 @@ uvx copier copy gh:Sandsy09/forge-template your-project --trust
 `--trust` is required — the scaffold runs a `_tasks` step (git init, first
 commit) after copying files.
 
-The public engine behind both paths is also installable directly —
-`pip install forge-template` or `uv add forge-template` — for clients that
+The public engine used by `create-forge --engine-preview` is also installable
+directly — `pip install forge-template` or `uv add forge-template` — for clients that
 consume [`docs/template-engine-api.md`](docs/template-engine-api.md)'s typed
 discovery/validation/rendering API without going through Copier or
 `create-forge` at all. The published wheel ships the engine facade and its
@@ -80,7 +81,9 @@ outcomes every generated project receives, the
 that baseline, the [Library archetype contract](docs/library-archetype.md)
 defines the distributable-package additions composed over it, and the
 [CLI Application archetype contract](docs/cli-application-archetype.md)
-defines the selected executable reference shape that FT-08.04 will add,
+defines the implemented executable reference shape. The
+[composition architecture review](docs/composition-architecture-review.md)
+records the Stage 08 boundary corrections proven by both archetypes, and
 the [Python support policy](docs/python-support.md) defines the
 supported CPython window and lifecycle, the
 [editor integration strategy](docs/editor-integration.md) keeps the baseline

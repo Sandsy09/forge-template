@@ -247,6 +247,12 @@ the same mechanism as a component's — `foundation_content_order`, output-path
 rendering ([ADR 0032](adr/0032-render-component-content-paths.md)), and
 containment all apply identically.
 
+The [Stage 08 composition review](composition-architecture-review.md) confirms
+that coincidentally identical Library/CLI package resources stay independently
+component-owned, while typed-distribution metadata reaches Foundation through
+the existing classifier extension point. No inheritance or shared runtime
+component is implied.
+
 ## Dependencies and conflicts
 
 Each entry in `requires` or `conflicts` contains a component `id` and an

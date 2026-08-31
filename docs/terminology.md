@@ -72,7 +72,10 @@ production catalogue's first component, while leaving the current monolithic
 Copier path unchanged. The
 [CLI Application archetype contract](cli-application-archetype.md) selects
 `cli` as the second reference shape: an independent executable distribution
-over the same Foundation, defined now and implemented by FT-08.04.
+over the same Foundation, defined and implemented by FT-08.04. The
+[composition architecture review](composition-architecture-review.md) uses
+both production shapes to distinguish deliberate archetype duplication from
+accidental Foundation coupling.
 
 ### Capability
 

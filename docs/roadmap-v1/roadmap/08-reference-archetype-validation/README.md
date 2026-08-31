@@ -24,7 +24,11 @@
   installed production catalogue now contains `cli` alongside `library`,
   proven by real `uv build`, install, console-script, and `python -m` output
   (`tests/test_cli_build.py`).
-- **FT-08.05 — Run composition architecture review**
+- **FT-08.05 — Run composition architecture review** — the engine-side
+  implementation is recorded by the
+  [canonical review](../../../composition-architecture-review.md) and
+  [ADR 0037](../../../adr/0037-two-archetype-composition-review.md); coordinated
+  `create-forge` lock finalisation remains before administrative closure.
 
 ### create-forge
 
@@ -42,6 +46,12 @@ FT-08.03 selected `cli` as an independent, optionless executable distribution
 over Foundation. FT-08.04 implemented it in the package-bound engine
 catalogue, which now contains both `cli` and `library`; the direct Copier
 path remains unchanged.
+
+FT-08.05 keeps the identical package-root, typing-marker, and test-package
+resources independently archetype-owned. It moves typed classifiers to those
+owners, makes the mandatory quality gate layout-neutral, removes optional
+coverage/pre-commit concerns from engine Foundation, and defines resolved
+lock state as a client-finalisation artefact rather than an in-memory render.
 
 ## Stage completion rule
 
