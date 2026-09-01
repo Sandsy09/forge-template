@@ -48,6 +48,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [organisation-policy-fixtures.md](organisation-policy-fixtures.md) — the
   test-only reference resolver and placeholder policy documents proving that
   protocol executably.
+- [no-copy-inheritance.md](no-copy-inheritance.md) — the executable boundary
+  proving downstream clients reuse package-bound Forge content without
+  copying it or importing private engine modules.
 - [component-manifests.md](component-manifests.md) — strict TOML component
   metadata, compatibility, content ownership, dependencies, and conflicts,
   plus the implicit Foundation content source and manifest protocol `2`'s

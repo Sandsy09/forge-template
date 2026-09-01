@@ -32,9 +32,9 @@ deliberately **not** `src/forge_template` code:
 - No roadmap issue in Stage 09, the final stage in roadmap v1, schedules a
   shipped resolver. Adding one here would convert a `type:test`,
   `priority:low` issue into an unplanned feature and a `0.4.0` release.
-- CLAUDE.md already states the standing rule this respects: "do not add
-  policy parsing, resolution, public exports, or `ForgeEngineError` values
-  until the later Stage 09 implementation."
+- CLAUDE.md already states the standing rule this respects: do not add policy
+  parsing, resolution, public exports, or `ForgeEngineError` values to
+  `src/forge_template`; a shipped implementation remains unscheduled.
 - The precedent is
   [ADR 0028](adr/0028-composition-contract-fixtures.md):
   `tests/composition_contract.py` was kept out of `src/` for the same reason
@@ -50,7 +50,7 @@ this issue, exactly as organisation-policy.md and ADR 0038 already state.
 
 ## The placeholder policy documents
 
-Five checked-in JSON documents at `tests/fixtures/organisation_policies/`,
+Six checked-in JSON documents at `tests/fixtures/organisation_policies/`,
 every ID prefixed `example-` so neutrality is a checked property (see
 `test_fixture_policies_carry_no_organisation_specific_values`), not an
 assertion:
@@ -62,6 +62,7 @@ assertion:
 | `example-quality-baseline.json` | `defaults.capabilities` + `forbidden.capabilities` | merges cleanly with `example-delivery-baseline` |
 | `example-restricted-delivery.json` | `forbidden.platforms` | the documented irreconcilable pair with `example-delivery-baseline` (`required-forbidden-conflict`) |
 | `example-production-library.json` | `required.archetype` + `forbidden.archetypes` | resolves against the **real installed catalogue**, not the fixture one |
+| `example-no-copy-inheritance.json` | default/required capability and platform plus a forbidden capability | proves additive selected-component ownership for [FT-09.05](no-copy-inheritance.md) |
 
 The middle three mirror
 [organisation-policy.md's own worked merge example](organisation-policy.md#multiple-policies)
@@ -93,9 +94,10 @@ through `parse_project_spec` and `render_project` in
 `test_resolved_selection_renders_a_real_project`. This is the fixture's one
 genuinely end-to-end proof: a policy-resolved selection is directly
 `ProjectSpec`-shaped and produces a real rendered project through the
-supported [template-engine API](template-engine-api.md), which is what
-[FT-09.05 / #48](https://github.com/Sandsy09/forge-template/issues/48) will
-need next.
+supported [template-engine API](template-engine-api.md). FT-09.05 builds on
+that path in the [no-copy inheritance proof](no-copy-inheritance.md), comparing
+the policy-derived result with an equivalent direct client and separating the
+real-catalogue proof from additive private-fixture coverage.
 
 ## What the tests prove
 
@@ -133,6 +135,11 @@ organisation-policy.md and extension-points.md. A downstream client owns its
 own resolver implementation, policy-source trust, and ProjectSpec
 construction -- this fixture is a reference to build and test against, not a
 dependency to import.
+
+The [no-copy inheritance proof](no-copy-inheritance.md) demonstrates that a
+downstream client can retain those responsibilities without copying any
+Foundation or component source. Its private fixture-catalogue scenario proves
+composition mechanics only and creates no supported client injection seam.
 
 A shipped, public resolver remains unscheduled in roadmap v1: Stage 09 is
 its final stage, and no issue here or in create-forge currently commits to

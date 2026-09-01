@@ -130,7 +130,10 @@ side-effect-free discovery, validation, planning, and in-memory rendering, the
 checks every rendered result before a client receives it, the
 [Forge-Blueprint compatibility policy](docs/compatibility-policy.md) defines
 every versioned engine axis, compatible ranges, and deprecation windows a
-downstream client may rely on, and
+downstream client may rely on, the
+[no-copy inheritance proof](docs/no-copy-inheritance.md) validates that an
+independent downstream client can reuse package-bound Forge content through
+the public facade without copying it, and
 [docs/adr/](docs/adr/) records why significant decisions were made.
 
 ## License

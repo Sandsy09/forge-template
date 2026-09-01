@@ -99,6 +99,13 @@ option-schema and Foundation source protocols), compatible ranges, a
 90-day-plus-one-release deprecation window, and the facts a conformant
 unsupported-version report must carry, pinned by
 `tests/test_compatibility_policy.py`.
+The [no-copy inheritance proof](docs/no-copy-inheritance.md)
+([ADR 0042](docs/adr/0042-validate-no-copy-downstream-inheritance.md)) closes
+forge-template Stage 09: `tests/no_copy_downstream.py` consumes only the
+top-level public facade, real-catalogue equivalence is byte-for-byte, and the
+private fixture catalogue separately demonstrates additive selected-component
+extensions. Never present that private override as a plugin or client
+distribution mechanism.
 Its
 [generated-project validation](docs/generated-project-validation.md) checks
 plan/output agreement, universal `pyproject.toml` metadata, and completed
@@ -323,7 +330,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0038 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0042 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by

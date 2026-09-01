@@ -84,7 +84,10 @@ client finalisation. The
 [Forge-Blueprint compatibility policy](docs/compatibility-policy.md) defines
 every versioned engine axis, compatible ranges, deprecation windows, and the
 facts a conformant unsupported-version report must carry, without changing
-the public facade or package version.
+the public facade or package version. The
+[no-copy inheritance proof](docs/no-copy-inheritance.md) demonstrates that a
+downstream client can keep policy and orchestration local while consuming
+Foundation and component output only through that supported facade.
 
 ## Branching and pull requests
 

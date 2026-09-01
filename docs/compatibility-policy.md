@@ -175,6 +175,11 @@ claim or duplicate that reservation. `create-forge`'s existing
 ["Unsupported combinations"](https://github.com/Sandsy09/create-forge/blob/main/docs/integration-contract.md#unsupported-combinations)
 rules already satisfy points 1–4 above.
 
+The [no-copy inheritance proof](no-copy-inheritance.md) validates the other
+side of negotiation: once compatible clients construct equivalent effective
+ProjectSpecs, policy provenance does not alter the deterministic plan or
+rendered bytes.
+
 ## Current compatibility state
 
 Living snapshot, reviewed 2026-09-01. Advancing it in line with the rules
