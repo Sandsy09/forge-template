@@ -45,6 +45,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0040 — Prove the organisation-policy protocol with a test-only reference fixture](0040-organisation-policy-reference-fixture.md)
 - [0041 — Define the Forge-Blueprint compatibility policy](0041-forge-blueprint-compatibility-policy.md)
 - [0042 — Validate no-copy downstream inheritance](0042-validate-no-copy-downstream-inheritance.md)
+- [0043 — Split invariants out of CLAUDE.md](0043-split-invariants-out-of-claude-md.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

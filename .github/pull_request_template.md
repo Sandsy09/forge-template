@@ -10,7 +10,7 @@
       released projects
 - [ ] An ADR is added under `docs/adr/`, if this makes a real architectural call
 - [ ] A `_migrations` block is added, if any `template/` path was renamed or
-      deleted (see CLAUDE.md's invariant 3)
+      deleted (see docs/invariants.md's invariant 3)
 - [ ] Any conditional file I touched still ends in a real trailing newline
-      (invariant 1)
+      (docs/invariants.md's invariant 1)
 - [ ] Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/)

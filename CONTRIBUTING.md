@@ -3,7 +3,7 @@
 This describes the human workflow — how to set up, validate, and release a
 change. For the rules that keep changes from breaking `copier update` for
 projects already scaffolded from this template, see
-[CLAUDE.md](CLAUDE.md); this file won't restate them.
+[docs/invariants.md](docs/invariants.md); this file won't restate them.
 
 ## Setup
 
@@ -16,7 +16,7 @@ The pre-commit gate lints root `*.md` and `docs/**` with `markdownlint-cli2`
 (ruleset in [.markdownlint-cli2.jsonc](.markdownlint-cli2.jsonc)); `docs/adr/`
 is exempt from its line-length rule only, since ADR records are immutable.
 `template/`'s Markdown is all `.md.jinja` and stays out of scope entirely —
-see CLAUDE.md's invariant 1.
+see [invariant 1](docs/invariants.md#1-generated-output-must-be-pre-commit-clean).
 
 No editor-specific setup is required. Project commands and configuration stay
 authoritative; the [editor integration strategy](docs/editor-integration.md)
@@ -281,7 +281,8 @@ it.
 If your change renamed or deleted a file under `template/`, the workflow
 warns if no `_migrations` block covers it — existing projects would otherwise
 get that path deleted plus a new one added on their next `copier update`,
-rather than a clean rename. See CLAUDE.md's invariant 3.
+rather than a clean rename. See
+[invariant 3](docs/invariants.md#3-moving-or-deleting-files-under-template-breaks-updates).
 
 Since [ADR 0036](docs/adr/0036-publish-the-engine-to-pypi.md), the same
 `release.yml` run also publishes the engine package to PyPI — a `publish`

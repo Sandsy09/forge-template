@@ -1,7 +1,7 @@
-"""Checks for ``copier.yml`` against the invariants documented in CLAUDE.md.
+"""Checks for ``copier.yml`` against the rules documented in CLAUDE.md.
 
 These used to be an inline ``python -c`` heredoc in
-``.github/workflows/test-template.yml`` (layout only) plus two invariants
+``.github/workflows/test-template.yml`` (layout only) plus two rules
 that nothing enforced at all (computed defaults, the ``versioning`` /
 ``versioning_resolved`` indirection). Both CI and ``uv run poe check`` now
 run them via :func:`check_all`.

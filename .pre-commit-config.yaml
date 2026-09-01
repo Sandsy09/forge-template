@@ -1,8 +1,8 @@
 # This repo's own lint gate -- also what CI runs (see the `lint` job in
 # .github/workflows/test-template.yml). Deliberately covers template/**: the
-# whitespace/EOF hooks are how invariant 1 in CLAUDE.md (generated output
-# must be pre-commit clean) gets enforced at the source, not just discovered
-# downstream when a scaffold's own pre-commit run fails.
+# whitespace/EOF hooks are how invariant 1 in docs/invariants.md (generated
+# output must be pre-commit clean) gets enforced at the source, not just
+# discovered downstream when a scaffold's own pre-commit run fails.
 default_install_hook_types: [pre-commit, commit-msg]
 
 repos:
@@ -30,7 +30,7 @@ repos:
   # Not markdownlint-cli2-docker, for the same reason shellcheck-py is used
   # above. Scope is root *.md and docs/** -- template/'s Markdown is all
   # .md.jinja and must never be linted or auto-fixed: it is raw Jinja, and
-  # rewriting it would risk invariant 1.
+  # rewriting it would risk invariant 1 (docs/invariants.md).
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: v0.23.2
     hooks:

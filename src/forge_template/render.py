@@ -90,7 +90,7 @@ def check_no_jinja_suffixes(root: Path) -> list[str]:
 
 def check_gha_expressions(root: Path) -> list[str]:
     """`${{ }}` GitHub Actions expressions must survive the `{% raw %}` block
-    (CLAUDE.md invariant 4) rather than being consumed by Jinja.
+    (docs/invariants.md invariant 4) rather than being consumed by Jinja.
     """  # noqa: D205
     ci_workflow = root / ".github" / "workflows" / "ci.yml"
     if not ci_workflow.is_file():

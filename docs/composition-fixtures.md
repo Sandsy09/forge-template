@@ -33,7 +33,8 @@ target's rendered content as a JSON string.
 Storing rendered content inside a JSON string rather than as real files is
 deliberate: the root `.pre-commit-config.yaml` runs
 `end-of-file-fixer`/`trailing-whitespace`/`mixed-line-ending` over every file
-with no exclusions, by design (CLAUDE.md invariant 1). A byte a golden fixture
+with no exclusions, by design ([docs/invariants.md](invariants.md) invariant
+1). A byte a golden fixture
 must pin exactly — a missing trailing newline, deliberate trailing whitespace
 — would otherwise be silently rewritten by the hook, and the resulting test
 failure would look like a renderer bug rather than a hook edit. A newline

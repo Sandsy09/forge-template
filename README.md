@@ -71,10 +71,11 @@ forge-template/
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the human workflow and
-[CLAUDE.md](CLAUDE.md) for the invariants that keep `copier update` working
-across projects generated at different points in this template's history; read
-the latter before changing anything under `template/`. The
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the human workflow,
+[docs/invariants.md](docs/invariants.md) for the rules that keep
+`copier update` working across projects generated at different points in
+this template's history, and [CLAUDE.md](CLAUDE.md) for agent guidance; read
+the invariants before changing anything under `template/`. The
 [canonical Forge vocabulary](docs/terminology.md) defines architectural terms,
 the [Foundation guarantees](docs/foundation-guarantees.md) define the mandatory
 outcomes every generated project receives, the
