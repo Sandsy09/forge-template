@@ -271,7 +271,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0042 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0044 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -284,8 +284,18 @@ path renders to a valid filename or empty, never something in between).
 
 ## Roadmap work
 
-The [live issue index](docs/roadmap-v1/github-issues/forge-template/ISSUE-INDEX.md)
-is the source of truth for roadmap order and blockers. FT-08.02 populated the
+The completed
+[Foundation roadmap](docs/roadmap-v1/github-issues/forge-template/ISSUE-INDEX.md)
+is the historical source for Stages 00–09. The live
+[Data Science epic index](docs/roadmap-v2/github-issues/forge-template/ISSUE-INDEX.md)
+continues through Stages 10–14 under
+[ADR 0044](docs/adr/0044-plan-data-science-as-the-third-archetype.md): a
+package-backed, notebook-oriented third archetype, reusable optional
+capabilities, and create-forge delivery that remains behind
+`--engine-preview`. Only epics are filed initially; plan and attach their
+children one epic at a time.
+
+FT-08.02 populated the
 production component catalogue under the
 [Library archetype contract](docs/library-archetype.md) — additive, package-bound
 content that leaves `template/` untouched. FT-08.04 (repurposed
@@ -308,11 +318,9 @@ possible.
 `.pre-commit-config.yaml`, ruleset in `.markdownlint-cli2.jsonc`
 (`docs/adr/` is exempt from line-length only, since records are immutable).
 
-Also open, not yet scheduled: [#1](https://github.com/Sandsy09/forge-template/issues/1)
-(reintroduce `make`, see Deferred below), [#7](https://github.com/Sandsy09/forge-template/issues/7)
-(split this file into invariants + agent guidance), [#8](https://github.com/Sandsy09/forge-template/issues/8)
-(finish auditing which repository helpers require shipped runtime
-dependencies rather than dev/test-group entries).
+Also open, not yet scheduled:
+[#1](https://github.com/Sandsy09/forge-template/issues/1) (reintroduce `make`,
+see Deferred below).
 
 ## Known limitation, documented not fixed
 
