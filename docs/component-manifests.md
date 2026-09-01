@@ -11,8 +11,8 @@ models component-to-component contributions only; protocol `2`
 contract](library-archetype.md)/[ADR 0031](adr/0031-library-archetype-contract.md))
 adds a discriminated contribution target so a contribution can also name the
 implicit Foundation content source — described below, and implemented by
-[`forge_template.foundation_source`](../src/forge_template/foundation_source.py) —
-rather than only another component. Protocol `1` parsing remains supported
+[`forge_template.foundation_source`](../src/forge_template/foundation_source.py)
+— rather than only another component. Protocol `1` parsing remains supported
 unchanged for existing component-to-component manifests.
 
 FT-08.02 populated the installed production catalogue with the first real

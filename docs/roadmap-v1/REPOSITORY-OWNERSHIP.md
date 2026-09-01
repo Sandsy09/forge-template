@@ -117,7 +117,8 @@ It owns:
 - structured engine errors and generated-project validation;
 - deterministic generation tests.
 
-It does **not** own interactive prompts, command-line parsing, terminal output or target-directory UX.
+It does **not** own interactive prompts, command-line parsing, terminal
+output or target-directory UX.
 
 ## `create-forge`
 
@@ -134,7 +135,8 @@ It owns:
 - CLI diagnostics/version reporting;
 - end-to-end scaffolding tests.
 
-It does **not** own copies of templates, a second component catalogue, compatibility rules, or rendering/composition logic.
+It does **not** own copies of templates, a second component catalogue,
+compatibility rules, or rendering/composition logic.
 
 ## Dependency direction
 
@@ -148,8 +150,12 @@ forge-template
 Generated repository
 ```
 
-The preferred dependency is one-way: `create-forge` consumes `forge-template`. `forge-template` must not import or depend on `create-forge`.
+The preferred dependency is one-way: `create-forge` consumes
+`forge-template`. `forge-template` must not import or depend on
+`create-forge`.
 
 ## Cross-repository issue rule
 
-If an issue is blocked by the other repository, link that external issue under **Cross-repository dependencies**. Do not create a second ticket that implements the same responsibility in both repositories.
+If an issue is blocked by the other repository, link that external issue
+under **Cross-repository dependencies**. Do not create a second ticket that
+implements the same responsibility in both repositories.

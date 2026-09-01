@@ -27,6 +27,17 @@ repos:
       - id: shellcheck
         files: ^scripts/.*\.sh$
 
+  # Not markdownlint-cli2-docker, for the same reason shellcheck-py is used
+  # above. Scope is root *.md and docs/** -- template/'s Markdown is all
+  # .md.jinja and must never be linted or auto-fixed: it is raw Jinja, and
+  # rewriting it would risk invariant 1.
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.23.2
+    hooks:
+      - id: markdownlint-cli2
+        args: [--fix]
+        exclude: ^(template|\.github)/
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.14.0
     hooks:

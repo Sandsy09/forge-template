@@ -12,6 +12,12 @@ uv sync --all-groups
 uv run pre-commit install --install-hooks
 ```
 
+The pre-commit gate lints root `*.md` and `docs/**` with `markdownlint-cli2`
+(ruleset in [.markdownlint-cli2.jsonc](.markdownlint-cli2.jsonc)); `docs/adr/`
+is exempt from its line-length rule only, since ADR records are immutable.
+`template/`'s Markdown is all `.md.jinja` and stays out of scope entirely —
+see CLAUDE.md's invariant 1.
+
 No editor-specific setup is required. Project commands and configuration stay
 authoritative; the [editor integration strategy](docs/editor-integration.md)
 defines the boundary for any future optional editor capability. Generated
@@ -99,7 +105,7 @@ of the Conventional Commits types this repo already uses: `feat`, `fix`,
 `docs`, `chore`, `refactor`, `test`, `ci`, `build`. Pick the type that the
 branch's eventual squash commit will carry — for example:
 
-```
+```text
 feat/archetype-cli
 fix/gitignore-trailing-newline
 ci/shellcheck-in-pre-commit

@@ -1,0 +1,23 @@
+{
+  "config": {
+    "MD013": {
+      "line_length": 80,
+      // A table row cannot be broken across lines; a heading cannot wrap;
+      // and CLAUDE.md's validation ladder relies on column alignment.
+      "tables": false,
+      "headings": false,
+      "code_blocks": false
+    }
+  },
+  "overrides": [
+    {
+      // CONTRIBUTING.md: ADR records are immutable. 0039's H1 title is 103
+      // chars and 0007:29 is a 93-char inline code span holding a Jinja
+      // conditional filename -- neither can wrap. Structural rules still
+      // apply, so new records are still checked for shape.
+      "filter": ["docs/adr/**"],
+      "config": { "MD013": false },
+      "combine": "merge"
+    }
+  ]
+}

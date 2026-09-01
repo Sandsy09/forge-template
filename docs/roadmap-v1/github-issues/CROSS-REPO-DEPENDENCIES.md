@@ -6,7 +6,7 @@ relationship sidebar is authoritative; this table is the readable roadmap
 view.
 
 | Blocked issue | Blocked by |
-|---|---|
+| --- | --- |
 | [FT-06.01](https://github.com/Sandsy09/forge-template/issues/32) (complete) | [create-forge#41 / CF-00.02](https://github.com/Sandsy09/create-forge/issues/41) (complete) |
 | [FT-06.02](https://github.com/Sandsy09/forge-template/issues/33) (complete) | [create-forge#41 / CF-00.02](https://github.com/Sandsy09/create-forge/issues/41) (complete) |
 | [FT-08.05](https://github.com/Sandsy09/forge-template/issues/43) (complete) | [create-forge#52 / CF-08.03](https://github.com/Sandsy09/create-forge/issues/52) (complete) |

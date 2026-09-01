@@ -240,7 +240,8 @@ This scope contract does not decide:
 - client construction, destination orchestration, and the first supported
   `create-forge` package range for the
   [stable template-engine API](template-engine-api.md), under
-  [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md); or
+  [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md);
+  or
 - the concrete SBOM/attestation implementation and the exit criteria that
   must hold before it is built, owned by the
   [supply-chain provenance contract](supply-chain-provenance.md).

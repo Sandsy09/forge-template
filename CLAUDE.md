@@ -28,7 +28,7 @@ Separate because Copier resolves template versions from PEP440 git tags here.
 
 ## Layout
 
-```
+```text
 forge-template/
 ├── copier.yml              Question schema. MUST be at root.
 ├── pyproject.toml          This repo's OWN tooling — NOT part of the scaffold
@@ -182,6 +182,11 @@ template files still shipped without trailing newlines in `v0.1.0` until the
 root pre-commit config was added and run against `template/` for the first
 time. Keep the pre-commit hooks scoped that way.
 
+The `markdownlint-cli2` hook is the deliberate exception: it excludes
+`template/` (and `.github/`) rather than covering it. Every Markdown file
+under `template/` is `.md.jinja` and holds raw Jinja, not valid Markdown;
+linting or `--fix`-rewriting one would itself violate this invariant.
+
 ### 2. `.copier-answers.yml` must be generated and committed
 
 Copier does not create it — `template/.copier-answers.yml.jinja` must exist and
@@ -241,7 +246,7 @@ Untagged commits on `main` are invisible to `copier update`. Use `release.yml`.
 Optional files use conditional names — when the name renders empty, the file is
 skipped:
 
-```
+```text
 template/{% if use_docs %}mkdocs.yml{% endif %}.jinja
 template/{% if dependency_updates == 'renovate' %}renovate.json{% endif %}.jinja
 ```
@@ -316,12 +321,13 @@ shellcheck steps) — see backlog item 1, done.
 
 ## Current state
 
-Working: Library and CLI Application archetypes, all four combos green locally and in CI, update
-merge validated, root and template `.gitattributes` both in place, no
-byte-empty template files remain, `task_runner`/`make` removed (it was the
-one untested, 100%-broken conditional — see Deferred). **`v0.3.2` is the
-latest tagged release**, carrying the reviewed Stage 08 boundary corrections.
-`v0.3.0` first carried the production
+Working: Library and CLI Application archetypes, all four combos green
+locally and in CI, update merge validated, root and template
+`.gitattributes` both in place, no byte-empty template files remain,
+`task_runner`/`make` removed (it was the one untested, 100%-broken
+conditional — see Deferred). **`v0.3.2` is the latest tagged release**,
+carrying the reviewed Stage 08 boundary corrections. `v0.3.0` first carried
+the production
 engine catalogue (both `library` and `cli`) alongside the direct-Copier
 template. Root repo hygiene is done:
 root
@@ -362,9 +368,13 @@ retires `template/` in favour of this catalogue is the `_migrations` moment:
 plan it before moving template paths and keep Library paths stable where
 possible.
 
+[#6](https://github.com/Sandsy09/forge-template/issues/6), done — a
+`markdownlint-cli2` hook now covers root `*.md` and `docs/**` in
+`.pre-commit-config.yaml`, ruleset in `.markdownlint-cli2.jsonc`
+(`docs/adr/` is exempt from line-length only, since records are immutable).
+
 Also open, not yet scheduled: [#1](https://github.com/Sandsy09/forge-template/issues/1)
-(reintroduce `make`, see Deferred below), [#6](https://github.com/Sandsy09/forge-template/issues/6)
-(Markdown linter in the pre-commit gate), [#7](https://github.com/Sandsy09/forge-template/issues/7)
+(reintroduce `make`, see Deferred below), [#7](https://github.com/Sandsy09/forge-template/issues/7)
 (split this file into invariants + agent guidance), [#8](https://github.com/Sandsy09/forge-template/issues/8)
 (finish auditing which repository helpers require shipped runtime
 dependencies rather than dev/test-group entries).

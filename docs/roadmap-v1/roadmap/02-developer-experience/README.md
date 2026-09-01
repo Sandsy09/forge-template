@@ -11,7 +11,8 @@
 - ~~**FT-02.03 — Add developer helper scripts only where justified**~~ —
   completed before the roadmap through Poe orchestration and the repository's
   scoped `verify-ci.sh` helper.
-- ~~[**FT-02.04 — Define optional editor integration strategy**](https://github.com/Sandsy09/forge-template/issues/23)~~ — completed by the
+- ~~[**FT-02.04 — Define optional editor integration strategy**](https://github.com/Sandsy09/forge-template/issues/23)~~
+  — completed by the
   [canonical strategy](../../../editor-integration.md) and
   [ADR 0014](../../../adr/0014-editor-neutral-foundation.md).
 

@@ -6,7 +6,7 @@ GitHub issue bodies and native relationships are the source of truth for open
 work; completed baseline items were not backfilled as closed issues.
 
 | ID | GitHub issue / evidence | Status | Parent | Blocked by | Milestone |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | FT-EPIC-00 | [#11](https://github.com/Sandsy09/forge-template/issues/11) and [Stage 00 record](../../roadmap/00-governance-and-principles/README.md) | Complete | — | — | Foundation Contract — Stage 00 |
 | FT-00.01 | [#19](https://github.com/Sandsy09/forge-template/issues/19), [guarantees](../../../foundation-guarantees.md), and [ADR 0011](../../../adr/0011-forge-foundation-guarantees.md) | Complete | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
 | FT-00.02 | [#20](https://github.com/Sandsy09/forge-template/issues/20), [terminology](../../../terminology.md), and [ADR 0010](../../../adr/0010-forge-architectural-terminology.md) | Complete | [#11](https://github.com/Sandsy09/forge-template/issues/11) | — | Foundation Contract — Stage 00 |
