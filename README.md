@@ -25,8 +25,9 @@ uvx copier copy gh:Sandsy09/forge-template your-project --trust
 commit) after copying files.
 
 The public engine used by `create-forge --engine-preview` is also installable
-directly — `pip install forge-template` or `uv add forge-template` — for clients that
-consume [`docs/template-engine-api.md`](docs/template-engine-api.md)'s typed
+directly — `pip install forge-template` or `uv add forge-template` — for
+clients that consume
+[`docs/template-engine-api.md`](docs/template-engine-api.md)'s typed
 discovery/validation/rendering API without going through Copier or
 `create-forge` at all. The published wheel ships the engine facade and its
 Foundation/component content only; this repository's own tooling
@@ -57,7 +58,7 @@ exactly what's asked and what each answer controls.
 
 ## Layout
 
-```
+```text
 forge-template/
 ├── copier.yml               Question schema for the scaffold
 ├── pyproject.toml           This repo's OWN tooling (not part of the scaffold)

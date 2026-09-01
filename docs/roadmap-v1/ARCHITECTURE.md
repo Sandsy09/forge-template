@@ -127,4 +127,6 @@ Blueprint, to consume the same engine directly.
 
 ## Critical invariant
 
-Generated projects require neither `forge-template` nor `create-forge` for normal development or runtime operation. Forge is a generator, not an application framework dependency.
+Generated projects require neither `forge-template` nor `create-forge` for
+normal development or runtime operation. Forge is a generator, not an
+application framework dependency.

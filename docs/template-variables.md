@@ -208,5 +208,6 @@ does not define:
 - organisation-policy resolution (Stage 09).
 
 The current CLI continues to pass its plain answer mapping directly to Copier,
-using its own flat `copier.yml` variable names unchanged. No generated project depends on
-`forge_template.template_variables` during normal development or runtime.
+using its own flat `copier.yml` variable names unchanged. No generated
+project depends on `forge_template.template_variables` during normal
+development or runtime.

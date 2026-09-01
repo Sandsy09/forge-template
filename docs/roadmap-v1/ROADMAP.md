@@ -18,7 +18,7 @@ The roadmap remains one product roadmap, with implementation ownership split
 between repository-local epics and issues.
 
 | Stage | Theme | forge-template | create-forge | Integration intensity |
-|---|---|---:|---:|---|
+| --- | --- | ---: | ---: | --- |
 | 00 | Governance and Principles | 5 issues | 2 issues | High |
 | 01 | Python Core | 5 issues | 2 issues | Medium |
 | 02 | Developer Experience | 4 issues | 2 issues | Medium |

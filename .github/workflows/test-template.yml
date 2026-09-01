@@ -40,7 +40,8 @@ jobs:
         run: uv sync --all-groups
 
       # Same gate as `uv run pre-commit run --all-files` locally: ruff,
-      # shellcheck, and the whitespace/EOF hooks that guard invariant 1.
+      # shellcheck, markdownlint, and the whitespace/EOF hooks that guard
+      # invariant 1.
       - name: Pre-commit
         run: uv run pre-commit run --all-files --show-diff-on-failure
 
