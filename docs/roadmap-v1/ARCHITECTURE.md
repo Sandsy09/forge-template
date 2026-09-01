@@ -23,7 +23,10 @@ strict downstream selection defaults, constraints, precedence, and failure
 semantics applied before that effective request is constructed. The
 [organisation-policy reference fixture](../organisation-policy-fixtures.md)
 proves it executably against a test-only resolver; a shipped, public
-resolver remains unscheduled.
+resolver remains unscheduled. The
+[no-copy inheritance proof](../no-copy-inheritance.md) demonstrates that an
+independent downstream client can combine that responsibility with the public
+engine facade without copying package-bound Foundation or component content.
 The [component manifest protocol](../component-manifests.md) defines the
 strict engine-owned metadata and compatibility for every future bundled
 archetype, capability, and platform.

@@ -19,7 +19,7 @@
   complete via the
   [canonical fixture doc](../../../organisation-policy-fixtures.md) and
   [ADR 0040](../../../adr/0040-organisation-policy-reference-fixture.md).
-  Five placeholder policy documents and a test-only reference resolver
+  Six placeholder policy documents and a test-only reference resolver
   prove protocol `1`'s full authority order, merge semantics, and all 17
   structured-failure detail codes, plus one end-to-end resolution rendered
   through the real production catalogue -- pinned by
@@ -30,7 +30,13 @@
   Every versioned engine axis, compatible ranges, a 90-day-plus-one-release
   deprecation window, and the facts a conformant unsupported-version report
   must carry are pinned by `tests/test_compatibility_policy.py`.
-- **FT-09.05 — Validate no-copy inheritance model**
+- **FT-09.05 — Validate no-copy inheritance model** — complete via the
+  [canonical proof](../../../no-copy-inheritance.md) and
+  [ADR 0042](../../../adr/0042-validate-no-copy-downstream-inheritance.md).
+  A test-only downstream harness proves the real package-bound catalogue can
+  be consumed without copying content, while private fixtures separately
+  prove additive capability/platform contributions without defining a plugin
+  mechanism.
 
 ### create-forge
 
@@ -51,11 +57,14 @@ remains unscheduled in this roadmap. The FT-09.04 policy defines the
 compatible ranges and deprecation windows a downstream client may rely on
 across every versioned engine axis, unblocking create-forge#54's
 compatibility negotiation and structured unsupported-version handling. The
+FT-09.05 proof closes forge-template's repository-local Stage 09 work while
+keeping policy resolution and filesystem orchestration client-owned. The
 downstream consumption hook is create-forge's own work.
 
 ## Stage completion rule
 
-- [ ] Repo-local issues are complete or explicitly deferred.
+- [ ] Repo-local issues are complete or explicitly deferred across both
+      repositories (forge-template complete; create-forge #53–#55 open).
 - [ ] Cross-repository blockers are resolved.
 - [ ] Public contracts changed by this stage are documented/versioned.
 - [ ] No implementation concern is duplicated across repositories.

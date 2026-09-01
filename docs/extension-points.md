@@ -172,6 +172,11 @@ staging is client-owned behaviour with no engine guarantee attached — it is
 not a documented extension mechanism, and doing so forfeits the validation
 the engine already performed.
 
+The [no-copy inheritance proof](no-copy-inheritance.md) validates the positive
+side of this boundary: independent clients obtain identical plans and bytes
+for equivalent effective ProjectSpecs, while additive differences remain
+selected-component files or declared extension contributions.
+
 ## Ownership and deferred work
 
 `forge-template` owns this extension-point inventory and its stability
@@ -197,3 +202,8 @@ defines. The downstream consumption hook belongs to
 [create-forge#54](https://github.com/Sandsy09/create-forge/issues/54), which
 already commits to using only the supported engine API and avoiding arbitrary
 file overlays.
+
+FT-09.05 closes the repository-local validation of this model through
+[no-copy-inheritance.md](no-copy-inheritance.md) and
+[ADR 0042](adr/0042-validate-no-copy-downstream-inheritance.md), without
+turning the private test catalogue into a plugin mechanism.

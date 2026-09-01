@@ -250,6 +250,16 @@ allowed to escape rather than being mislabeled as user input failures.
 Messages are diagnostic, not a parsing protocol. Clients branch on the error
 code and structured detail paths and may present the safe messages to users.
 
+## No-copy downstream reuse
+
+The [no-copy inheritance contract](no-copy-inheritance.md) proves a
+Blueprint-style client can combine client-owned policy and orchestration with
+this facade without copying Foundation/component source or importing private
+engine modules. Equivalent effective ProjectSpecs produce identical plans and
+rendered bytes even when their policy provenance differs. The private
+catalogue overrides used by this repository's additive fixture tests remain
+unsupported and are not a discovery or plugin API.
+
 ## Compatibility and current cutover boundary
 
 [compatibility-policy.md](compatibility-policy.md) is the canonical,

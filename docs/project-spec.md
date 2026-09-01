@@ -93,8 +93,8 @@ strict [organisation policy protocol](organisation-policy.md).
 the optional identifiers that influenced that effective request. They do not
 reapply defaults, carry policy documents, or grant rendering authority.
 Organisation-policy protocol `1` now defines the external document, conflict,
-and failure semantics; executable parsing and resolution remain later Stage 09
-work and do not alter this ProjectSpec wire shape.
+and failure semantics; executable parsing and resolution remain unscheduled
+client-owned work in roadmap v1 and do not alter this ProjectSpec wire shape.
 
 ### Component options
 
@@ -220,7 +220,8 @@ The surrounding implementation is defined by the
 [stable template-engine API](template-engine-api.md). This protocol still does
 not define:
 
-- executable organisation-policy parsing and resolution (Stage 09); or
+- executable organisation-policy parsing and resolution (unscheduled in
+  roadmap v1); or
 - CLI prompting, ProjectSpec construction, diagnostics, or target filesystem
   orchestration (`create-forge`).
 

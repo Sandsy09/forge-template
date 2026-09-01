@@ -9,6 +9,10 @@
 > production component, implemented by FT-08.02. The
 > [CLI Application contract](../cli-application-archetype.md) defines `cli`
 > as the optionless second reference archetype, implemented by FT-08.04.
+> The [no-copy inheritance proof](../no-copy-inheritance.md) completes
+> forge-template Stage 09 by validating that future clients can reuse the same
+> package-bound engine without copying its source; create-forge retains its
+> own three Stage 09 integration issues.
 
 The roadmap remains one product roadmap, with implementation ownership split
 between repository-local epics and issues.

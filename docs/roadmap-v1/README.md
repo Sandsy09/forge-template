@@ -87,7 +87,12 @@ resolver; a shipped, public resolver remains unscheduled. The canonical
 by FT-09.04, defines every versioned engine axis, compatible ranges, a
 90-day-plus-one-release deprecation window, and the facts a conformant
 unsupported-version report must carry, without changing the public facade or
-package version.
+package version. The canonical
+[no-copy inheritance proof](../no-copy-inheritance.md), delivered by
+FT-09.05, demonstrates that an independent client can preserve its own policy
+and orchestration concerns while reusing package-bound Forge content only
+through the public facade. Forge-template's Stage 09 work is complete;
+create-forge #53–#55 retain the shared integration work.
 
 The canonical [Library archetype contract](../library-archetype.md) defines
 the distributable-package additions composed over one implicit Foundation

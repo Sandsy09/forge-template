@@ -21,6 +21,9 @@ and diagnostic presentation; the
 [organisation-policy reference fixture](../organisation-policy-fixtures.md)
 proves that ownership boundary executably against a test-only resolver
 `forge-template` owns without shipping it as public API. The
+[no-copy inheritance proof](../no-copy-inheritance.md) validates that clients
+can retain those selection/orchestration responsibilities without copying
+Foundation or component source. The
 [component manifest protocol](../component-manifests.md) defines the bundled
 identity, display, version, compatibility, content, dependency, and conflict
 metadata that `forge-template` owns rather than the CLI. The

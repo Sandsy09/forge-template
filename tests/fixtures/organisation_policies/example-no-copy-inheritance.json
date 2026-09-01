@@ -1,0 +1,17 @@
+{
+  "policy_version": 1,
+  "id": "example-no-copy-inheritance",
+  "description": "Exercises selection-only downstream reuse without copying Forge content.",
+  "defaults": {
+    "archetype": "library-v2",
+    "capabilities": ["coverage"],
+    "platforms": ["github"]
+  },
+  "required": {
+    "capabilities": ["coverage"],
+    "platforms": ["github"]
+  },
+  "forbidden": {
+    "capabilities": ["documentation"]
+  }
+}

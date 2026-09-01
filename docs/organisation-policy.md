@@ -222,7 +222,8 @@ safe human-readable `message`. Stable detail codes are:
 Paths begin at the relevant policy ID or effective selection field. Messages
 must not echo secrets or arbitrary external content. Existing
 `ForgeEngineError`, `EngineErrorCode`, and public engine operations remain
-unchanged until later Stage 09 work implements this contract.
+unchanged unless a future, separately accepted implementation ships this
+contract.
 
 ## Ownership and deferred implementation
 
