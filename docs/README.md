@@ -4,6 +4,8 @@ This directory holds documentation about `forge-template` itself, as opposed
 to the documentation the `library` archetype generates for scaffolded
 projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 
+- [invariants.md](invariants.md) — the six hard rules governing changes
+  under `template/` and `copier.yml`.
 - [terminology.md](terminology.md) — canonical Forge architectural vocabulary
   and authority rules.
 - [foundation-guarantees.md](foundation-guarantees.md) — mandatory outcomes

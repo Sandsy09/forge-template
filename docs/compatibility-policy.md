@@ -26,7 +26,7 @@ bundled components. It complements, and does not restate:
 - [ADR 0002](adr/0002-copier-over-cookiecutter.md) and
   [ADR 0003](adr/0003-two-repo-split.md) — the direct-Copier `template/` path
   resolves its own compatibility from PEP 440 git tags and `copier update`'s
-  three-way merge, governed by [CLAUDE.md](../CLAUDE.md)'s invariants 3 and 6.
+  three-way merge, governed by [invariants](invariants.md) 3 and 6.
   That mechanism is unrelated to the axes below and is out of scope here.
 - Client-side presentation. This document defines what the engine publishes
   and the minimum facts a conformant report must carry, not wording,
