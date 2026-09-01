@@ -35,6 +35,12 @@ Foundation/component content only; this repository's own tooling
 installable package — see
 [ADR 0036](docs/adr/0036-publish-the-engine-to-pypi.md).
 
+The next planned engine shape is a package-backed, notebook-oriented Data
+Science archetype composed with reusable optional capabilities. Its
+[Stage 10–14 roadmap](docs/roadmap-v2/README.md) files epics only; the exact
+stack and child issues are intentionally decided one epic at a time. The
+default direct-Copier Library path remains unchanged.
+
 ## Two repos
 
 | Repo | Role |
