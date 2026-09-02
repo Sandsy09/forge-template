@@ -78,9 +78,9 @@ deliberately broken one is not worth publishing.
 
 ## Two catalogues, split by purpose
 
-The production catalogue (`library`, `cli`) has zero capabilities or
-platforms, so a required/default/forbidden rule over either kind has nothing
-to reference. Most scenarios instead resolve against the fixture catalogue
+The source production catalogue (`library`, `cli`, `jupyter`,
+`scientific-python`) still has no platforms and deliberately provides only a
+small capability set. Most scenarios therefore resolve against the fixture catalogue
 at `tests/fixtures/component_manifests/` (`library`, `library-v2` as two
 archetypes; `changelog`, `coverage`, `documentation` as capabilities;
 `github` as a platform), reached through the same private

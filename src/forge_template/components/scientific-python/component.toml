@@ -1,0 +1,25 @@
+# The production Scientific Python capability. See
+# docs/data-science-capabilities.md and ADR 0051.
+manifest_version = 2
+id = "scientific-python"
+name = "Scientific Python"
+description = "A core numerical, tabular, plotting, and machine-learning stack."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-runtime-dependencies"
+content = "extensions/runtime-dependencies.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "readme-project-shape"
+content = "extensions/readme-project-shape.md.jinja"

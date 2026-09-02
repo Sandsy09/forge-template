@@ -22,14 +22,16 @@ FT-EPIC-11 is natively blocked by FT-EPIC-10, now complete.
    safe notebook validator, Foundation contributions, tests, and [ADR
    0050](../../../adr/0050-production-jupyter-capability.md).
 3. [FT-11.03 / #107](https://github.com/Sandsy09/forge-template/issues/107)
-   implements the independently applicable `scientific-python` capability.
+   is complete: the independently applicable `scientific-python` capability,
+   exact runtime dependency contributions, generated import test, guidance,
+   endpoint resolution, and [ADR
+   0051](../../../adr/0051-production-scientific-python-capability.md).
 4. [FT-11.04 / #108](https://github.com/Sandsy09/forge-template/issues/108)
    validates omission, independent and combined selection, compatibility,
    deterministic rendering, and packaged resources.
 
-FT-11.01 and FT-11.02 are complete. `FT-11.03 / #107` is the next actionable
-implementation; FT-11.04 remains blocked only by FT-11.03 because its other
-predecessor is complete.
+FT-11.01 through FT-11.03 are complete. `FT-11.04 / #108` is the final,
+actionable Stage 11 validation issue; both of its predecessors are complete.
 
 ## Entry criteria
 

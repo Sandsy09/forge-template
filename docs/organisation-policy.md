@@ -190,9 +190,11 @@ no permitted archetype.
 After policy resolution, the normal ProjectSpec and component-manifest
 validation remains authoritative. Policy cannot bypass component dependencies,
 conflicts, protocol or Python compatibility, option validation, file-conflict
-rules, or Foundation guarantees. The current production catalogue contains
-only the `library` and `cli` archetypes; capability and platform identifiers
-in the examples are neutral placeholders for later fixture/catalogue work.
+rules, or Foundation guarantees. The source production catalogue contains the
+`library` and `cli` archetypes plus the `jupyter` and `scientific-python`
+capabilities; platform identifiers in the examples remain neutral placeholders
+for later fixture/catalogue work. The latest published `0.3.2` catalogue still
+contains only the two archetypes.
 
 ## Structured failures
 

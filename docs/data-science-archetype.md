@@ -6,7 +6,7 @@ ownership boundaries. It is the canonical living contract accepted by
 
 The contract is intentionally ahead of the archetype implementation. The
 source catalogue now contains `library`, `cli`, and the production `jupyter`
-capability; Stage 12 will implement this
+and `scientific-python` capabilities; Stage 12 will implement this
 shape after the remaining Stage 10 decisions and the Stage 11 capabilities are
 complete. Nothing here changes the direct-Copier Library path.
 

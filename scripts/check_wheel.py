@@ -39,6 +39,7 @@ _MUST_CONTAIN = (
     "forge_template/components/jupyter/content/",
     "forge_template/components/library/content/",
     "forge_template/components/cli/content/",
+    "forge_template/components/scientific-python/content/",
 )
 _MUST_NOT_CONTAIN = (
     "forge_template/adr.py",
@@ -50,7 +51,7 @@ _SMOKE_IMPORT = (
     "import forge_template; "
     "descriptors = forge_template.discover_components(); "
     "ids = sorted(d.id for d in descriptors); "
-    "assert ids == ['cli', 'jupyter', 'library'], ids; "
+    "assert ids == ['cli', 'jupyter', 'library', 'scientific-python'], ids; "
     "print('discovered:', ids)"
 )
 

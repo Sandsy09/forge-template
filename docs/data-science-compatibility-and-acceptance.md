@@ -9,11 +9,11 @@ the final child of
 [FT-EPIC-10](https://github.com/Sandsy09/forge-template/issues/96).
 
 This contract itself bumped no version or published package. Stage 11 has now
-added `jupyter` to the source catalogue; the published `0.3.2` wheel still
-contains only `library` and `cli`. Later Stage 11–12 work adds Scientific
-Python and Data Science before FT-12.04 publishes `0.4.0`; Stage 14 reviews
-the result and publishes the reviewed line. Nothing here changes the
-direct-Copier Library path.
+added `jupyter` and `scientific-python` to the source catalogue; the published
+`0.3.2` wheel still contains only `library` and `cli`. Later Stage 12 work adds
+Data Science before FT-12.04 publishes `0.4.0`; Stage 14 reviews the result and
+publishes the reviewed line. Nothing here changes the direct-Copier Library
+path.
 
 It completes the Stage 10 set:
 [the archetype shape](data-science-archetype.md) (FT-10.01),
@@ -138,10 +138,10 @@ against a released or locally overridden engine.
 | Manifest validation accepts contributions to each new Foundation extension point | FT-11.01 | `uv run pytest tests/test_capability_extension_points.py` — **done** ([ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)) | FT-11.01 / #105 |
 | Empty new points render `library` and `cli` byte-for-byte unchanged | FT-11.01 | `uv run pytest tests/test_capability_extension_points.py` — **done** | FT-11.01 / #105 |
 | Multiple deterministic capability contributions compose without last-write-wins | FT-11.01 | `uv run pytest tests/test_capability_extension_points.py` — **done** | FT-11.01 / #105 |
-| Discovery returns `data-science`, `jupyter`, `scientific-python` with the accepted metadata, in lexical order | FT-12.01 | Jupyter subset: `uv run pytest tests/test_jupyter_capability.py` — **done**; complete set: `uv run poe check` | FT-11.02 / #106 for each capability; FT-12.01 / #109 for the archetype |
-| Descriptor results contain no filesystem or package-resource path | FT-11.04 | Jupyter: `uv run pytest tests/test_jupyter_capability.py` — **done**; combined: `uv run poe check` | FT-11.02 / #106 |
+| Discovery returns `data-science`, `jupyter`, `scientific-python` with the accepted metadata, in lexical order | FT-12.01 | Capability subset: `uv run pytest tests/test_jupyter_capability.py tests/test_scientific_python_capability.py` — **done**; complete set: `uv run poe check` | FT-11.02 / #106 and FT-11.03 / #107 for the capabilities; FT-12.01 / #109 for the archetype |
+| Descriptor results contain no filesystem or package-resource path | FT-11.04 | Both production capabilities: `uv run pytest tests/test_jupyter_capability.py tests/test_scientific_python_capability.py` — **done**; combined: `uv run poe check` | FT-11.02 / #106 and FT-11.03 / #107 |
 | Invalid selections fail closed through stable structured engine errors before rendering | FT-11.04 | `uv run poe check` | FT-11.04 / #108 |
-| The built wheel ships every new manifest, contribution, and owned resource and still excludes repo tooling | FT-11.02 | `uv run poe check:wheel` — **done for Jupyter** | FT-11.02 / #106 |
+| The built wheel ships every new manifest, contribution, and owned resource and still excludes repo tooling | FT-11.03 | `uv run poe check:wheel` — **done for Jupyter and Scientific Python** | FT-11.02 / #106 and FT-11.03 / #107 |
 | Public engine signatures, result fields, and `EngineErrorCode` values are unchanged | FT-12.04 | `uv run pytest tests/test_engine.py tests/test_compatibility_policy.py` | every Stage 11–12 child |
 
 ### Generated-project checks
@@ -168,15 +168,17 @@ property: the *combined* dependency set must actually lock.
 | Check | Owner | Evidence command | First required at |
 | --- | --- | --- | --- |
 | The `jupyter` development dependency set resolves at Python 3.11 and at 3.14 | FT-11.02 | `uv run pytest tests/test_jupyter_capability_build.py` — **done** | FT-11.02 / #106 |
-| The `scientific-python` runtime dependency set resolves at Python 3.11 and at 3.14 | FT-11.03 | `uv lock` against each endpoint | FT-11.03 / #107 |
+| The `scientific-python` runtime dependency set resolves at Python 3.11 and at 3.14 | FT-11.03 | `uv run pytest tests/test_scientific_python_capability_build.py` — **done** | FT-11.03 / #107 |
 | A Data Science project (with `jupyter`, and with `jupyter` + `scientific-python`) builds, installs, imports, and passes `notebook:check` at Python 3.11 and at 3.14 | FT-12.03 | `uv run poe archetype` extended to both endpoints | FT-12.03 / #111 |
 | `library` and `cli` retain their current single-selection build evidence as regression | FT-12.03 | `uv run poe archetype` | FT-12.03 / #111 |
 
-Today `uv run poe archetype` builds each archetype on one interpreter with one
-`PythonSelection` (`minimum` 3.11, `development` 3.13), and this repository's
-CI runs every job on Python 3.13. Sweeping both endpoints is new test
-machinery FT-12.03 must build, not existing coverage. The known live
-constraint is the NumPy `>=2.4,<2.5` ceiling
+Today the capability-owned dependency groups have endpoint-resolution
+coverage, while `uv run poe archetype` builds each archetype on one interpreter
+with one `PythonSelection` (`minimum` 3.11, `development` 3.13), and this
+repository's CI runs every job on Python 3.13. Sweeping complete Data Science
+build, install, import, and notebook execution across both endpoints is new
+test machinery FT-12.03 must build. The known live constraint is the NumPy
+`>=2.4,<2.5` ceiling
 ([data-science-capabilities.md](data-science-capabilities.md#dependency-evidence)):
 `2.5.0` drops Python 3.11, so a wider bound would fail the 3.11 endpoint. A
 resolution failure at any endpoint is fixed by an upstream compatibility

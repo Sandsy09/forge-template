@@ -47,12 +47,13 @@ def _payload(
     }
 
 
-def test_discovery_exposes_library_with_cli_and_jupyter() -> None:
+def test_discovery_exposes_library_with_cli_and_capabilities() -> None:
     descriptors = discover_components()
     assert [descriptor.id for descriptor in descriptors] == [
         "cli",
         "jupyter",
         "library",
+        "scientific-python",
     ]
 
     library = next(d for d in descriptors if d.id == "library")

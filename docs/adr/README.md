@@ -53,6 +53,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0048 — Fix the Data Science compatibility, acceptance, and release contract](0048-data-science-compatibility-and-acceptance.md)
 - [0049 — Publish Foundation extension points for capability tooling](0049-foundation-capability-tooling-extension-points.md)
 - [0050 — Ship Jupyter as a production capability](0050-production-jupyter-capability.md)
+- [0051 — Ship Scientific Python as a production capability](0051-production-scientific-python-capability.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.
