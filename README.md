@@ -38,10 +38,14 @@ installable package — see
 The [accepted Data Science shape](docs/data-science-archetype.md) is an
 independent, package-backed, notebook-oriented archetype composed with the
 accepted [`jupyter` and `scientific-python` capability
-contracts](docs/data-science-capabilities.md). Its
+contracts](docs/data-science-capabilities.md), the
+[notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md),
+and the
+[compatibility and acceptance contract](docs/data-science-compatibility-and-acceptance.md)
+that classifies the `0.4.0` engine line and fixes the acceptance matrix. Its
 [Stage 10–14 roadmap](docs/roadmap-v2/README.md) tracks the six epics and 24
-filed child issues across both repositories. The default direct-Copier Library
-path remains unchanged.
+filed child issues across both repositories; Stage 10's contract set is now
+complete. The default direct-Copier Library path remains unchanged.
 
 ## Two repos
 
@@ -96,10 +100,13 @@ defines the implemented executable reference shape. The
 future third shape's package, notebook, working-tree, and capability ownership
 without yet implementing it. The [initial Data Science capability
 contracts](docs/data-science-capabilities.md) define reusable notebook tooling
-and an independently optional scientific runtime stack, and the
+and an independently optional scientific runtime stack, the
 [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
 fix the fail-closed notebook-validation order, deterministic failures, and
-safe diagnostics for that future archetype. The
+safe diagnostics for that future archetype, and the
+[compatibility and acceptance contract](docs/data-science-compatibility-and-acceptance.md)
+classifies every versioned axis for the `0.4.0` line and fixes the executable
+acceptance matrix and release gates. The
 [composition architecture review](docs/composition-architecture-review.md)
 records the Stage 08 boundary corrections proven by both archetypes, and
 the [Python support policy](docs/python-support.md) defines the

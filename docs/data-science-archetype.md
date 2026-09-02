@@ -28,9 +28,12 @@ Its canonical identity and fixed project choices are:
 
 The fixed choices keep the initial archetype focused on composition rather
 than creating another packaging matrix. The canonical [initial capability
-contracts](data-science-capabilities.md) supply its intended variability.
-FT-10.04 retains ownership of the complete component, protocol,
-engine-package, Python-compatibility, and release classification.
+contracts](data-science-capabilities.md) supply its intended variability. The
+[compatibility and acceptance contract](data-science-compatibility-and-acceptance.md)
+classifies the complete component, protocol, engine-package,
+Python-compatibility, and release picture: `data-science` enters at component
+version `1.0.0` on the `forge-template` `0.4.0` line, and the generated
+project's own `0.1.0` starting version above is a separate axis.
 
 The archetype uses PEP 517 and PEP 621 metadata and must build a wheel and
 source distribution. It contributes these classifiers:
@@ -144,15 +147,16 @@ separate decision.
 
 This contract deliberately does not decide or implement:
 
-- ProjectSpec, manifest, option-schema, Foundation, component, engine-package,
-  Python, acceptance-matrix, or release compatibility, owned by FT-10.04; or
 - any production manifest, resource, generated output, CLI behaviour, tag, or
   release, owned by Stages 11–14.
 
 FT-10.02 subsequently accepted the capability identities, dependency bounds,
 and formal Jupyter requirement in the canonical [initial capability
-contracts](data-science-capabilities.md), and FT-10.03 the notebook
+contracts](data-science-capabilities.md), FT-10.03 the notebook
 validation order, working-tree, secret, and generated-artefact safeguards in
 the [notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
-contract; neither decision alters this archetype's package, path, or
-no-placeholder ownership.
+contract, and FT-10.04 the versioned-axis classification, executable
+acceptance matrix, and release gates in the
+[compatibility and acceptance contract](data-science-compatibility-and-acceptance.md);
+none of the three alters this archetype's package, path, or no-placeholder
+ownership.

@@ -22,6 +22,11 @@ runtime operation.
   including the fail-closed notebook-validation order, deterministic failure
   identifiers, output- and secret-free diagnostics, and the prose-only
   working-tree guidance;
+- the canonical
+  [compatibility and acceptance contract](../data-science-compatibility-and-acceptance.md),
+  including the versioned-axis classification for the `0.4.0` line, the
+  executable acceptance matrix and its per-check owners, the valid and invalid
+  selection set, and the cross-repository release gates;
 - Foundation/archetype/capability/platform classification;
 - package-bound capability and archetype manifests and content;
 - component compatibility, dependencies, conflicts, options, and extension

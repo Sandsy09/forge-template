@@ -33,8 +33,10 @@ future compatibility restriction must use the existing component relationship
 and version contracts rather than a client-side allowlist.
 
 The proposed manifest metadata is conceptual until Stage 11 packages it. The
-complete protocol and engine-package compatibility classification remains an
-explicit FT-10.04 acceptance decision.
+[compatibility and acceptance contract](data-science-compatibility-and-acceptance.md)
+classifies the complete protocol and engine-package picture: both capabilities
+enter at component version `1.0.0` on the `forge-template` `0.4.0` line, with
+every protocol integer unchanged.
 
 The complete identity and relationship portion of each future manifest is:
 
@@ -195,8 +197,10 @@ NumPy needs the narrower minor-line ceiling: [2.4.6 supports Python
 3.12 or newer](https://pypi.org/pypi/numpy/2.5.0/json). Allowing `>=2.4,<3`
 would therefore make a valid Forge Python 3.11 selection fail during lock
 resolution. A temporary uv resolution of the combined dependency set against
-Python 3.11 also passed during this decision review. FT-10.04 retains the
-complete executable Python 3.11--3.14 acceptance matrix.
+Python 3.11 also passed during this decision review. The
+[compatibility and acceptance contract](data-science-compatibility-and-acceptance.md#python-endpoint-checks)
+makes the executable Python 3.11 and 3.14 endpoint sweep a required FT-11.02,
+FT-11.03, and FT-12.03 acceptance check.
 
 ## Selection criteria
 
@@ -240,8 +244,6 @@ to an archetype or Foundation to avoid that obligation.
 
 This contract does not implement or decide:
 
-- the full compatibility matrix, engine `0.4.0` line, release hand-offs, and
-  version-axis classification, owned by FT-10.04;
 - Foundation capability-tooling extension points, owned by FT-11.01;
 - either production manifest or its resources, owned by FT-11.02 and
   FT-11.03; or
@@ -252,8 +254,10 @@ FT-10.03 subsequently accepted the notebook validator's ordering, temporary
 copy, timeout, source preservation, failure identifiers, and safe
 diagnostics in the
 [notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
-contract; that decision changes none of the dependency or manifest metadata
-above.
+contract, and FT-10.04 the full compatibility matrix, `0.4.0` engine line,
+release hand-offs, and version-axis classification in the
+[compatibility and acceptance contract](data-science-compatibility-and-acceptance.md);
+neither decision changes any dependency or manifest metadata above.
 
 No package dependency, manifest, catalogue entry, public API, ProjectSpec,
 template, Copier answer, generated output, tag, or release changes through

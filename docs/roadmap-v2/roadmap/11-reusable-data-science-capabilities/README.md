@@ -7,7 +7,7 @@ delivers the first production capability layer selected by Stage 10.
 
 ## Dependencies
 
-FT-EPIC-11 is natively blocked by FT-EPIC-10.
+FT-EPIC-11 is natively blocked by FT-EPIC-10, now complete.
 
 ## Child sequence
 
@@ -21,12 +21,14 @@ FT-EPIC-11 is natively blocked by FT-EPIC-10.
    validates omission, independent and combined selection, compatibility,
    deterministic rendering, and packaged resources.
 
-FT-11.01 is blocked by FT-10.04. The two capability implementations may then
-proceed independently; both block FT-11.04.
+FT-11.01 was blocked by FT-10.04, now complete, so FT-11.01 is actionable. The
+two capability implementations may then proceed independently; both block
+FT-11.04.
 
 ## Entry criteria
 
-- Stage 10's contract is accepted.
+- Stage 10's contract is accepted — all four children are complete, including
+  the [compatibility and acceptance contract](../../../data-science-compatibility-and-acceptance.md).
 - Capability ownership, applicability, options, and compatibility are fixed.
 
 ## Outcomes

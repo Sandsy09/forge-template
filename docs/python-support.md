@@ -77,8 +77,11 @@ Future Data Science dependencies follow the same floor. The canonical
 [initial capability contracts](data-science-capabilities.md#dependency-evidence)
 record the reviewed lower-release metadata for the Jupyter and Scientific
 Python lines, including the NumPy 2.4 ceiling needed to retain Python 3.11.
-FT-10.04 owns their complete Python 3.11–3.14 execution matrix and release
-acceptance evidence.
+The
+[compatibility and acceptance contract](data-science-compatibility-and-acceptance.md#python-endpoint-checks)
+makes an executable Python 3.11 and 3.14 endpoint sweep a required Stage 11
+and Stage 12 acceptance check, and requires a superseding ADR rather than a
+silent bound change if a dependency set fails to resolve at either endpoint.
 
 ## Admitting a new CPython release
 

@@ -5,13 +5,13 @@ index records every forge-template roadmap-v2 epic and child.
 
 | ID | GitHub issue | Status | Parent | Blocked by | Milestone |
 | --- | --- | --- | --- | --- | --- |
-| FT-EPIC-10 | [#96](https://github.com/Sandsy09/forge-template/issues/96) | Open | — | — | Data Science Architecture Contract — Stage 10 |
+| FT-EPIC-10 | [#96](https://github.com/Sandsy09/forge-template/issues/96) | Complete | — | — | Data Science Architecture Contract — Stage 10 |
 | FT-10.01 | [#101](https://github.com/Sandsy09/forge-template/issues/101) | Complete | [#96](https://github.com/Sandsy09/forge-template/issues/96) | — | Data Science Architecture Contract — Stage 10 |
 | FT-10.02 | [#102](https://github.com/Sandsy09/forge-template/issues/102) | Complete | [#96](https://github.com/Sandsy09/forge-template/issues/96) | [#101](https://github.com/Sandsy09/forge-template/issues/101) (complete) | Data Science Architecture Contract — Stage 10 |
 | FT-10.03 | [#103](https://github.com/Sandsy09/forge-template/issues/103) | Complete | [#96](https://github.com/Sandsy09/forge-template/issues/96) | [#102](https://github.com/Sandsy09/forge-template/issues/102) (complete) | Data Science Architecture Contract — Stage 10 |
-| FT-10.04 | [#104](https://github.com/Sandsy09/forge-template/issues/104) | Open | [#96](https://github.com/Sandsy09/forge-template/issues/96) | [#103](https://github.com/Sandsy09/forge-template/issues/103) (complete) | Data Science Architecture Contract — Stage 10 |
-| FT-EPIC-11 | [#97](https://github.com/Sandsy09/forge-template/issues/97) | Blocked | — | [#96](https://github.com/Sandsy09/forge-template/issues/96) | Reusable Data Science Capabilities — Stage 11 |
-| FT-11.01 | [#105](https://github.com/Sandsy09/forge-template/issues/105) | Blocked | [#97](https://github.com/Sandsy09/forge-template/issues/97) | [#104](https://github.com/Sandsy09/forge-template/issues/104) | Reusable Data Science Capabilities — Stage 11 |
+| FT-10.04 | [#104](https://github.com/Sandsy09/forge-template/issues/104) | Complete | [#96](https://github.com/Sandsy09/forge-template/issues/96) | [#103](https://github.com/Sandsy09/forge-template/issues/103) (complete) | Data Science Architecture Contract — Stage 10 |
+| FT-EPIC-11 | [#97](https://github.com/Sandsy09/forge-template/issues/97) | Open | — | [#96](https://github.com/Sandsy09/forge-template/issues/96) (complete) | Reusable Data Science Capabilities — Stage 11 |
+| FT-11.01 | [#105](https://github.com/Sandsy09/forge-template/issues/105) | Open | [#97](https://github.com/Sandsy09/forge-template/issues/97) | [#104](https://github.com/Sandsy09/forge-template/issues/104) (complete) | Reusable Data Science Capabilities — Stage 11 |
 | FT-11.02 | [#106](https://github.com/Sandsy09/forge-template/issues/106) | Blocked | [#97](https://github.com/Sandsy09/forge-template/issues/97) | [#105](https://github.com/Sandsy09/forge-template/issues/105) | Reusable Data Science Capabilities — Stage 11 |
 | FT-11.03 | [#107](https://github.com/Sandsy09/forge-template/issues/107) | Blocked | [#97](https://github.com/Sandsy09/forge-template/issues/97) | [#105](https://github.com/Sandsy09/forge-template/issues/105) | Reusable Data Science Capabilities — Stage 11 |
 | FT-11.04 | [#108](https://github.com/Sandsy09/forge-template/issues/108) | Blocked | [#97](https://github.com/Sandsy09/forge-template/issues/97) | [#106](https://github.com/Sandsy09/forge-template/issues/106), [#107](https://github.com/Sandsy09/forge-template/issues/107) | Reusable Data Science Capabilities — Stage 11 |

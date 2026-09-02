@@ -107,7 +107,11 @@ runtime-dependency owners without adding them to the production catalogue.
 The [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
 fix the fail-closed notebook-validation order, deterministic failure
 identifiers, output-free diagnostics, and the prose-only working-tree
-guidance those future owners must satisfy.
+guidance those future owners must satisfy. The
+[Data Science compatibility and acceptance contract](docs/data-science-compatibility-and-acceptance.md)
+classifies every versioned engine axis for the `0.4.0` line, fixes the
+executable acceptance matrix and its per-check owners, and states the
+cross-repository release gates, completing the Stage 10 contract set.
 
 ## Branching and pull requests
 
