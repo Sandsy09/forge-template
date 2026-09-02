@@ -7,7 +7,7 @@ adds the third production archetype and publishes a consumable engine release.
 
 ## Dependencies
 
-FT-EPIC-12 is natively blocked by FT-EPIC-11.
+FT-EPIC-12 is natively blocked by FT-EPIC-11, now complete.
 
 ## Child sequence
 
@@ -25,7 +25,8 @@ The four children form a strict sequence beginning after FT-11.04.
 
 ## Entry criteria
 
-- Stage 11 capabilities are production-ready.
+- Stage 11 capabilities are production-ready, and their composition is
+  validated (FT-11.04 / ADR 0052, complete).
 - The Stage 10 contract supplies complete generated-project acceptance rules.
 
 ## Outcomes

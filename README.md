@@ -46,8 +46,10 @@ and the
 that classifies the `0.4.0` engine line and fixes the acceptance matrix. Its
 [Stage 10–14 roadmap](docs/roadmap-v2/README.md) tracks the six epics and 24
 filed child issues across both repositories; Stage 10's contract set is
-complete and Stage 11 now includes the additive Foundation tooling points and
-the package-bound `jupyter` and `scientific-python` capabilities. Both
+complete, and Stage 11 is complete: the additive Foundation tooling points,
+the package-bound `jupyter` and `scientific-python` capabilities, and the
+[end-to-end composition validation](docs/capability-composition-validation.md)
+that proves the layer and fails every invalid selection closed. Both
 capabilities are present on unreleased `main`; the published `0.3.2` line
 remains a two-archetype catalogue until Stage 12 publishes `0.4.0`. The
 default direct-Copier Library path remains unchanged.

@@ -128,7 +128,13 @@ add Jupyter development dependencies, tasks, safe notebook validation, root
 guidance, and checkpoint hygiene only when the capability is selected.
 FT-11.03 / ADR 0051 contributes the bounded scientific runtime stack, its
 component-owned import test, and usage guidance only when Scientific Python is
-selected. The two capabilities remain independent.
+selected. The two capabilities remain independent. FT-11.04 / ADR 0052 then
+proves the layer — the
+[capability composition validation](docs/capability-composition-validation.md)
+covers every archetype-and-capability composition, fails every documented
+invalid selection closed before rendering, and extends `poe check:wheel` to
+the component manifests and extension trees — closing Stage 11 with no
+manifest, content, engine, or version change.
 
 ## Branching and pull requests
 
@@ -219,6 +225,12 @@ production archetypes -- Library across all three packaging modes, CLI's one
 fixed mode plus its installed console script and `python -m` invocation --
 see [library-archetype.md](docs/library-archetype.md) and
 [cli-application-archetype.md](docs/cli-application-archetype.md).
+
+A change to a component manifest, its packaged resources, or
+`[tool.hatch.build.targets.wheel]` should also run `uv run poe check:wheel`
+(see [Releasing](#releasing)), which verifies the built wheel still ships
+every manifest, content tree, and extension contribution and still excludes
+this repo's own CI tooling.
 
 ## Proposing a template change
 

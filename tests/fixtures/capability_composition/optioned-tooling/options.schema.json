@@ -1,0 +1,7 @@
+{
+  "schema_version": 2,
+  "options": [
+    { "name": "label", "type": "string", "required": true },
+    { "name": "mode", "type": "string", "choices": ["fast", "full"], "default": "fast" }
+  ]
+}
