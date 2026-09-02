@@ -37,9 +37,9 @@ installable package — see
 
 The next planned engine shape is a package-backed, notebook-oriented Data
 Science archetype composed with reusable optional capabilities. Its
-[Stage 10–14 roadmap](docs/roadmap-v2/README.md) files epics only; the exact
-stack and child issues are intentionally decided one epic at a time. The
-default direct-Copier Library path remains unchanged.
+[Stage 10–14 roadmap](docs/roadmap-v2/README.md) tracks the six epics and 24
+filed child issues across both repositories. The default direct-Copier Library
+path remains unchanged.
 
 ## Two repos
 

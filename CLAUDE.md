@@ -291,9 +291,9 @@ is the historical source for Stages 00–09. The live
 continues through Stages 10–14 under
 [ADR 0044](docs/adr/0044-plan-data-science-as-the-third-archetype.md): a
 package-backed, notebook-oriented third archetype, reusable optional
-capabilities, and create-forge delivery that remains behind
-`--engine-preview`. Only epics are filed initially; plan and attach their
-children one epic at a time.
+  capabilities, and create-forge delivery that remains behind
+  `--engine-preview`. All 24 child issues are filed and attached to their
+  epics; GitHub issue bodies and native relationships are authoritative.
 
 FT-08.02 populated the
 production component catalogue under the
