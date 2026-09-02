@@ -142,12 +142,19 @@ def catalogue_with_capability_fixtures(
 def test_unfilled_points_render_production_archetypes_unchanged(
     archetype: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", None)
     monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", None)
     production = _render(_payload(archetype=archetype))
 
     stripped = tmp_path / "foundation"
     shutil.copytree(_PRODUCTION_FOUNDATION, stripped)
     _strip_capability_tooling_points(stripped)
+    pre_capability_catalogue = tmp_path / "components"
+    shutil.copytree(_PRODUCTION_COMPONENTS, pre_capability_catalogue)
+    shutil.rmtree(pre_capability_catalogue / "jupyter")
+    monkeypatch.setattr(
+        engine_module, "_CATALOGUE_ROOT_OVERRIDE", pre_capability_catalogue
+    )
     monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", stripped)
     baseline = _render(_payload(archetype=archetype))
 

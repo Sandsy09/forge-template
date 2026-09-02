@@ -70,6 +70,11 @@ development-tooling capability needs the other three. See
 [capability tooling extends the same Foundation content](#capability-tooling-extends-the-same-foundation-content)
 below.
 
+FT-11.02's production `jupyter` capability is the first consumer of all three
+new points. It also contributes README guidance and `.ipynb_checkpoints/`
+through the existing project-shape points; [ADR
+0050](adr/0050-production-jupyter-capability.md) records that concrete use.
+
 Foundation owns six further files with **no** extension point at all:
 `.editorconfig`, `.gitattributes`, `.python-version.jinja`,
 `CONTRIBUTING.md.jinja`, `LICENSE.jinja`, and `SECURITY.md.jinja`. These are

@@ -4,8 +4,9 @@ This document defines the future `data-science` archetype's project shape and
 ownership boundaries. It is the canonical living contract accepted by
 [ADR 0045](adr/0045-data-science-project-shape.md) for FT-10.01.
 
-The contract is intentionally ahead of implementation. The production engine
-catalogue still contains only `library` and `cli`; Stage 12 will implement this
+The contract is intentionally ahead of the archetype implementation. The
+source catalogue now contains `library`, `cli`, and the production `jupyter`
+capability; Stage 12 will implement this
 shape after the remaining Stage 10 decisions and the Stage 11 capabilities are
 complete. Nothing here changes the direct-Copier Library path.
 

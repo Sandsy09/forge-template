@@ -18,16 +18,18 @@ FT-EPIC-11 is natively blocked by FT-EPIC-10, now complete.
    `pyproject-aggregate-check`) and
    [ADR 0049](../../../adr/0049-foundation-capability-tooling-extension-points.md).
 2. [FT-11.02 / #106](https://github.com/Sandsy09/forge-template/issues/106)
-   implements the optionless `jupyter` capability.
+   is complete: the optionless package-bound `jupyter` capability, generated
+   safe notebook validator, Foundation contributions, tests, and [ADR
+   0050](../../../adr/0050-production-jupyter-capability.md).
 3. [FT-11.03 / #107](https://github.com/Sandsy09/forge-template/issues/107)
    implements the independently applicable `scientific-python` capability.
 4. [FT-11.04 / #108](https://github.com/Sandsy09/forge-template/issues/108)
    validates omission, independent and combined selection, compatibility,
    deterministic rendering, and packaged resources.
 
-FT-11.01 is complete, so `FT-11.02 / #106` and `FT-11.03 / #107` are now
-actionable. The two capability implementations proceed independently; both
-block FT-11.04.
+FT-11.01 and FT-11.02 are complete. `FT-11.03 / #107` is the next actionable
+implementation; FT-11.04 remains blocked only by FT-11.03 because its other
+predecessor is complete.
 
 ## Entry criteria
 

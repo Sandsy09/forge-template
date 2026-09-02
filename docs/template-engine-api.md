@@ -89,12 +89,15 @@ entrypoint, or arbitrary directory. This is a deliberate trust boundary:
 discovered manifests, option schemas, templates, and literal content were all
 reviewed as part of the installed engine distribution.
 
-The production catalogue holds two independent archetype manifests: `library`
+The source catalogue holds two independent archetype manifests, `library`
 (FT-08.02, the [Library archetype contract](library-archetype.md)) and `cli`
-(FT-08.04, the [CLI Application archetype contract](cli-application-archetype.md)).
-Discovery returns both descriptors in lexical order (`cli` then `library`); a
-ProjectSpec selects exactly one archetype, and selecting any capability or
-platform is rejected, since none exists yet.
+(FT-08.04, the [CLI Application archetype contract](cli-application-archetype.md)),
+plus the optionless `jupyter` capability (FT-11.02, [ADR
+0050](adr/0050-production-jupyter-capability.md)). Discovery returns
+`cli`, `jupyter`, and `library` in lexical order. A ProjectSpec selects exactly
+one archetype and may independently select Jupyter; no platform exists yet.
+The latest published `0.3.2` wheel remains the two-archetype catalogue until
+Stage 12 publishes the expanded `0.4.0` line.
 Test-only fixture injection is private and is not a supported client
 extension mechanism -- this applies equally to the implicit Foundation
 content source, which discovery never exposes at all (see "Foundation"

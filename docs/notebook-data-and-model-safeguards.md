@@ -5,13 +5,13 @@ artefact, secret, and generated-output safeguards for generated Forge
 projects. It is the canonical living contract accepted by
 [ADR 0047](adr/0047-notebook-data-and-model-safeguards.md) for FT-10.03.
 
-The contract is intentionally ahead of implementation. The production engine
-catalogue still contains only `library` and `cli`; Stage 11 packages the
-[`jupyter` capability](data-science-capabilities.md#jupyter-capability) that
-implements the notebook check, and Stage 12 adds the
+FT-11.02 now packages the
+[`jupyter` capability](data-science-capabilities.md#jupyter-capability) and its
+notebook check in the source catalogue under [ADR
+0050](adr/0050-production-jupyter-capability.md). Stage 12 adds the
 [Data Science archetype](data-science-archetype.md) that supplies its first
-notebook. Nothing here changes the direct-Copier Library path or any
-generated output today.
+notebook. The published `0.3.2` wheel and direct-Copier Library path remain
+unchanged.
 
 ## Safeguards are generated-project checks, not engine validation
 
@@ -159,7 +159,7 @@ directory is removed on success and on failure alike; an interrupted run
 leaves the tracked notebook byte-identical and at worst leaks a temporary
 directory to the operating system's own cleanup.
 
-The property the implementation must demonstrate, owned by FT-11.02: a
+FT-11.02's focused validator tests demonstrate the required property: a
 tracked notebook's bytes are identical before and after a run, including
 after a failing run.
 
@@ -285,10 +285,10 @@ places `notebook:check` in the aggregate quality contract, and
 [Foundation guarantees](foundation-guarantees.md) that platform CI runs that
 same contract. A generated project whose CI runs the aggregate contract
 therefore executes its notebooks in CI, with the workflow job's identity and
-secrets. Whether generated CI runs `notebook:check`, and any per-notebook
-opt-out, is Stage 11's decision to wire; the exposure is stated here so that
-decision is made deliberately. Selecting an execution sandbox is outside this
-contract's accepted scope.
+secrets. FT-11.02 wires `notebook:check` unconditionally into the aggregate
+contract whenever `jupyter` is selected and provides no per-notebook opt-out.
+Selecting an execution sandbox remains outside this contract's accepted
+scope.
 
 ## Ignored working trees and prose-only guidance
 
@@ -330,6 +330,8 @@ point, which now accepts contributions from any selected owner — archetype or
 capability — in composition order, rather than a new capability-specific point
 ([extension-points.md](extension-points.md#capability-tooling-extends-the-same-foundation-content),
 [ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)).
+FT-11.02 now supplies that exact contribution through the production Jupyter
+manifest ([ADR 0050](adr/0050-production-jupyter-capability.md)).
 
 **The FT-10.03 scope requires that guidance markers for these trees remain
 tracked. The tracked guidance is prose and rules, not placeholder files.**
@@ -395,7 +397,7 @@ narrow new decision here.
 | Acceptance criterion | Already owned | New here |
 | --- | --- | --- |
 | Contract and ADR define validation order, deterministic failures, safe diagnostics | ADR 0046 assigned ordering, timeout, source preservation, errors, and diagnostics to FT-10.03; exception ownership owns the no-secrets-in-diagnostics principle; generated-project validation supplies the ordered, code-addressable failure style | The eight-step order, the empty-set pass, the short-circuit rule, the ten identifiers and their sort order, the per-class fail-closed table, and the diagnostic allow and deny lists |
-| Notebook checks preserve the tracked source | ADR 0045 fixed the notebook path and its output-free property; ADR 0046 assigned temporary-copy execution to nbclient | The single write root, the outside-the-tree temporary location, unconditional discard, the ban on any in-place or fix mode, and the byte-identity property FT-11.02 must demonstrate |
+| Notebook checks preserve the tracked source | ADR 0045 fixed the notebook path and its output-free property; ADR 0046 assigned temporary-copy execution to nbclient | The single write root, the outside-the-tree temporary location, unconditional discard, the ban on any in-place or fix mode, and the byte-identity property demonstrated by FT-11.02 |
 | Tracked guidance and ignore rules cover every accepted path | ADR 0045 fixed the five trees, the no-placeholder rule, and the two extension points; secret handling owns the anti-shadowing audit | The prose-only reading of "guidance markers", root-anchoring as the concrete way that audit is discharged, and `.ipynb_checkpoints/` as a `jupyter`-owned entry |
 | Alignment with secret, path/resource, and generated-project validation policies | Secret handling owns ignore, example, and hook policy; paths and resources owns no-implicit-context; generated-project validation excludes ignore policy, git state, and command execution from the engine | That `notebook:check` is a generated-project task adding no `ForgeEngineError` code, introduces no runtime path helper, and sets the executed copy's working directory explicitly |
 
@@ -409,10 +411,9 @@ This contract does not decide or implement:
   limits for `notebook:check`;
 - automated output stripping — `nbstripout`, a pre-commit hook, or a `--fix`
   mode — and any notebook or data size threshold;
-- whether generated CI runs `notebook:check`, any per-notebook exclusion, or
-  a verbose diagnostic mode;
-- the packaged manifest, resources, implementation, and tests, owned by
-  FT-11.02 and FT-11.03.
+- per-notebook exclusions or a verbose diagnostic mode; and
+- the Scientific Python packaged manifest, resources, implementation, and
+  tests, owned by FT-11.03.
 
 FT-10.04 subsequently accepted compatibility, the executable acceptance
 matrix, and the `forge-template` `0.4.0` release classification in the
@@ -424,7 +425,10 @@ the Foundation extension points for development dependencies, Poe tasks, and
 aggregate-check entries, and resolved the capability-contributed ignore entry
 onto the existing `gitignore-project-shape` point
 ([ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)).
+FT-11.02 then delivered the package-bound Jupyter manifest, generated
+validator, fixed tasks, aggregate-check entry, README guidance, and checkpoint
+ignore contribution ([ADR 0050](adr/0050-production-jupyter-capability.md)).
 
-No package dependency, manifest, catalogue entry, public API, ProjectSpec,
-template, Copier answer, generated output, tag, or release changes through
-this documentation decision.
+The Jupyter implementation adds its package-bound manifest and generated
+content on `main`; it changes no public API, ProjectSpec, template, Copier
+answer, tag, or release.

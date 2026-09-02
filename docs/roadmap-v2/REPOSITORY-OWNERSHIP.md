@@ -27,6 +27,9 @@ runtime operation.
   including the versioned-axis classification for the `0.4.0` line, the
   executable acceptance matrix and its per-check owners, the valid and invalid
   selection set, and the cross-repository release gates;
+- the production `jupyter` capability on `main`, including its manifest,
+  generated validator, development dependencies, tasks, and Foundation
+  contributions;
 - Foundation/archetype/capability/platform classification;
 - package-bound capability and archetype manifests and content;
 - component compatibility, dependencies, conflicts, options, and extension

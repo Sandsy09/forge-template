@@ -97,12 +97,15 @@ def test_engine_info_reports_package_and_protocols_without_discovery(
     assert info.component_manifest_protocols == (1, 2)
 
 
-def test_installed_catalogue_contains_the_production_library_archetype() -> None:
-    """FT-08.02 populates the previously-empty production catalogue; FT-08.04
-    adds the second, independent CLI Application archetype beside it."""
+def test_installed_catalogue_contains_the_production_components() -> None:
+    """The production source catalogue exposes two archetypes and Jupyter."""
     descriptors = discover_components()
 
-    assert [descriptor.id for descriptor in descriptors] == ["cli", "library"]
+    assert [descriptor.id for descriptor in descriptors] == [
+        "cli",
+        "jupyter",
+        "library",
+    ]
     library = next(d for d in descriptors if d.id == "library")
     assert library.kind == "archetype"
     assert library.version == "1.0.1"

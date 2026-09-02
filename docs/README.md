@@ -22,7 +22,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   production archetype.
 - [data-science-capabilities.md](data-science-capabilities.md) — the accepted
   optionless Jupyter tooling and optional Scientific Python dependency
-  contracts for the first production capabilities.
+  contracts, including the production Jupyter implementation on `main`.
 - [notebook-data-and-model-safeguards.md](notebook-data-and-model-safeguards.md)
   — fail-closed notebook validation order, deterministic failure identifiers,
   safe diagnostics, and the prose-only working-tree guidance for the future

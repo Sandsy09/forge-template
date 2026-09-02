@@ -1,0 +1,40 @@
+# The production Jupyter capability. See docs/data-science-capabilities.md,
+# docs/notebook-data-and-model-safeguards.md, and ADR 0050.
+manifest_version = 2
+id = "jupyter"
+name = "Jupyter"
+description = "Notebook authoring, execution, and validation tooling."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-development-dependencies"
+content = "extensions/development-dependencies.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-task-definitions"
+content = "extensions/task-definitions.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-aggregate-check"
+content = "extensions/aggregate-check.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "readme-project-shape"
+content = "extensions/readme-project-shape.md.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "gitignore-project-shape"
+content = "extensions/gitignore-project-shape.jinja"

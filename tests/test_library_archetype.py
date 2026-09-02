@@ -47,9 +47,13 @@ def _payload(
     }
 
 
-def test_discovery_exposes_the_production_library_alongside_cli() -> None:
+def test_discovery_exposes_library_with_cli_and_jupyter() -> None:
     descriptors = discover_components()
-    assert [descriptor.id for descriptor in descriptors] == ["cli", "library"]
+    assert [descriptor.id for descriptor in descriptors] == [
+        "cli",
+        "jupyter",
+        "library",
+    ]
 
     library = next(d for d in descriptors if d.id == "library")
     assert library.kind == "archetype"

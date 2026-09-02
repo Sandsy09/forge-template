@@ -1,0 +1,19 @@
+## Notebooks
+
+Start JupyterLab from the project root:
+
+```bash
+uv run poe notebook
+```
+
+Before committing a notebook, clear every execution count and stored output.
+Validate all notebooks with:
+
+```bash
+uv run --locked poe notebook:check
+```
+
+The check executes temporary copies with this project's Python kernel. It is
+a correctness gate, not a sandbox: notebook code retains the current user's
+filesystem, environment, credential, and network access. Review notebooks as
+executable source before running the command.

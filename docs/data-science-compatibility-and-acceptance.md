@@ -8,12 +8,12 @@ accepted by
 the final child of
 [FT-EPIC-10](https://github.com/Sandsy09/forge-template/issues/96).
 
-The contract is intentionally ahead of implementation. It bumps no version,
-publishes no package, adds no component, and changes no generated output. The
-production engine catalogue still contains only `library` and `cli`. Stages 11
-and 12 implement the components this contract classifies; Stage 14 reviews the
-result and publishes the reviewed line. Nothing here changes the direct-Copier
-Library path.
+This contract itself bumped no version or published package. Stage 11 has now
+added `jupyter` to the source catalogue; the published `0.3.2` wheel still
+contains only `library` and `cli`. Later Stage 11–12 work adds Scientific
+Python and Data Science before FT-12.04 publishes `0.4.0`; Stage 14 reviews
+the result and publishes the reviewed line. Nothing here changes the
+direct-Copier Library path.
 
 It completes the Stage 10 set:
 [the archetype shape](data-science-archetype.md) (FT-10.01),
@@ -138,10 +138,10 @@ against a released or locally overridden engine.
 | Manifest validation accepts contributions to each new Foundation extension point | FT-11.01 | `uv run pytest tests/test_capability_extension_points.py` — **done** ([ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)) | FT-11.01 / #105 |
 | Empty new points render `library` and `cli` byte-for-byte unchanged | FT-11.01 | `uv run pytest tests/test_capability_extension_points.py` — **done** | FT-11.01 / #105 |
 | Multiple deterministic capability contributions compose without last-write-wins | FT-11.01 | `uv run pytest tests/test_capability_extension_points.py` — **done** | FT-11.01 / #105 |
-| Discovery returns `data-science`, `jupyter`, `scientific-python` with the accepted metadata, in lexical order | FT-12.01 | `uv run poe check` | FT-11.02 / #106 for each capability; FT-12.01 / #109 for the archetype |
-| Descriptor results contain no filesystem or package-resource path | FT-11.04 | `uv run poe check` | FT-11.02 / #106 |
+| Discovery returns `data-science`, `jupyter`, `scientific-python` with the accepted metadata, in lexical order | FT-12.01 | Jupyter subset: `uv run pytest tests/test_jupyter_capability.py` — **done**; complete set: `uv run poe check` | FT-11.02 / #106 for each capability; FT-12.01 / #109 for the archetype |
+| Descriptor results contain no filesystem or package-resource path | FT-11.04 | Jupyter: `uv run pytest tests/test_jupyter_capability.py` — **done**; combined: `uv run poe check` | FT-11.02 / #106 |
 | Invalid selections fail closed through stable structured engine errors before rendering | FT-11.04 | `uv run poe check` | FT-11.04 / #108 |
-| The built wheel ships every new manifest, contribution, and owned resource and still excludes repo tooling | FT-11.02 | `uv run poe check:wheel` | FT-11.02 / #106 |
+| The built wheel ships every new manifest, contribution, and owned resource and still excludes repo tooling | FT-11.02 | `uv run poe check:wheel` — **done for Jupyter** | FT-11.02 / #106 |
 | Public engine signatures, result fields, and `EngineErrorCode` values are unchanged | FT-12.04 | `uv run pytest tests/test_engine.py tests/test_compatibility_policy.py` | every Stage 11–12 child |
 
 ### Generated-project checks
@@ -152,7 +152,7 @@ against a released or locally overridden engine.
 | Wheel and sdist build, install into an isolated environment, import, and report `__version__`, metadata, and `py.typed` | FT-12.01 | `uv run poe archetype` | FT-12.01 / #109 |
 | Every generated target has an explicit Data Science or Foundation owner | FT-12.02 | `uv run poe check` | FT-12.02 / #110 |
 | The starter notebook is clean and executes | FT-12.02 | `uv run --locked poe notebook:check` in the generated project | FT-12.02 / #110 |
-| Notebook validation is deterministic, output- and secret-free, and leaves the tracked notebook byte-identical | FT-11.02 | `uv run --locked poe notebook:check` plus a tracked-bytes assertion | FT-11.02 / #106 |
+| Notebook validation is deterministic, output- and secret-free, and leaves the tracked notebook byte-identical | FT-11.02 | `uv run pytest tests/test_notebook_validator.py` — **done** | FT-11.02 / #106 |
 | No generated example carries a secret, credential, binary model, or embedded dataset | FT-12.02 | `uv run pre-commit run --all-files` in the generated project | FT-12.02 / #110 |
 | Built artefacts contain no ignored `data/`, `models/`, or `artifacts/` content | FT-12.03 | `uv run poe archetype` | FT-12.03 / #111 |
 | The generated project needs neither Forge repository for development, build, or runtime | FT-12.03 | `uv run poe archetype` (isolated venv) | FT-12.01 / #109 |
@@ -167,7 +167,7 @@ property: the *combined* dependency set must actually lock.
 
 | Check | Owner | Evidence command | First required at |
 | --- | --- | --- | --- |
-| The `jupyter` development dependency set resolves at Python 3.11 and at 3.14 | FT-11.02 | `uv lock` against each endpoint | FT-11.02 / #106 |
+| The `jupyter` development dependency set resolves at Python 3.11 and at 3.14 | FT-11.02 | `uv run pytest tests/test_jupyter_capability_build.py` — **done** | FT-11.02 / #106 |
 | The `scientific-python` runtime dependency set resolves at Python 3.11 and at 3.14 | FT-11.03 | `uv lock` against each endpoint | FT-11.03 / #107 |
 | A Data Science project (with `jupyter`, and with `jupyter` + `scientific-python`) builds, installs, imports, and passes `notebook:check` at Python 3.11 and at 3.14 | FT-12.03 | `uv run poe archetype` extended to both endpoints | FT-12.03 / #111 |
 | `library` and `cli` retain their current single-selection build evidence as regression | FT-12.03 | `uv run poe archetype` | FT-12.03 / #111 |
@@ -264,7 +264,7 @@ earlier Stage 10 decisions. What genuinely remains open is narrow.
 | Issue | Fixed by the Stage 10 contract set | Still owned by the issue |
 | --- | --- | --- |
 | FT-11.01 / #105 | **Complete.** [ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md) fixed the three point identifiers, the any-selected-owner and composition-order rules, the byte-neutral-when-empty guarantee, and the one recorded `check`-array reformat | — |
-| FT-11.02 / #106 | `jupyter` at `1.0.0`, protocol `2`, ProjectSpec `[1]`, `>=3.11`, no options, no requires/conflicts; the four dependency lines; the full `notebook:check` order, identifiers, and diagnostics | The packaged manifest, the validator script, task wiring, and usage guidance content |
+| FT-11.02 / #106 | **Complete.** `jupyter` at `1.0.0`, protocol `2`, ProjectSpec `[1]`, `>=3.11`, no options, no requires/conflicts; four development dependency lines; fixed tasks, validator, safe diagnostics, contributions, tests, and [ADR 0050](adr/0050-production-jupyter-capability.md) | — |
 | FT-11.03 / #107 | `scientific-python` at `1.0.0`, same shared fields; the four runtime dependency lines and their bounds | The packaged manifest, the import/smoke test, and guidance content |
 | FT-11.04 / #108 | The valid/invalid selection set above; determinism and path-free descriptor requirements | The fixture catalogue and the assertions that exercise them |
 | FT-12.01 / #109 | `data-science` at `1.0.0`, protocol `2`, `>=3.11`, `requires = [{ id = "jupyter", version = ">=1,<2" }]`, no options/conflicts, `uv-build-static`, generated version `0.1.0`, classifiers, reserved shape | The manifest file, the owned `src/` tree content, and the smoke tests |

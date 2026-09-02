@@ -107,7 +107,9 @@ fixes that future shape's package, notebook, working-tree, and ownership
 boundary before implementation begins.
 The [initial Data Science capability contracts](docs/data-science-capabilities.md)
 define the optionless `jupyter` development-tooling and `scientific-python`
-runtime-dependency owners without adding them to the production catalogue.
+runtime-dependency owners. FT-11.02 / ADR 0050 now ships `jupyter` in the
+unreleased source catalogue; `scientific-python` remains future work and the
+published `0.3.2` catalogue remains unchanged.
 The [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
 fix the fail-closed notebook-validation order, deterministic failure
 identifiers, output-free diagnostics, and the prose-only working-tree
@@ -116,10 +118,12 @@ guidance those future owners must satisfy. The
 classifies every versioned engine axis for the `0.4.0` line, fixes the
 executable acceptance matrix and its per-check owners, and states the
 cross-repository release gates, completing the Stage 10 contract set.
-Stage 11's first change ships in the engine: FT-11.01 / ADR 0049 adds the
+Stage 11's first changes ship in the engine: FT-11.01 / ADR 0049 adds the
 three capability-tooling Foundation extension points the `jupyter` and
 `scientific-python` capabilities need, additively and with `library` and
-`cli` output semantically unchanged.
+`cli` output semantically unchanged. FT-11.02 / ADR 0050 uses those points to
+add Jupyter development dependencies, tasks, safe notebook validation, root
+guidance, and checkpoint hygiene only when the capability is selected.
 
 ## Branching and pull requests
 
