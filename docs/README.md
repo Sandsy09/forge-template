@@ -83,7 +83,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   engine.
 - [extension-points.md](extension-points.md) — the complete sanctioned
   extension surface, the denial of any `override` grant, and the published,
-  versioned content extension-point inventory.
+  versioned content extension-point inventory, now eleven entries after
+  FT-11.01 added three Foundation points for capability tooling.
 - [template-variables.md](template-variables.md) — the rendered
   template-variable namespace, component option declarations, and
   resolution/rejection rules for the future composition engine.

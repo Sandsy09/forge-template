@@ -61,7 +61,11 @@ target, disposition, and collision-safety rules that composed selection
 resolves against. The
 [safe override and extension points](docs/extension-points.md) contract
 defines the complete sanctioned extension surface, denies any `override`
-grant, and publishes the extension-point inventory as a versioned contract.
+grant, and publishes the extension-point inventory as a versioned contract —
+grown from eight to eleven points by FT-11.01 / ADR 0049, which added
+`pyproject-development-dependencies`, `pyproject-task-definitions`, and
+`pyproject-aggregate-check` so a selected capability, not only an archetype,
+can attach tooling.
 The
 [template variable contract](docs/template-variables.md) defines the rendered
 variable namespace and the component option vocabulary declared through
@@ -112,6 +116,10 @@ guidance those future owners must satisfy. The
 classifies every versioned engine axis for the `0.4.0` line, fixes the
 executable acceptance matrix and its per-check owners, and states the
 cross-repository release gates, completing the Stage 10 contract set.
+Stage 11's first change ships in the engine: FT-11.01 / ADR 0049 adds the
+three capability-tooling Foundation extension points the `jupyter` and
+`scientific-python` capabilities need, additively and with `library` and
+`cli` output semantically unchanged.
 
 ## Branching and pull requests
 

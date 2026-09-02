@@ -3,7 +3,10 @@
 Pins the published content extension-point inventory, proves ``merge`` and
 ``override`` stay unconstructible rather than merely unused, and proves an
 unsupported collision surfaces as the stable structured failure a downstream
-client is documented to expect.
+client is documented to expect. ADR 0049 (FT-11.01) added the three
+capability-tooling points to the pinned inventory; the detailed
+ownership, ordering, and collision rules are exercised by
+``tests/test_capability_extension_points.py``.
 """
 
 from __future__ import annotations
@@ -99,6 +102,10 @@ def test_published_extension_point_inventory_matches_the_contract() -> None:
         ("pyproject-runtime-dependencies", "content/pyproject.toml.jinja"),
         ("pyproject-classifiers", "content/pyproject.toml.jinja"),
         ("pyproject-entry-points", "content/pyproject.toml.jinja"),
+        # Capability-tooling points (FT-11.01 / ADR 0049).
+        ("pyproject-development-dependencies", "content/pyproject.toml.jinja"),
+        ("pyproject-task-definitions", "content/pyproject.toml.jinja"),
+        ("pyproject-aggregate-check", "content/pyproject.toml.jinja"),
         ("readme-project-shape", "content/README.md.jinja"),
         ("gitignore-project-shape", "content/.gitignore.jinja"),
     }

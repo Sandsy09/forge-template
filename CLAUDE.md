@@ -271,7 +271,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0044 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0049 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -320,8 +320,28 @@ facade unchanged; acceptance is an executable matrix whose rows each name one
 non-interactive command and one FT- or CF-repository owner; dependency
 resolution is swept at Python 3.11 and 3.14; and four release gates bind to
 create-forge's existing coordination order. No version is bumped here —
-FT-12.04 and FT-14.03 perform the actual releases. **Stage 10 is complete;
-`FT-EPIC-11 / #97` and `FT-11.01 / #105` are unblocked.**
+FT-12.04 and FT-14.03 perform the actual releases. **Stage 10 is complete.**
+
+Stage 11 (`FT-EPIC-11 / #97`) delivers the reusable capability layer.
+FT-11.01's
+[capability-tooling extension points](docs/extension-points.md#capability-tooling-extends-the-same-foundation-content)
+([ADR 0049](docs/adr/0049-foundation-capability-tooling-extension-points.md))
+grow the published Foundation inventory from eight points to eleven —
+`pyproject-development-dependencies`, `pyproject-task-definitions`, and
+`pyproject-aggregate-check` on `content/pyproject.toml.jinja` — so a selected
+*capability*, not only an archetype, can attach a dev dependency, a Poe task,
+and an aggregate-`check` entry. Additive: `foundation_version` stays `1`, no
+engine module or public signature changes, `library`/`cli` stay at `1.0.1`,
+and their generated output is byte-for-byte unchanged except the aggregate
+`check` array is now multi-line (a recorded, semantics-preserving reformat so
+a marker line fits inside it). Any selected owner may contribute; multiple
+contributions compose in composition order, never last-write-wins; an
+unfilled point emits zero bytes. A capability's `.gitignore` and README
+guidance route through the existing `gitignore-project-shape` /
+`readme-project-shape` points — no new point for either. Pinned by
+`tests/test_extension_points.py` (inventory) and
+`tests/test_capability_extension_points.py` (behaviour). **FT-11.01 is
+complete; `FT-11.02 / #106` and `FT-11.03 / #107` are unblocked.**
 
 FT-08.02 populated the
 production component catalogue under the

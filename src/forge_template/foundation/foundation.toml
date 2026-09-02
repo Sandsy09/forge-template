@@ -28,6 +28,21 @@ content = "content/pyproject.toml.jinja"
 id = "pyproject-entry-points"
 content = "content/pyproject.toml.jinja"
 
+# Capability-tooling points (FT-11.01). A selected capability -- or an
+# archetype -- attaches development dependencies, task definitions, and
+# aggregate-check entries through these; see docs/extension-points.md.
+[[extension_points]]
+id = "pyproject-development-dependencies"
+content = "content/pyproject.toml.jinja"
+
+[[extension_points]]
+id = "pyproject-task-definitions"
+content = "content/pyproject.toml.jinja"
+
+[[extension_points]]
+id = "pyproject-aggregate-check"
+content = "content/pyproject.toml.jinja"
+
 [[extension_points]]
 id = "readme-project-shape"
 content = "content/README.md.jinja"

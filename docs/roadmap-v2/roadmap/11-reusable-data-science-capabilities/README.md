@@ -12,7 +12,11 @@ FT-EPIC-11 is natively blocked by FT-EPIC-10, now complete.
 ## Child sequence
 
 1. [FT-11.01 / #105](https://github.com/Sandsy09/forge-template/issues/105)
-   adds additive Foundation extension points for capability tooling.
+   is complete: the three additive Foundation
+   [capability-tooling extension points](../../../extension-points.md#capability-tooling-extends-the-same-foundation-content)
+   (`pyproject-development-dependencies`, `pyproject-task-definitions`,
+   `pyproject-aggregate-check`) and
+   [ADR 0049](../../../adr/0049-foundation-capability-tooling-extension-points.md).
 2. [FT-11.02 / #106](https://github.com/Sandsy09/forge-template/issues/106)
    implements the optionless `jupyter` capability.
 3. [FT-11.03 / #107](https://github.com/Sandsy09/forge-template/issues/107)
@@ -21,15 +25,17 @@ FT-EPIC-11 is natively blocked by FT-EPIC-10, now complete.
    validates omission, independent and combined selection, compatibility,
    deterministic rendering, and packaged resources.
 
-FT-11.01 was blocked by FT-10.04, now complete, so FT-11.01 is actionable. The
-two capability implementations may then proceed independently; both block
-FT-11.04.
+FT-11.01 is complete, so `FT-11.02 / #106` and `FT-11.03 / #107` are now
+actionable. The two capability implementations proceed independently; both
+block FT-11.04.
 
 ## Entry criteria
 
 - Stage 10's contract is accepted — all four children are complete, including
   the [compatibility and acceptance contract](../../../data-science-compatibility-and-acceptance.md).
 - Capability ownership, applicability, options, and compatibility are fixed.
+- The Foundation extension points a development-tooling capability needs are
+  published (FT-11.01, complete).
 
 ## Outcomes
 
