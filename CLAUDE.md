@@ -267,7 +267,9 @@ shellcheck steps) — see backlog item 1, done.
 ## Current state
 
 Working: Library and CLI Application archetypes plus the package-bound Jupyter
-and Scientific Python capabilities on `main`; all four Copier combos green
+and Scientific Python capabilities on `main`, with the two-capability
+composition layer validated end to end (FT-11.04 / ADR 0052 — Stage 11
+closed); all four Copier combos green
 locally and in CI, update merge validated, root and template
 `.gitattributes` both in place, no byte-empty template files remain,
 `task_runner`/`make` removed (it was the one untested, 100%-broken
@@ -282,7 +284,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0050 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0052 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -365,8 +367,25 @@ and ten stable codes. [ADR 0050](docs/adr/0050-production-jupyter-capability.md)
 records the choices. FT-11.03 / #107 then ships `scientific-python` `1.0.0`,
 its four bounded runtime dependencies, generated import test, and guidance
 under [ADR 0051](docs/adr/0051-production-scientific-python-capability.md).
-**FT-11.01 through FT-11.03 are complete; FT-11.04 / #108 is the final,
-actionable Stage 11 issue.**
+FT-11.04 / #108's
+[capability composition validation](docs/capability-composition-validation.md)
+([ADR 0052](docs/adr/0052-validate-production-capability-composition.md))
+closes Stage 11: `tests/test_capability_composition.py` proves both
+capabilities compose across `library` and `cli`, every documented invalid
+selection fails closed as a structured `ForgeEngineError` before rendering
+(`operation` is `parse` or `validate`, never `render`), descriptors stay
+path-free, Foundation and every capability-free render name no capability or
+domain tool, and no composition depends on a Forge package. Three test-only
+synthetic capabilities under `tests/fixtures/capability_composition/`
+(`requires-jupyter`, `conflicts-jupyter`, `optioned-tooling`) exercise the
+`requires`/`conflicts`/options paths the production catalogue cannot reach;
+`requires-jupyter` rehearses the exact `jupyter >=1,<2` edge FT-12.01's
+`data-science` archetype will declare. `scripts/check_wheel.py` now also
+requires every component's `component.toml` and `extensions/` tree, plus
+`foundation.toml` and `library/options.schema.json`. No manifest, content,
+engine module, public signature, `EngineErrorCode`, or version changes.
+**FT-11.01 through FT-11.04 are complete; `FT-EPIC-11 / #97` and its milestone
+are closed. `FT-12.01 / #109` is the next actionable issue.**
 
 FT-08.02 populated the
 production component catalogue under the

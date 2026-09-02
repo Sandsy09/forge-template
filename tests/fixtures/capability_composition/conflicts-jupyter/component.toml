@@ -1,0 +1,17 @@
+# Synthetic capability for FT-11.04 / ADR 0052. NOT a production component.
+# Declares a conflict with `jupyter` so the conflicts branch of
+# validate_manifest_selection is exercised -- no production component
+# declares a conflict. See docs/capability-composition-validation.md.
+manifest_version = 2
+id = "conflicts-jupyter"
+name = "Conflicts Jupyter"
+description = "Synthetic capability that conflicts with jupyter."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = [{ id = "jupyter" }]
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

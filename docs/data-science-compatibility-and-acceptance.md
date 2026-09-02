@@ -70,7 +70,9 @@ catalogue content behind that unchanged facade:
 - The three manifests carry no `options_schema`, so the option-prompting
   surface create-forge Stage 13 builds is exercised only by fixtures, exactly
   as [FT-11.04 / #108](https://github.com/Sandsy09/forge-template/issues/108)
-  states.
+  did — its `optioned-tooling` fixture proves capability option validation
+  and rendering
+  ([capability-composition-validation.md](capability-composition-validation.md)).
 
 `notebook:check` is a generated-project Poe task, not an engine operation. It
 adds no `ForgeEngineError` code and sits outside
@@ -139,8 +141,8 @@ against a released or locally overridden engine.
 | Empty new points render `library` and `cli` byte-for-byte unchanged | FT-11.01 | `uv run pytest tests/test_capability_extension_points.py` — **done** | FT-11.01 / #105 |
 | Multiple deterministic capability contributions compose without last-write-wins | FT-11.01 | `uv run pytest tests/test_capability_extension_points.py` — **done** | FT-11.01 / #105 |
 | Discovery returns `data-science`, `jupyter`, `scientific-python` with the accepted metadata, in lexical order | FT-12.01 | Capability subset: `uv run pytest tests/test_jupyter_capability.py tests/test_scientific_python_capability.py` — **done**; complete set: `uv run poe check` | FT-11.02 / #106 and FT-11.03 / #107 for the capabilities; FT-12.01 / #109 for the archetype |
-| Descriptor results contain no filesystem or package-resource path | FT-11.04 | Both production capabilities: `uv run pytest tests/test_jupyter_capability.py tests/test_scientific_python_capability.py` — **done**; combined: `uv run poe check` | FT-11.02 / #106 and FT-11.03 / #107 |
-| Invalid selections fail closed through stable structured engine errors before rendering | FT-11.04 | `uv run poe check` | FT-11.04 / #108 |
+| Descriptor results contain no filesystem or package-resource path | FT-11.04 | `uv run pytest tests/test_capability_composition.py` — **done** ([ADR 0052](adr/0052-validate-production-capability-composition.md)) | FT-11.02 / #106 and FT-11.03 / #107 |
+| Invalid selections fail closed through stable structured engine errors before rendering | FT-11.04 | `uv run pytest tests/test_capability_composition.py` — **done** | FT-11.04 / #108 |
 | The built wheel ships every new manifest, contribution, and owned resource and still excludes repo tooling | FT-11.03 | `uv run poe check:wheel` — **done for Jupyter and Scientific Python** | FT-11.02 / #106 and FT-11.03 / #107 |
 | Public engine signatures, result fields, and `EngineErrorCode` values are unchanged | FT-12.04 | `uv run pytest tests/test_engine.py tests/test_compatibility_policy.py` | every Stage 11–12 child |
 
@@ -268,7 +270,7 @@ earlier Stage 10 decisions. What genuinely remains open is narrow.
 | FT-11.01 / #105 | **Complete.** [ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md) fixed the three point identifiers, the any-selected-owner and composition-order rules, the byte-neutral-when-empty guarantee, and the one recorded `check`-array reformat | — |
 | FT-11.02 / #106 | **Complete.** `jupyter` at `1.0.0`, protocol `2`, ProjectSpec `[1]`, `>=3.11`, no options, no requires/conflicts; four development dependency lines; fixed tasks, validator, safe diagnostics, contributions, tests, and [ADR 0050](adr/0050-production-jupyter-capability.md) | — |
 | FT-11.03 / #107 | `scientific-python` at `1.0.0`, same shared fields; the four runtime dependency lines and their bounds | The packaged manifest, the import/smoke test, and guidance content |
-| FT-11.04 / #108 | The valid/invalid selection set above; determinism and path-free descriptor requirements | The fixture catalogue and the assertions that exercise them |
+| FT-11.04 / #108 | The valid/invalid selection set above; determinism and path-free descriptor requirements | **Complete.** [ADR 0052](adr/0052-validate-production-capability-composition.md) and [capability-composition-validation.md](capability-composition-validation.md): the fixture catalogue and the assertions that exercise it |
 | FT-12.01 / #109 | `data-science` at `1.0.0`, protocol `2`, `>=3.11`, `requires = [{ id = "jupyter", version = ">=1,<2" }]`, no options/conflicts, `uv-build-static`, generated version `0.1.0`, classifiers, reserved shape | The manifest file, the owned `src/` tree content, and the smoke tests |
 | FT-12.02 / #110 | The five root-anchored ignore entries; the prose-only guidance reading; the output-free stdlib starter notebook; no tracked placeholder | The notebook cells, the README fragment wording, and the ignore fragment |
 | FT-12.03 / #111 | The Generated-project and Python-endpoint rows above; both valid compositions; the missing-Jupyter rejection | The test module structure and the endpoint-sweep machinery |

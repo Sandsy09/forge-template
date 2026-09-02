@@ -1,0 +1,25 @@
+# Synthetic capability for FT-11.04 / ADR 0052. NOT a production component.
+# Carries an options_schema so capability option validation is exercised --
+# `jupyter` and `scientific-python` are both optionless. Contributes a task
+# fragment that reads its own options, so a bad option value is caught before
+# rendering rather than producing broken output. See
+# docs/capability-composition-validation.md.
+manifest_version = 2
+id = "optioned-tooling"
+name = "Optioned Tooling"
+description = "Synthetic capability exercising capability option validation."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+options_schema = "options.schema.json"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-task-definitions"
+content = "extensions/task-definitions.toml.jinja"

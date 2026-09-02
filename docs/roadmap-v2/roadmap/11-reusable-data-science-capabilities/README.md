@@ -27,11 +27,15 @@ FT-EPIC-11 is natively blocked by FT-EPIC-10, now complete.
    endpoint resolution, and [ADR
    0051](../../../adr/0051-production-scientific-python-capability.md).
 4. [FT-11.04 / #108](https://github.com/Sandsy09/forge-template/issues/108)
-   validates omission, independent and combined selection, compatibility,
-   deterministic rendering, and packaged resources.
+   is complete: the
+   [capability composition validation](../../../capability-composition-validation.md)
+   and [ADR 0052](../../../adr/0052-validate-production-capability-composition.md)
+   prove omission, independent and combined selection, every documented
+   invalid selection failing closed, deterministic rendering, path-free
+   descriptors, Foundation neutrality, and packaged resources.
 
-FT-11.01 through FT-11.03 are complete. `FT-11.04 / #108` is the final,
-actionable Stage 11 validation issue; both of its predecessors are complete.
+FT-11.01 through FT-11.04 are complete. Stage 11 is closed; `FT-12.01 / #109`
+is the next actionable issue.
 
 ## Entry criteria
 
@@ -53,8 +57,8 @@ actionable Stage 11 validation issue; both of its predecessors are complete.
 ## Exit criteria
 
 The selected capability layer is production-ready, documented, deterministic,
-and suitable for the Data Science archetype. Stage 12 may then implement that
-archetype against real components.
+and suitable for the Data Science archetype. **Met.** Stage 12 may now
+implement that archetype against real components.
 
 ## Non-goals
 

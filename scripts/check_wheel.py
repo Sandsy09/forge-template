@@ -35,11 +35,28 @@ from pathlib import Path
 _MUST_CONTAIN = (
     "forge_template/engine.py",
     "forge_template/project_spec.py",
+    # The Foundation content source and its manifest -- the wheel is
+    # undiscoverable without foundation.toml, and unusable without content/.
+    "forge_template/foundation/foundation.toml",
     "forge_template/foundation/content/",
-    "forge_template/components/jupyter/content/",
-    "forge_template/components/library/content/",
+    # Every catalogue component ships its manifest, its owned content tree,
+    # and its extension contributions. A `[tool.hatch.build.targets.wheel]`
+    # `exclude` that dropped `component.toml`, `extensions/`, or a component's
+    # `options.schema.json` would otherwise publish an unusable catalogue --
+    # see FT-11.04 / ADR 0052.
+    "forge_template/components/cli/component.toml",
     "forge_template/components/cli/content/",
+    "forge_template/components/cli/extensions/",
+    "forge_template/components/jupyter/component.toml",
+    "forge_template/components/jupyter/content/",
+    "forge_template/components/jupyter/extensions/",
+    "forge_template/components/library/component.toml",
+    "forge_template/components/library/content/",
+    "forge_template/components/library/extensions/",
+    "forge_template/components/library/options.schema.json",
+    "forge_template/components/scientific-python/component.toml",
     "forge_template/components/scientific-python/content/",
+    "forge_template/components/scientific-python/extensions/",
 )
 _MUST_NOT_CONTAIN = (
     "forge_template/adr.py",
