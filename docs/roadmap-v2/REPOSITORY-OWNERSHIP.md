@@ -33,8 +33,10 @@ runtime operation.
 - the production `scientific-python` capability on `main`, including its
   manifest, four runtime dependency contributions, import test, and guidance;
 - the production `data-science` archetype on `main`, including its manifest
-  with the hard `jupyter` requirement, its owned package and smoke tests, and
-  its four packaging/metadata/classifier contributions;
+  with the hard `jupyter` requirement, its owned package, smoke tests, and
+  output-free starter notebook, its four packaging/metadata/classifier
+  contributions, and its `readme-project-shape` and `gitignore-project-shape`
+  contributions for the ignored working trees;
 - Foundation/archetype/capability/platform classification;
 - package-bound capability and archetype manifests and content;
 - component compatibility, dependencies, conflicts, options, and extension

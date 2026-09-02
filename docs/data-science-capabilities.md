@@ -257,8 +257,10 @@ to an archetype or Foundation to avoid that obligation.
 
 FT-12.01 / [ADR 0053](adr/0053-production-data-science-archetype.md) shipped
 the `data-science` manifest — declaring the `jupyter >=1,<2` edge above — and
-its owned package and smoke tests. The starter notebook and working-tree
-shape remain FT-12.02's.
+its owned package and smoke tests. FT-12.02 /
+[ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md) added its
+output-free starter notebook and the five root-anchored working-tree ignore
+entries; neither change touches the `jupyter` or `scientific-python` manifest.
 
 FT-10.03 subsequently accepted the notebook validator's ordering, temporary
 copy, timeout, source preservation, failure identifiers, and safe

@@ -8,9 +8,11 @@ projects. It is the canonical living contract accepted by
 FT-11.02 now packages the
 [`jupyter` capability](data-science-capabilities.md#jupyter-capability) and its
 notebook check in the source catalogue under [ADR
-0050](adr/0050-production-jupyter-capability.md). Stage 12 adds the
-[Data Science archetype](data-science-archetype.md) that supplies its first
-notebook. The published `0.3.2` wheel and direct-Copier Library path remain
+0050](adr/0050-production-jupyter-capability.md). FT-12.02 /
+[ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md) adds the
+[Data Science archetype](data-science-archetype.md)'s output-free starter
+notebook and the five root-anchored working-tree ignore entries this contract
+fixes. The published `0.3.2` wheel and direct-Copier Library path remain
 unchanged.
 
 ## Safeguards are generated-project checks, not engine validation

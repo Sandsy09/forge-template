@@ -105,10 +105,19 @@ def test_plan_identifies_foundation_component_and_capability_owners() -> None:
         "src/churn_model/py.typed",
         "tests/__init__.py",
         "tests/test_smoke.py",
+        "notebooks/getting-started.ipynb",
     ):
         assert by_target[owned_target].owner == ComponentOwner(id="data-science")
 
     assert by_target["scripts/check_notebooks.py"].owner == ComponentOwner(id="jupyter")
+
+    # The archetype contributes the project-shape guidance and the working-tree
+    # ignore entries through Foundation's existing reviewed extension points.
+    for mixed_target in ("README.md", ".gitignore"):
+        owners = {
+            extension.component_id for extension in by_target[mixed_target].extensions
+        }
+        assert "data-science" in owners
 
     extensions = by_target["pyproject.toml"].extensions
     by_point = {extension.extension_point: extension for extension in extensions}
@@ -176,12 +185,15 @@ def test_composed_file_set_is_the_package_and_notebook_tooling_shape() -> None:
         "src/churn_model/py.typed",
         "tests/__init__.py",
         "tests/test_smoke.py",
+        "notebooks/getting-started.ipynb",
         "scripts/check_notebooks.py",
     }
-    # FT-12.02 owns the starter notebook and the ignored working trees; they
-    # are deliberately absent here.
-    assert not any(target.startswith("notebooks/") for target in targets)
-    assert not any(target.startswith("data/") for target in targets)
+    # The working trees carry no tracked placeholder -- ADR 0045/0047. A clean
+    # checkout does not contain data/, models/, or artifacts/ until a user or
+    # selected component creates them.
+    for reserved in ("data/", "models/", "artifacts/"):
+        assert not any(target.startswith(reserved) for target in targets)
+    assert not any(target.endswith(".gitkeep") for target in targets)
 
 
 def test_generated_package_source_resolves_version_from_metadata() -> None:
@@ -289,3 +301,113 @@ def test_data_science_composes_with_optional_scientific_python() -> None:
         "scikit-learn>=1.9,<2",
     ]
     assert "tests/test_scientific_python.py" in files
+
+
+_WORKING_TREE_IGNORES = (
+    "/data/raw/",
+    "/data/interim/",
+    "/data/processed/",
+    "/models/",
+    "/artifacts/",
+)
+
+
+def test_every_generated_target_has_an_explicit_owner_in_the_selection() -> None:
+    """Acceptance criterion 1: every generated target is owned by Foundation or
+    by a component that is actually in the selection -- no orphan output."""
+    spec = parse_project_spec(_payload(capabilities=["jupyter", "scientific-python"]))
+
+    plan = plan_generation(spec)
+    selected = {"data-science", "jupyter", "scientific-python"}
+    for item in plan.files:
+        if isinstance(item.owner, FoundationOwner):
+            continue
+        assert isinstance(item.owner, ComponentOwner)
+        assert item.owner.id in selected, item.target
+
+    by_target = {item.target: item for item in plan.files}
+    assert by_target["notebooks/getting-started.ipynb"].owner == ComponentOwner(
+        id="data-science"
+    )
+
+
+def test_working_trees_are_ignored_while_their_guidance_stays_tracked() -> None:
+    """Acceptance criterion 3: the five root-anchored ignore entries land in
+    order, shadow no tracked path, and the README documents every tree -- with
+    no .gitkeep or per-directory placeholder anywhere in the output."""
+    spec = parse_project_spec(_payload())
+
+    rendered = render_project(spec)
+    files = {item.target: item.content.decode() for item in rendered.files}
+
+    gitignore_lines = files[".gitignore"].splitlines()
+    positions = [gitignore_lines.index(entry) for entry in _WORKING_TREE_IGNORES]
+    assert positions == sorted(positions), gitignore_lines
+    # Root-anchored, so none can shadow src/<package>/models/ or a tracked
+    # root directory -- docs/notebook-data-and-model-safeguards.md.
+    for entry in _WORKING_TREE_IGNORES:
+        assert entry.startswith("/")
+    for tracked in ("notebooks/", "src/", "tests/"):
+        assert not any(
+            line.rstrip("/") == tracked.rstrip("/") for line in gitignore_lines
+        )
+
+    readme = files["README.md"]
+    assert "## Working directories" in readme
+    for tree in (
+        "data/raw/",
+        "data/interim/",
+        "data/processed/",
+        "models/",
+        "artifacts/",
+    ):
+        assert tree in readme
+
+    targets = {item.target for item in rendered.files}
+    assert not any(target.endswith(".gitkeep") for target in targets)
+    assert not any(
+        target.startswith(("data/", "models/", "artifacts/")) for target in targets
+    )
+
+
+@pytest.mark.parametrize("archetype", ["library", "cli"])
+@pytest.mark.parametrize(
+    "capabilities",
+    [[], ["jupyter"], ["jupyter", "scientific-python"]],
+)
+def test_library_and_cli_render_without_the_data_science_shape(
+    archetype: str, capabilities: list[str]
+) -> None:
+    """Acceptance criterion 5: the Data Science README and ignore contributions
+    reach only a Data Science selection -- Library and CLI are untouched."""
+    options: dict[str, object] = {}
+    if archetype == "library":
+        options = {
+            "library": {"packaging_mode": "uv-build-static", "initial_version": "0.1.0"}
+        }
+    payload = {
+        "protocol_version": 1,
+        "project": {
+            "name": "Sibling Project",
+            "package_name": "sibling_project",
+            "repository_name": "sibling-project",
+            "description": "Regression fixture.",
+            "licence": "mit",
+            "authors": [{"name": "Test User"}],
+        },
+        "python": {"minimum": "3.11", "development": "3.13"},
+        "components": {
+            "archetype": archetype,
+            "capabilities": capabilities,
+            "platforms": [],
+        },
+        "component_options": options,
+    }
+
+    rendered = render_project(parse_project_spec(payload))
+    files = {item.target: item.content.decode() for item in rendered.files}
+
+    for entry in _WORKING_TREE_IGNORES:
+        assert entry not in files[".gitignore"]
+    assert "## Working directories" not in files["README.md"]
+    assert not any(item.target.startswith("notebooks/") for item in rendered.files)

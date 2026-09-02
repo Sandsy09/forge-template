@@ -45,8 +45,10 @@ create-forge staging, uv lock, atomic finalisation
   validator; FT-11.03 ships the independent `scientific-python` runtime stack
   and import test; FT-11.04 proves their composition end to end. FT-12.01
   then ships the independent `data-science` archetype, declaring the hard
-  `jupyter` requirement. All are present on unreleased `main`; FT-12.02–04
-  add its notebook, the full regression matrix, and the `0.4.0` release.
+  `jupyter` requirement, and FT-12.02 completes its generated shape with the
+  output-free starter notebook and the ignored working trees. All are present
+  on unreleased `main`; FT-12.03–04 add the full regression matrix and the
+  `0.4.0` release.
 - Capabilities remain bundled, reviewed forge-template components. This
   roadmap does not introduce plugins or remote component registries.
 - create-forge consumes public descriptors and never recreates component

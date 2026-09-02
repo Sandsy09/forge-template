@@ -1,0 +1,84 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "intro",
+   "metadata": {},
+   "source": [
+    "# Getting started\n",
+    "\n",
+    "A starting point for exploratory work. It imports only the\n",
+    "`{{ project.package_name }}` package and modules that ship with Python, so\n",
+    "it runs anywhere the project is installed.\n",
+    "\n",
+    "**Before committing any notebook**, restart the kernel and clear every\n",
+    "output. `uv run --locked poe notebook:check` enforces this: it re-executes a\n",
+    "copy of each notebook and fails if a cell carries a stored output or\n",
+    "execution count."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "version",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from {{ project.package_name }} import __version__\n",
+    "\n",
+    "print(__version__)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "layout",
+   "metadata": {},
+   "source": [
+    "## Where things live\n",
+    "\n",
+    "The generated project reserves these project-root directories for local or\n",
+    "generated working material. Git ignores their contents and nothing creates\n",
+    "them automatically -- add each one when you first need it.\n",
+    "\n",
+    "| Directory | Holds |\n",
+    "| --- | --- |\n",
+    "| `data/raw/` | Immutable source data, exactly as received |\n",
+    "| `data/interim/` | Partially transformed data |\n",
+    "| `data/processed/` | Final datasets ready for modelling |\n",
+    "| `models/` | Trained and serialised models |\n",
+    "| `artifacts/` | Generated reports, figures, and run outputs |\n",
+    "\n",
+    "Keep datasets, trained models, and credentials out of version control."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "summary",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import statistics\n",
+    "\n",
+    "# A handful of literal values stand in for a real measurement series.\n",
+    "observations = [0.12, 0.31, 0.08, 0.45, 0.22]\n",
+    "\n",
+    "print(\"count:\", len(observations))\n",
+    "print(\"mean:\", round(statistics.mean(observations), 4))\n",
+    "print(\"stdev:\", round(statistics.stdev(observations), 4))"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "name": "python"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
