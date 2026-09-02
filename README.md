@@ -35,8 +35,9 @@ Foundation/component content only; this repository's own tooling
 installable package — see
 [ADR 0036](docs/adr/0036-publish-the-engine-to-pypi.md).
 
-The next planned engine shape is a package-backed, notebook-oriented Data
-Science archetype composed with reusable optional capabilities. Its
+The [accepted Data Science shape](docs/data-science-archetype.md) is an
+independent, package-backed, notebook-oriented archetype composed with
+reusable optional capabilities. Its
 [Stage 10–14 roadmap](docs/roadmap-v2/README.md) tracks the six epics and 24
 filed child issues across both repositories. The default direct-Copier Library
 path remains unchanged.
@@ -90,6 +91,9 @@ that baseline, the [Library archetype contract](docs/library-archetype.md)
 defines the distributable-package additions composed over it, and the
 [CLI Application archetype contract](docs/cli-application-archetype.md)
 defines the implemented executable reference shape. The
+[Data Science archetype contract](docs/data-science-archetype.md) defines the
+future third shape's package, notebook, working-tree, and capability ownership
+without yet implementing it. The
 [composition architecture review](docs/composition-architecture-review.md)
 records the Stage 08 boundary corrections proven by both archetypes, and
 the [Python support policy](docs/python-support.md) defines the

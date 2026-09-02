@@ -98,6 +98,9 @@ The [Data Science roadmap](docs/roadmap-v2/README.md) continues this completed
 architecture through Stages 10–14. It plans a package-backed,
 notebook-oriented third archetype and reusable capabilities without changing
 the default Copier path during roadmap creation.
+The canonical [Data Science archetype contract](docs/data-science-archetype.md)
+fixes that future shape's package, notebook, working-tree, and ownership
+boundary before implementation begins.
 
 ## Branching and pull requests
 

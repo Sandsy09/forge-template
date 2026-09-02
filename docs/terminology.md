@@ -79,6 +79,13 @@ over the same Foundation, defined and implemented by FT-08.04. The
 both production shapes to distinguish deliberate archetype duplication from
 accidental Foundation coupling.
 
+The future [Data Science archetype contract](data-science-archetype.md)
+applies the same definition to an independent, optionless
+package-plus-notebooks shape. It owns its package, tests, starter notebook,
+and local working-tree conventions while leaving notebook tooling and the
+scientific stack to reusable capabilities. It remains unimplemented until
+Stages 11–12.
+
 ### Capability
 
 A capability is an optional, reusable project concern that can apply across
