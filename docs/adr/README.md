@@ -47,6 +47,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0042 — Validate no-copy downstream inheritance](0042-validate-no-copy-downstream-inheritance.md)
 - [0043 — Split invariants out of CLAUDE.md](0043-split-invariants-out-of-claude-md.md)
 - [0044 — Plan Data Science as the third production archetype](0044-plan-data-science-as-the-third-archetype.md)
+- [0045 — Define Data Science as an independent package-plus-notebooks shape](0045-data-science-project-shape.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

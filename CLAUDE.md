@@ -294,6 +294,9 @@ package-backed, notebook-oriented third archetype, reusable optional
   capabilities, and create-forge delivery that remains behind
   `--engine-preview`. All 24 child issues are filed and attached to their
   epics; GitHub issue bodies and native relationships are authoritative.
+FT-10.01's [Data Science contract](docs/data-science-archetype.md) now fixes
+the future optionless package, test, starter-notebook, ignored working-tree,
+and ownership shape without adding it to the production catalogue.
 
 FT-08.02 populated the
 production component catalogue under the
