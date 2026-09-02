@@ -73,6 +73,13 @@ with the lifecycle below does not change the durable policy.
 These values match the existing `copier.yml`; adopting this policy changes no
 question, answer, generated file, or runtime behaviour.
 
+Future Data Science dependencies follow the same floor. The canonical
+[initial capability contracts](data-science-capabilities.md#dependency-evidence)
+record the reviewed lower-release metadata for the Jupyter and Scientific
+Python lines, including the NumPy 2.4 ceiling needed to retain Python 3.11.
+FT-10.04 owns their complete Python 3.11–3.14 execution matrix and release
+acceptance evidence.
+
 ## Admitting a new CPython release
 
 A CPython release enters the active window only after its final release and a

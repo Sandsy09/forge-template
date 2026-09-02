@@ -297,6 +297,10 @@ package-backed, notebook-oriented third archetype, reusable optional
 FT-10.01's [Data Science contract](docs/data-science-archetype.md) now fixes
 the future optionless package, test, starter-notebook, ignored working-tree,
 and ownership shape without adding it to the production catalogue.
+FT-10.02's [initial capability contracts](docs/data-science-capabilities.md)
+define reusable optionless `jupyter` development tooling and an independently
+optional `scientific-python` runtime stack. Data Science will explicitly
+require Jupyter; neither component exists in the production catalogue yet.
 
 FT-08.02 populated the
 production component catalogue under the

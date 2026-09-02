@@ -20,6 +20,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [data-science-archetype.md](data-science-archetype.md) — the accepted
   package-plus-notebooks shape and ownership boundary for the future third
   production archetype.
+- [data-science-capabilities.md](data-science-capabilities.md) — the accepted
+  optionless Jupyter tooling and optional Scientific Python dependency
+  contracts for the first production capabilities.
 - [roadmap-v2/](roadmap-v2/) — the Stage 10–14 two-repository roadmap for a
   package-backed Data Science archetype and reusable optional capabilities.
 - [roadmap-v1/](roadmap-v1/) — the completed historical Foundation roadmap

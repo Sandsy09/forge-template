@@ -24,6 +24,12 @@ exactly one. The released Copier path remains the monolithic `template/` tree
 and is unaffected -- `create-forge` continues to consume only that path until
 a later, separate cutover decision.
 
+The [initial Data Science capability contracts](data-science-capabilities.md)
+define future manifest-protocol-2 `jupyter` and `scientific-python`
+capabilities. They are not catalogue entries yet. Data Science will declare a
+hard `jupyter>=1,<2` reference, while both capability manifests declare no
+requirements or conflicts themselves.
+
 ## Authoring and schema source
 
 Each component uses a UTF-8 TOML file named `component.toml`. TOML is the

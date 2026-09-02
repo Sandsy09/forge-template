@@ -87,6 +87,12 @@ makes `github` a mandatory co-selection — composition still applies every
 capability before every platform, so the provenance capability is never
 pushed after the platform it depends on.
 
+The accepted [Data Science capability contract](data-science-capabilities.md#data-science-requires-jupyter)
+provides the reverse cross-tier shape: the future `data-science` archetype
+requires the `jupyter` capability. Both IDs must appear explicitly in the
+ProjectSpec, but the archetype tier still applies before the capability tier.
+The dependency constrains selection; it does not invert composition order.
+
 ## Cycles
 
 Dependency cycles are rejected **catalogue-wide**, in

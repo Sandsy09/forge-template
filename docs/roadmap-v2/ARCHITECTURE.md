@@ -29,9 +29,11 @@ create-forge staging, uv lock, atomic finalisation
 - Reusable optional concerns become capabilities rather than Foundation
   defaults or duplicated archetype content.
 - FT-10.01 fixes the minimal shape: the archetype owns the starter notebook
-  and working-tree conventions, while reusable capabilities own notebook
-  tooling and the optional scientific stack. Later Stage 10 decisions define
-  those capability contracts, safeguards, and compatibility impact.
+  and working-tree conventions. FT-10.02's [initial capability
+  contracts](../data-science-capabilities.md) define reusable `jupyter`
+  development tooling and the independently optional `scientific-python`
+  runtime stack. Later Stage 10 decisions define safeguards and compatibility
+  impact.
 - Capabilities remain bundled, reviewed forge-template components. This
   roadmap does not introduce plugins or remote component registries.
 - create-forge consumes public descriptors and never recreates component
