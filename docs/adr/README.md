@@ -50,6 +50,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0045 — Define Data Science as an independent package-plus-notebooks shape](0045-data-science-project-shape.md)
 - [0046 — Define Jupyter and Scientific Python as independent capabilities](0046-initial-data-science-capabilities.md)
 - [0047 — Define fail-closed notebook validation and repository safeguards](0047-notebook-data-and-model-safeguards.md)
+- [0048 — Fix the Data Science compatibility, acceptance, and release contract](0048-data-science-compatibility-and-acceptance.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

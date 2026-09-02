@@ -27,6 +27,10 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   — fail-closed notebook validation order, deterministic failure identifiers,
   safe diagnostics, and the prose-only working-tree guidance for the future
   Data Science archetype.
+- [data-science-compatibility-and-acceptance.md](data-science-compatibility-and-acceptance.md)
+  — the versioned-axis classification, executable acceptance matrix, valid and
+  invalid selections, and cross-repository release gates for the `0.4.0` Data
+  Science engine line.
 - [roadmap-v2/](roadmap-v2/) — the Stage 10–14 two-repository roadmap for a
   package-backed Data Science archetype and reusable optional capabilities.
 - [roadmap-v1/](roadmap-v1/) — the completed historical Foundation roadmap

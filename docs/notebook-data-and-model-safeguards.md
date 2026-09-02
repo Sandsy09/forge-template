@@ -410,9 +410,14 @@ This contract does not decide or implement:
 - the Foundation extension points for development dependencies, Poe tasks,
   aggregate-check entries, and capability-contributed ignore entries, owned
   by FT-11.01, or the packaged manifest, resources, implementation, and
-  tests, owned by FT-11.02 and FT-11.03; or
-- compatibility, the acceptance matrix, and the `forge-template` 0.4.0
-  release classification, owned by FT-10.04.
+  tests, owned by FT-11.02 and FT-11.03.
+
+FT-10.04 subsequently accepted compatibility, the executable acceptance
+matrix, and the `forge-template` `0.4.0` release classification in the
+[compatibility and acceptance contract](data-science-compatibility-and-acceptance.md);
+it makes this contract's `notebook:check` a required generated-project
+acceptance row at both Python endpoints and changes nothing in the validation
+order, identifiers, diagnostics, or safeguards above.
 
 No package dependency, manifest, catalogue entry, public API, ProjectSpec,
 template, Copier answer, generated output, tag, or release changes through

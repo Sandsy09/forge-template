@@ -309,8 +309,19 @@ identifiers, output- and secret-free diagnostics, and the reading that
 "guidance markers remain tracked" means the root README prose and
 root-anchored `.gitignore` entries only — no `.gitkeep` or per-tree README,
 so ADR 0045 stands. `notebook:check` is a generated-project task, not an
-engine check, and adds no `ForgeEngineError` code. FT-10.04 (the last Stage
-10 child) is now unblocked.
+engine check, and adds no `ForgeEngineError` code.
+FT-10.04's
+[compatibility and acceptance contract](docs/data-science-compatibility-and-acceptance.md)
+([ADR 0048](docs/adr/0048-data-science-compatibility-and-acceptance.md))
+closes Stage 10: the Data Science rollout moves only the package version
+(`0.3.2` → `0.4.0`, reviewed `0.4.1`) and the discovered-component set (three
+new components at `1.0.0`), leaving every protocol and the public engine
+facade unchanged; acceptance is an executable matrix whose rows each name one
+non-interactive command and one FT- or CF-repository owner; dependency
+resolution is swept at Python 3.11 and 3.14; and four release gates bind to
+create-forge's existing coordination order. No version is bumped here —
+FT-12.04 and FT-14.03 perform the actual releases. **Stage 10 is complete;
+`FT-EPIC-11 / #97` and `FT-11.01 / #105` are unblocked.**
 
 FT-08.02 populated the
 production component catalogue under the

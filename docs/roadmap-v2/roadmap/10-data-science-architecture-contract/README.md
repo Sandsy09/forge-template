@@ -26,11 +26,13 @@ engine and client baseline.
    fail-closed `notebook:check` validation order, deterministic failure
    identifiers, safe diagnostics, and the prose-only working-tree guidance.
 4. [FT-10.04 / #104](https://github.com/Sandsy09/forge-template/issues/104)
-   fixes compatibility, acceptance, and `forge-template` 0.4.0 release
-   requirements.
+   is complete: the canonical [compatibility and acceptance
+   contract](../../../data-science-compatibility-and-acceptance.md) classifies
+   every versioned axis for the `0.4.0` line, fixes the executable acceptance
+   matrix and its owners, and states the cross-repository release gates.
 
-Each child is blocked by the preceding item. With FT-10.03 complete, FT-10.04
-is the next actionable decision.
+Each child was blocked by the preceding item. All four are complete; the epic
+is ready to close and Stage 11 is unblocked.
 
 ## Entry criteria
 
@@ -55,6 +57,7 @@ is the next actionable decision.
 
 The four accepted decisions make the shape, capability boundaries,
 safeguards, compatibility impact, and acceptance strategy implementation-ready.
+All four are accepted, so this exit criterion is met.
 
 ## Non-goals
 

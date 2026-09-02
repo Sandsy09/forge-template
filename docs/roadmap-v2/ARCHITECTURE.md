@@ -35,8 +35,11 @@ create-forge staging, uv lock, atomic finalisation
   runtime stack. FT-10.03's
   [notebook, data, and model safeguards](../notebook-data-and-model-safeguards.md)
   fix the fail-closed `notebook:check` order, deterministic failures, safe
-  diagnostics, and the prose-only working-tree guidance. FT-10.04 still owns
-  compatibility impact and the release line.
+  diagnostics, and the prose-only working-tree guidance. FT-10.04's
+  [compatibility and acceptance contract](../data-science-compatibility-and-acceptance.md)
+  classifies every versioned axis for the `0.4.0` line, fixes the executable
+  acceptance matrix and its owners, and states the release gates, completing
+  Stage 10.
 - Capabilities remain bundled, reviewed forge-template components. This
   roadmap does not introduce plugins or remote component registries.
 - create-forge consumes public descriptors and never recreates component
@@ -46,9 +49,11 @@ create-forge staging, uv lock, atomic finalisation
 
 ProjectSpec, component-manifest, option-schema, Foundation-source, component,
 and engine-package versions remain independently governed by the canonical
-compatibility policy. Stage 10 must classify every required version change
-before implementation, and Stage 14 reviews the resulting line before final
-client rollout.
+compatibility policy. Stage 10 has classified every required version change in
+the
+[compatibility and acceptance contract](../data-science-compatibility-and-acceptance.md):
+only the package version and the discovered-component set move. Stage 14
+reviews the resulting line before final client rollout.
 
 The default Copier path, `template/`, `copier.yml`, and stored Copier answers
 are outside this roadmap unless a later, separately accepted cutover changes

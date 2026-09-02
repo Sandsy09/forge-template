@@ -201,6 +201,14 @@ Released `create-forge` declares the compatible
 `forge-template>=0.3.1,<0.4` engine range
 ([template-engine-api.md](template-engine-api.md#compatibility-and-current-cutover-boundary)).
 
+The planned Data Science line advances this table to package `0.4.0` (reviewed
+`0.4.1`) and adds `data-science`, `jupyter`, and `scientific-python` at
+component version `1.0.0`, with every protocol integer unchanged. The
+[Data Science compatibility and acceptance contract](data-science-compatibility-and-acceptance.md)
+classifies each axis and the release gate; FT-12.04 advances the snapshot here
+when it publishes, the same way [python-support.md](python-support.md) advances
+its own living table.
+
 ## Non-guarantees
 
 This policy does not promise:
