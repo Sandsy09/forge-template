@@ -35,3 +35,13 @@ target.kind = "foundation"
 extension_point = "pyproject-classifiers"
 content = "extensions/classifiers.toml.jinja"
 target.kind = "foundation"
+
+[[contributions]]
+extension_point = "readme-project-shape"
+content = "extensions/readme-project-shape.md.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "gitignore-project-shape"
+content = "extensions/gitignore-project-shape.jinja"
+target.kind = "foundation"

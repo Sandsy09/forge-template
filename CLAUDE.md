@@ -122,6 +122,8 @@ FT-08.04 added `cli`
 ([contract](docs/cli-application-archetype.md)/[ADR 0035](docs/adr/0035-implement-cli-application-archetype.md)),
 and FT-12.01 added `data-science`
 ([contract](docs/data-science-archetype.md)/[ADR 0053](docs/adr/0053-production-data-science-archetype.md)),
+with FT-12.02 completing its notebook and working-tree shape
+([ADR 0054](docs/adr/0054-data-science-notebook-and-artefact-layout.md)),
 all alongside the implicit Foundation source at `src/forge_template/foundation/`;
 FT-11.02 adds the optionless `jupyter` capability without a notebook or
 runtime dependency; FT-11.03 adds the independently optional
@@ -134,7 +136,8 @@ Library across all three packaging modes and for CLI's fixed packaging mode,
 plus a real installed console script and `python -m` invocation; it also
 proves both archetypes' locked aggregate checks with Jupyter selected, and a
 real Data Science wheel/install/`__version__`/`py.typed` plus its own locked
-`poe check` with Jupyter selected.
+`poe check` with Jupyter selected — which since FT-12.02 runs `notebook:check`
+over the real starter notebook and a live kernel.
 `discover_components()` now returns
 `("cli", "data-science", "jupyter", "library", "scientific-python")`. No
 archetype inherits from or reads
@@ -292,7 +295,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0052 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0054 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -413,8 +416,26 @@ classifiers. Selecting it without `jupyter` is rejected as
 build/install) cover it. No engine module, public signature, `EngineErrorCode`,
 protocol integer, Foundation file, existing component, or package version
 changes; `library`/`cli` stay `1.0.1`, both capabilities stay `1.0.0`, the
-package stays `0.3.2` and untagged. **FT-12.01 is complete; `FT-12.02 / #110`
-is the next actionable issue.**
+package stays `0.3.2` and untagged. FT-12.02 / #110's
+[notebook and artefact layout](docs/notebook-data-and-model-safeguards.md)
+([ADR 0054](docs/adr/0054-data-science-notebook-and-artefact-layout.md)) then
+completes the archetype's generated shape within the same `1.0.0` component:
+an output-free, stdlib-and-package-only
+`content/notebooks/getting-started.ipynb.jinja`, a `gitignore-project-shape`
+contribution carrying the five root-anchored working-tree entries
+(`/data/raw/` … `/artifacts/`, ahead of `jupyter`'s `.ipynb_checkpoints/`),
+and a `readme-project-shape` contribution documenting the package/test/notebook
+structure and the ignored `data/`, `models/`, and `artifacts/` trees — no
+`.gitkeep` or per-tree placeholder. It also corrects one
+[compatibility-and-acceptance](docs/data-science-compatibility-and-acceptance.md)
+row whose evidence named a generated-project pre-commit run the engine path
+does not produce. `tests/test_data_science_notebook.py` (fast: nbformat
+cleanliness, real `ruff check`/`format --check` over the rendered project,
+stdlib-only imports, no-payload, ignored-tree discovery) is added;
+`tests/test_data_science_build.py`'s generated `poe check` now runs
+`notebook:check` over a real notebook and kernel. `scripts/check_wheel.py`
+needs no change. `library`/`cli` render byte-for-byte unchanged. **FT-12.01
+and FT-12.02 are complete; `FT-12.03 / #111` is the next actionable issue.**
 
 FT-08.02 populated the
 production component catalogue under the

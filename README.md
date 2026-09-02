@@ -50,9 +50,12 @@ complete, Stage 11 is complete — the additive Foundation tooling points, the
 package-bound `jupyter` and `scientific-python` capabilities, and the
 [end-to-end composition validation](docs/capability-composition-validation.md)
 that proves the layer and fails every invalid selection closed — and Stage 12
-has begun: FT-12.01 / [ADR 0053](docs/adr/0053-production-data-science-archetype.md)
+is under way: FT-12.01 / [ADR 0053](docs/adr/0053-production-data-science-archetype.md)
 ships the `data-science` archetype itself, requiring `jupyter` and rejected
-before rendering without it. All of this is present on unreleased `main`; the
+before rendering without it, and FT-12.02 /
+[ADR 0054](docs/adr/0054-data-science-notebook-and-artefact-layout.md) adds its
+output-free starter notebook and the ignored `data/`, `models/`, and
+`artifacts/` working trees. All of this is present on unreleased `main`; the
 published `0.3.2` line remains a two-archetype catalogue until Stage 12
 publishes `0.4.0`. The default direct-Copier Library path remains unchanged.
 

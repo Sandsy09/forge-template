@@ -133,9 +133,12 @@ This is an in-memory composition proof. It deliberately does not cover:
   of engine scope, proved by
   [`tests/test_notebook_validator.py`](../tests/test_notebook_validator.py);
 - **the `data-science` archetype** — FT-12.01 /
-  [ADR 0053](adr/0053-production-data-science-archetype.md) introduced it and
+  [ADR 0053](adr/0053-production-data-science-archetype.md) introduced it,
+  FT-12.02 / [ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md)
+  completed its notebook and working-tree shape, and
   [`tests/test_data_science_archetype.py`](../tests/test_data_science_archetype.py)
-  covers it; the `requires-jupyter` fixture here only rehearses its
+  and [`tests/test_data_science_notebook.py`](../tests/test_data_science_notebook.py)
+  cover it; the `requires-jupyter` fixture here only rehearses its
   cross-tier dependency edge; and
 - **`create-forge` selection UX** — owned by create-forge Stages 13–14.
 

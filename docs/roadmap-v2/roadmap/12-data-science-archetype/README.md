@@ -17,13 +17,15 @@ FT-EPIC-12 is natively blocked by FT-EPIC-11, now complete.
    [ADR 0053](../../../adr/0053-production-data-science-archetype.md).
 2. [FT-12.02 / #110](https://github.com/Sandsy09/forge-template/issues/110)
    adds its clean starter notebook and documented data/model/artefact layout.
+   **Complete** — FT-12.02 /
+   [ADR 0054](../../../adr/0054-data-science-notebook-and-artefact-layout.md).
 3. [FT-12.03 / #111](https://github.com/Sandsy09/forge-template/issues/111)
    validates supported compositions and all three archetype regressions.
 4. [FT-12.04 / #112](https://github.com/Sandsy09/forge-template/issues/112)
    publishes and verifies the `forge-template` 0.4.0 compatibility line.
 
 The four children form a strict sequence beginning after FT-11.04. FT-12.01
-is done; FT-12.02 / #110 is the next actionable issue.
+and FT-12.02 are done; FT-12.03 / #111 is the next actionable issue.
 
 ## Entry criteria
 

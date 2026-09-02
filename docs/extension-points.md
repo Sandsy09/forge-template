@@ -82,7 +82,11 @@ FT-12.01's `data-science` archetype uses the four archetype-neutral pyproject
 points (`pyproject-build-system`, `pyproject-archetype-metadata`,
 `pyproject-build-configuration`, `pyproject-classifiers`) exactly as `cli`
 does; [ADR 0053](adr/0053-production-data-science-archetype.md) records that
-use.
+use. FT-12.02 then adds its `readme-project-shape` contribution (project
+structure and the working-directory guidance) and its `gitignore-project-shape`
+contribution (the five root-anchored `data/`, `models/`, and `artifacts/`
+entries, composed ahead of `jupyter`'s `.ipynb_checkpoints/`); [ADR
+0054](adr/0054-data-science-notebook-and-artefact-layout.md) records that use.
 
 Foundation owns six further files with **no** extension point at all:
 `.editorconfig`, `.gitattributes`, `.python-version.jinja`,

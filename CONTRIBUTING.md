@@ -106,9 +106,11 @@ notebook-oriented third archetype and reusable capabilities without changing
 the default Copier path during roadmap creation.
 The canonical [Data Science archetype contract](docs/data-science-archetype.md)
 fixed that shape's package, notebook, working-tree, and ownership boundary
-before implementation; FT-12.01 / ADR 0053 now implements the manifest, its
-owned package and smoke tests, and its packaging/metadata/classifier
-contributions.
+before implementation; FT-12.01 / ADR 0053 implemented the manifest, its owned
+package and smoke tests, and its packaging/metadata/classifier contributions,
+and FT-12.02 / ADR 0054 added the output-free starter notebook, the five
+root-anchored working-tree ignore entries, and the README project-shape
+guidance — completing the generated shape within the same `1.0.0` component.
 The [initial Data Science capability contracts](docs/data-science-capabilities.md)
 define the optionless `jupyter` development-tooling and `scientific-python`
 runtime-dependency owners. FT-11.02 / ADR 0050 ships `jupyter`, and FT-11.03 /
@@ -139,9 +141,11 @@ the component manifests and extension trees — closing Stage 11 with no
 manifest, content, engine, or version change.
 Stage 12 then adds the third archetype: FT-12.01 / ADR 0053 ships
 `data-science` `1.0.0`, an independent package-backed archetype that requires
-`jupyter>=1,<2` and is rejected before rendering without it. `library`/`cli`
-stay `1.0.1`, both capabilities stay `1.0.0`, and the package stays `0.3.2`
-and untagged — FT-12.04 releases `0.4.0`.
+`jupyter>=1,<2` and is rejected before rendering without it, and FT-12.02 /
+ADR 0054 completes its generated shape — the output-free starter notebook and
+the five root-anchored working-tree ignore entries with prose-only guidance.
+`library`/`cli` stay `1.0.1`, both capabilities stay `1.0.0`, and the package
+stays `0.3.2` and untagged — FT-12.04 releases `0.4.0`.
 
 ## Branching and pull requests
 

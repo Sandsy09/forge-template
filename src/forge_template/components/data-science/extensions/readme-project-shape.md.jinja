@@ -1,0 +1,24 @@
+## Project structure
+
+```text
+src/{{ project.package_name }}/   Package source
+tests/                            Test suite
+notebooks/                        Exploratory and reporting notebooks
+```
+
+## Working directories
+
+These project-root directories hold local or generated working material. Git
+ignores their contents, and nothing in the project creates them -- add each one
+when you first need it.
+
+```text
+data/raw/         Immutable source data, exactly as received
+data/interim/     Partially transformed data
+data/processed/   Final datasets ready for modelling
+models/           Trained and serialised models
+artifacts/        Generated reports, figures, and run outputs
+```
+
+Never commit a dataset, a trained model, a generated binary, or a credential --
+keep them in the ignored directories above or outside the repository.
