@@ -106,7 +106,8 @@ The engine does not make these universal:
 - secret-example and ignore-file policy;
 - git tracking or clean-tree state;
 - wheel and sdist contents;
-- generated command execution; or
+- generated command execution;
+- notebook cleanliness or execution; or
 - destination filesystem state.
 
 The released Copier Library scaffold continues to exercise its applicable
@@ -120,3 +121,9 @@ explicitly out of this boundary, above). FT-08.04 added the independent CLI
 Application archetype, and the
 [Stage 08 composition review](composition-architecture-review.md) proves both
 shapes against the same validation and ownership boundary.
+
+Notebook cleanliness and execution are a generated-project concern owned by
+the future `notebook:check` task under the
+[notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
+contract. That task runs after handoff in the project's own environment; it
+is not an engine render check and adds no `ForgeEngineError` code.

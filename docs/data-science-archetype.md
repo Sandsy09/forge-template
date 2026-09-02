@@ -64,7 +64,9 @@ and the smoke test owns import and version behaviour.
 The starter notebook is tracked, output-free, and uses only the generated
 package and Python's standard library. It demonstrates the package-plus-
 notebooks boundary without making a scientific stack mandatory. Its exact
-executable validation and failure behaviour remain with FT-10.03.
+executable validation and failure behaviour are fixed by the
+[notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
+contract.
 
 ## Local working trees
 
@@ -87,10 +89,12 @@ or selected component creates them.
 Forge supplies no path helper, project-root discovery, data loader, model
 registry, or artefact API for these locations. Any future runtime owner that
 uses them must follow the canonical
-[path and resource conventions](paths-and-resources.md). FT-10.03 defines the
-retention, secret, generated-artefact, and validation safeguards; this
-contract fixes only shape and ownership. Prose uses British spelling, while
-the conventional filesystem path remains `artifacts/`.
+[path and resource conventions](paths-and-resources.md). The
+[notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
+contract defines the retention, secret, generated-artefact, and validation
+safeguards, including the root-anchored ignore entries and the prose-only
+guidance reading; this contract fixes only shape and ownership. Prose uses
+British spelling, while the conventional filesystem path remains `artifacts/`.
 
 ## Ownership map
 
@@ -140,8 +144,6 @@ separate decision.
 
 This contract deliberately does not decide or implement:
 
-- notebook execution, data/model/secret, and generated-artefact safeguards,
-  owned by FT-10.03;
 - ProjectSpec, manifest, option-schema, Foundation, component, engine-package,
   Python, acceptance-matrix, or release compatibility, owned by FT-10.04; or
 - any production manifest, resource, generated output, CLI behaviour, tag, or
@@ -149,5 +151,8 @@ This contract deliberately does not decide or implement:
 
 FT-10.02 subsequently accepted the capability identities, dependency bounds,
 and formal Jupyter requirement in the canonical [initial capability
-contracts](data-science-capabilities.md); those decisions do not alter this
-archetype's package or path ownership.
+contracts](data-science-capabilities.md), and FT-10.03 the notebook
+validation order, working-tree, secret, and generated-artefact safeguards in
+the [notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
+contract; neither decision alters this archetype's package, path, or
+no-placeholder ownership.

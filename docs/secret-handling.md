@@ -131,3 +131,7 @@ a future optional scanning capability and the GitHub-platform contribution
 that would generate host-native scanning configuration.
 [Supply-chain provenance](supply-chain-provenance.md) owns SBOM and
 release-provenance planning, a related but distinct supply-chain concern.
+The [notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
+contract applies this document's ignore-shadowing audit and its
+no-real-values rule to a data project's `data/`, `models/`, and `artifacts/`
+trees and to committed notebook outputs, without changing any rule here.

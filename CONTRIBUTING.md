@@ -104,6 +104,10 @@ boundary before implementation begins.
 The [initial Data Science capability contracts](docs/data-science-capabilities.md)
 define the optionless `jupyter` development-tooling and `scientific-python`
 runtime-dependency owners without adding them to the production catalogue.
+The [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
+fix the fail-closed notebook-validation order, deterministic failure
+identifiers, output-free diagnostics, and the prose-only working-tree
+guidance those future owners must satisfy.
 
 ## Branching and pull requests
 

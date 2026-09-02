@@ -23,6 +23,10 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [data-science-capabilities.md](data-science-capabilities.md) — the accepted
   optionless Jupyter tooling and optional Scientific Python dependency
   contracts for the first production capabilities.
+- [notebook-data-and-model-safeguards.md](notebook-data-and-model-safeguards.md)
+  — fail-closed notebook validation order, deterministic failure identifiers,
+  safe diagnostics, and the prose-only working-tree guidance for the future
+  Data Science archetype.
 - [roadmap-v2/](roadmap-v2/) — the Stage 10–14 two-repository roadmap for a
   package-backed Data Science archetype and reusable optional capabilities.
 - [roadmap-v1/](roadmap-v1/) — the completed historical Foundation roadmap
