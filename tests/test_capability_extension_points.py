@@ -151,7 +151,10 @@ def test_unfilled_points_render_production_archetypes_unchanged(
     _strip_capability_tooling_points(stripped)
     pre_capability_catalogue = tmp_path / "components"
     shutil.copytree(_PRODUCTION_COMPONENTS, pre_capability_catalogue)
+    # A pre-FT-11.01 catalogue has neither the capabilities nor anything that
+    # requires one: `data-science` declares `requires = ["jupyter"]`.
     shutil.rmtree(pre_capability_catalogue / "jupyter")
+    shutil.rmtree(pre_capability_catalogue / "data-science")
     monkeypatch.setattr(
         engine_module, "_CATALOGUE_ROOT_OVERRIDE", pre_capability_catalogue
     )

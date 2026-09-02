@@ -1,0 +1,37 @@
+# The production Data Science archetype. See docs/data-science-archetype.md
+# and ADR 0045/0053. The hard Jupyter requirement is declared here, not by
+# `jupyter`, to keep the capability reusable and avoid a dependency cycle --
+# see docs/data-science-capabilities.md#data-science-requires-jupyter.
+manifest_version = 2
+id = "data-science"
+name = "Data Science"
+description = "A package-backed, notebook-oriented data science project."
+kind = "archetype"
+version = "1.0.0"
+content_root = "content"
+requires = [{ id = "jupyter", version = ">=1,<2" }]
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+extension_point = "pyproject-build-system"
+content = "extensions/build-system.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-archetype-metadata"
+content = "extensions/archetype-metadata.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-build-configuration"
+content = "extensions/build-configuration.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-classifiers"
+content = "extensions/classifiers.toml.jinja"
+target.kind = "foundation"

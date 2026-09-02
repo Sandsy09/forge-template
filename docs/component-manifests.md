@@ -16,14 +16,14 @@ implicit Foundation content source — described below, and implemented by
 unchanged for existing component-to-component manifests.
 
 FT-08.02 populated the installed production catalogue with the first real
-manifest, `library`; FT-08.04 added `cli`, and FT-11.02/FT-11.03 added the
-first production capabilities, `jupyter` and `scientific-python`. Discovery
-from current source returns
-`("cli", "jupyter", "library", "scientific-python")`. The two archetypes are
-independent and compose over the same implicit Foundation source; a
-ProjectSpec selects exactly one. The released Copier path remains the
-monolithic `template/` tree and is unaffected -- `create-forge` continues to
-consume only that path until a later, separate cutover decision.
+manifest, `library`; FT-08.04 added `cli`, FT-11.02/FT-11.03 added the
+first production capabilities, `jupyter` and `scientific-python`, and FT-12.01
+added the third archetype, `data-science`. Discovery from current source
+returns `("cli", "data-science", "jupyter", "library", "scientific-python")`.
+The three archetypes are independent and compose over the same implicit
+Foundation source; a ProjectSpec selects exactly one. The released Copier path
+remains the monolithic `template/` tree and is unaffected -- `create-forge`
+continues to consume only that path until a later, separate cutover decision.
 
 The [initial Data Science capability contracts](data-science-capabilities.md)
 define manifest-protocol-2 `jupyter` and `scientific-python` capabilities.

@@ -6,10 +6,11 @@ Guidance for Claude Code working in this repository.
 
 A [Copier](https://copier.readthedocs.io/) template and public composition
 engine that scaffold modern Python projects. The source catalogue contains
-independent **library** and **CLI Application** archetypes plus the optionless
-**Jupyter** and **Scientific Python** capabilities; the published `v0.3.2`
-catalogue still contains only the two archetypes and the direct-Copier
-compatibility path remains Library-only.
+independent **library**, **CLI Application**, and **Data Science** archetypes
+plus the optionless **Jupyter** and **Scientific Python** capabilities; the
+published `v0.3.2` catalogue still contains only the two original archetypes
+and no capabilities, and the direct-Copier compatibility path remains
+Library-only.
 
 Copier was chosen over Cookiecutter specifically for `copier update`, which
 three-way merges template changes into projects generated months earlier. Every
@@ -112,25 +113,32 @@ Its
 [generated-project validation](docs/generated-project-validation.md) checks
 plan/output agreement, universal `pyproject.toml` metadata, and completed
 Forge extension rendering before a result is returned. **The source catalogue
-now holds two independent reference archetypes plus the Jupyter and Scientific
-Python capabilities**:
+now holds three independent reference archetypes plus the Jupyter and
+Scientific Python capabilities**:
 FT-08.02
 populated it with `library`
 ([contract](docs/library-archetype.md)/[ADR 0033](docs/adr/0033-migrate-library-production-catalogue.md)),
-and FT-08.04 added `cli`
+FT-08.04 added `cli`
 ([contract](docs/cli-application-archetype.md)/[ADR 0035](docs/adr/0035-implement-cli-application-archetype.md)),
-both alongside the implicit Foundation source at `src/forge_template/foundation/`;
+and FT-12.01 added `data-science`
+([contract](docs/data-science-archetype.md)/[ADR 0053](docs/adr/0053-production-data-science-archetype.md)),
+all alongside the implicit Foundation source at `src/forge_template/foundation/`;
 FT-11.02 adds the optionless `jupyter` capability without a notebook or
 runtime dependency; FT-11.03 adds the independently optional
-`scientific-python` runtime stack and component-owned import test. `uv run poe
+`scientific-python` runtime stack and component-owned import test. `data-science`
+declares `requires = [{ id = "jupyter", version = ">=1,<2" }]` — the archetype,
+not the capability, owns that edge — and is rejected before rendering when
+`jupyter` is not also selected. `uv run poe
 archetype` proves real wheels/sdists for
 Library across all three packaging modes and for CLI's fixed packaging mode,
 plus a real installed console script and `python -m` invocation; it also
-proves both archetypes' locked aggregate checks with Jupyter selected.
+proves both archetypes' locked aggregate checks with Jupyter selected, and a
+real Data Science wheel/install/`__version__`/`py.typed` plus its own locked
+`poe check` with Jupyter selected.
 `discover_components()` now returns
-`("cli", "jupyter", "library", "scientific-python")`. Neither
+`("cli", "data-science", "jupyter", "library", "scientific-python")`. No
 archetype inherits from or reads
-resources from the other; a ProjectSpec selects exactly one. These
+resources from another; a ProjectSpec selects exactly one. These
 contracts are not
 yet consumed by the direct-Copier path; see
 [#5](https://github.com/Sandsy09/forge-template/issues/5), done,
@@ -380,12 +388,33 @@ synthetic capabilities under `tests/fixtures/capability_composition/`
 (`requires-jupyter`, `conflicts-jupyter`, `optioned-tooling`) exercise the
 `requires`/`conflicts`/options paths the production catalogue cannot reach;
 `requires-jupyter` rehearses the exact `jupyter >=1,<2` edge FT-12.01's
-`data-science` archetype will declare. `scripts/check_wheel.py` now also
+`data-science` archetype declares. `scripts/check_wheel.py` now also
 requires every component's `component.toml` and `extensions/` tree, plus
 `foundation.toml` and `library/options.schema.json`. No manifest, content,
 engine module, public signature, `EngineErrorCode`, or version changes.
 **FT-11.01 through FT-11.04 are complete; `FT-EPIC-11 / #97` and its milestone
-are closed. `FT-12.01 / #109` is the next actionable issue.**
+are closed.**
+
+Stage 12 (`FT-EPIC-12 / #98`, milestone *Data Science Archetype — Stage 12*)
+adds the third archetype and publishes `0.4.0`. FT-12.01 / #109's
+[Data Science archetype](docs/data-science-archetype.md)
+([ADR 0053](docs/adr/0053-production-data-science-archetype.md)) ships
+`data-science` `1.0.0`: an independent, package-backed archetype declaring
+`requires = [{ id = "jupyter", version = ">=1,<2" }]`, owning
+`src/<package>/__init__.py` (byte-identical to `library`'s), `py.typed`,
+`tests/__init__.py`, and `tests/test_smoke.py`, and contributing through the
+four archetype-neutral pyproject points (`build-system`, `archetype-metadata`,
+`build-configuration`, `classifiers`) exactly as `cli` does — fixed
+`uv-build-static`, generated version `0.1.0`, and the three scientific
+classifiers. Selecting it without `jupyter` is rejected as
+`INVALID_COMPONENT_SELECTION` / `validate` from both `plan_generation` and
+`render_project`, never `render`. `tests/test_data_science_archetype.py`
+(fast) and `tests/test_data_science_build.py` (`archetype`-marked, real
+build/install) cover it. No engine module, public signature, `EngineErrorCode`,
+protocol integer, Foundation file, existing component, or package version
+changes; `library`/`cli` stay `1.0.1`, both capabilities stay `1.0.0`, the
+package stays `0.3.2` and untagged. **FT-12.01 is complete; `FT-12.02 / #110`
+is the next actionable issue.**
 
 FT-08.02 populated the
 production component catalogue under the

@@ -1,14 +1,20 @@
 # Data Science Archetype Contract
 
-This document defines the future `data-science` archetype's project shape and
+This document defines the `data-science` archetype's project shape and
 ownership boundaries. It is the canonical living contract accepted by
-[ADR 0045](adr/0045-data-science-project-shape.md) for FT-10.01.
+[ADR 0045](adr/0045-data-science-project-shape.md) for FT-10.01 and
+implemented by FT-12.01 /
+[ADR 0053](adr/0053-production-data-science-archetype.md).
 
-The contract is intentionally ahead of the archetype implementation. The
-source catalogue now contains `library`, `cli`, and the production `jupyter`
-and `scientific-python` capabilities; Stage 12 will implement this
-shape after the remaining Stage 10 decisions and the Stage 11 capabilities are
-complete. Nothing here changes the direct-Copier Library path.
+That implementation ships the `data-science` archetype in the source
+catalogue: `discover_components()` returns `cli`, `data-science`, `jupyter`,
+`library`, and `scientific-python` in lexical order. The manifest, its owned
+package and smoke tests, and its four packaging/metadata/classifier
+contributions implement this contract; the starter notebook, the working
+trees, and their README and `.gitignore` guidance remain FT-12.02's, and the
+full composition and regression matrix remains FT-12.03's. The published
+`0.3.2` wheel stays the two-archetype line until FT-12.04 publishes `0.4.0`.
+Nothing here changes the direct-Copier Library path.
 
 ## Archetype identity and fixed choices
 
@@ -49,7 +55,7 @@ runtime framework.
 
 ## Reserved generated shape
 
-The future production component owns this minimal tracked shape:
+The production component owns this minimal tracked shape:
 
 ```text
 src/<package_name>/__init__.py
@@ -59,11 +65,16 @@ tests/test_smoke.py
 notebooks/getting-started.ipynb
 ```
 
+FT-12.01 ships the first four; `notebooks/getting-started.ipynb` is FT-12.02's.
+
 The package is independent rather than inherited from either existing
 archetype. Its root public API initially exports only `__version__`, resolved
 from installed distribution metadata with the same deterministic `0.0.0`
 fallback used by the existing archetypes. `py.typed` declares inline typing,
-and the smoke test owns import and version behaviour.
+and the smoke test owns import and version behaviour. The `__init__.py`,
+`py.typed`, and `tests/__init__.py` files are byte-identical to `library`'s
+copies — copied into the archetype's own content tree, never read across
+archetypes.
 
 The starter notebook is tracked, output-free, and uses only the generated
 package and Python's standard library. It demonstrates the package-plus-
@@ -123,7 +134,7 @@ variables. It may not read or contribute through Library or CLI Application
 resources, select either archetype, or introduce inheritance between
 archetypes. The Jupyter and Scientific Python contracts may contribute their
 own files or use declared extension points, but do not gain ownership of the
-archetype's package or notebook. The future Data Science manifest explicitly
+archetype's package or notebook. The Data Science manifest explicitly
 requires `jupyter>=1,<2`; Scientific Python remains optional.
 
 Foundation remains provider-, framework-, organisation-, and domain-neutral.
@@ -146,10 +157,16 @@ separate decision.
 
 ## Deferred decisions
 
-This contract deliberately does not decide or implement:
+FT-12.01 implemented the manifest, the owned package and smoke tests, and the
+four packaging/metadata/classifier contributions. Still owned by later Stage
+12 children:
 
-- any production manifest, resource, generated output, CLI behaviour, tag, or
-  release, owned by Stages 11–14.
+- the starter notebook, the `data/`, `models/`, and `artifacts/` working
+  trees, and their `readme-project-shape` and `gitignore-project-shape`
+  contributions — FT-12.02;
+- the full capability-composition and Library/CLI-Application regression
+  matrix, and the generated-project restoration and lock evidence — FT-12.03;
+- the `0.4.0` engine release, its tag, and PyPI publication — FT-12.04.
 
 FT-10.02 subsequently accepted the capability identities, dependency bounds,
 and formal Jupyter requirement in the canonical [initial capability

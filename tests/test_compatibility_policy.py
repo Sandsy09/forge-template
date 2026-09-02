@@ -93,12 +93,14 @@ def test_published_compatibility_state_matches_the_engine() -> None:
     components = {c.id: c for c in discover_components()}
     assert components.keys() == {
         "cli",
+        "data-science",
         "jupyter",
         "library",
         "scientific-python",
     }
     assert components["library"].version == "1.0.1"
     assert components["cli"].version == "1.0.1"
+    assert components["data-science"].version == "1.0.0"
     assert components["jupyter"].version == "1.0.0"
     assert components["scientific-python"].version == "1.0.0"
 

@@ -47,6 +47,9 @@ _MUST_CONTAIN = (
     "forge_template/components/cli/component.toml",
     "forge_template/components/cli/content/",
     "forge_template/components/cli/extensions/",
+    "forge_template/components/data-science/component.toml",
+    "forge_template/components/data-science/content/",
+    "forge_template/components/data-science/extensions/",
     "forge_template/components/jupyter/component.toml",
     "forge_template/components/jupyter/content/",
     "forge_template/components/jupyter/extensions/",
@@ -68,7 +71,8 @@ _SMOKE_IMPORT = (
     "import forge_template; "
     "descriptors = forge_template.discover_components(); "
     "ids = sorted(d.id for d in descriptors); "
-    "assert ids == ['cli', 'jupyter', 'library', 'scientific-python'], ids; "
+    "assert ids == "
+    "['cli', 'data-science', 'jupyter', 'library', 'scientific-python'], ids; "
     "print('discovered:', ids)"
 )
 

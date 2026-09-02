@@ -255,8 +255,10 @@ to an archetype or Foundation to avoid that obligation.
 
 ## Deferred decisions
 
-This contract still does not implement or decide the Data Science production
-manifest and generated shape, owned by Stage 12.
+FT-12.01 / [ADR 0053](adr/0053-production-data-science-archetype.md) shipped
+the `data-science` manifest — declaring the `jupyter >=1,<2` edge above — and
+its owned package and smoke tests. The starter notebook and working-tree
+shape remain FT-12.02's.
 
 FT-10.03 subsequently accepted the notebook validator's ordering, temporary
 copy, timeout, source preservation, failure identifiers, and safe
