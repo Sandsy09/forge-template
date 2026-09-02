@@ -21,12 +21,15 @@ engine and client baseline.
    contracts](../../../data-science-capabilities.md) define optionless
    `jupyter` and `scientific-python` components and bounded dependency lines.
 3. [FT-10.03 / #103](https://github.com/Sandsy09/forge-template/issues/103)
-   defines notebook, data, model, secret, and generated-artefact safeguards.
+   is complete: the canonical [notebook, data, and model
+   safeguards](../../../notebook-data-and-model-safeguards.md) define the
+   fail-closed `notebook:check` validation order, deterministic failure
+   identifiers, safe diagnostics, and the prose-only working-tree guidance.
 4. [FT-10.04 / #104](https://github.com/Sandsy09/forge-template/issues/104)
    fixes compatibility, acceptance, and `forge-template` 0.4.0 release
    requirements.
 
-Each child is blocked by the preceding item. With FT-10.02 complete, FT-10.03
+Each child is blocked by the preceding item. With FT-10.03 complete, FT-10.04
 is the next actionable decision.
 
 ## Entry criteria

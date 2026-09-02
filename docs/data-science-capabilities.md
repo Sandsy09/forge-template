@@ -113,11 +113,12 @@ adds no duplicate Ruff dependency, `nbqa`, or competing notebook formatter.
 The [Ruff notebook discovery documentation](https://docs.astral.sh/ruff/configuration/#jupyter-notebook-discovery)
 is the upstream reference for that choice.
 
-FT-10.03 owns the validator's ordering, temporary-copy execution, timeout,
-source preservation, deterministic errors, and safe diagnostics. FT-11.01
-owns the additive Foundation extension points for development dependencies,
-Poe task definitions, and aggregate-check entries. FT-11.02 owns the packaged
-manifest, resources, and implementation.
+The [notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
+contract fixes the validator's ordering, temporary-copy execution, timeout,
+source preservation, deterministic failure identifiers, and safe diagnostics.
+FT-11.01 owns the additive Foundation extension points for development
+dependencies, Poe task definitions, and aggregate-check entries. FT-11.02
+owns the packaged manifest, resources, and implementation.
 
 ## Data Science requires Jupyter
 
@@ -239,7 +240,6 @@ to an archetype or Foundation to avoid that obligation.
 
 This contract does not implement or decide:
 
-- notebook safeguards and validation failure behaviour, owned by FT-10.03;
 - the full compatibility matrix, engine `0.4.0` line, release hand-offs, and
   version-axis classification, owned by FT-10.04;
 - Foundation capability-tooling extension points, owned by FT-11.01;
@@ -247,6 +247,13 @@ This contract does not implement or decide:
   FT-11.03; or
 - the Data Science production manifest and generated shape, owned by Stage
   12.
+
+FT-10.03 subsequently accepted the notebook validator's ordering, temporary
+copy, timeout, source preservation, failure identifiers, and safe
+diagnostics in the
+[notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
+contract; that decision changes none of the dependency or manifest metadata
+above.
 
 No package dependency, manifest, catalogue entry, public API, ProjectSpec,
 template, Copier answer, generated output, tag, or release changes through

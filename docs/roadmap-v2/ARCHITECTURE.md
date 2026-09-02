@@ -32,8 +32,11 @@ create-forge staging, uv lock, atomic finalisation
   and working-tree conventions. FT-10.02's [initial capability
   contracts](../data-science-capabilities.md) define reusable `jupyter`
   development tooling and the independently optional `scientific-python`
-  runtime stack. Later Stage 10 decisions define safeguards and compatibility
-  impact.
+  runtime stack. FT-10.03's
+  [notebook, data, and model safeguards](../notebook-data-and-model-safeguards.md)
+  fix the fail-closed `notebook:check` order, deterministic failures, safe
+  diagnostics, and the prose-only working-tree guidance. FT-10.04 still owns
+  compatibility impact and the release line.
 - Capabilities remain bundled, reviewed forge-template components. This
   roadmap does not introduce plugins or remote component registries.
 - create-forge consumes public descriptors and never recreates component

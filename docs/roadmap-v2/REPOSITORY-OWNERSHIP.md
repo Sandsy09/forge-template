@@ -17,6 +17,11 @@ runtime operation.
 - the canonical [initial capability contracts](../data-science-capabilities.md),
   including Jupyter's development tooling and Scientific Python's optional
   runtime dependency stack;
+- the canonical
+  [notebook, data, and model safeguards](../notebook-data-and-model-safeguards.md),
+  including the fail-closed notebook-validation order, deterministic failure
+  identifiers, output- and secret-free diagnostics, and the prose-only
+  working-tree guidance;
 - Foundation/archetype/capability/platform classification;
 - package-bound capability and archetype manifests and content;
 - component compatibility, dependencies, conflicts, options, and extension

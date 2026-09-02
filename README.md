@@ -96,7 +96,10 @@ defines the implemented executable reference shape. The
 future third shape's package, notebook, working-tree, and capability ownership
 without yet implementing it. The [initial Data Science capability
 contracts](docs/data-science-capabilities.md) define reusable notebook tooling
-and an independently optional scientific runtime stack. The
+and an independently optional scientific runtime stack, and the
+[notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
+fix the fail-closed notebook-validation order, deterministic failures, and
+safe diagnostics for that future archetype. The
 [composition architecture review](docs/composition-architecture-review.md)
 records the Stage 08 boundary corrections proven by both archetypes, and
 the [Python support policy](docs/python-support.md) defines the

@@ -301,6 +301,16 @@ FT-10.02's [initial capability contracts](docs/data-science-capabilities.md)
 define reusable optionless `jupyter` development tooling and an independently
 optional `scientific-python` runtime stack. Data Science will explicitly
 require Jupyter; neither component exists in the production catalogue yet.
+FT-10.03's [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
+([ADR 0047](docs/adr/0047-notebook-data-and-model-safeguards.md)) fix the
+fail-closed `notebook:check` validation order, the 300-second per-cell
+nbclient timeout on a discarded temporary copy, ten deterministic failure
+identifiers, output- and secret-free diagnostics, and the reading that
+"guidance markers remain tracked" means the root README prose and
+root-anchored `.gitignore` entries only — no `.gitkeep` or per-tree README,
+so ADR 0045 stands. `notebook:check` is a generated-project task, not an
+engine check, and adds no `ForgeEngineError` code. FT-10.04 (the last Stage
+10 child) is now unblocked.
 
 FT-08.02 populated the
 production component catalogue under the
