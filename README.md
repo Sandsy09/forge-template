@@ -36,8 +36,9 @@ installable package — see
 [ADR 0036](docs/adr/0036-publish-the-engine-to-pypi.md).
 
 The [accepted Data Science shape](docs/data-science-archetype.md) is an
-independent, package-backed, notebook-oriented archetype composed with
-reusable optional capabilities. Its
+independent, package-backed, notebook-oriented archetype composed with the
+accepted [`jupyter` and `scientific-python` capability
+contracts](docs/data-science-capabilities.md). Its
 [Stage 10–14 roadmap](docs/roadmap-v2/README.md) tracks the six epics and 24
 filed child issues across both repositories. The default direct-Copier Library
 path remains unchanged.
@@ -93,7 +94,9 @@ defines the distributable-package additions composed over it, and the
 defines the implemented executable reference shape. The
 [Data Science archetype contract](docs/data-science-archetype.md) defines the
 future third shape's package, notebook, working-tree, and capability ownership
-without yet implementing it. The
+without yet implementing it. The [initial Data Science capability
+contracts](docs/data-science-capabilities.md) define reusable notebook tooling
+and an independently optional scientific runtime stack. The
 [composition architecture review](docs/composition-architecture-review.md)
 records the Stage 08 boundary corrections proven by both archetypes, and
 the [Python support policy](docs/python-support.md) defines the

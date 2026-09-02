@@ -27,9 +27,10 @@ Its canonical identity and fixed project choices are:
 | Intrinsic runtime dependencies | none |
 
 The fixed choices keep the initial archetype focused on composition rather
-than creating another packaging matrix. Capability selection supplies its
-intended variability. FT-10.04 retains ownership of component, protocol,
-engine-package, Python-compatibility, and release versions.
+than creating another packaging matrix. The canonical [initial capability
+contracts](data-science-capabilities.md) supply its intended variability.
+FT-10.04 retains ownership of the complete component, protocol,
+engine-package, Python-compatibility, and release classification.
 
 The archetype uses PEP 517 and PEP 621 metadata and must build a wheel and
 source distribution. It contributes these classifiers:
@@ -103,8 +104,8 @@ contribute to a mixed root file.
 | Package and test paths, packaging/version metadata, classifiers, notebook path and content, and working-tree conventions | Data Science archetype |
 | Data Science project-shape and working-tree guidance within the root README | Data Science archetype through `readme-project-shape` |
 | Data/model/artefact ignore entries within the root `.gitignore` | Data Science archetype through `gitignore-project-shape` |
-| Notebook authoring, execution, validation, development dependencies, and tooling guidance | Future Jupyter capability |
-| Optional scientific runtime dependencies and their import validation | Future Scientific Python capability |
+| Notebook authoring, execution, validation, development dependencies, and tooling guidance | [`jupyter`](data-science-capabilities.md#jupyter-capability) capability |
+| Optional scientific runtime dependencies and their import validation | [`scientific-python`](data-science-capabilities.md#scientific-python-capability) capability |
 | CI, repository-provider, delivery, and deployment integrations | Selected platform components |
 | Default or constrained selections | Profiles and organisation policies, which own no rendered files |
 | Discovery-driven input, ProjectSpec construction, staging, lock finalisation, and atomic destination placement | `create-forge` |
@@ -112,9 +113,10 @@ contribute to a mixed root file.
 Data Science may reuse Foundation extension points and public template
 variables. It may not read or contribute through Library or CLI Application
 resources, select either archetype, or introduce inheritance between
-archetypes. The future Jupyter and Scientific Python contracts may contribute
-their own files or use declared extension points, but do not gain ownership of
-the archetype's package or notebook.
+archetypes. The Jupyter and Scientific Python contracts may contribute their
+own files or use declared extension points, but do not gain ownership of the
+archetype's package or notebook. The future Data Science manifest explicitly
+requires `jupyter>=1,<2`; Scientific Python remains optional.
 
 Foundation remains provider-, framework-, organisation-, and domain-neutral.
 Neither notebooks, scientific libraries, data/model conventions, nor their
@@ -138,11 +140,14 @@ separate decision.
 
 This contract deliberately does not decide or implement:
 
-- capability manifests, dependency bounds, or the formal Jupyter requirement,
-  owned by FT-10.02;
 - notebook execution, data/model/secret, and generated-artefact safeguards,
   owned by FT-10.03;
 - ProjectSpec, manifest, option-schema, Foundation, component, engine-package,
   Python, acceptance-matrix, or release compatibility, owned by FT-10.04; or
 - any production manifest, resource, generated output, CLI behaviour, tag, or
   release, owned by Stages 11–14.
+
+FT-10.02 subsequently accepted the capability identities, dependency bounds,
+and formal Jupyter requirement in the canonical [initial capability
+contracts](data-science-capabilities.md); those decisions do not alter this
+archetype's package or path ownership.

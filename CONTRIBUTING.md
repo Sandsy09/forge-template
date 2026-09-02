@@ -101,6 +101,9 @@ the default Copier path during roadmap creation.
 The canonical [Data Science archetype contract](docs/data-science-archetype.md)
 fixes that future shape's package, notebook, working-tree, and ownership
 boundary before implementation begins.
+The [initial Data Science capability contracts](docs/data-science-capabilities.md)
+define the optionless `jupyter` development-tooling and `scientific-python`
+runtime-dependency owners without adding them to the production catalogue.
 
 ## Branching and pull requests
 
