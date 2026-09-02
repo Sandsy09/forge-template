@@ -98,13 +98,14 @@ def test_engine_info_reports_package_and_protocols_without_discovery(
 
 
 def test_installed_catalogue_contains_the_production_components() -> None:
-    """The production source catalogue exposes two archetypes and Jupyter."""
+    """The production source catalogue exposes both initial capabilities."""
     descriptors = discover_components()
 
     assert [descriptor.id for descriptor in descriptors] == [
         "cli",
         "jupyter",
         "library",
+        "scientific-python",
     ]
     library = next(d for d in descriptors if d.id == "library")
     assert library.kind == "archetype"

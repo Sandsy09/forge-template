@@ -91,9 +91,16 @@ def test_published_compatibility_state_matches_the_engine() -> None:
     assert foundation.foundation_version == FOUNDATION_SOURCE_PROTOCOL_VERSION
 
     components = {c.id: c for c in discover_components()}
-    assert components.keys() == {"cli", "jupyter", "library"}
+    assert components.keys() == {
+        "cli",
+        "jupyter",
+        "library",
+        "scientific-python",
+    }
     assert components["library"].version == "1.0.1"
     assert components["cli"].version == "1.0.1"
+    assert components["jupyter"].version == "1.0.0"
+    assert components["scientific-python"].version == "1.0.0"
 
 
 def test_component_versions_are_canonical_pep440() -> None:

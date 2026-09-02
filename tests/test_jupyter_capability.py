@@ -63,6 +63,7 @@ def test_discovery_exposes_path_free_immutable_jupyter_descriptor() -> None:
         "cli",
         "jupyter",
         "library",
+        "scientific-python",
     ]
     jupyter = descriptors[1]
     assert jupyter.name == "Jupyter"

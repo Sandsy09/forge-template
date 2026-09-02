@@ -30,6 +30,8 @@ runtime operation.
 - the production `jupyter` capability on `main`, including its manifest,
   generated validator, development dependencies, tasks, and Foundation
   contributions;
+- the production `scientific-python` capability on `main`, including its
+  manifest, four runtime dependency contributions, import test, and guidance;
 - Foundation/archetype/capability/platform classification;
 - package-bound capability and archetype manifests and content;
 - component compatibility, dependencies, conflicts, options, and extension

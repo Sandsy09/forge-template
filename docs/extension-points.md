@@ -74,6 +74,10 @@ FT-11.02's production `jupyter` capability is the first consumer of all three
 new points. It also contributes README guidance and `.ipynb_checkpoints/`
 through the existing project-shape points; [ADR
 0050](adr/0050-production-jupyter-capability.md) records that concrete use.
+FT-11.03's production `scientific-python` capability instead uses the existing
+`pyproject-runtime-dependencies` and `readme-project-shape` points for its
+bounded stack and usage guidance; [ADR
+0051](adr/0051-production-scientific-python-capability.md) records that use.
 
 Foundation owns six further files with **no** extension point at all:
 `.editorconfig`, `.gitattributes`, `.python-version.jinja`,

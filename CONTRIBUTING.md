@@ -86,7 +86,9 @@ manifest itself. The current Copier tree remains unchanged while
 defines the package-specific boundary FT-08.04 implements: the optionless
 `cli` executable shape, its one direct runtime dependency, console/module
 entry points, and the four neutral Foundation extension points it shares
-with Library. `discover_components()` now returns both `("cli", "library")`.
+with Library. The source catalogue's `discover_components()` result is now
+`("cli", "jupyter", "library", "scientific-python")`; the latest published
+`0.3.2` wheel remains the two-archetype line.
 The [composition architecture review](docs/composition-architecture-review.md)
 records which duplicated resources remain archetype-owned, which accidental
 Foundation assumptions were removed, and why lock resolution belongs to
@@ -107,8 +109,8 @@ fixes that future shape's package, notebook, working-tree, and ownership
 boundary before implementation begins.
 The [initial Data Science capability contracts](docs/data-science-capabilities.md)
 define the optionless `jupyter` development-tooling and `scientific-python`
-runtime-dependency owners. FT-11.02 / ADR 0050 now ships `jupyter` in the
-unreleased source catalogue; `scientific-python` remains future work and the
+runtime-dependency owners. FT-11.02 / ADR 0050 ships `jupyter`, and FT-11.03 /
+ADR 0051 ships `scientific-python`, in the unreleased source catalogue; the
 published `0.3.2` catalogue remains unchanged.
 The [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
 fix the fail-closed notebook-validation order, deterministic failure
@@ -124,6 +126,9 @@ three capability-tooling Foundation extension points the `jupyter` and
 `cli` output semantically unchanged. FT-11.02 / ADR 0050 uses those points to
 add Jupyter development dependencies, tasks, safe notebook validation, root
 guidance, and checkpoint hygiene only when the capability is selected.
+FT-11.03 / ADR 0051 contributes the bounded scientific runtime stack, its
+component-owned import test, and usage guidance only when Scientific Python is
+selected. The two capabilities remain independent.
 
 ## Branching and pull requests
 

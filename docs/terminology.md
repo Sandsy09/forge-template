@@ -186,9 +186,10 @@ discovery, collision-checked planning, and rendering. The source catalogue
 contains `library` and `cli`, the two independent reference archetypes
 implemented by the [Library](library-archetype.md) and
 [CLI Application](cli-application-archetype.md) contracts, plus the first
-production capability, `jupyter`. All selected components compose over one
-implicit, non-discoverable Foundation source rather than representing
-Foundation as a component. The latest published `0.3.2` catalogue still
+production capabilities, `jupyter` and `scientific-python`. All selected
+components compose over one implicit, non-discoverable Foundation source
+rather than representing Foundation as a component. The latest published
+`0.3.2` catalogue still
 contains only the two archetypes.
 
 ### ProjectSpec
