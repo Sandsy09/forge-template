@@ -40,6 +40,10 @@ create-forge staging, uv lock, atomic finalisation
   classifies every versioned axis for the `0.4.0` line, fixes the executable
   acceptance matrix and its owners, and states the release gates, completing
   Stage 10.
+- FT-11.01 publishes the three capability-tooling Foundation points. FT-11.02
+  uses them to ship the optionless `jupyter` component and its safe generated
+  notebook validator on unreleased `main`; Scientific Python and Data Science
+  remain later Stage 11–12 work.
 - Capabilities remain bundled, reviewed forge-template components. This
   roadmap does not introduce plugins or remote component registries.
 - create-forge consumes public descriptors and never recreates component

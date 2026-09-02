@@ -36,6 +36,7 @@ _MUST_CONTAIN = (
     "forge_template/engine.py",
     "forge_template/project_spec.py",
     "forge_template/foundation/content/",
+    "forge_template/components/jupyter/content/",
     "forge_template/components/library/content/",
     "forge_template/components/cli/content/",
 )
@@ -49,7 +50,7 @@ _SMOKE_IMPORT = (
     "import forge_template; "
     "descriptors = forge_template.discover_components(); "
     "ids = sorted(d.id for d in descriptors); "
-    "assert ids == ['cli', 'library'], ids; "
+    "assert ids == ['cli', 'jupyter', 'library'], ids; "
     "print('discovered:', ids)"
 )
 

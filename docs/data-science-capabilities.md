@@ -1,14 +1,16 @@
 # Initial Data Science Capability Contracts
 
-This document defines the future `jupyter` and `scientific-python`
-capabilities and their dependency ownership. It is the canonical living
+This document defines the `jupyter` and `scientific-python` capabilities and
+their dependency ownership. It is the canonical living
 contract accepted by
 [ADR 0046](adr/0046-initial-data-science-capabilities.md) for FT-10.02.
 
-The contract is intentionally ahead of implementation. The production engine
-catalogue still contains only `library` and `cli`; Stages 11 and 12 will add
-the capabilities and Data Science archetype after the remaining Stage 10
-decisions are complete. Nothing here changes the direct-Copier Library path.
+FT-11.02 implements `jupyter` in the package-bound source catalogue under
+[ADR 0050](adr/0050-production-jupyter-capability.md). `scientific-python`
+and the Data Science archetype remain future work. The latest published
+`0.3.2` wheel still contains only `library` and `cli`; Stage 12 publishes the
+expanded catalogue as `0.4.0`. Nothing here changes the direct-Copier Library
+path.
 
 ## Shared component contract
 
@@ -32,7 +34,8 @@ or Data Science. Their manifests do not restrict an archetype by name. A
 future compatibility restriction must use the existing component relationship
 and version contracts rather than a client-side allowlist.
 
-The proposed manifest metadata is conceptual until Stage 11 packages it. The
+The Jupyter manifest is packaged on `main`; the Scientific Python metadata
+remains conceptual until FT-11.03 packages it. The
 [compatibility and acceptance contract](data-science-compatibility-and-acceptance.md)
 classifies the complete protocol and engine-package picture: both capabilities
 enter at component version `1.0.0` on the `forge-template` `0.4.0` line, with
@@ -72,9 +75,9 @@ projectspec_protocols = [1]
 requires_python = ">=3.11"
 ```
 
-Neither manifest has `options_schema`. Contribution blocks are optional
-manifest fields and remain absent from these decision-level examples because
-FT-11.02 and FT-11.03 own the concrete packaged resources. FT-11.01 has
+Neither manifest has `options_schema`. Contribution blocks remain absent from
+these identity-focused examples. FT-11.02 now owns Jupyter's concrete
+packaged resources, while FT-11.03 owns Scientific Python's. FT-11.01 has
 delivered the three Foundation extension points those contributions target —
 `pyproject-development-dependencies`, `pyproject-task-definitions`, and
 `pyproject-aggregate-check`
@@ -89,14 +92,14 @@ delivered the three Foundation extension points those contributions target —
 - the generated project's Python kernel;
 - structural notebook parsing and validation;
 - programmatic execution of a temporary notebook copy;
-- the future `notebook` and `notebook:check` Poe tasks;
+- the `notebook` and `notebook:check` Poe tasks;
 - integration of `notebook:check` into the aggregate quality contract; and
 - usage guidance contributed to the Foundation-owned root README.
 
 It does not own a notebook. The Data Science archetype owns
 `notebooks/getting-started.ipynb`; other archetypes or future components may
-own their own notebooks. A selected `jupyter` capability must therefore pass
-its future check without side effects when no notebooks exist.
+own their own notebooks. A selected `jupyter` capability therefore passes its
+check without side effects when no notebooks exist.
 
 The capability owns these generated development dependencies:
 
@@ -125,8 +128,10 @@ source preservation, deterministic failure identifiers, and safe diagnostics.
 FT-11.01 has delivered the additive Foundation extension points for
 development dependencies, Poe task definitions, and aggregate-check entries
 ([extension-points.md](extension-points.md#capability-tooling-extends-the-same-foundation-content)).
-FT-11.02 owns the packaged manifest, resources, and implementation that
-contribute through them.
+FT-11.02 delivers the packaged manifest, resources, and implementation that
+contribute through them; [ADR
+0050](adr/0050-production-jupyter-capability.md) records the concrete task,
+validator, and diagnostic choices.
 
 ## Data Science requires Jupyter
 
@@ -248,10 +253,10 @@ to an archetype or Foundation to avoid that obligation.
 
 ## Deferred decisions
 
-This contract does not implement or decide:
+This contract still does not implement or decide:
 
-- either production manifest or its resources, owned by FT-11.02 and
-  FT-11.03; or
+- the Scientific Python production manifest or resources, owned by FT-11.03;
+  or
 - the Data Science production manifest and generated shape, owned by Stage
   12.
 
@@ -268,6 +273,10 @@ extension points these contributions target
 [ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)). None
 of these decisions changes any dependency or manifest metadata above.
 
-No package dependency, manifest, catalogue entry, public API, ProjectSpec,
-template, Copier answer, generated output, tag, or release changes through
-this documentation decision.
+FT-11.02 subsequently delivered Jupyter's production manifest, resources,
+validator, and contributions exactly as specified ([ADR
+0050](adr/0050-production-jupyter-capability.md)).
+
+The Jupyter implementation changes the source catalogue and generated engine
+output only when selected. It changes no public API, ProjectSpec, direct-Copier
+template, stored answer, tag, or release.

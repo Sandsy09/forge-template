@@ -5,9 +5,11 @@ Guidance for Claude Code working in this repository.
 ## What this is
 
 A [Copier](https://copier.readthedocs.io/) template and public composition
-engine that scaffold modern Python projects. The engine catalogue contains
-independent **library** and **CLI Application** archetypes; the direct-Copier
-compatibility path remains Library-only.
+engine that scaffold modern Python projects. The source catalogue contains
+independent **library** and **CLI Application** archetypes plus the optionless
+**Jupyter** capability; the published `v0.3.2` catalogue still contains only
+the two archetypes and the direct-Copier compatibility path remains
+Library-only.
 
 Copier was chosen over Cookiecutter specifically for `copier update`, which
 three-way merges template changes into projects generated months earlier. Every
@@ -109,17 +111,21 @@ distribution mechanism.
 Its
 [generated-project validation](docs/generated-project-validation.md) checks
 plan/output agreement, universal `pyproject.toml` metadata, and completed
-Forge extension rendering before a result is returned. **The production
-catalogue now holds two independent reference archetypes**: FT-08.02
+Forge extension rendering before a result is returned. **The source catalogue
+now holds two independent reference archetypes and the Jupyter capability**:
+FT-08.02
 populated it with `library`
 ([contract](docs/library-archetype.md)/[ADR 0033](docs/adr/0033-migrate-library-production-catalogue.md)),
 and FT-08.04 added `cli`
 ([contract](docs/cli-application-archetype.md)/[ADR 0035](docs/adr/0035-implement-cli-application-archetype.md)),
-both alongside the implicit Foundation source at `src/forge_template/foundation/`
-— proven by `uv run poe archetype` building real wheels/sdists for Library
-across all three packaging modes and for CLI's fixed packaging mode, plus a
-real installed console script and `python -m` invocation. `discover_components()`
-now returns `("cli", "library")`. Neither archetype inherits from or reads
+both alongside the implicit Foundation source at `src/forge_template/foundation/`;
+FT-11.02 adds the optionless `jupyter` capability without a notebook or
+runtime dependency. `uv run poe archetype` proves real wheels/sdists for
+Library across all three packaging modes and for CLI's fixed packaging mode,
+plus a real installed console script and `python -m` invocation; it also
+proves both archetypes' locked aggregate checks with Jupyter selected.
+`discover_components()` now returns `("cli", "jupyter", "library")`. Neither
+archetype inherits from or reads
 resources from the other; a ProjectSpec selects exactly one. These
 contracts are not
 yet consumed by the direct-Copier path; see
@@ -256,7 +262,8 @@ shellcheck steps) — see backlog item 1, done.
 
 ## Current state
 
-Working: Library and CLI Application archetypes, all four combos green
+Working: Library and CLI Application archetypes plus the package-bound
+Jupyter capability on `main`; all four Copier combos green
 locally and in CI, update merge validated, root and template
 `.gitattributes` both in place, no byte-empty template files remain,
 `task_runner`/`make` removed (it was the one untested, 100%-broken
@@ -271,7 +278,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0049 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0050 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -300,7 +307,8 @@ and ownership shape without adding it to the production catalogue.
 FT-10.02's [initial capability contracts](docs/data-science-capabilities.md)
 define reusable optionless `jupyter` development tooling and an independently
 optional `scientific-python` runtime stack. Data Science will explicitly
-require Jupyter; neither component exists in the production catalogue yet.
+require Jupyter. FT-11.02 now ships Jupyter in the source catalogue;
+Scientific Python remains future work.
 FT-10.03's [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
 ([ADR 0047](docs/adr/0047-notebook-data-and-model-safeguards.md)) fix the
 fail-closed `notebook:check` validation order, the 300-second per-cell
@@ -341,7 +349,17 @@ guidance route through the existing `gitignore-project-shape` /
 `readme-project-shape` points — no new point for either. Pinned by
 `tests/test_extension_points.py` (inventory) and
 `tests/test_capability_extension_points.py` (behaviour). **FT-11.01 is
-complete; `FT-11.02 / #106` and `FT-11.03 / #107` are unblocked.**
+complete.** FT-11.02 / #106 then ships `jupyter` `1.0.0`: a package-bound,
+optionless capability with no requirements, conflicts, runtime dependencies,
+or notebook content. It contributes four development dependencies,
+`notebook` and `notebook:check`, the aggregate-check entry, README safety
+guidance, and `.ipynb_checkpoints/`; its literal
+`scripts/check_notebooks.py` validates every notebook structurally before
+executing byte-identical temporary copies with nbclient. Diagnostics expose
+only relative paths, optional zero-based cell indexes, fixed safe messages,
+and ten stable codes. [ADR 0050](docs/adr/0050-production-jupyter-capability.md)
+records the choices. **FT-11.02 is complete; FT-11.03 / #107 remains the next
+implementation, and FT-11.04 / #108 remains blocked only by #107.**
 
 FT-08.02 populated the
 production component catalogue under the

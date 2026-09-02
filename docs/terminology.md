@@ -182,12 +182,14 @@ order a validated selection of them applies in; and
 [template-variables.md](template-variables.md) defines the option vocabulary a
 component may declare through its manifest's `options_schema`. The
 [stable template-engine API](template-engine-api.md) implements package-bound
-discovery, collision-checked planning, and rendering. The production catalogue
+discovery, collision-checked planning, and rendering. The source catalogue
 contains `library` and `cli`, the two independent reference archetypes
 implemented by the [Library](library-archetype.md) and
-[CLI Application](cli-application-archetype.md) contracts; both compose over
-one implicit, non-discoverable Foundation source rather than representing
-Foundation as a component.
+[CLI Application](cli-application-archetype.md) contracts, plus the first
+production capability, `jupyter`. All selected components compose over one
+implicit, non-discoverable Foundation source rather than representing
+Foundation as a component. The latest published `0.3.2` catalogue still
+contains only the two archetypes.
 
 ### ProjectSpec
 

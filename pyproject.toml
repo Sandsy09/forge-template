@@ -51,6 +51,12 @@ test = [
     "pytest>=8.3",
     "pytest-cov>=6.0",
     "pytest-xdist>=3.6",
+    # Exercise the exact generated Jupyter validator in-process. JupyterLab
+    # itself is verified through generated-project resolution; the repository
+    # tests do not launch an interactive server.
+    "ipykernel>=7.3,<8",
+    "nbclient>=0.11,<1",
+    "nbformat>=5.11,<6",
     # Needed in-process by tests/test_combos.py and tests/test_update.py,
     # which call copier.run_copy / copier.run_update directly rather than
     # shelling out to `uvx copier`.
@@ -180,7 +186,7 @@ addopts = [
 markers = [
     "combos: scaffolds every answer combination and runs its full toolchain (slow; `poe combos`)",
     "update: exercises `copier update` end-to-end (slow; `poe update`)",
-    "archetype: builds real wheels/sdists for the production Library and CLI archetypes (slow; `poe archetype`)",
+    "archetype: validates real production archetype and capability projects (slow; `poe archetype`)",
 ]
 
 [tool.coverage.run]
