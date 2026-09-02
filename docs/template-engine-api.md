@@ -89,15 +89,19 @@ entrypoint, or arbitrary directory. This is a deliberate trust boundary:
 discovered manifests, option schemas, templates, and literal content were all
 reviewed as part of the installed engine distribution.
 
-The source catalogue holds two independent archetype manifests, `library`
-(FT-08.02, the [Library archetype contract](library-archetype.md)) and `cli`
+The source catalogue holds three independent archetype manifests, `library`
+(FT-08.02, the [Library archetype contract](library-archetype.md)), `cli`
 (FT-08.04, the [CLI Application archetype contract](cli-application-archetype.md)),
-plus the optionless `jupyter` and `scientific-python` capabilities (FT-11.02 /
+and `data-science` (FT-12.01 /
+[ADR 0053](adr/0053-production-data-science-archetype.md), the
+[Data Science archetype contract](data-science-archetype.md)), plus the
+optionless `jupyter` and `scientific-python` capabilities (FT-11.02 /
 [ADR 0050](adr/0050-production-jupyter-capability.md) and FT-11.03 / [ADR
 0051](adr/0051-production-scientific-python-capability.md)). Discovery returns
-`cli`, `jupyter`, `library`, and `scientific-python` in lexical order. A
-ProjectSpec selects exactly one archetype and may independently select either
-capability or both; no platform exists yet.
+`cli`, `data-science`, `jupyter`, `library`, and `scientific-python` in
+lexical order. A ProjectSpec selects exactly one archetype and may
+independently select either capability or both; `data-science` requires
+`jupyter`. No platform exists yet.
 The latest published `0.3.2` wheel remains the two-archetype catalogue until
 Stage 12 publishes the expanded `0.4.0` line.
 Test-only fixture injection is private and is not a supported client

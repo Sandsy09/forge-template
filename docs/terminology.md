@@ -183,9 +183,10 @@ order a validated selection of them applies in; and
 component may declare through its manifest's `options_schema`. The
 [stable template-engine API](template-engine-api.md) implements package-bound
 discovery, collision-checked planning, and rendering. The source catalogue
-contains `library` and `cli`, the two independent reference archetypes
-implemented by the [Library](library-archetype.md) and
-[CLI Application](cli-application-archetype.md) contracts, plus the first
+contains `library`, `cli`, and `data-science`, the three independent
+reference archetypes implemented by the [Library](library-archetype.md),
+[CLI Application](cli-application-archetype.md), and
+[Data Science](data-science-archetype.md) contracts, plus the first
 production capabilities, `jupyter` and `scientific-python`. All selected
 components compose over one implicit, non-discoverable Foundation source
 rather than representing Foundation as a component. The latest published

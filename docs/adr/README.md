@@ -55,6 +55,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0050 — Ship Jupyter as a production capability](0050-production-jupyter-capability.md)
 - [0051 — Ship Scientific Python as a production capability](0051-production-scientific-python-capability.md)
 - [0052 — Validate production capability composition](0052-validate-production-capability-composition.md)
+- [0053 — Ship Data Science as a production archetype](0053-production-data-science-archetype.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

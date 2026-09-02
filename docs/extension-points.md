@@ -78,6 +78,11 @@ FT-11.03's production `scientific-python` capability instead uses the existing
 `pyproject-runtime-dependencies` and `readme-project-shape` points for its
 bounded stack and usage guidance; [ADR
 0051](adr/0051-production-scientific-python-capability.md) records that use.
+FT-12.01's `data-science` archetype uses the four archetype-neutral pyproject
+points (`pyproject-build-system`, `pyproject-archetype-metadata`,
+`pyproject-build-configuration`, `pyproject-classifiers`) exactly as `cli`
+does; [ADR 0053](adr/0053-production-data-science-archetype.md) records that
+use.
 
 Foundation owns six further files with **no** extension point at all:
 `.editorconfig`, `.gitattributes`, `.python-version.jinja`,

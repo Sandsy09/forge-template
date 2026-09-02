@@ -78,7 +78,7 @@ deliberately broken one is not worth publishing.
 
 ## Two catalogues, split by purpose
 
-The source production catalogue (`library`, `cli`, `jupyter`,
+The source production catalogue (`library`, `cli`, `data-science`, `jupyter`,
 `scientific-python`) still has no platforms and deliberately provides only a
 small capability set. Most scenarios therefore resolve against the fixture catalogue
 at `tests/fixtures/component_manifests/` (`library`, `library-v2` as two

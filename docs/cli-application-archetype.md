@@ -232,10 +232,11 @@ archetype`, real `uv build`):
 
 ## Current evidence and deferred work
 
-The production catalogue now contains both `cli` and `library`, proven
-end-to-end: `discover_components()` returns both descriptors,
-`plan_generation`/`render_project` compose either one with Foundation into a
-real project, and `uv run poe archetype` builds a real wheel and sdist,
+The production catalogue now contains `cli` alongside `library`,
+`data-science`, and the two capabilities, proven end-to-end:
+`discover_components()` returns `cli` among them,
+`plan_generation`/`render_project` compose either archetype with Foundation
+into a real project, and `uv run poe archetype` builds a real wheel and sdist,
 installs them, and exercises the documented console-script and `python -m`
 command contract for real.
 

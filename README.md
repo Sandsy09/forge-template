@@ -36,9 +36,9 @@ Foundation/component content only; this repository's own tooling
 installable package — see
 [ADR 0036](docs/adr/0036-publish-the-engine-to-pypi.md).
 
-The [accepted Data Science shape](docs/data-science-archetype.md) is an
+The [Data Science archetype](docs/data-science-archetype.md) is an
 independent, package-backed, notebook-oriented archetype composed with the
-accepted [`jupyter` and `scientific-python` capability
+[`jupyter` and `scientific-python` capability
 contracts](docs/data-science-capabilities.md), the
 [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md),
 and the
@@ -46,13 +46,15 @@ and the
 that classifies the `0.4.0` engine line and fixes the acceptance matrix. Its
 [Stage 10–14 roadmap](docs/roadmap-v2/README.md) tracks the six epics and 24
 filed child issues across both repositories; Stage 10's contract set is
-complete, and Stage 11 is complete: the additive Foundation tooling points,
-the package-bound `jupyter` and `scientific-python` capabilities, and the
+complete, Stage 11 is complete — the additive Foundation tooling points, the
+package-bound `jupyter` and `scientific-python` capabilities, and the
 [end-to-end composition validation](docs/capability-composition-validation.md)
-that proves the layer and fails every invalid selection closed. Both
-capabilities are present on unreleased `main`; the published `0.3.2` line
-remains a two-archetype catalogue until Stage 12 publishes `0.4.0`. The
-default direct-Copier Library path remains unchanged.
+that proves the layer and fails every invalid selection closed — and Stage 12
+has begun: FT-12.01 / [ADR 0053](docs/adr/0053-production-data-science-archetype.md)
+ships the `data-science` archetype itself, requiring `jupyter` and rejected
+before rendering without it. All of this is present on unreleased `main`; the
+published `0.3.2` line remains a two-archetype catalogue until Stage 12
+publishes `0.4.0`. The default direct-Copier Library path remains unchanged.
 
 ## Two repos
 
@@ -104,13 +106,15 @@ defines the distributable-package additions composed over it, and the
 [CLI Application archetype contract](docs/cli-application-archetype.md)
 defines the implemented executable reference shape. The
 [Data Science archetype contract](docs/data-science-archetype.md) defines the
-future third shape's package, notebook, working-tree, and capability ownership
-without yet implementing it. The [initial Data Science capability
+third shape's package, notebook, working-tree, and capability ownership;
+FT-12.01 / [ADR 0053](docs/adr/0053-production-data-science-archetype.md)
+implements its manifest, owned package, and smoke tests (the notebook and
+working trees remain FT-12.02). The [initial Data Science capability
 contracts](docs/data-science-capabilities.md) define reusable notebook tooling
 and an independently optional scientific runtime stack, the
 [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
 fix the fail-closed notebook-validation order, deterministic failures, and
-safe diagnostics for that future archetype, and the
+safe diagnostics for that archetype's notebooks, and the
 [compatibility and acceptance contract](docs/data-science-compatibility-and-acceptance.md)
 classifies every versioned axis for the `0.4.0` line and fixes the executable
 acceptance matrix and release gates. The

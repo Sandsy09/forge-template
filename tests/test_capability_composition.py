@@ -362,7 +362,13 @@ def test_valid_capability_options_reach_output(overlaid_catalogue: Path) -> None
 
 def test_production_descriptors_are_immutable_and_path_free() -> None:
     descriptors = {d.id: d for d in discover_components()}
-    assert set(descriptors) == {"cli", "jupyter", "library", "scientific-python"}
+    assert set(descriptors) == {
+        "cli",
+        "data-science",
+        "jupyter",
+        "library",
+        "scientific-python",
+    }
 
     for descriptor in descriptors.values():
         assert set(descriptor.model_dump()) == _DESCRIPTOR_FIELDS
@@ -468,4 +474,10 @@ def test_every_manifest_declared_resource_is_reachable_as_a_package_resource() -
         for contribution in manifest.contributions:
             assert (child / contribution.content).is_file(), contribution.content
 
-    assert seen_ids == {"cli", "jupyter", "library", "scientific-python"}
+    assert seen_ids == {
+        "cli",
+        "data-science",
+        "jupyter",
+        "library",
+        "scientific-python",
+    }

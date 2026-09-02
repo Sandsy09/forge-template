@@ -56,8 +56,8 @@ has this identity:
 Component version `1.0.1`, manifest protocol `2`, ProjectSpec protocol `1`,
 and the `forge-template` package version (`0.3.2`) are independent
 compatibility axes. `discover_components()` returns `library` alongside the
-independent `cli` descriptor. Foundation is never returned as a component
-descriptor.
+independent `cli`, `data-science`, `jupyter`, and `scientific-python`
+descriptors. Foundation is never returned as a component descriptor.
 
 ## Library options
 
@@ -242,8 +242,9 @@ same context as file content before its output target is derived; see
 ## Current evidence and deferred work
 
 The production catalogue now contains `library` alongside `cli`
-([CLI Application](cli-application-archetype.md)), proven end-to-end:
-`discover_components()` returns both descriptors, `plan_generation`/`render_project`
+([CLI Application](cli-application-archetype.md)), `data-science`, and the two
+capabilities, proven end-to-end: `discover_components()` returns `library`
+among them, `plan_generation`/`render_project`
 compose Foundation and Library into a real project across all three packaging
 modes, and `uv run poe archetype` builds real wheels and sdists from that
 output. `template/`'s monolithic Copier tree is untouched; the direct-Copier

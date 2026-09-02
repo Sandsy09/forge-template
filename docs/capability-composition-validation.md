@@ -132,9 +132,11 @@ This is an in-memory composition proof. It deliberately does not cover:
 - **notebook execution** — `notebook:check` is a generated-project task, out
   of engine scope, proved by
   [`tests/test_notebook_validator.py`](../tests/test_notebook_validator.py);
-- **the `data-science` archetype**, which does not exist yet — FT-12.01
-  introduces it, and the `requires-jupyter` fixture only rehearses its
-  dependency edge; and
+- **the `data-science` archetype** — FT-12.01 /
+  [ADR 0053](adr/0053-production-data-science-archetype.md) introduced it and
+  [`tests/test_data_science_archetype.py`](../tests/test_data_science_archetype.py)
+  covers it; the `requires-jupyter` fixture here only rehearses its
+  cross-tier dependency edge; and
 - **`create-forge` selection UX** — owned by create-forge Stages 13–14.
 
 Those rows in the
