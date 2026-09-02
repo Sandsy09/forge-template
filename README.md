@@ -44,8 +44,10 @@ and the
 [compatibility and acceptance contract](docs/data-science-compatibility-and-acceptance.md)
 that classifies the `0.4.0` engine line and fixes the acceptance matrix. Its
 [Stage 10–14 roadmap](docs/roadmap-v2/README.md) tracks the six epics and 24
-filed child issues across both repositories; Stage 10's contract set is now
-complete. The default direct-Copier Library path remains unchanged.
+filed child issues across both repositories; Stage 10's contract set is
+complete and Stage 11 has begun — FT-11.01 added three additive Foundation
+extension points for capability tooling. The default direct-Copier Library
+path remains unchanged.
 
 ## Two repos
 
@@ -146,7 +148,8 @@ deterministic order that catalogue applies in, the
 target, disposition, and collision-safety rules, the
 [safe override and extension points](docs/extension-points.md) contract
 denies any `override` grant and publishes the extension-point inventory as a
-versioned contract, the
+versioned contract — eleven points after FT-11.01 added three for capability
+tooling — the
 [template variable contract](docs/template-variables.md) defines the rendered
 variable namespace and component option vocabulary, the
 [stable template-engine API](docs/template-engine-api.md) exposes typed,

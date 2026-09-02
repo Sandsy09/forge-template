@@ -324,8 +324,12 @@ also name source directories. No entry here may shadow `notebooks/`, `src/`,
 one: JupyterLab writes it beside whichever notebook is open, so it is
 unanchored, and the capability that causes it owns it. It is also in the
 check's discovery exclusion set, so a checkpoint copy is never validated or
-executed. The extension point through which a capability contributes a
-`.gitignore` entry is FT-11.01's to define.
+executed. FT-11.01 resolved the extension point a capability contributes a
+`.gitignore` entry through: it is the **existing** `gitignore-project-shape`
+point, which now accepts contributions from any selected owner — archetype or
+capability — in composition order, rather than a new capability-specific point
+([extension-points.md](extension-points.md#capability-tooling-extends-the-same-foundation-content),
+[ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)).
 
 **The FT-10.03 scope requires that guidance markers for these trees remain
 tracked. The tracked guidance is prose and rules, not placeholder files.**
@@ -407,17 +411,19 @@ This contract does not decide or implement:
   mode — and any notebook or data size threshold;
 - whether generated CI runs `notebook:check`, any per-notebook exclusion, or
   a verbose diagnostic mode;
-- the Foundation extension points for development dependencies, Poe tasks,
-  aggregate-check entries, and capability-contributed ignore entries, owned
-  by FT-11.01, or the packaged manifest, resources, implementation, and
-  tests, owned by FT-11.02 and FT-11.03.
+- the packaged manifest, resources, implementation, and tests, owned by
+  FT-11.02 and FT-11.03.
 
 FT-10.04 subsequently accepted compatibility, the executable acceptance
 matrix, and the `forge-template` `0.4.0` release classification in the
 [compatibility and acceptance contract](data-science-compatibility-and-acceptance.md);
 it makes this contract's `notebook:check` a required generated-project
 acceptance row at both Python endpoints and changes nothing in the validation
-order, identifiers, diagnostics, or safeguards above.
+order, identifiers, diagnostics, or safeguards above. FT-11.01 then delivered
+the Foundation extension points for development dependencies, Poe tasks, and
+aggregate-check entries, and resolved the capability-contributed ignore entry
+onto the existing `gitignore-project-shape` point
+([ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)).
 
 No package dependency, manifest, catalogue entry, public API, ProjectSpec,
 template, Copier answer, generated output, tag, or release changes through

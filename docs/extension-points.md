@@ -6,6 +6,10 @@ Blueprint-style consumer, or a component author — safely change about
 generated output, and what happens when it tries something unsafe. It is
 delivered by [FT-09.02](https://github.com/Sandsy09/forge-template/issues/45)
 and adopted by [ADR 0039](adr/0039-deny-policy-file-overrides.md).
+[FT-11.01 / #105](https://github.com/Sandsy09/forge-template/issues/105) and
+[ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md) later
+grew the published inventory from eight points to eleven for capability
+tooling — an additive change to the inventory, not to any rule here.
 
 ## Scope
 
@@ -44,11 +48,11 @@ published by the installed catalogue at the time of this decision is:
 
 | Owner file | Extension point IDs |
 | --- | --- |
-| `content/pyproject.toml.jinja` | `pyproject-build-system`, `pyproject-archetype-metadata`, `pyproject-build-configuration`, `pyproject-runtime-dependencies`, `pyproject-classifiers`, `pyproject-entry-points` |
+| `content/pyproject.toml.jinja` | `pyproject-build-system`, `pyproject-archetype-metadata`, `pyproject-build-configuration`, `pyproject-runtime-dependencies`, `pyproject-classifiers`, `pyproject-entry-points`, `pyproject-development-dependencies`, `pyproject-task-definitions`, `pyproject-aggregate-check` |
 | `content/README.md.jinja` | `readme-project-shape` |
 | `content/.gitignore.jinja` | `gitignore-project-shape` |
 
-All eight are published by the implicit Foundation content source. **Neither
+All eleven are published by the implicit Foundation content source. **Neither
 production archetype publishes an extension point of its own** — `library`
 and `cli` only contribute into Foundation's points, through manifest protocol
 `2`'s `target.kind = "foundation"`
@@ -56,11 +60,76 @@ and `cli` only contribute into Foundation's points, through manifest protocol
 This is unchanged by [ADR 0037](adr/0037-two-archetype-composition-review.md):
 the Stage 08 review found no new point was required.
 
+The last three `pyproject.toml.jinja` IDs were added additively by
+[FT-11.01 / #105](https://github.com/Sandsy09/forge-template/issues/105) and
+[ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md) so a
+selected *capability* — not only an archetype — has a sanctioned way to
+attach a development dependency, a task definition, and an aggregate-`check`
+entry. The first six existed only for an archetype's packaging shape; a
+development-tooling capability needs the other three. See
+[capability tooling extends the same Foundation content](#capability-tooling-extends-the-same-foundation-content)
+below.
+
 Foundation owns six further files with **no** extension point at all:
 `.editorconfig`, `.gitattributes`, `.python-version.jinja`,
 `CONTRIBUTING.md.jinja`, `LICENSE.jinja`, and `SECURITY.md.jinja`. These are
 sole-owner `create` content, deliberately not extensible — stated here rather
 than left to be inferred from the absence of a declaration.
+
+## Capability tooling extends the same Foundation content
+
+[ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)
+publishes three points on `content/pyproject.toml.jinja` for
+development-time tooling. Nothing about the extension mechanism changes; only
+the published inventory grows.
+
+| Extension point | Region it lives in | What a contribution supplies |
+| --- | --- | --- |
+| `pyproject-development-dependencies` | Foundation's existing `dev` dependency group | PEP 508 requirement strings, one per line, comma-terminated |
+| `pyproject-task-definitions` | `[tool.poe.tasks]`, before the aggregate `check` | `"name" = "command"` task lines |
+| `pyproject-aggregate-check` | the `check` task's own array | task-name strings, comma-terminated, that `check` then runs in order |
+
+The rules that already govern every other point apply unchanged:
+
+- **Foundation keeps ownership of the target.** A contribution is `extend`,
+  never `override` or `merge`. `pyproject.toml` stays Foundation-owned in the
+  [public plan](template-engine-api.md); a capability's contributions surface
+  as `PlannedExtension` entries on it, exactly as an archetype's do.
+- **Any selected owner may contribute** — archetype *or* capability. The point
+  does not care which tier the contributor is in; it only requires the
+  contributor to be selected and to declare a `[[contributions]]` entry naming
+  the point.
+- **Multiple contributions compose in [composition order](composition-order.md)**,
+  never last-write-wins: the archetype tier first, then the capability tier,
+  lexical by component ID within a tier. Two capabilities that both contribute
+  a task line produce both task lines, in that order. This is the property
+  [FT-11.01 / #105](https://github.com/Sandsy09/forge-template/issues/105)'s
+  acceptance criteria name, pinned by
+  `tests/test_capability_extension_points.py`.
+- **An unfilled point contributes zero bytes.** The engine's marker line —
+  including its trailing newline — is removed when no contribution targets it,
+  so `library` and `cli` render byte-for-byte as they did before these three
+  points existed. ADR 0049 records the one deliberate exception: the aggregate
+  `check` array became multi-line so a marker line can sit inside it, which is
+  a semantics-preserving reformat, not a behaviour change.
+- **A contribution naming an undeclared point is rejected at catalogue
+  validation**, independent of any selection — the same
+  `component_manifest.validate_manifest_set` check that already guards every
+  other contribution.
+
+A capability contributes a `.gitignore` entry (for example
+`.ipynb_checkpoints/`) or root-README usage guidance through the **existing**
+`gitignore-project-shape` and `readme-project-shape` points, under the same
+"any selected owner may contribute" rule — no capability-specific point is
+added for either. This is the surface
+[notebook-data-and-model-safeguards.md](notebook-data-and-model-safeguards.md#local-working-trees)
+defers to FT-11.01.
+
+A capability does **not** get to declare its own named dependency group: that
+would need a second point inside `[dependency-groups]` plus an `include-group`
+entry, and is deliberately out of scope. Development dependencies a capability
+needs go into Foundation's `dev` group, which `[tool.uv]
+default-groups = ["dev"]` already installs.
 
 ## When an override is allowed
 
@@ -146,7 +215,10 @@ way component IDs and manifest protocols are:
 
 - **Adding** an extension point to existing owner content is additive and
   requires no version transition beyond the normal patch/minor release that
-  ships it.
+  ships it. [ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)
+  is the worked precedent: the three capability-tooling points ship in the
+  same `0.4.0` line that first makes a requirable capability visible, and the
+  points alone would not have forced even that minor bump.
 - **Removing or renaming** a published extension point ID is breaking: any
   contribution naming it would stop resolving. It requires a version
   transition and release-note treatment matching any other breaking
@@ -156,7 +228,10 @@ way component IDs and manifest protocols are:
   option identifiers.
 
 A regression test in `tests/test_extension_points.py` pins the current
-inventory so a removal or rename is caught rather than shipped silently.
+eleven-entry inventory so a removal or rename is caught rather than shipped
+silently; `tests/test_capability_extension_points.py` pins the additive,
+byte-neutral, composition-ordered behaviour of the three capability-tooling
+points.
 
 ## Client boundary
 

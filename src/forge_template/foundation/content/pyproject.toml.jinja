@@ -55,6 +55,7 @@ dev = [
     { include-group = "test" },
     { include-group = "typecheck" },
     "poethepoet>=0.31",
+    [[forge:extension pyproject-development-dependencies]]
 ]
 
 [tool.uv]
@@ -133,4 +134,12 @@ format = "ruff format ."
 "format:check" = "ruff format --check ."
 typecheck = "mypy ."
 test = "pytest"
-check = ["lock:check", "format:check", "lint", "typecheck", "test"]
+[[forge:extension pyproject-task-definitions]]
+check = [
+    "lock:check",
+    "format:check",
+    "lint",
+    "typecheck",
+    "test",
+    [[forge:extension pyproject-aggregate-check]]
+]

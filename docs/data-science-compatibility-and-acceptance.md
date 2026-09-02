@@ -38,7 +38,7 @@ requirement on the implementing stages, not a prediction.
 | Option-schema protocol | `1`, `2` | `1`, `2` | Unchanged — all three new components declare no `options_schema` |
 | Foundation source protocol | `1` | `1` | Unchanged — new extension points are content, not a source-shape change |
 | Organisation-policy protocol | `1` | `1` | Unchanged (documentation-only by design) |
-| Extension-point inventory | 8 points across 3 Foundation files | 8 + FT-11.01's additive points | Additive only; no rename, no removal |
+| Extension-point inventory | 8 points across 3 Foundation files | 11 points across 3 Foundation files (FT-11.01) | Additive only; no rename, no removal |
 | `library` component | `1.0.1` | `1.0.1` | Unchanged |
 | `cli` component | `1.0.1` | `1.0.1` | Unchanged |
 | `data-science` component | — | `1.0.0` | New |
@@ -135,9 +135,9 @@ against a released or locally overridden engine.
 
 | Check | Owner | Evidence command | First required at |
 | --- | --- | --- | --- |
-| Manifest validation accepts contributions to each new Foundation extension point | FT-11.01 | `uv run poe check` | FT-11.01 / #105 |
-| Empty new points render `library` and `cli` byte-for-byte unchanged | FT-11.01 | `uv run pytest tests/test_composition_contract.py` | FT-11.01 / #105 |
-| Multiple deterministic capability contributions compose without last-write-wins | FT-11.01 | `uv run poe check` | FT-11.01 / #105 |
+| Manifest validation accepts contributions to each new Foundation extension point | FT-11.01 | `uv run pytest tests/test_capability_extension_points.py` — **done** ([ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)) | FT-11.01 / #105 |
+| Empty new points render `library` and `cli` byte-for-byte unchanged | FT-11.01 | `uv run pytest tests/test_capability_extension_points.py` — **done** | FT-11.01 / #105 |
+| Multiple deterministic capability contributions compose without last-write-wins | FT-11.01 | `uv run pytest tests/test_capability_extension_points.py` — **done** | FT-11.01 / #105 |
 | Discovery returns `data-science`, `jupyter`, `scientific-python` with the accepted metadata, in lexical order | FT-12.01 | `uv run poe check` | FT-11.02 / #106 for each capability; FT-12.01 / #109 for the archetype |
 | Descriptor results contain no filesystem or package-resource path | FT-11.04 | `uv run poe check` | FT-11.02 / #106 |
 | Invalid selections fail closed through stable structured engine errors before rendering | FT-11.04 | `uv run poe check` | FT-11.04 / #108 |
@@ -263,7 +263,7 @@ earlier Stage 10 decisions. What genuinely remains open is narrow.
 
 | Issue | Fixed by the Stage 10 contract set | Still owned by the issue |
 | --- | --- | --- |
-| FT-11.01 / #105 | Points are additive; Foundation source protocol stays `1`; empty points must be byte-neutral for `library`/`cli` | The point identifiers, their ordering and collision rules, and their manifest-field shape |
+| FT-11.01 / #105 | **Complete.** [ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md) fixed the three point identifiers, the any-selected-owner and composition-order rules, the byte-neutral-when-empty guarantee, and the one recorded `check`-array reformat | — |
 | FT-11.02 / #106 | `jupyter` at `1.0.0`, protocol `2`, ProjectSpec `[1]`, `>=3.11`, no options, no requires/conflicts; the four dependency lines; the full `notebook:check` order, identifiers, and diagnostics | The packaged manifest, the validator script, task wiring, and usage guidance content |
 | FT-11.03 / #107 | `scientific-python` at `1.0.0`, same shared fields; the four runtime dependency lines and their bounds | The packaged manifest, the import/smoke test, and guidance content |
 | FT-11.04 / #108 | The valid/invalid selection set above; determinism and path-free descriptor requirements | The fixture catalogue and the assertions that exercise them |
@@ -287,7 +287,6 @@ This contract does not decide or implement:
 
 - any manifest, resource, validator script, generated file, or test — owned by
   Stages 11 and 12;
-- the Foundation extension-point identifiers — owned by FT-11.01;
 - the `create-forge` capability and option selection UX, or its adoption of
   the `0.4` and `0.4.1` ranges — owned by create-forge Stages 13 and 14;
 - any package, protocol, or component version bump, tag, or release — the

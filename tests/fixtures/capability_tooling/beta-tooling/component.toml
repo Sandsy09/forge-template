@@ -1,0 +1,31 @@
+# Synthetic capability for tests/test_capability_extension_points.py. Paired
+# with alpha-tooling to prove multiple capability contributions to one point
+# compose in composition order rather than last-write-wins.
+manifest_version = 2
+id = "beta-tooling"
+name = "Beta Tooling"
+description = "Synthetic capability exercising the FT-11.01 tooling points."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-development-dependencies"
+content = "extensions/dependencies.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-task-definitions"
+content = "extensions/tasks.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-aggregate-check"
+content = "extensions/aggregate-check.toml.jinja"

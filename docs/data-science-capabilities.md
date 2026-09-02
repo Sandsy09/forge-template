@@ -74,8 +74,12 @@ requires_python = ">=3.11"
 
 Neither manifest has `options_schema`. Contribution blocks are optional
 manifest fields and remain absent from these decision-level examples because
-FT-11.01 owns the new Foundation extension-point identifiers and FT-11.02/
-FT-11.03 own the concrete packaged resources.
+FT-11.02 and FT-11.03 own the concrete packaged resources. FT-11.01 has
+delivered the three Foundation extension points those contributions target —
+`pyproject-development-dependencies`, `pyproject-task-definitions`, and
+`pyproject-aggregate-check`
+([extension-points.md](extension-points.md#capability-tooling-extends-the-same-foundation-content),
+[ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)).
 
 ## Jupyter capability
 
@@ -118,9 +122,11 @@ is the upstream reference for that choice.
 The [notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
 contract fixes the validator's ordering, temporary-copy execution, timeout,
 source preservation, deterministic failure identifiers, and safe diagnostics.
-FT-11.01 owns the additive Foundation extension points for development
-dependencies, Poe task definitions, and aggregate-check entries. FT-11.02
-owns the packaged manifest, resources, and implementation.
+FT-11.01 has delivered the additive Foundation extension points for
+development dependencies, Poe task definitions, and aggregate-check entries
+([extension-points.md](extension-points.md#capability-tooling-extends-the-same-foundation-content)).
+FT-11.02 owns the packaged manifest, resources, and implementation that
+contribute through them.
 
 ## Data Science requires Jupyter
 
@@ -244,7 +250,6 @@ to an archetype or Foundation to avoid that obligation.
 
 This contract does not implement or decide:
 
-- Foundation capability-tooling extension points, owned by FT-11.01;
 - either production manifest or its resources, owned by FT-11.02 and
   FT-11.03; or
 - the Data Science production manifest and generated shape, owned by Stage
@@ -256,8 +261,12 @@ diagnostics in the
 [notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
 contract, and FT-10.04 the full compatibility matrix, `0.4.0` engine line,
 release hand-offs, and version-axis classification in the
-[compatibility and acceptance contract](data-science-compatibility-and-acceptance.md);
-neither decision changes any dependency or manifest metadata above.
+[compatibility and acceptance contract](data-science-compatibility-and-acceptance.md).
+FT-11.01 subsequently delivered the three Foundation capability-tooling
+extension points these contributions target
+([extension-points.md](extension-points.md#capability-tooling-extends-the-same-foundation-content),
+[ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md)). None
+of these decisions changes any dependency or manifest metadata above.
 
 No package dependency, manifest, catalogue entry, public API, ProjectSpec,
 template, Copier answer, generated output, tag, or release changes through
