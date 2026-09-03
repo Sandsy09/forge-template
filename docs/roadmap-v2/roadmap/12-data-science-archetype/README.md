@@ -4,6 +4,7 @@
 
 [FT-EPIC-12 / forge-template#98](https://github.com/Sandsy09/forge-template/issues/98)
 adds the third production archetype and publishes a consumable engine release.
+**Complete** — all four children, the epic, and its milestone are closed.
 
 ## Dependencies
 
@@ -25,9 +26,14 @@ FT-EPIC-12 is natively blocked by FT-EPIC-11, now complete.
    [ADR 0055](../../../adr/0055-validate-data-science-generated-projects.md).
 4. [FT-12.04 / #112](https://github.com/Sandsy09/forge-template/issues/112)
    publishes and verifies the `forge-template` 0.4.0 compatibility line.
+   **Complete** — [preparation PR #128](https://github.com/Sandsy09/forge-template/pull/128),
+   [`v0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0),
+   [PyPI](https://pypi.org/project/forge-template/0.4.0/), and the
+   [published artefact audit](../../../data-science-validation.md#published-040-release-verification).
 
-The four children form a strict sequence beginning after FT-11.04. FT-12.01,
-FT-12.02, and FT-12.03 are done; FT-12.04 / #112 is the next actionable issue.
+The four children formed a strict sequence beginning after FT-11.04. All four
+are complete; the released provider line makes create-forge Stage 13
+actionable.
 
 ## Entry criteria
 
@@ -48,7 +54,8 @@ FT-12.02, and FT-12.03 are done; FT-12.04 / #112 is the next actionable issue.
 
 The installed engine catalogue discovers and renders Data Science from a
 released, verified package, with no cross-archetype resource access and no
-Forge dependency in generated projects.
+Forge dependency in generated projects. **Met** by the published `0.4.0`
+artefacts and both accepted Data Science composition audits.
 
 ## Non-goals
 

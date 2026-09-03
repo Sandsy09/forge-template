@@ -31,6 +31,9 @@ Completed `create-forge#91` is retained as a native predecessor because its
 engine-native option prompting is required before an option-bearing component
 composition can be presented generically.
 
+Stages 10, 11, and 12 are complete. The `forge-template 0.4.0` release is the
+immutable provider hand-off into the now-actionable create-forge Stage 13.
+
 ## Delivery rules
 
 - All 24 child issues are filed and attached to their native epics.

@@ -12,8 +12,9 @@ notebook check in the source catalogue under [ADR
 [ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md) adds the
 [Data Science archetype](data-science-archetype.md)'s output-free starter
 notebook and the five root-anchored working-tree ignore entries this contract
-fixes. The published `0.3.2` wheel and direct-Copier Library path remain
-unchanged.
+fixes. [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+now publishes that generated-project behaviour; the direct-Copier Library
+path remains unchanged.
 
 ## Safeguards are generated-project checks, not engine validation
 

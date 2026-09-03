@@ -8,10 +8,12 @@ contract accepted by
 FT-11.02 implements `jupyter` in the package-bound source catalogue under
 [ADR 0050](adr/0050-production-jupyter-capability.md), and FT-11.03 implements
 `scientific-python` under [ADR
-0051](adr/0051-production-scientific-python-capability.md). The Data Science
-archetype remains future work. The latest published `0.3.2` wheel still
-contains only `library` and `cli`; Stage 12 publishes the expanded catalogue
-as `0.4.0`. Nothing here changes the direct-Copier Library path.
+0051](adr/0051-production-scientific-python-capability.md). FT-12.01–12.03
+implemented and validated the Data Science archetype that requires Jupyter.
+FT-12.04 published the expanded catalogue as
+[`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+on [PyPI](https://pypi.org/project/forge-template/0.4.0/). Nothing here changes
+the direct-Copier Library path.
 
 ## Shared component contract
 

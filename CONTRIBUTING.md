@@ -86,9 +86,8 @@ manifest itself. The current Copier tree remains unchanged while
 defines the package-specific boundary FT-08.04 implements: the optionless
 `cli` executable shape, its one direct runtime dependency, console/module
 entry points, and the four neutral Foundation extension points it shares
-with Library. The source catalogue's `discover_components()` result is now
-`("cli", "jupyter", "library", "scientific-python")`; the latest published
-`0.3.2` wheel remains the two-archetype line.
+with Library. The published `0.4.0` catalogue's `discover_components()` result
+is `("cli", "data-science", "jupyter", "library", "scientific-python")`.
 The [composition architecture review](docs/composition-architecture-review.md)
 records which duplicated resources remain archetype-owned, which accidental
 Foundation assumptions were removed, and why lock resolution belongs to
@@ -114,8 +113,8 @@ guidance — completing the generated shape within the same `1.0.0` component.
 The [initial Data Science capability contracts](docs/data-science-capabilities.md)
 define the optionless `jupyter` development-tooling and `scientific-python`
 runtime-dependency owners. FT-11.02 / ADR 0050 ships `jupyter`, and FT-11.03 /
-ADR 0051 ships `scientific-python`, in the unreleased source catalogue; the
-published `0.3.2` catalogue remains unchanged.
+ADR 0051 ships `scientific-python`; both capabilities are published in the
+`0.4.0` catalogue.
 The [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
 fix the fail-closed notebook-validation order, deterministic failure
 identifiers, output-free diagnostics, and the prose-only working-tree
@@ -153,8 +152,9 @@ with `--update-goldens` like the composition-contract goldens. Building the
 sweep forced two content corrections in `scientific-python` and `jupyter` (a
 generated `mypy --strict` failure on untyped `pandas`/`sklearn`, and a
 `py314`-target `except` reformat in `check_notebooks.py`); both components
-stay `1.0.0`. `library`/`cli` stay `1.0.1` and the package stays `0.3.2` and
-untagged — FT-12.04 releases `0.4.0`.
+stay `1.0.0`. `library`/`cli` stay `1.0.1`. FT-12.04 published and verified
+[`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+on [PyPI](https://pypi.org/project/forge-template/0.4.0/), closing Stage 12.
 
 ## Branching and pull requests
 
@@ -343,10 +343,10 @@ Untagged commits on `main` are invisible to `copier update` — a project
 scaffolded from `main` right now will never see them. Before a release, bump
 `project.version` in `pyproject.toml` through a reviewed pull request. The
 manual `.github/workflows/release.yml` derives `v<project-version>` from that
-single source, rejects an existing or non-increasing tag, and has no separate
-bump selector. Run it from the Actions tab (`workflow_dispatch`), using
-`dry_run: true` first when you want to inspect the derived tag without pushing
-it.
+single source, rejects an existing or non-increasing tag, rejects dispatches
+outside `main`, and has no separate bump selector. Run it from the Actions tab
+(`workflow_dispatch`), using `dry_run: true` first to inspect the derived tag
+and complete generated release notes without pushing either.
 
 If your change renamed or deleted a file under `template/`, the workflow
 warns if no `_migrations` block covers it — existing projects would otherwise

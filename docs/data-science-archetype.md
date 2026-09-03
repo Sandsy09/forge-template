@@ -17,8 +17,10 @@ trees, and the archetype's `readme-project-shape` and `gitignore-project-shape`
 contributions; FT-12.03 proved both valid compositions build, install, and
 pass their own locked `poe check` at Python 3.11 and 3.14, and pinned
 `library`/`cli` output byte-for-byte — see
-[data-science-validation.md](data-science-validation.md). The published
-`0.3.2` wheel stays the two-archetype line until FT-12.04 publishes `0.4.0`.
+[data-science-validation.md](data-science-validation.md). FT-12.04 published
+the complete catalogue in
+[`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+on [PyPI](https://pypi.org/project/forge-template/0.4.0/).
 Nothing here changes the direct-Copier Library path.
 
 ## Archetype identity and fixed choices
@@ -171,9 +173,10 @@ their guidance and ignore entries. FT-12.03 / [ADR 0055](adr/0055-validate-data-
 proved both valid compositions across Python 3.11 and 3.14, the deterministic
 composition and documented rejections, and the `library`/`cli` byte-level
 regression pin — see [data-science-validation.md](data-science-validation.md).
-Still owned by the last Stage 12 child:
-
-- the `0.4.0` engine release, its tag, and PyPI publication — FT-12.04.
+FT-12.04 completed the last Stage 12 obligation by publishing and verifying
+the `0.4.0` engine release, tag, wheel, and source distribution. The
+[generated-project validation record](data-science-validation.md#published-040-release-verification)
+contains the immutable release and artefact evidence.
 
 FT-10.02 subsequently accepted the capability identities, dependency bounds,
 and formal Jupyter requirement in the canonical [initial capability

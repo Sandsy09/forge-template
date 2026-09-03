@@ -8,7 +8,7 @@ exposes the released Data Science composition through `new --engine-preview`.
 ## Dependencies
 
 CF-EPIC-13 is natively blocked by completed `create-forge#91` and
-FT-EPIC-12. The open provider epic keeps Stage 13 blocked.
+FT-EPIC-12. Both predecessors are complete, so Stage 13 is actionable.
 
 ## Child sequence
 
@@ -23,8 +23,8 @@ FT-EPIC-12. The open provider epic keeps Stage 13 blocked.
 5. [CF-13.05 / create-forge#110](https://github.com/Sandsy09/create-forge/issues/110)
    validates the Data Science preview pipeline against the released engine.
 
-The sequence begins after completed create-forge #91 and FT-12.04, then
-proceeds linearly through preview-pipeline validation.
+The sequence begins with CF-13.01, now that create-forge #91 and FT-12.04 are
+complete, then proceeds linearly through preview-pipeline validation.
 
 ## Entry criteria
 

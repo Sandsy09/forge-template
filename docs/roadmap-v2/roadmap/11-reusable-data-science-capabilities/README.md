@@ -34,8 +34,8 @@ FT-EPIC-11 is natively blocked by FT-EPIC-10, now complete.
    invalid selection failing closed, deterministic rendering, path-free
    descriptors, Foundation neutrality, and packaged resources.
 
-FT-11.01 through FT-11.04 are complete. Stage 11 is closed; `FT-12.01 / #109`
-is the next actionable issue.
+FT-11.01 through FT-11.04 are complete. Stage 11 is closed; Stage 12 has also
+completed with the published `forge-template 0.4.0` provider line.
 
 ## Entry criteria
 

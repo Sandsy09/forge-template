@@ -60,7 +60,7 @@ answer pair.
 Undocumented names in `forge_template.engine`, `component_manifest`,
 `composition`, `file_conflicts`, `foundation_source`, `project_spec`, and
 `template_variables` are implementation details. They may change within the
-`0.3.x` line when the supported top-level behaviour remains compatible.
+`0.4.x` line when the supported top-level behaviour remains compatible.
 
 ## Engine and protocol information
 
@@ -102,8 +102,11 @@ optionless `jupyter` and `scientific-python` capabilities (FT-11.02 /
 lexical order. A ProjectSpec selects exactly one archetype and may
 independently select either capability or both; `data-science` requires
 `jupyter`. No platform exists yet.
-The source package is prepared at `0.4.0` with this five-component catalogue;
-the latest published wheel remains `0.3.2` until FT-12.04 completes the release.
+[`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+publishes this five-component catalogue on
+[PyPI](https://pypi.org/project/forge-template/0.4.0/). The release preserves
+the public facade and protocol tuples from `0.3.x`; clients must still adopt a
+compatible `0.4.x` package range deliberately.
 Test-only fixture injection is private and is not a supported client
 extension mechanism -- this applies equally to the implicit Foundation
 content source, which discovery never exposes at all (see "Foundation"

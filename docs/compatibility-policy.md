@@ -208,9 +208,12 @@ The Data Science line advances the package to `0.4.0` and adds
 `data-science`, `jupyter`, and `scientific-python` at component version
 `1.0.0`, with every protocol integer unchanged. The
 [Data Science compatibility and acceptance contract](data-science-compatibility-and-acceptance.md)
-classifies each axis and the release gate. The reviewed Stage 14 line remains
-planned as `0.4.1`; [python-support.md](python-support.md) uses the same living
-snapshot pattern for its own state.
+classifies each axis and the release gate. That line is now available as the
+[`v0.4.0` GitHub Release](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+and [PyPI distribution](https://pypi.org/project/forge-template/0.4.0/). The
+reviewed Stage 14 line remains planned as `0.4.1`;
+[python-support.md](python-support.md) uses the same living snapshot pattern
+for its own state.
 
 ## Non-guarantees
 

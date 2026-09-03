@@ -27,12 +27,15 @@ runtime operation.
   including the versioned-axis classification for the `0.4.0` line, the
   executable acceptance matrix and its per-check owners, the valid and invalid
   selection set, and the cross-repository release gates;
-- the production `jupyter` capability on `main`, including its manifest,
+- the production `jupyter` capability, published in `forge-template 0.4.0`,
+  including its manifest,
   generated validator, development dependencies, tasks, and Foundation
   contributions;
-- the production `scientific-python` capability on `main`, including its
-  manifest, four runtime dependency contributions, import test, and guidance;
-- the production `data-science` archetype on `main`, including its manifest
+- the production `scientific-python` capability, published in `0.4.0`,
+  including its manifest, four runtime dependency contributions, import test,
+  and guidance;
+- the production `data-science` archetype, published in `0.4.0`, including its
+  manifest
   with the hard `jupyter` requirement, its owned package, smoke tests, and
   output-free starter notebook, its four packaging/metadata/classifier
   contributions, and its `readme-project-shape` and `gitignore-project-shape`
