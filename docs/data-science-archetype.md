@@ -4,17 +4,22 @@ This document defines the `data-science` archetype's project shape and
 ownership boundaries. It is the canonical living contract accepted by
 [ADR 0045](adr/0045-data-science-project-shape.md) for FT-10.01, implemented by
 FT-12.01 / [ADR 0053](adr/0053-production-data-science-archetype.md) and
-FT-12.02 / [ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md).
+FT-12.02 / [ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md),
+and validated by FT-12.03 /
+[ADR 0055](adr/0055-validate-data-science-generated-projects.md).
 
-Those two changes ship the archetype in the source catalogue:
+Those changes ship the archetype in the source catalogue:
 `discover_components()` returns `cli`, `data-science`, `jupyter`, `library`,
 and `scientific-python` in lexical order. FT-12.01 shipped the manifest, the
 owned package and smoke tests, and the four packaging/metadata/classifier
 contributions; FT-12.02 shipped the starter notebook, the five ignored working
 trees, and the archetype's `readme-project-shape` and `gitignore-project-shape`
-contributions. The full composition and regression matrix remains FT-12.03's.
-The published `0.3.2` wheel stays the two-archetype line until FT-12.04
-publishes `0.4.0`. Nothing here changes the direct-Copier Library path.
+contributions; FT-12.03 proved both valid compositions build, install, and
+pass their own locked `poe check` at Python 3.11 and 3.14, and pinned
+`library`/`cli` output byte-for-byte — see
+[data-science-validation.md](data-science-validation.md). The published
+`0.3.2` wheel stays the two-archetype line until FT-12.04 publishes `0.4.0`.
+Nothing here changes the direct-Copier Library path.
 
 ## Archetype identity and fixed choices
 
@@ -162,10 +167,12 @@ FT-12.01 implemented the manifest, the owned package and smoke tests, and the
 four packaging/metadata/classifier contributions. FT-12.02 implemented the
 starter notebook, the five ignored working trees, and the
 `readme-project-shape` and `gitignore-project-shape` contributions that carry
-their guidance and ignore entries. Still owned by later Stage 12 children:
+their guidance and ignore entries. FT-12.03 / [ADR 0055](adr/0055-validate-data-science-generated-projects.md)
+proved both valid compositions across Python 3.11 and 3.14, the deterministic
+composition and documented rejections, and the `library`/`cli` byte-level
+regression pin — see [data-science-validation.md](data-science-validation.md).
+Still owned by the last Stage 12 child:
 
-- the full capability-composition and Library/CLI-Application regression
-  matrix, and the generated-project restoration and lock evidence — FT-12.03;
 - the `0.4.0` engine release, its tag, and PyPI publication — FT-12.04.
 
 FT-10.02 subsequently accepted the capability identities, dependency bounds,

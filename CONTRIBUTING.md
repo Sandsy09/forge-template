@@ -144,8 +144,17 @@ Stage 12 then adds the third archetype: FT-12.01 / ADR 0053 ships
 `jupyter>=1,<2` and is rejected before rendering without it, and FT-12.02 /
 ADR 0054 completes its generated shape — the output-free starter notebook and
 the five root-anchored working-tree ignore entries with prose-only guidance.
-`library`/`cli` stay `1.0.1`, both capabilities stay `1.0.0`, and the package
-stays `0.3.2` and untagged — FT-12.04 releases `0.4.0`.
+FT-12.03 / ADR 0055 validates both valid compositions across Python 3.11 and
+3.14 (`tests/test_data_science_endpoints.py`, with `poe archetype` now `-n 4`),
+proves deterministic composition and the archetype rejections
+(`tests/test_data_science_composition.py`), and byte-pins `library`/`cli`
+output in `tests/fixtures/archetype_regression/digests.json` — regenerated
+with `--update-goldens` like the composition-contract goldens. Building the
+sweep forced two content corrections in `scientific-python` and `jupyter` (a
+generated `mypy --strict` failure on untyped `pandas`/`sklearn`, and a
+`py314`-target `except` reformat in `check_notebooks.py`); both components
+stay `1.0.0`. `library`/`cli` stay `1.0.1` and the package stays `0.3.2` and
+untagged — FT-12.04 releases `0.4.0`.
 
 ## Branching and pull requests
 
@@ -231,11 +240,14 @@ review the diff — see
 
 A change to `src/forge_template/foundation/` or
 `src/forge_template/components/*/content` should also run
-`uv run poe archetype`, which builds real wheels and sdists for both
-production archetypes -- Library across all three packaging modes, CLI's one
-fixed mode plus its installed console script and `python -m` invocation --
-see [library-archetype.md](docs/library-archetype.md) and
-[cli-application-archetype.md](docs/cli-application-archetype.md).
+`uv run poe archetype` (`pytest -m archetype -n 4`), which builds real wheels
+and sdists for all three production archetypes -- Library across all three
+packaging modes, CLI's one fixed mode plus its installed console script and
+`python -m` invocation, and Data Science with and without Scientific Python
+across Python 3.11 and 3.14 -- see
+[library-archetype.md](docs/library-archetype.md),
+[cli-application-archetype.md](docs/cli-application-archetype.md), and
+[data-science-validation.md](docs/data-science-validation.md).
 
 A change to a component manifest, its packaged resources, or
 `[tool.hatch.build.targets.wheel]` should also run `uv run poe check:wheel`

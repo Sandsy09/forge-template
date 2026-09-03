@@ -128,16 +128,22 @@ override that loads them stays unsupported — as
 This is an in-memory composition proof. It deliberately does not cover:
 
 - **lock resolution or build** of a generated project — owned by FT-12.03's
-  `uv run poe archetype` endpoint sweep;
+  `uv run poe archetype` endpoint sweep
+  ([data-science-validation.md](data-science-validation.md),
+  [ADR 0055](adr/0055-validate-data-science-generated-projects.md));
 - **notebook execution** — `notebook:check` is a generated-project task, out
   of engine scope, proved by
   [`tests/test_notebook_validator.py`](../tests/test_notebook_validator.py);
 - **the `data-science` archetype** — FT-12.01 /
   [ADR 0053](adr/0053-production-data-science-archetype.md) introduced it,
   FT-12.02 / [ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md)
-  completed its notebook and working-tree shape, and
-  [`tests/test_data_science_archetype.py`](../tests/test_data_science_archetype.py)
-  and [`tests/test_data_science_notebook.py`](../tests/test_data_science_notebook.py)
+  completed its notebook and working-tree shape, FT-12.03 /
+  [ADR 0055](adr/0055-validate-data-science-generated-projects.md) validated
+  both compositions end to end, and
+  [`tests/test_data_science_archetype.py`](../tests/test_data_science_archetype.py),
+  [`tests/test_data_science_notebook.py`](../tests/test_data_science_notebook.py),
+  [`tests/test_data_science_composition.py`](../tests/test_data_science_composition.py),
+  and [`tests/test_data_science_endpoints.py`](../tests/test_data_science_endpoints.py)
   cover it; the `requires-jupyter` fixture here only rehearses its
   cross-tier dependency edge; and
 - **`create-forge` selection UX** — owned by create-forge Stages 13–14.

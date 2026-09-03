@@ -40,10 +40,12 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         action="store_true",
         default=False,
         help=(
-            "Rewrite tests/fixtures/golden/*.json from the current composed "
-            "output of tests/test_composition_contract.py instead of asserting "
-            "against it. Review the diff like any other change -- see "
-            "docs/composition-fixtures.md."
+            "Rewrite the checked-in test fixtures from current output instead "
+            "of asserting against them: tests/fixtures/golden/*.json "
+            "(tests/test_composition_contract.py) and "
+            "tests/fixtures/archetype_regression/digests.json "
+            "(tests/test_data_science_composition.py). Review the diff like any "
+            "other change -- see docs/composition-fixtures.md."
         ),
     )
 
@@ -58,8 +60,9 @@ def from_git(pytestconfig: pytest.Config) -> bool:
 
 @pytest.fixture(scope="session")
 def update_goldens(pytestconfig: pytest.Config) -> bool:
-    """Whether composition-contract tests should rewrite their golden
-    fixtures (--update-goldens) instead of asserting against them.
+    """Whether fixture-backed tests should rewrite their checked-in
+    expectations (--update-goldens) instead of asserting against them --
+    the composition-contract goldens and the archetype regression digests.
     """
     return bool(pytestconfig.getoption("--update-goldens"))
 

@@ -123,7 +123,9 @@ FT-08.04 added `cli`
 and FT-12.01 added `data-science`
 ([contract](docs/data-science-archetype.md)/[ADR 0053](docs/adr/0053-production-data-science-archetype.md)),
 with FT-12.02 completing its notebook and working-tree shape
-([ADR 0054](docs/adr/0054-data-science-notebook-and-artefact-layout.md)),
+([ADR 0054](docs/adr/0054-data-science-notebook-and-artefact-layout.md)) and
+FT-12.03 validating both compositions end to end
+([contract](docs/data-science-validation.md)/[ADR 0055](docs/adr/0055-validate-data-science-generated-projects.md)),
 all alongside the implicit Foundation source at `src/forge_template/foundation/`;
 FT-11.02 adds the optionless `jupyter` capability without a notebook or
 runtime dependency; FT-11.03 adds the independently optional
@@ -131,13 +133,16 @@ runtime dependency; FT-11.03 adds the independently optional
 declares `requires = [{ id = "jupyter", version = ">=1,<2" }]` — the archetype,
 not the capability, owns that edge — and is rejected before rendering when
 `jupyter` is not also selected. `uv run poe
-archetype` proves real wheels/sdists for
+archetype` (since FT-12.03 `pytest -m archetype -n 4`) proves real
+wheels/sdists for
 Library across all three packaging modes and for CLI's fixed packaging mode,
 plus a real installed console script and `python -m` invocation; it also
 proves both archetypes' locked aggregate checks with Jupyter selected, and a
 real Data Science wheel/install/`__version__`/`py.typed` plus its own locked
-`poe check` with Jupyter selected — which since FT-12.02 runs `notebook:check`
-over the real starter notebook and a live kernel.
+`poe check` — which since FT-12.02 runs `notebook:check`
+over the real starter notebook and a live kernel, and since FT-12.03 sweeps
+both `data-science` compositions (with and without `scientific-python`) across
+Python 3.11 and 3.14.
 `discover_components()` now returns
 `("cli", "data-science", "jupyter", "library", "scientific-python")`. No
 archetype inherits from or reads
@@ -295,7 +300,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0054 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0055 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -434,8 +439,26 @@ cleanliness, real `ruff check`/`format --check` over the rendered project,
 stdlib-only imports, no-payload, ignored-tree discovery) is added;
 `tests/test_data_science_build.py`'s generated `poe check` now runs
 `notebook:check` over a real notebook and kernel. `scripts/check_wheel.py`
-needs no change. `library`/`cli` render byte-for-byte unchanged. **FT-12.01
-and FT-12.02 are complete; `FT-12.03 / #111` is the next actionable issue.**
+needs no change. `library`/`cli` render byte-for-byte unchanged. FT-12.03's
+[generated-project validation](docs/data-science-validation.md)
+([ADR 0055](docs/adr/0055-validate-data-science-generated-projects.md)) then
+proves the matrix: `tests/test_data_science_composition.py` (fast:
+determinism under repetition/reorder/catalogue-layout/`PYTHONHASHSEED`, the
+archetype rejections, Forge-freedom, `ruff format` clean at every floor incl.
+`py314`, and a `{target: sha256}` regression pin on `library`/`cli` in
+`tests/fixtures/archetype_regression/digests.json`, regenerated with
+`--update-goldens`) and `tests/test_data_science_endpoints.py`
+(`archetype`-marked: both compositions × Python 3.11/3.14 through lock, sync,
+build, isolated install, and the generated `poe check` incl. a live-kernel
+`notebook:check`; ignored-tree artefact exclusion; Forge-free install).
+`poe archetype` now runs `pytest -m archetype -n 4`. Building the sweep forced
+two content corrections in already-merged capability content —
+`scientific-python`'s `tests/test_scientific_python.py` gains
+`# type: ignore[import-untyped]` on `pandas`/`sklearn` (generated `mypy
+--strict`), and `jupyter`'s `scripts/check_notebooks.py` splits one
+`except (OSError, UnicodeError)` into two clauses (ruff at `target-version =
+py314` rewrites it to pre-3.14 syntax); both components stay `1.0.0`. **FT-12.01
+through FT-12.03 are complete; `FT-12.04 / #112` is the next actionable issue.**
 
 FT-08.02 populated the
 production component catalogue under the

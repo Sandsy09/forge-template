@@ -37,6 +37,10 @@ runtime operation.
   output-free starter notebook, its four packaging/metadata/classifier
   contributions, and its `readme-project-shape` and `gitignore-project-shape`
   contributions for the ignored working trees;
+- the canonical
+  [Data Science generated-project validation](../data-science-validation.md),
+  including the deterministic-composition proof, the Python 3.11/3.14 endpoint
+  sweep, and the `library`/`cli` byte-level regression pin;
 - Foundation/archetype/capability/platform classification;
 - package-bound capability and archetype manifests and content;
 - component compatibility, dependencies, conflicts, options, and extension
