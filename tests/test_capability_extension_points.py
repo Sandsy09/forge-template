@@ -274,16 +274,16 @@ def test_multiple_capability_contributions_compose_without_last_write_wins(
     assert text.index('"alpha:check" =') < text.index('"beta:check" =')
 
 
-# --- Acceptance criterion 4: no protocol or version moves ------------------
+# --- Acceptance criterion 4: protocol and component-version stability ------
 
 
-def test_no_protocol_or_version_moves() -> None:
+def test_capability_extension_points_keep_protocols_and_component_versions() -> None:
     source = load_foundation_source(_PRODUCTION_FOUNDATION / "foundation.toml")
     assert source.foundation_version == 1
     assert FOUNDATION_SOURCE_PROTOCOL_VERSION == 1
 
     info = get_engine_info()
-    assert info.package_version == "0.3.2"
+    assert info.package_version == "0.4.0"
     assert info.projectspec_protocols == (1,)
     assert info.component_manifest_protocols == (1, 2)
 

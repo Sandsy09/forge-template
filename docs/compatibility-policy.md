@@ -182,17 +182,20 @@ rendered bytes.
 
 ## Current compatibility state
 
-Living snapshot, reviewed 2026-09-01. Advancing it in line with the rules
+Living snapshot, reviewed 2026-09-03. Advancing it in line with the rules
 above does not require a new ADR; a semantic change to those rules does (see
 "Ownership and change process").
 
 | Axis | Current value |
 | --- | --- |
-| `forge-template` package | `0.3.2` |
+| `forge-template` package | `0.4.0` |
 | ProjectSpec protocol | `1` |
 | Component manifest protocol | `1`, `2` |
 | `library` component | `1.0.1` |
 | `cli` component | `1.0.1` |
+| `data-science` component | `1.0.0` |
+| `jupyter` component | `1.0.0` |
+| `scientific-python` component | `1.0.0` |
 | Option-schema protocol | `1`, `2` |
 | Foundation source protocol | `1` (internal; see above) |
 | Organisation-policy protocol | `1` (doc-only; see above) |
@@ -201,13 +204,13 @@ Released `create-forge` declares the compatible
 `forge-template>=0.3.1,<0.4` engine range
 ([template-engine-api.md](template-engine-api.md#compatibility-and-current-cutover-boundary)).
 
-The planned Data Science line advances this table to package `0.4.0` (reviewed
-`0.4.1`) and adds `data-science`, `jupyter`, and `scientific-python` at
-component version `1.0.0`, with every protocol integer unchanged. The
+The Data Science line advances the package to `0.4.0` and adds
+`data-science`, `jupyter`, and `scientific-python` at component version
+`1.0.0`, with every protocol integer unchanged. The
 [Data Science compatibility and acceptance contract](data-science-compatibility-and-acceptance.md)
-classifies each axis and the release gate; FT-12.04 advances the snapshot here
-when it publishes, the same way [python-support.md](python-support.md) advances
-its own living table.
+classifies each axis and the release gate. The reviewed Stage 14 line remains
+planned as `0.4.1`; [python-support.md](python-support.md) uses the same living
+snapshot pattern for its own state.
 
 ## Non-guarantees
 

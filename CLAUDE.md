@@ -7,9 +7,10 @@ Guidance for Claude Code working in this repository.
 A [Copier](https://copier.readthedocs.io/) template and public composition
 engine that scaffold modern Python projects. The source catalogue contains
 independent **library**, **CLI Application**, and **Data Science** archetypes
-plus the optionless **Jupyter** and **Scientific Python** capabilities; the
-published `v0.3.2` catalogue still contains only the two original archetypes
-and no capabilities, and the direct-Copier compatibility path remains
+plus the optionless **Jupyter** and **Scientific Python** capabilities. The
+source package is prepared at `0.4.0`; the published `v0.3.2` catalogue still
+contains only the two original archetypes and no capabilities until FT-12.04
+completes the release. The direct-Copier compatibility path remains
 Library-only.
 
 Copier was chosen over Cookiecutter specifically for `copier update`, which
@@ -92,9 +93,9 @@ and option-schema vocabulary (protocols `1` and `2`, `format` support) in
 [template-engine API](docs/template-engine-api.md) in `engine.py` exposes
 package-bound discovery, strict validation, deterministic planning, in-memory
 rendering, structured failures, and the `map_legacy_library_answers` helper
-from the top-level package, at package version `0.3.2`. ADR 0037's Stage 08
-review corrects Foundation ownership and generated quality/lock behavior
-without changing the `0.3.x` public facade. The
+from the top-level package, at package version `0.4.0`. The `0.4.x` line keeps
+the `0.3.x` public facade and protocol tuples while adding the Data Science
+catalogue; ADR 0037's Stage 08 review remains its Foundation boundary. The
 [Forge-Blueprint compatibility policy](docs/compatibility-policy.md)
 ([ADR 0041](docs/adr/0041-forge-blueprint-compatibility-policy.md)) defines
 every versioned axis above (package, both protocols, component versions,
@@ -289,8 +290,9 @@ closed); all four Copier combos green
 locally and in CI, update merge validated, root and template
 `.gitattributes` both in place, no byte-empty template files remain,
 `task_runner`/`make` removed (it was the one untested, 100%-broken
-conditional — see Deferred). **`v0.3.2` is the latest tagged release**,
-carrying the reviewed Stage 08 boundary corrections. `v0.3.0` first carried
+conditional — see Deferred). **`v0.3.2` is the latest tagged release; the
+source package is prepared at `0.4.0` pending FT-12.04 publication.** `v0.3.2`
+carries the reviewed Stage 08 boundary corrections. `v0.3.0` first carried
 the production
 engine catalogue (both `library` and `cli`) alongside the direct-Copier
 template. Root repo hygiene is done:

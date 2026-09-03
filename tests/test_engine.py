@@ -92,7 +92,7 @@ def test_engine_info_reports_package_and_protocols_without_discovery(
 
     info = get_engine_info()
 
-    assert info.package_version == "0.3.2"
+    assert info.package_version == "0.4.0"
     assert info.projectspec_protocols == (1,)
     assert info.component_manifest_protocols == (1, 2)
 
@@ -692,9 +692,11 @@ def test_project_version_and_release_workflow_share_one_source() -> None:
         encoding="utf-8"
     )
 
-    assert 'version = "0.3.2"' in pyproject
+    assert 'version = "0.4.0"' in pyproject
     assert (
         "tomllib.load(open('pyproject.toml', 'rb'))['project']['version']" in workflow
     )
     assert "bump:" not in workflow
+    assert "github.ref != 'refs/heads/main'" in workflow
+    assert "## Release notes" in workflow
     assert (REPO_ROOT / "src" / "forge_template" / "py.typed").is_file()
