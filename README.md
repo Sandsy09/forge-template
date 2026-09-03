@@ -52,12 +52,16 @@ package-bound `jupyter` and `scientific-python` capabilities, and the
 that proves the layer and fails every invalid selection closed — and Stage 12
 is under way: FT-12.01 / [ADR 0053](docs/adr/0053-production-data-science-archetype.md)
 ships the `data-science` archetype itself, requiring `jupyter` and rejected
-before rendering without it, and FT-12.02 /
+before rendering without it, FT-12.02 /
 [ADR 0054](docs/adr/0054-data-science-notebook-and-artefact-layout.md) adds its
 output-free starter notebook and the ignored `data/`, `models/`, and
-`artifacts/` working trees. All of this is present on unreleased `main`; the
-published `0.3.2` line remains a two-archetype catalogue until Stage 12
-publishes `0.4.0`. The default direct-Copier Library path remains unchanged.
+`artifacts/` working trees, and FT-12.03 /
+[ADR 0055](docs/adr/0055-validate-data-science-generated-projects.md)
+[validates both compositions](docs/data-science-validation.md) across Python
+3.11 and 3.14 and byte-pins `library`/`cli` output. All of this is present on
+unreleased `main`; the published `0.3.2` line remains a two-archetype
+catalogue until Stage 12 publishes `0.4.0`. The default direct-Copier Library
+path remains unchanged.
 
 ## Two repos
 
@@ -110,9 +114,13 @@ defines the distributable-package additions composed over it, and the
 defines the implemented executable reference shape. The
 [Data Science archetype contract](docs/data-science-archetype.md) defines the
 third shape's package, notebook, working-tree, and capability ownership;
-FT-12.01 / [ADR 0053](docs/adr/0053-production-data-science-archetype.md)
-implements its manifest, owned package, and smoke tests (the notebook and
-working trees remain FT-12.02). The [initial Data Science capability
+FT-12.01–03 implement it in full — the manifest and package
+([ADR 0053](docs/adr/0053-production-data-science-archetype.md)), the notebook
+and working trees
+([ADR 0054](docs/adr/0054-data-science-notebook-and-artefact-layout.md)), and
+the [end-to-end validation](docs/data-science-validation.md)
+([ADR 0055](docs/adr/0055-validate-data-science-generated-projects.md)). The
+[initial Data Science capability
 contracts](docs/data-science-capabilities.md) define reusable notebook tooling
 and an independently optional scientific runtime stack, the
 [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)

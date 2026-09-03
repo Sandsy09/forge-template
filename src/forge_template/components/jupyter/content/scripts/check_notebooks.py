@@ -114,8 +114,11 @@ def _parse_notebook(
 ) -> tuple[NotebookNode | None, Failure | None]:
     try:
         raw = path.read_bytes()
+    except OSError:
+        return None, Failure(relative, "unreadable-notebook")
+    try:
         text = raw.decode("utf-8")
-    except (OSError, UnicodeError):
+    except UnicodeError:
         return None, Failure(relative, "unreadable-notebook")
 
     try:

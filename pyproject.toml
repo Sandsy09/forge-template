@@ -213,7 +213,10 @@ typecheck = "mypy"
 test = "pytest -m 'not (combos or update or archetype)'"
 combos = "pytest -m combos -n 4"
 update = "pytest -m update"
-archetype = "pytest -m archetype"
+# -n 4: FT-12.03 added a 2x2 Data Science endpoint sweep (both compositions x
+# Python 3.11/3.14), each cell a real lock/build/install/notebook run. Spread
+# them across workers the same way `combos` does -- see ADR 0055.
+archetype = "pytest -m archetype -n 4"
 "verify-ci" = "bash scripts/verify-ci.sh"
 check = ["format:check", "lint", "typecheck", "test"]
 

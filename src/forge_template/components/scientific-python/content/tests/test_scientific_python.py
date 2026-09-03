@@ -2,8 +2,8 @@
 
 import matplotlib
 import numpy
-import pandas
-import sklearn
+import pandas  # type: ignore[import-untyped]  # ships no type information
+import sklearn  # type: ignore[import-untyped]  # ships no type information
 
 
 def test_scientific_python_stack_is_importable() -> None:

@@ -83,8 +83,8 @@ The [Data Science archetype contract](data-science-archetype.md) applies the
 same definition to an independent, optionless package-plus-notebooks shape. It
 owns its package, tests, starter notebook, and local working-tree conventions
 while leaving notebook tooling and the scientific stack to reusable
-capabilities. FT-12.01 and FT-12.02 implement it in the source catalogue
-(ADR 0053/0054); FT-12.04 publishes the `0.4.0` line that ships it.
+capabilities. FT-12.01–03 implement and validate it in the source catalogue
+(ADR 0053/0054/0055); FT-12.04 publishes the `0.4.0` line that ships it.
 
 ### Capability
 

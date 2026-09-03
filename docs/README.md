@@ -35,6 +35,11 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   — what the `jupyter` and `scientific-python` layer is proven to do across
   every archetype, the invalid selections it fails closed, and what it
   deliberately leaves to Stage 12 (FT-11.04, ADR 0052).
+- [data-science-validation.md](data-science-validation.md) — what the
+  `data-science` archetype and its capability compositions are proven to do
+  as generated projects: deterministic composition, both window-edge Python
+  endpoints, the documented rejections, and the `library`/`cli` byte-level
+  regression pin (FT-12.03, ADR 0055).
 - [roadmap-v2/](roadmap-v2/) — the Stage 10–14 two-repository roadmap for a
   package-backed Data Science archetype and reusable optional capabilities.
 - [roadmap-v1/](roadmap-v1/) — the completed historical Foundation roadmap

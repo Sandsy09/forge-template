@@ -150,15 +150,15 @@ against a released or locally overridden engine.
 
 | Check | Owner | Evidence command | First required at |
 | --- | --- | --- | --- |
-| A restored project passes the aggregate quality contract from committed lock state | FT-12.03 | `uv run --locked poe check` in the generated project | FT-12.03 / #111 |
+| A restored project passes the aggregate quality contract from committed lock state | FT-12.03 | `uv run poe archetype` (`tests/test_data_science_endpoints.py`) — **done** ([ADR 0055](adr/0055-validate-data-science-generated-projects.md)) | FT-12.03 / #111 |
 | Wheel and sdist build, install into an isolated environment, import, and report `__version__`, metadata, and `py.typed` | FT-12.01 | `uv run poe archetype` (`tests/test_data_science_build.py`) — **done for `data-science` + `jupyter`** | FT-12.01 / #109 |
 | Every generated target has an explicit Data Science or Foundation owner | FT-12.02 | `uv run poe check` (`tests/test_data_science_archetype.py`) — **done** ([ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md)) | FT-12.02 / #110 |
 | The starter notebook is clean and executes | FT-12.02 | `uv run --locked poe notebook:check` in the generated project, via `uv run poe archetype` — **done** | FT-12.02 / #110 |
 | Notebook validation is deterministic, output- and secret-free, and leaves the tracked notebook byte-identical | FT-11.02 | `uv run pytest tests/test_notebook_validator.py` — **done** | FT-11.02 / #106 |
 | No generated example carries a secret, credential, binary model, or embedded dataset | FT-12.02 | `uv run pytest tests/test_data_science_notebook.py` plus this repository's `detect-private-key` / `check-added-large-files` hooks over the authored fragments — **done** (the engine path generates no `.pre-commit-config.yaml`; [ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md)) | FT-12.02 / #110 |
-| Built artefacts contain no ignored `data/`, `models/`, or `artifacts/` content | FT-12.03 | `uv run poe archetype` | FT-12.03 / #111 |
-| The generated project needs neither Forge repository for development, build, or runtime | FT-12.03 | `uv run poe archetype` (isolated venv) | FT-12.01 / #109 |
-| Repeated renders and manifest-order permutations produce identical output | FT-12.03 | `uv run poe check` | FT-12.03 / #111 |
+| Built artefacts contain no ignored `data/`, `models/`, or `artifacts/` content | FT-12.03 | `uv run poe archetype` (`tests/test_data_science_endpoints.py`) — **done** ([ADR 0055](adr/0055-validate-data-science-generated-projects.md)) | FT-12.03 / #111 |
+| The generated project needs neither Forge repository for development, build, or runtime | FT-12.03 | `uv run poe archetype` (isolated venv) — **done** ([ADR 0055](adr/0055-validate-data-science-generated-projects.md)) | FT-12.01 / #109 |
+| Repeated renders and manifest-order permutations produce identical output | FT-12.03 | `uv run poe check` (`tests/test_data_science_composition.py`) — **done** ([ADR 0055](adr/0055-validate-data-science-generated-projects.md)) | FT-12.03 / #111 |
 
 ### Python endpoint checks
 
@@ -171,16 +171,18 @@ property: the *combined* dependency set must actually lock.
 | --- | --- | --- | --- |
 | The `jupyter` development dependency set resolves at Python 3.11 and at 3.14 | FT-11.02 | `uv run pytest tests/test_jupyter_capability_build.py` — **done** | FT-11.02 / #106 |
 | The `scientific-python` runtime dependency set resolves at Python 3.11 and at 3.14 | FT-11.03 | `uv run pytest tests/test_scientific_python_capability_build.py` — **done** | FT-11.03 / #107 |
-| A Data Science project (with `jupyter`, and with `jupyter` + `scientific-python`) builds, installs, imports, and passes `notebook:check` at Python 3.11 and at 3.14 | FT-12.03 | `uv run poe archetype` extended to both endpoints | FT-12.03 / #111 |
-| `library` and `cli` retain their current single-selection build evidence as regression | FT-12.03 | `uv run poe archetype` | FT-12.03 / #111 |
+| A Data Science project (with `jupyter`, and with `jupyter` + `scientific-python`) builds, installs, imports, and passes `notebook:check` at Python 3.11 and at 3.14 | FT-12.03 | `uv run poe archetype` (`tests/test_data_science_endpoints.py`, `-n 4`) — **done** ([ADR 0055](adr/0055-validate-data-science-generated-projects.md)) | FT-12.03 / #111 |
+| `library` and `cli` retain their current single-selection build evidence as regression | FT-12.03 | `uv run poe archetype` (`tests/test_library_build.py`, `tests/test_cli_build.py`) plus the byte-level pin in `tests/test_data_science_composition.py` — **done** | FT-12.03 / #111 |
 
-Today the capability-owned dependency groups have endpoint-resolution
-coverage, while `uv run poe archetype` builds each archetype on one interpreter
-with one `PythonSelection` (`minimum` 3.11, `development` 3.13), and this
-repository's CI runs every job on Python 3.13. Sweeping complete Data Science
-build, install, import, and notebook execution across both endpoints is new
-test machinery FT-12.03 must build. The known live constraint is the NumPy
-`>=2.4,<2.5` ceiling
+FT-12.03 built that machinery: `tests/test_data_science_endpoints.py` sweeps
+each valid composition across `development` 3.11 and 3.14 (the floor stays
+`data-science`'s fixed `>=3.11`), and `uv run poe archetype` now runs its
+cases under `-n 4`. Building the sweep forced two content corrections in
+already-merged capability content — the generated `mypy --strict` failed on
+`pandas`/`sklearn` imports, and a `py314` target reformatted `check_notebooks.py`
+into pre-3.14 syntax; both are recorded in
+[ADR 0055](adr/0055-validate-data-science-generated-projects.md). The known
+live constraint is the NumPy `>=2.4,<2.5` ceiling
 ([data-science-capabilities.md](data-science-capabilities.md#dependency-evidence)):
 `2.5.0` drops Python 3.11, so a wider bound would fail the 3.11 endpoint. A
 resolution failure at any endpoint is fixed by an upstream compatibility
@@ -273,7 +275,7 @@ earlier Stage 10 decisions. What genuinely remains open is narrow.
 | FT-11.04 / #108 | The valid/invalid selection set above; determinism and path-free descriptor requirements | **Complete.** [ADR 0052](adr/0052-validate-production-capability-composition.md) and [capability-composition-validation.md](capability-composition-validation.md): the fixture catalogue and the assertions that exercise it |
 | FT-12.01 / #109 | `data-science` at `1.0.0`, protocol `2`, `>=3.11`, `requires = [{ id = "jupyter", version = ">=1,<2" }]`, no options/conflicts, `uv-build-static`, generated version `0.1.0`, classifiers, reserved shape | **Complete.** [ADR 0053](adr/0053-production-data-science-archetype.md): the manifest, the owned `src/` tree and smoke tests, and the four packaging/metadata/classifier contributions |
 | FT-12.02 / #110 | The five root-anchored ignore entries; the prose-only guidance reading; the output-free stdlib starter notebook; no tracked placeholder | **Complete.** [ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md): the four notebook cells, the README project-shape and working-directory fragment, and the `gitignore-project-shape` fragment |
-| FT-12.03 / #111 | The Generated-project and Python-endpoint rows above; both valid compositions; the missing-Jupyter rejection | The test module structure and the endpoint-sweep machinery |
+| FT-12.03 / #111 | The Generated-project and Python-endpoint rows above; both valid compositions; the missing-Jupyter rejection | **Complete.** [ADR 0055](adr/0055-validate-data-science-generated-projects.md) and [data-science-validation.md](data-science-validation.md): the two test modules, the `-n 4` archetype task, the `library`/`cli` digest fixture, and two forced content corrections (`scientific-python` `mypy` ignores, `jupyter` `check_notebooks.py` `py314` `except` split) |
 | FT-12.04 / #112 | `0.4.0`; every unchanged axis; the release gate above | Changelog and release-note content, and the dry-run inspection |
 
 ## Alignment with existing contracts

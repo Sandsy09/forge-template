@@ -57,6 +57,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0052 — Validate production capability composition](0052-validate-production-capability-composition.md)
 - [0053 — Ship Data Science as a production archetype](0053-production-data-science-archetype.md)
 - [0054 — Ship the Data Science notebook and artefact layout](0054-data-science-notebook-and-artefact-layout.md)
+- [0055 — Validate Data Science generated projects](0055-validate-data-science-generated-projects.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

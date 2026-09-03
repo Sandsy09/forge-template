@@ -103,6 +103,19 @@ deliberateness lives in that review, not in the regeneration step itself.
 `--update-goldens` is a `pytest` option registered in `tests/conftest.py`,
 alongside the existing `--from-git` option.
 
+The same option also regenerates
+`tests/fixtures/archetype_regression/digests.json` — the per-target SHA-256
+map `tests/test_data_science_composition.py` pins `library` and `cli` output
+against across every capability selection (FT-12.03, ADR 0055). Unlike the
+goldens above, that fixture is generated from the **production** catalogue,
+not `tests/fixtures/component_manifests/`, so any deliberate change to
+`library`, `cli`, `jupyter`, `scientific-python`, or Foundation output must
+regenerate it:
+
+```bash
+uv run pytest tests/test_data_science_composition.py --update-goldens
+```
+
 ## Remaining boundary
 
 These fixtures do not define organisation-policy resolution; that is

@@ -12,6 +12,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -40,10 +41,12 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         action="store_true",
         default=False,
         help=(
-            "Rewrite tests/fixtures/golden/*.json from the current composed "
-            "output of tests/test_composition_contract.py instead of asserting "
-            "against it. Review the diff like any other change -- see "
-            "docs/composition-fixtures.md."
+            "Rewrite the checked-in test fixtures from current output instead "
+            "of asserting against them: tests/fixtures/golden/*.json "
+            "(tests/test_composition_contract.py) and "
+            "tests/fixtures/archetype_regression/digests.json "
+            "(tests/test_data_science_composition.py). Review the diff like any "
+            "other change -- see docs/composition-fixtures.md."
         ),
     )
 
@@ -58,8 +61,9 @@ def from_git(pytestconfig: pytest.Config) -> bool:
 
 @pytest.fixture(scope="session")
 def update_goldens(pytestconfig: pytest.Config) -> bool:
-    """Whether composition-contract tests should rewrite their golden
-    fixtures (--update-goldens) instead of asserting against them.
+    """Whether fixture-backed tests should rewrite their checked-in
+    expectations (--update-goldens) instead of asserting against them --
+    the composition-contract goldens and the archetype regression digests.
     """
     return bool(pytestconfig.getoption("--update-goldens"))
 
@@ -83,17 +87,37 @@ def _git_identity() -> None:
     specifically because it only fires when no identity exists at all: on the
     author's own machine that never triggers, and on a CI runner the git
     config is thrown away with the VM.
+
+    Under ``pytest-xdist`` (``poe archetype -n 4``, ``poe combos -n 4``) every
+    worker is a separate process running this session fixture, so the
+    ``git config --global`` writes race on ``~/.gitconfig.lock``. The retry
+    loop tolerates that: a lock failure just means a peer is writing the same
+    identity, so re-check and return once it lands.
     """
-    result = subprocess.run(
-        ["git", "config", "--get", "user.email"], capture_output=True, text=True
-    )
-    if result.returncode == 0 and result.stdout.strip():
+
+    def _has_identity() -> bool:
+        got = subprocess.run(
+            ["git", "config", "--get", "user.email"], capture_output=True, text=True
+        )
+        return got.returncode == 0 and bool(got.stdout.strip())
+
+    if _has_identity():
         return
-    subprocess.run(["git", "config", "--global", "user.name", "pytest"], check=True)
-    subprocess.run(
-        ["git", "config", "--global", "user.email", "pytest@example.invalid"],
-        check=True,
-    )
+    for attempt in range(20):
+        name = subprocess.run(
+            ["git", "config", "--global", "user.name", "pytest"], capture_output=True
+        )
+        email = subprocess.run(
+            ["git", "config", "--global", "user.email", "pytest@example.invalid"],
+            capture_output=True,
+        )
+        if name.returncode == 0 and email.returncode == 0:
+            return
+        if _has_identity():  # a peer worker won the race
+            return
+        time.sleep(0.1 * (attempt + 1))
+    msg = "could not configure a git identity (gitconfig lock contention)"
+    raise RuntimeError(msg)
 
 
 @pytest.fixture(scope="session")
