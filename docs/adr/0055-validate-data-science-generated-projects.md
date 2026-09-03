@@ -65,7 +65,11 @@ distribution.
 
 `uv run poe archetype` becomes `pytest -m archetype -n 4` so the four sweep
 cells land one per worker, matching how `poe combos` already runs. Its
-evidence command is unchanged.
+evidence command is unchanged. `tests/conftest.py`'s session-scoped
+`_git_identity` fixture gains a retry loop: under `pytest-xdist` every worker
+runs it, and on a runner with no configured identity the four
+`git config --global` writes race on `~/.gitconfig.lock` — the loop tolerates
+the lock failure and returns once any worker's write lands.
 
 **Correction 1 — `scientific-python` `tests/test_scientific_python.py`.**
 `pandas` and `sklearn` ship no type information, so the generated project's
@@ -109,7 +113,10 @@ and untagged; FT-12.04 publishes the `0.4.0` line.
   corrections are recorded here; the acceptance matrix rows they unblock are
   marked done in the contract.
 - `uv run poe archetype` runs its cases in parallel. Wall-clock cost of the
-  new sweep is bounded by the slowest single cell rather than their sum.
+  new sweep is bounded by the slowest single cell rather than their sum. It is
+  the first `-n`-parallel suite CI runs, so the `_git_identity` fixture is now
+  xdist-safe — closing the last gap in the git-identity bug class CLAUDE.md's
+  "Validation" section tracks.
 - `tests/test_data_science_build.py` keeps its single-composition 3.13
   baseline; the sweep is additive, not a replacement.
 - `scripts/check_wheel.py` needs no change — the two corrected files are
