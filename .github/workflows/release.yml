@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: Print the tag without creating it
+        description: Print the tag and notes without creating anything
         type: boolean
         default: false
 
@@ -22,6 +22,12 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Refuse to release from anything but main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Releases must be dispatched from main, not ${{ github.ref }}."
+          exit 1
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
@@ -55,15 +61,21 @@ jobs:
         id: notes
         run: |
           latest="${{ steps.version.outputs.latest }}"
+          if [ "$latest" = "none" ]; then
+            echo "Initial release." > release-notes.md
+          else
+            git log "${latest}..HEAD" --pretty='- %s' --no-merges > release-notes.md
+          fi
           {
             echo "notes<<EOF"
-            if [ "$latest" = "none" ]; then
-              echo "Initial release."
-            else
-              git log "${latest}..HEAD" --pretty='- %s' --no-merges
-            fi
+            cat release-notes.md
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
+          {
+            echo "## Release notes"
+            echo
+            cat release-notes.md
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Warn on breaking template changes
         run: |

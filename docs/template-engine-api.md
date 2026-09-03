@@ -3,10 +3,10 @@
 This is the canonical living contract for the supported `forge-template`
 engine facade. [ADR 0029](adr/0029-stable-template-engine-api.md) records the
 decision to expose it. The current compatibility line is package version
-`0.3.x`, following the incompatible `PlannedFile.owner` change FT-08.02 made
-to the still-pre-1.0 planning model (see "Compatibility and cutover boundary"
-below); ProjectSpec and component-manifest protocol versions remain separate
-from the package version.
+`0.4.x`; its public facade is unchanged from `0.3.x`, while the installed
+catalogue adds the Data Science archetype and its two capabilities (see
+"Compatibility and cutover boundary" below). ProjectSpec and
+component-manifest protocol versions remain separate from the package version.
 
 The facade is side-effect-free. It discovers only reviewed components bundled
 in the installed wheel, validates an effective ProjectSpec, plans composition,
@@ -102,8 +102,8 @@ optionless `jupyter` and `scientific-python` capabilities (FT-11.02 /
 lexical order. A ProjectSpec selects exactly one archetype and may
 independently select either capability or both; `data-science` requires
 `jupyter`. No platform exists yet.
-The latest published `0.3.2` wheel remains the two-archetype catalogue until
-Stage 12 publishes the expanded `0.4.0` line.
+The source package is prepared at `0.4.0` with this five-component catalogue;
+the latest published wheel remains `0.3.2` until FT-12.04 completes the release.
 Test-only fixture injection is private and is not a supported client
 extension mechanism -- this applies equally to the implicit Foundation
 content source, which discovery never exposes at all (see "Foundation"
@@ -274,9 +274,9 @@ unsupported and are not a discovery or plugin API.
 [compatibility-policy.md](compatibility-policy.md) is the canonical,
 living compatibility policy across every versioned axis this engine
 publishes -- package, ProjectSpec protocol, component manifest protocol,
-component content versions, and more. This section keeps the `0.3.x`
-narrative specific to this API's own history; it is no longer the only place
-the general compatibility rules live.
+component content versions, and more. This section keeps the `0.3.x` and
+`0.4.x` narrative specific to this API's own history; it is no longer the only
+place the general compatibility rules live.
 
 Within one package compatibility line, documented top-level names,
 signatures, result fields, error-code values, and their stated semantics are
@@ -302,3 +302,7 @@ released initially at `v0.3.0`. `v0.3.2` applies the accepted
 without changing the facade or protocols. Released `create-forge` assigns the
 compatible `forge-template>=0.3.1,<0.4` engine range behind its engine path;
 the direct-Copier Library path remains separately compatible.
+
+The `0.4.x` line retains that facade and both protocol tuples. It adds the
+package-bound `data-science`, `jupyter`, and `scientific-python` components;
+clients adopt the new catalogue deliberately by moving their package range.

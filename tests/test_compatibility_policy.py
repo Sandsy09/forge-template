@@ -77,7 +77,7 @@ def test_published_compatibility_state_matches_the_engine() -> None:
     info = get_engine_info()
     pyproject = tomllib.loads(_PYPROJECT_TOML.read_text(encoding="utf-8"))
 
-    assert info.package_version == pyproject["project"]["version"] == "0.3.2"
+    assert info.package_version == pyproject["project"]["version"] == "0.4.0"
     assert info.projectspec_protocols == (PROJECT_SPEC_PROTOCOL_VERSION,) == (1,)
     assert (
         info.component_manifest_protocols

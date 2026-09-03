@@ -2,10 +2,10 @@
 
 A [Copier](https://copier.readthedocs.io/) template and public composition
 engine for modern Python projects. The source engine catalogue offers
-independent **library** and **CLI Application** archetypes plus the optional
-**Jupyter** and **Scientific Python** capabilities; the compatibility-preserving
-direct-Copier path remains Library-only and supports `copier update` through
-three-way merges.
+independent **Library**, **CLI Application**, and **Data Science** archetypes
+plus the optional **Jupyter** and **Scientific Python** capabilities; the
+compatibility-preserving direct-Copier path remains Library-only and supports
+`copier update` through three-way merges.
 
 ## Quick start
 
@@ -58,10 +58,10 @@ output-free starter notebook and the ignored `data/`, `models/`, and
 `artifacts/` working trees, and FT-12.03 /
 [ADR 0055](docs/adr/0055-validate-data-science-generated-projects.md)
 [validates both compositions](docs/data-science-validation.md) across Python
-3.11 and 3.14 and byte-pins `library`/`cli` output. All of this is present on
-unreleased `main`; the published `0.3.2` line remains a two-archetype
-catalogue until Stage 12 publishes `0.4.0`. The default direct-Copier Library
-path remains unchanged.
+3.11 and 3.14 and byte-pins `library`/`cli` output. The source package is now
+prepared at `0.4.0`; the published `0.3.2` line remains a two-archetype
+catalogue until FT-12.04 completes the release. The default direct-Copier
+Library path remains unchanged.
 
 ## Two repos
 
