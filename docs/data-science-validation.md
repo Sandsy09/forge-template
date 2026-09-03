@@ -1,8 +1,8 @@
 # Data Science generated-project validation
 
 This document records what the `data-science` archetype and its supported
-capability compositions are proven to do as generated projects, and what that
-proof deliberately leaves to the `0.4.0` release. It is the canonical result
+capability compositions are proven to do as generated projects, together with
+the published `0.4.0` release evidence. It is the canonical result
 of [FT-12.03 / #111](https://github.com/Sandsy09/forge-template/issues/111),
 the third child of
 [FT-EPIC-12](https://github.com/Sandsy09/forge-template/issues/98), adopted by
@@ -112,19 +112,52 @@ already-merged content:
 | `scientific-python` `tests/test_scientific_python.py` | `pandas` and `sklearn` ship no type information; `mypy --strict` failed on their imports | `# type: ignore[import-untyped]` on each, the way this repository handles an untyped dependency |
 | `jupyter` `scripts/check_notebooks.py` | at `target-version = "py314"` ruff rewrites `except (OSError, UnicodeError):` to the PEP 758 form, a syntax error below 3.14 | split into two single-exception `except` clauses, stable at any target — behaviour and the ten failure codes unchanged |
 
-Both components stay at `1.0.0`: neither has shipped in a published wheel, so
-these are content fixes within unreleased components, consistent with
-[ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md).
+Both components stayed at `1.0.0`: the corrections landed before their first
+published wheel, so they were fixes to unreleased component content,
+consistent with
+[ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md). They now
+ship unchanged in `forge-template 0.4.0`.
 
-## What this proof deliberately leaves open
+## Published 0.4.0 release verification
 
-- **The `0.4.0` release.** Merging is not releasing. The package stays
-  `0.3.2` and untagged; FT-12.04 / #112 bumps the version, runs
-  `release.yml`, and publishes the wheel and sdist to PyPI.
-- **The Copier regression gate.** `uv run poe combos` and `uv run poe update`
-  are release gates run once per published line, not per child — no Stage 11
-  or 12 change touches `template/` or `copier.yml`
-  ([compatibility and acceptance](data-science-compatibility-and-acceptance.md#regression-checks)).
+FT-12.04 prepared the release in
+[PR #128](https://github.com/Sandsy09/forge-template/pull/128), merged as
+commit `91f1cc5606778379a10b1b7591c9d924e0ba6218`. The protected
+[`main` run](https://github.com/Sandsy09/forge-template/actions/runs/33736737699)
+passed the aggregate gate, all four Copier combinations, update compatibility,
+archetype builds, Windows smoke, and wheel-content validation. The
+[`release.yml` dry run](https://github.com/Sandsy09/forge-template/actions/runs/33737131150)
+derived `v0.4.0`, displayed the complete squash-commit release notes since
+`v0.3.2`, and created no tag, GitHub Release, or PyPI file.
+
+The real
+[`release.yml` run](https://github.com/Sandsy09/forge-template/actions/runs/33737307302)
+created the annotated
+[`v0.4.0` tag and GitHub Release](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+at that same commit and published exactly one wheel and one source distribution
+to [PyPI](https://pypi.org/project/forge-template/0.4.0/):
+
+| Artefact | SHA-256 |
+| --- | --- |
+| `forge_template-0.4.0-py3-none-any.whl` | `ea731259f65c553c09b7b9fd33eb23c0cc4ea297359b34b11b713fcdaaeb6d5f` |
+| `forge_template-0.4.0.tar.gz` | `07b3df2c1845646de16971df11af3016acec4915971e47a2e746e7db95bc726e` |
+
+The downloaded hashes match PyPI metadata. Wheel `METADATA` and sdist
+`PKG-INFO` both report `0.4.0`. An isolated install reports ProjectSpec
+protocol `(1,)`, manifest protocols `(1, 2)`, and lexical discovery order
+`cli`, `data-science`, `jupyter`, `library`, `scientific-python`, with the
+accepted component versions and `data-science` → `jupyter>=1,<2` requirement.
+The wheel contains Foundation, all five manifests and their owned resources,
+and `py.typed`; repository-only checking modules remain excluded.
+
+Both accepted Data Science compositions were rendered from the downloaded
+wheel into temporary projects. Each resolved a lock, restored with
+`uv sync --all-groups --locked`, passed `uv run --locked poe check`, built a
+wheel and sdist, and installed in isolation. Their generated runtime metadata
+and lock state contain neither Forge package.
+
+## What remains open
+
 - **create-forge.** Client option and capability selection, `--engine-preview`
   delivery, and the end-to-end console-script proof are create-forge Stages
   13 and 14.

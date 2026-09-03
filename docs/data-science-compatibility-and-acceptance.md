@@ -8,12 +8,13 @@ accepted by
 the final child of
 [FT-EPIC-10](https://github.com/Sandsy09/forge-template/issues/96).
 
-This contract itself bumped no version or published package. Stage 11 has now
-added `jupyter` and `scientific-python` to the source catalogue; the published
-`0.3.2` wheel still contains only `library` and `cli`. Later Stage 12 work adds
-Data Science before FT-12.04 publishes `0.4.0`; Stage 14 reviews the result and
-publishes the reviewed line. Nothing here changes the direct-Copier Library
-path.
+This contract itself bumped no version or published package. Stages 11 and 12
+subsequently implemented the two capabilities and Data Science archetype, and
+FT-12.04 published them in
+[`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+on [PyPI](https://pypi.org/project/forge-template/0.4.0/). Stage 14 reviews the
+result and publishes the reviewed line. Nothing here changes the direct-Copier
+Library path.
 
 It completes the Stage 10 set:
 [the archetype shape](data-science-archetype.md) (FT-10.01),
@@ -30,7 +31,7 @@ inventory. Data Science moves exactly two of them: the package version and the
 set of discovered components. Every other axis is unchanged, and this is a
 requirement on the implementing stages, not a prediction.
 
-| Axis | Current | Data Science line | Change class |
+| Axis | Pre-rollout baseline | Data Science line | Change class |
 | --- | --- | --- | --- |
 | `forge-template` package | `0.3.2` | `0.4.0`, reviewed `0.4.1` | New minor compatibility line |
 | ProjectSpec protocol | `1` | `1` | Unchanged |
@@ -47,15 +48,16 @@ requirement on the implementing stages, not a prediction.
 
 The living
 [current compatibility state](compatibility-policy.md#current-compatibility-state)
-table stays at `0.3.2` until FT-12.04 actually publishes `0.4.0`; advancing it
-is a release step, not a planning one.
+table advanced to `0.4.0` only when FT-12.04 published the release. The table
+above preserves the `0.3.2` decision baseline so the classified transition
+remains explicit.
 
 ## The public engine API does not change
 
 `get_engine_info()`, `discover_components()`, `parse_project_spec()`,
-`plan_project()`, `render_project()`, `validate_rendered_project()`, and
+`plan_generation()`, `render_project()`, `validate_rendered_project()`, and
 `map_legacy_library_answers()` keep their current signatures, result fields,
-and `EngineErrorCode` values at package version `0.3.2`
+and `EngineErrorCode` values from package version `0.3.2` through `0.4.0`
 ([template-engine-api.md](template-engine-api.md)). The Data Science line adds
 catalogue content behind that unchanged facade:
 
@@ -112,7 +114,8 @@ components ride the same release and the roadmap sets it at `0.4.0`.
 version `1.0.0`. Component versions are independent PEP 440 and unrelated to
 the `0.4.0` package version or any protocol integer
 ([component-manifests.md](component-manifests.md#manifest-and-component-versions)):
-`library` and `cli` sit at `1.0.1` inside the `0.3.2` package today. A first
+`library` and `cli` sat at `1.0.1` inside the `0.3.2` baseline and remain there
+in `0.4.0`. A first
 production release of reviewed, owned content is a `1.0.0`, matching that
 precedent. Later movement follows the standard component version rules — patch
 for corrected content, minor for additive content or a new option, major for a
@@ -143,8 +146,8 @@ against a released or locally overridden engine.
 | Discovery returns `data-science`, `jupyter`, `scientific-python` with the accepted metadata, in lexical order | FT-12.01 | `uv run pytest tests/test_data_science_archetype.py` — **done** ([ADR 0053](adr/0053-production-data-science-archetype.md)) | FT-11.02 / #106 and FT-11.03 / #107 for the capabilities; FT-12.01 / #109 for the archetype |
 | Descriptor results contain no filesystem or package-resource path | FT-11.04 | `uv run pytest tests/test_capability_composition.py` — **done** ([ADR 0052](adr/0052-validate-production-capability-composition.md)) | FT-11.02 / #106 and FT-11.03 / #107 |
 | Invalid selections fail closed through stable structured engine errors before rendering | FT-11.04 | `uv run pytest tests/test_capability_composition.py` — **done** | FT-11.04 / #108 |
-| The built wheel ships every new manifest, contribution, and owned resource and still excludes repo tooling | FT-11.03 | `uv run poe check:wheel` — **done for Jupyter and Scientific Python** | FT-11.02 / #106 and FT-11.03 / #107 |
-| Public engine signatures, result fields, and `EngineErrorCode` values are unchanged | FT-12.04 | `uv run pytest tests/test_engine.py tests/test_compatibility_policy.py` | every Stage 11–12 child |
+| The built wheel ships every new manifest, contribution, and owned resource and still excludes repo tooling | FT-12.04 | `uv run poe check:wheel` plus the [published-wheel audit](data-science-validation.md#published-040-release-verification) — **done** | FT-11.02 / #106 and FT-11.03 / #107 |
+| Public engine signatures, result fields, and `EngineErrorCode` values are unchanged | FT-12.04 | `uv run pytest tests/test_engine.py tests/test_compatibility_policy.py` plus isolated `0.4.0` imports — **done** | every Stage 11–12 child |
 
 ### Generated-project checks
 
@@ -210,8 +213,8 @@ not a per-child obligation.
 
 | Check | Owner | Evidence command | First required at |
 | --- | --- | --- | --- |
-| All four Copier combos render and pass their own `poe check` | FT-12.04 | `uv run poe combos` | FT-12.04 / #112 |
-| `copier update` from the last tag preserves local edits and reaches HEAD | FT-12.04 | `uv run poe update` | FT-12.04 / #112 |
+| All four Copier combos render and pass their own `poe check` | FT-12.04 | `uv run poe combos` — **done** in the protected [release commit run](https://github.com/Sandsy09/forge-template/actions/runs/33736737699) | FT-12.04 / #112 |
+| `copier update` from the last tag preserves local edits and reaches HEAD | FT-12.04 | `uv run poe update` — **done** in the protected [release commit run](https://github.com/Sandsy09/forge-template/actions/runs/33736737699) | FT-12.04 / #112 |
 | Existing fast, wheel, and archetype suites stay green | every child | `uv run poe check`, `poe check:wheel`, `poe archetype` | every Stage 11–12 child |
 | `create-forge` Library, CLI Application, default-Copier, and no-engine paths are unchanged | CF-14.03 | `create-forge` regression suite | CF-14.03 / create-forge#113 |
 
@@ -251,7 +254,7 @@ not a competing procedure.
 
 | Gate | Owner | Entry criteria | Exit criteria |
 | --- | --- | --- | --- |
-| `forge-template` `0.4.0` | FT-12.04 / #112 | Every Engine, Generated-project, Python-endpoint, and Regression row above passes on protected `main`; release dry-run inspected | Tag `v0.4.0`, GitHub release, PyPI wheel and sdist all name one commit; installed discovery returns the three new components with accepted metadata |
+| `forge-template` `0.4.0` | FT-12.04 / #112 — **complete** | Every Engine, Generated-project, Python-endpoint, and Regression row above passed on protected [`main`](https://github.com/Sandsy09/forge-template/actions/runs/33736737699); the [dry run](https://github.com/Sandsy09/forge-template/actions/runs/33737131150) was inspected | The [release run](https://github.com/Sandsy09/forge-template/actions/runs/33737307302), tag, [GitHub Release](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0), and [PyPI artefacts](https://pypi.org/project/forge-template/0.4.0/) name commit `91f1cc5606778379a10b1b7591c9d924e0ba6218`; installed discovery and both Data Science compositions passed the [published artefact audit](data-science-validation.md#published-040-release-verification) |
 | `create-forge` `>=0.4,<0.5` adoption | CF-13.01 / create-forge#106 | `v0.4.0` is an immutable published target; contract tests pass against it | Engine extra is `>=0.4,<0.5`; lock refreshed; `0.3` and out-of-range engines fail before generation; plain installs unaffected |
 | Reviewed `forge-template` `0.4.1` | FT-14.03 / #115 | FT-14.01 composition review and FT-14.02 cross-repository validation complete; dry-run inspected | Tag `v0.4.1`, release, PyPI artefacts, and engine metadata agree; isolated public-import, discovery, render, and generated-project validation pass |
 | `create-forge` `0.3.0` | CF-14.04 / create-forge#114 | `v0.4.1` published; CF-14.01 adoption, CF-14.02 end-to-end, and CF-14.03 regressions complete | Tag `v0.3.0`; the released pair generates and validates the accepted Data Science compositions behind `--engine-preview`; both Stage 14 milestones close with no open issues |
@@ -271,12 +274,12 @@ earlier Stage 10 decisions. What genuinely remains open is narrow.
 | --- | --- | --- |
 | FT-11.01 / #105 | **Complete.** [ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md) fixed the three point identifiers, the any-selected-owner and composition-order rules, the byte-neutral-when-empty guarantee, and the one recorded `check`-array reformat | — |
 | FT-11.02 / #106 | **Complete.** `jupyter` at `1.0.0`, protocol `2`, ProjectSpec `[1]`, `>=3.11`, no options, no requires/conflicts; four development dependency lines; fixed tasks, validator, safe diagnostics, contributions, tests, and [ADR 0050](adr/0050-production-jupyter-capability.md) | — |
-| FT-11.03 / #107 | `scientific-python` at `1.0.0`, same shared fields; the four runtime dependency lines and their bounds | The packaged manifest, the import/smoke test, and guidance content |
+| FT-11.03 / #107 | `scientific-python` at `1.0.0`, same shared fields; the four runtime dependency lines and their bounds | **Complete.** [ADR 0051](adr/0051-production-scientific-python-capability.md): the packaged manifest, runtime dependency contribution, import test, guidance, and endpoint resolution evidence |
 | FT-11.04 / #108 | The valid/invalid selection set above; determinism and path-free descriptor requirements | **Complete.** [ADR 0052](adr/0052-validate-production-capability-composition.md) and [capability-composition-validation.md](capability-composition-validation.md): the fixture catalogue and the assertions that exercise it |
 | FT-12.01 / #109 | `data-science` at `1.0.0`, protocol `2`, `>=3.11`, `requires = [{ id = "jupyter", version = ">=1,<2" }]`, no options/conflicts, `uv-build-static`, generated version `0.1.0`, classifiers, reserved shape | **Complete.** [ADR 0053](adr/0053-production-data-science-archetype.md): the manifest, the owned `src/` tree and smoke tests, and the four packaging/metadata/classifier contributions |
 | FT-12.02 / #110 | The five root-anchored ignore entries; the prose-only guidance reading; the output-free stdlib starter notebook; no tracked placeholder | **Complete.** [ADR 0054](adr/0054-data-science-notebook-and-artefact-layout.md): the four notebook cells, the README project-shape and working-directory fragment, and the `gitignore-project-shape` fragment |
 | FT-12.03 / #111 | The Generated-project and Python-endpoint rows above; both valid compositions; the missing-Jupyter rejection | **Complete.** [ADR 0055](adr/0055-validate-data-science-generated-projects.md) and [data-science-validation.md](data-science-validation.md): the two test modules, the `-n 4` archetype task, the `library`/`cli` digest fixture, and two forced content corrections (`scientific-python` `mypy` ignores, `jupyter` `check_notebooks.py` `py314` `except` split) |
-| FT-12.04 / #112 | `0.4.0`; every unchanged axis; the release gate above | Changelog and release-note content, and the dry-run inspection |
+| FT-12.04 / #112 | `0.4.0`; every unchanged axis; the release gate above | **Complete.** [PR #128](https://github.com/Sandsy09/forge-template/pull/128), protected `main`, dry-run and publication workflows, [`v0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0), [PyPI](https://pypi.org/project/forge-template/0.4.0/), and the [published artefact audit](data-science-validation.md#published-040-release-verification) |
 
 ## Alignment with existing contracts
 
@@ -291,17 +294,16 @@ earlier Stage 10 decisions. What genuinely remains open is narrow.
 
 This contract does not decide or implement:
 
-- any manifest, resource, validator script, generated file, or test — owned by
-  Stages 11 and 12;
 - the `create-forge` capability and option selection UX, or its adoption of
   the `0.4` and `0.4.1` ranges — owned by create-forge Stages 13 and 14;
-- any package, protocol, or component version bump, tag, or release — the
-  `0.4.0` and `0.4.1` releases are performed by FT-12.04 and FT-14.03;
+- the reviewed `0.4.1` package release — owned by FT-14.03; `0.4.0` is
+  complete;
 - admitting a new CPython release or moving the Python floor — owned by
   [python-support.md](python-support.md); or
 - retiring the direct-Copier Library path, which remains a separate future
   initiative.
 
-No package dependency, manifest, catalogue entry, public API, ProjectSpec,
-template, Copier answer, generated output, tag, or release changes through
-this documentation decision.
+The original documentation decision changed no package dependency, manifest,
+catalogue entry, public API, ProjectSpec, template, Copier answer, generated
+output, tag, or release. The implementation and release evidence above records
+the later stages that executed its accepted contract.

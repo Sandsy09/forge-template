@@ -50,7 +50,7 @@ complete, Stage 11 is complete — the additive Foundation tooling points, the
 package-bound `jupyter` and `scientific-python` capabilities, and the
 [end-to-end composition validation](docs/capability-composition-validation.md)
 that proves the layer and fails every invalid selection closed — and Stage 12
-is under way: FT-12.01 / [ADR 0053](docs/adr/0053-production-data-science-archetype.md)
+is complete: FT-12.01 / [ADR 0053](docs/adr/0053-production-data-science-archetype.md)
 ships the `data-science` archetype itself, requiring `jupyter` and rejected
 before rendering without it, FT-12.02 /
 [ADR 0054](docs/adr/0054-data-science-notebook-and-artefact-layout.md) adds its
@@ -58,10 +58,11 @@ output-free starter notebook and the ignored `data/`, `models/`, and
 `artifacts/` working trees, and FT-12.03 /
 [ADR 0055](docs/adr/0055-validate-data-science-generated-projects.md)
 [validates both compositions](docs/data-science-validation.md) across Python
-3.11 and 3.14 and byte-pins `library`/`cli` output. The source package is now
-prepared at `0.4.0`; the published `0.3.2` line remains a two-archetype
-catalogue until FT-12.04 completes the release. The default direct-Copier
-Library path remains unchanged.
+3.11 and 3.14 and byte-pins `library`/`cli` output. FT-12.04 published and
+verified [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+on [PyPI](https://pypi.org/project/forge-template/0.4.0/), making the complete
+five-component catalogue available to engine clients. The default
+direct-Copier Library path remains unchanged.
 
 ## Two repos
 

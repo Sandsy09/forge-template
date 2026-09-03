@@ -17,29 +17,30 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [cli-application-archetype.md](cli-application-archetype.md) — the selected
   second reference archetype's package, dependency, command, and future
   composition contract.
-- [data-science-archetype.md](data-science-archetype.md) — the accepted
-  package-plus-notebooks shape and ownership boundary for the future third
-  production archetype.
+- [data-science-archetype.md](data-science-archetype.md) — the published
+  package-plus-notebooks shape and ownership boundary for the third production
+  archetype.
 - [data-science-capabilities.md](data-science-capabilities.md) — the accepted
   optionless Jupyter tooling and optional Scientific Python dependency
   contracts, including both production capability implementations on `main`.
 - [notebook-data-and-model-safeguards.md](notebook-data-and-model-safeguards.md)
   — fail-closed notebook validation order, deterministic failure identifiers,
-  safe diagnostics, and the prose-only working-tree guidance for the future
-  Data Science archetype.
+  safe diagnostics, and the prose-only working-tree guidance for the Data
+  Science archetype.
 - [data-science-compatibility-and-acceptance.md](data-science-compatibility-and-acceptance.md)
   — the versioned-axis classification, executable acceptance matrix, valid and
   invalid selections, and cross-repository release gates for the `0.4.0` Data
   Science engine line.
 - [capability-composition-validation.md](capability-composition-validation.md)
   — what the `jupyter` and `scientific-python` layer is proven to do across
-  every archetype, the invalid selections it fails closed, and what it
-  deliberately leaves to Stage 12 (FT-11.04, ADR 0052).
+  every archetype and the invalid selections it fails closed (FT-11.04,
+  ADR 0052).
 - [data-science-validation.md](data-science-validation.md) — what the
   `data-science` archetype and its capability compositions are proven to do
   as generated projects: deterministic composition, both window-edge Python
-  endpoints, the documented rejections, and the `library`/`cli` byte-level
-  regression pin (FT-12.03, ADR 0055).
+  endpoints, the documented rejections, the `library`/`cli` byte-level
+  regression pin, and the published `0.4.0` artefact audit (FT-12.03–12.04,
+  ADR 0055).
 - [roadmap-v2/](roadmap-v2/) — the Stage 10–14 two-repository roadmap for a
   package-backed Data Science archetype and reusable optional capabilities.
 - [roadmap-v1/](roadmap-v1/) — the completed historical Foundation roadmap

@@ -73,7 +73,7 @@ with the lifecycle below does not change the durable policy.
 These values match the existing `copier.yml`; adopting this policy changes no
 question, answer, generated file, or runtime behaviour.
 
-Future Data Science dependencies follow the same floor. The canonical
+Published Data Science dependencies follow the same floor. The canonical
 [initial capability contracts](data-science-capabilities.md#dependency-evidence)
 record the reviewed lower-release metadata for the Jupyter and Scientific
 Python lines, including the NumPy 2.4 ceiling needed to retain Python 3.11.

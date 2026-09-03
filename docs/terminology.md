@@ -84,7 +84,9 @@ same definition to an independent, optionless package-plus-notebooks shape. It
 owns its package, tests, starter notebook, and local working-tree conventions
 while leaving notebook tooling and the scientific stack to reusable
 capabilities. FT-12.01–03 implement and validate it in the source catalogue
-(ADR 0053/0054/0055); FT-12.04 publishes the `0.4.0` line that ships it.
+(ADR 0053/0054/0055); FT-12.04 published the
+[`0.4.0` line](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+that ships it.
 
 ### Capability
 
@@ -189,9 +191,8 @@ reference archetypes implemented by the [Library](library-archetype.md),
 [Data Science](data-science-archetype.md) contracts, plus the first
 production capabilities, `jupyter` and `scientific-python`. All selected
 components compose over one implicit, non-discoverable Foundation source
-rather than representing Foundation as a component. The latest published
-`0.3.2` catalogue still
-contains only the two archetypes.
+rather than representing Foundation as a component. The published `0.4.0`
+catalogue contains all three archetypes and both capabilities.
 
 ### ProjectSpec
 

@@ -8,9 +8,9 @@ A [Copier](https://copier.readthedocs.io/) template and public composition
 engine that scaffold modern Python projects. The source catalogue contains
 independent **library**, **CLI Application**, and **Data Science** archetypes
 plus the optionless **Jupyter** and **Scientific Python** capabilities. The
-source package is prepared at `0.4.0`; the published `v0.3.2` catalogue still
-contains only the two original archetypes and no capabilities until FT-12.04
-completes the release. The direct-Copier compatibility path remains
+published [`v0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+catalogue contains all five components with the public facade and protocol
+tuples unchanged from `0.3.x`. The direct-Copier compatibility path remains
 Library-only.
 
 Copier was chosen over Cookiecutter specifically for `copier update`, which
@@ -283,16 +283,17 @@ shellcheck steps) — see backlog item 1, done.
 
 ## Current state
 
-Working: Library and CLI Application archetypes plus the package-bound Jupyter
-and Scientific Python capabilities on `main`, with the two-capability
-composition layer validated end to end (FT-11.04 / ADR 0052 — Stage 11
+Working: Library, CLI Application, and Data Science archetypes plus the
+package-bound Jupyter and Scientific Python capabilities on `main`, with the
+two-capability composition layer validated end to end (FT-11.04 / ADR 0052 —
+Stage 11 closed) and the Data Science line published (FT-12.04 — Stage 12
 closed); all four Copier combos green
 locally and in CI, update merge validated, root and template
 `.gitattributes` both in place, no byte-empty template files remain,
 `task_runner`/`make` removed (it was the one untested, 100%-broken
-conditional — see Deferred). **`v0.3.2` is the latest tagged release; the
-source package is prepared at `0.4.0` pending FT-12.04 publication.** `v0.3.2`
-carries the reviewed Stage 08 boundary corrections. `v0.3.0` first carried
+conditional — see Deferred). **`v0.4.0` is the latest tagged release and the
+first published five-component Data Science line.** `v0.3.2` carries the
+reviewed Stage 08 boundary corrections. `v0.3.0` first carried
 the production
 engine catalogue (both `library` and `cli`) alongside the direct-Copier
 template. Root repo hygiene is done:
@@ -351,8 +352,9 @@ new components at `1.0.0`), leaving every protocol and the public engine
 facade unchanged; acceptance is an executable matrix whose rows each name one
 non-interactive command and one FT- or CF-repository owner; dependency
 resolution is swept at Python 3.11 and 3.14; and four release gates bind to
-create-forge's existing coordination order. No version is bumped here —
-FT-12.04 and FT-14.03 perform the actual releases. **Stage 10 is complete.**
+create-forge's existing coordination order. No version was bumped by the
+decision itself — FT-12.04 has performed the `0.4.0` release and FT-14.03
+retains the later `0.4.1` release. **Stage 10 is complete.**
 
 Stage 11 (`FT-EPIC-11 / #97`) delivers the reusable capability layer.
 FT-11.01's
@@ -459,8 +461,13 @@ two content corrections in already-merged capability content —
 `# type: ignore[import-untyped]` on `pandas`/`sklearn` (generated `mypy
 --strict`), and `jupyter`'s `scripts/check_notebooks.py` splits one
 `except (OSError, UnicodeError)` into two clauses (ruff at `target-version =
-py314` rewrites it to pre-3.14 syntax); both components stay `1.0.0`. **FT-12.01
-through FT-12.03 are complete; `FT-12.04 / #112` is the next actionable issue.**
+py314` rewrites it to pre-3.14 syntax); both components stay `1.0.0`. FT-12.04
+prepared the package in [PR #128](https://github.com/Sandsy09/forge-template/pull/128),
+then published and verified
+[`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+on [PyPI](https://pypi.org/project/forge-template/0.4.0/), with the public API
+and protocols unchanged. **FT-12.01 through FT-12.04 are complete;
+`FT-EPIC-12 / #98` and its milestone are closed.**
 
 FT-08.02 populated the
 production component catalogue under the

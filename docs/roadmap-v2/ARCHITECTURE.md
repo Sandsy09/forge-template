@@ -48,8 +48,9 @@ create-forge staging, uv lock, atomic finalisation
   `jupyter` requirement, and FT-12.02 completes its generated shape with the
   output-free starter notebook and the ignored working trees. FT-12.03
   validates both compositions across Python 3.11 and 3.14 and byte-pins
-  `library`/`cli` output. All are present on unreleased `main`; FT-12.04 adds
-  the `0.4.0` release.
+  `library`/`cli` output. FT-12.04 published the complete catalogue in
+  [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0),
+  making create-forge Stage 13 actionable.
 - Capabilities remain bundled, reviewed forge-template components. This
   roadmap does not introduce plugins or remote component registries.
 - create-forge consumes public descriptors and never recreates component
