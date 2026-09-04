@@ -227,7 +227,7 @@ Every change is a branch (`<type>/<short-slug>`) and a pull request into
 
 ## Validation
 
-Run in this order. All five currently pass.
+Run in this order. All six currently pass.
 
 ```bash
 uv run poe check             # fast: this repo's own lint/typecheck + schema/ADR/render unit tests
@@ -235,7 +235,13 @@ uv run poe combos            # slow: 4 combos in parallel, render assertions, ea
 ./scripts/verify-ci.sh <org> # pushes poe combos' output to throwaway repos, watches CI
 uv run poe update             # slow: both copier update scenarios (local edits survive; latest tag -> HEAD)
 uv run poe archetype          # slow: real uv build/install/import for the Library archetype, 3 packaging modes
+uv run poe crossrepo          # slow, sibling-gated: pairs this repo with a local create-forge checkout
 ```
+
+`poe crossrepo` (FT-14.02, [docs/cross-repository-validation.md](docs/cross-repository-validation.md))
+skips itself when no `create-forge` checkout is found at `../create-forge` or
+`--create-forge-root`, and is deliberately absent from CI — see
+[ADR 0057](docs/adr/0057-validate-the-cross-repository-data-science-line.md).
 
 `poe check`, `poe combos`, `poe update`, and `poe archetype` are all `pytest`
 under a marker select (`tests/test_combos.py` / `tests/test_update.py` /
@@ -477,8 +483,22 @@ consumes ProjectSpec behind `new --engine-preview` with the compatible
 ([ADR 0056](docs/adr/0056-three-archetype-composition-boundary-review.md))
 finds no production boundary defect, records all deliberate duplication and
 all eleven Foundation extension points, and deterministically exercises all
-ten valid compositions. FT-14.02 / #114 is the next actionable issue;
-FT-14.03 / #115 alone owns the reviewed `0.4.1` release. Stage 14 remains open.
+ten valid compositions. FT-14.02 / #114's
+[cross-repository validation](docs/cross-repository-validation.md)
+([ADR 0057](docs/adr/0057-validate-the-cross-repository-data-science-line.md))
+then pairs current forge-template and create-forge `main` in one local,
+non-PyPI install: installed engine metadata matches the FT-14.01 handoff
+table, all ten valid compositions generate through the real `create-forge
+new --engine-preview` console script with deterministic rendering and
+failure cleanup, both Data Science compositions pass their generated `poe
+check` at Python 3.11/3.13/3.14, create-forge's own
+`tests/test_engine_cross_repository.py` passes against the pair, and the
+ADR 0056 package-size figures (60 files, 39,182 bytes, 892 bytes of
+duplicate overhead) are now pinned executably alongside a wheel-size ceiling
+in `scripts/check_wheel.py`. The new `crossrepo` pytest marker
+(`uv run poe crossrepo`) is sibling-gated and deliberately absent from CI.
+**FT-14.01 and FT-14.02 are complete;** FT-14.03 / #115 alone owns the
+reviewed `0.4.1` release. Stage 14 remains open.
 
 FT-08.02 populated the
 production component catalogue under the

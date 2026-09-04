@@ -22,6 +22,14 @@ PyPI"):
    `[project.dependencies]` -- no dev-group extras. This is the check that
    would have caught #8 (`pyyaml` imported but undeclared): exclusion alone
    proves the modules are absent, not that what remains is self-sufficient.
+
+FT-14.02 (docs/cross-repository-validation.md) added the size ceiling below:
+ADR 0056 measured a 72,566-byte local review wheel; the published `0.4.0`
+wheel is 72,544 bytes. `_MAX_WHEEL_BYTES` is a generous ceiling around that
+figure, not a tight pin -- zip metadata (timestamps, compression) makes an
+exact byte count non-reproducible across machines, but an unbounded content
+addition (a new archetype or capability outgrowing the reviewed catalogue)
+should still fail loudly here rather than silently ship.
 """
 
 from __future__ import annotations
@@ -67,6 +75,9 @@ _MUST_NOT_CONTAIN = (
     "forge_template/schema.py",
     "forge_template/github_actions.py",
 )
+# A generous ceiling around ADR 0056's 72,566-byte review measurement and the
+# published 0.4.0 wheel's 72,544 bytes -- see the module docstring.
+_MAX_WHEEL_BYTES = 131_072  # 128 KiB
 _SMOKE_IMPORT = (
     "import forge_template; "
     "descriptors = forge_template.discover_components(); "
@@ -109,6 +120,19 @@ def _check_contents(wheel: Path) -> list[str]:
     return failures
 
 
+def _check_size(wheel: Path) -> str | None:
+    """Return an error message if the built wheel exceeds the size ceiling."""
+    size = wheel.stat().st_size
+    if size > _MAX_WHEEL_BYTES:
+        return (
+            f"too large: {wheel.name} is {size:,} bytes, over the "
+            f"{_MAX_WHEEL_BYTES:,}-byte ceiling recorded in "
+            "docs/cross-repository-validation.md -- if this growth is "
+            "expected, re-measure and raise _MAX_WHEEL_BYTES deliberately"
+        )
+    return None
+
+
 def _check_isolated_import(wheel: Path) -> str | None:
     """Return an error message if the wheel fails to import/discover in
     isolation, resolving only its declared runtime dependencies.
@@ -142,15 +166,18 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as tmp:
         wheel = _build_wheel(Path(tmp))
         failures = _check_contents(wheel)
-        import_failure = _check_isolated_import(wheel)
-        if import_failure:
+        if size_failure := _check_size(wheel):
+            failures.append(size_failure)
+        if import_failure := _check_isolated_import(wheel):
             failures.append(import_failure)
 
         if failures:
             print("\n".join(failures), file=sys.stderr)
             return 1
 
-    print(f"ok: {wheel.name} ships the engine facade only")
+        size = wheel.stat().st_size
+
+    print(f"ok: {wheel.name} ({size:,} bytes) ships the engine facade only")
     return 0
 
 

@@ -132,7 +132,10 @@ classifies every versioned axis for the `0.4.0` line and fixes the executable
 acceptance matrix and release gates. The
 [composition architecture review](docs/composition-architecture-review.md)
 records the Stage 08 corrections and Stage 14 confirmation across all three
-archetypes and both capabilities, and
+archetypes and both capabilities, the
+[cross-repository validation](docs/cross-repository-validation.md) then proves
+current `forge-template` and `create-forge` `main` pair and pass together
+through a local, non-PyPI install, and
 the [Python support policy](docs/python-support.md) defines the
 supported CPython window and lifecycle, the
 [editor integration strategy](docs/editor-integration.md) keeps the baseline

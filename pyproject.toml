@@ -187,6 +187,7 @@ markers = [
     "combos: scaffolds every answer combination and runs its full toolchain (slow; `poe combos`)",
     "update: exercises `copier update` end-to-end (slow; `poe update`)",
     "archetype: validates real production archetype and capability projects (slow; `poe archetype`)",
+    "crossrepo: validates this repo against a sibling create-forge checkout (slow, sibling-gated; `poe crossrepo`)",
 ]
 
 [tool.coverage.run]
@@ -210,7 +211,7 @@ format = "ruff format ."
 "lint:fix" = "ruff check --fix ."
 "format:check" = "ruff format --check ."
 typecheck = "mypy"
-test = "pytest -m 'not (combos or update or archetype)'"
+test = "pytest -m 'not (combos or update or archetype or crossrepo)'"
 combos = "pytest -m combos -n 4"
 update = "pytest -m update"
 # -n 4: FT-12.03 added a 2x2 Data Science endpoint sweep (both compositions x
@@ -219,6 +220,15 @@ update = "pytest -m update"
 archetype = "pytest -m archetype -n 4"
 "verify-ci" = "bash scripts/verify-ci.sh"
 check = ["format:check", "lint", "typecheck", "test"]
+
+# FT-14.02: validates this repo's main against a sibling create-forge
+# checkout through a local (non-PyPI) paired install -- see
+# docs/cross-repository-validation.md. Skips itself when
+# ../create-forge (or --create-forge-root) is not a create-forge checkout, so
+# it is deliberately absent from CI (ADR 0057): forge-template CI must not
+# depend on a moving sibling `main`. Slow -- real uv lock resolutions plus
+# generated `poe check` runs with live Jupyter kernels.
+crossrepo = "pytest -m crossrepo"
 
 # Verifies the built wheel ships the public engine facade and content trees
 # but excludes this repo's own CI tooling (adr.py, render.py, schema.py,

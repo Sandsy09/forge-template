@@ -252,8 +252,22 @@ across Python 3.11 and 3.14 -- see
 A change to a component manifest, its packaged resources, or
 `[tool.hatch.build.targets.wheel]` should also run `uv run poe check:wheel`
 (see [Releasing](#releasing)), which verifies the built wheel still ships
-every manifest, content tree, and extension contribution and still excludes
-this repo's own CI tooling.
+every manifest, content tree, and extension contribution, still excludes
+this repo's own CI tooling, and stays under its recorded size ceiling.
+
+A change to the Foundation/component catalogue or the public engine facade
+that a `create-forge` checkout could observe should also run
+`uv run poe crossrepo` (`pytest -m crossrepo`) with a sibling `create-forge`
+checkout present at `../create-forge` (or pass
+`--create-forge-root=<path>`). It pairs both local working trees in one
+isolated install -- never PyPI -- and proves every valid composition
+generates through the real `create-forge new --engine-preview` console
+script, fails the documented rejections closed, and reproduces the recorded
+package-size figures; see
+[cross-repository-validation.md](docs/cross-repository-validation.md). It is
+slow (real `uv lock` resolutions plus generated `poe check` runs with live
+Jupyter kernels) and deliberately absent from CI -- see
+[ADR 0057](docs/adr/0057-validate-the-cross-repository-data-science-line.md).
 
 ## Proposing a template change
 

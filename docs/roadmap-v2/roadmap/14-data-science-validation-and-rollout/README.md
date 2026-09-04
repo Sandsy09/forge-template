@@ -20,10 +20,12 @@ forge-template completes provider review first:
    is complete: it reviewed the three-archetype composition boundaries after
    CF-13.05 and found no production defect.
 2. [FT-14.02 / #114](https://github.com/Sandsy09/forge-template/issues/114)
-   is next: it runs cross-repository compatibility validation against both
-   main branches.
+   is complete: it ran cross-repository compatibility validation against both
+   `main` branches, paired through a local, non-PyPI install
+   ([evidence](../../../cross-repository-validation.md)).
 3. [FT-14.03 / #115](https://github.com/Sandsy09/forge-template/issues/115)
-   publishes and verifies the reviewed `forge-template` 0.4.1 release.
+   is next: it publishes and verifies the reviewed `forge-template` 0.4.1
+   release.
 
 create-forge then completes client rollout:
 

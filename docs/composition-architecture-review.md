@@ -173,3 +173,18 @@ compositions plus Library and CLI, confirm deterministic failure cleanup,
 re-check wheel resources and measured size, and record evidence without an
 unpublished registry dependency. It must not tag, release, change the client
 dependency range, or alter the default Copier path.
+
+## FT-14.02 executed the handoff
+
+[ADR 0057](adr/0057-validate-the-cross-repository-data-science-line.md)
+records FT-14.02's result: a paired local install of both `main` branches —
+never PyPI — generates and passes its own checks for all ten valid
+compositions, fails the documented rejections closed with no partial
+destination, and reproduces this review's package-size figures exactly
+(60 files, 39,182 bytes, 892 bytes of duplicate overhead), now pinned by
+`tests/test_composition_architecture_review.py`. `create-forge`'s own
+canonical `tests/test_engine_cross_repository.py` passes against the same
+pair. See
+[cross-repository-validation.md](cross-repository-validation.md) for the
+exact commands, revisions, and outcomes. The candidate above is unchanged;
+FT-14.03 alone bumps and publishes `0.4.1`.
