@@ -312,4 +312,7 @@ clients adopt the new catalogue deliberately by moving their package range.
 The current `create-forge` `main` branch accepts `forge-template>=0.4,<0.5`
 behind `new --engine-preview`; the Stage 14 review in
 [ADR 0056](adr/0056-three-archetype-composition-boundary-review.md) changes no
-public interface or protocol.
+public interface or protocol. FT-14.03 prepares that reviewed line as `0.4.1`
+-- the same facade, protocol tuples, and catalogue as `0.4.0`, republished
+after [cross-repository validation](cross-repository-validation.md) so
+create-forge Stage 14 has an immutable target.

@@ -338,7 +338,7 @@ def test_installed_engine_metadata_matches_the_reviewed_candidate(
     assert result.returncode == 0, result.stdout + result.stderr
     payload = json.loads(result.stdout)
 
-    assert payload["package_version"] == "0.4.0"
+    assert payload["package_version"] == "0.4.1"
     assert payload["projectspec_protocols"] == [1]
     assert payload["component_manifest_protocols"] == [1, 2]
     assert payload["component_ids"] == [

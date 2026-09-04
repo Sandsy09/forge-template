@@ -61,7 +61,11 @@ output-free starter notebook and the ignored `data/`, `models/`, and
 3.11 and 3.14 and byte-pins `library`/`cli` output. FT-12.04 published and
 verified [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
 on [PyPI](https://pypi.org/project/forge-template/0.4.0/), making the complete
-five-component catalogue available to engine clients. The default
+five-component catalogue available to engine clients. Stage 14's
+[composition review](docs/composition-architecture-review.md) and
+[cross-repository validation](docs/cross-repository-validation.md) found no
+production boundary defect; the source package is now prepared at `0.4.1`
+pending FT-14.03's publication of that reviewed line. The default
 direct-Copier Library path remains unchanged.
 
 ## Two repos
