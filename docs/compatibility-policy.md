@@ -182,13 +182,13 @@ rendered bytes.
 
 ## Current compatibility state
 
-Living snapshot, reviewed 2026-09-03. Advancing it in line with the rules
+Living snapshot, reviewed 2026-09-04. Advancing it in line with the rules
 above does not require a new ADR; a semantic change to those rules does (see
 "Ownership and change process").
 
 | Axis | Current value |
 | --- | --- |
-| `forge-template` package | `0.4.0` |
+| `forge-template` package | `0.4.1` |
 | ProjectSpec protocol | `1` |
 | Component manifest protocol | `1`, `2` |
 | `library` component | `1.0.1` |
@@ -204,14 +204,14 @@ Released `create-forge` declares the compatible
 `forge-template>=0.3.1,<0.4` engine range
 ([template-engine-api.md](template-engine-api.md#compatibility-and-current-cutover-boundary)).
 
-The Data Science line advances the package to `0.4.0` and adds
-`data-science`, `jupyter`, and `scientific-python` at component version
+The Data Science line advanced the package to `0.4.0`, now available as the
+[`v0.4.0` GitHub Release](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
+and [PyPI distribution](https://pypi.org/project/forge-template/0.4.0/), and
+added `data-science`, `jupyter`, and `scientific-python` at component version
 `1.0.0`, with every protocol integer unchanged. The
 [Data Science compatibility and acceptance contract](data-science-compatibility-and-acceptance.md)
-classifies each axis and the release gate. That line is now available as the
-[`v0.4.0` GitHub Release](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
-and [PyPI distribution](https://pypi.org/project/forge-template/0.4.0/). The
-reviewed Stage 14 line remains planned as `0.4.1`;
+classifies each axis and the release gate. FT-14.03 prepares the reviewed
+`0.4.1` line here pending publication, the same way FT-12.04 did for `0.4.0`;
 [python-support.md](python-support.md) uses the same living snapshot pattern
 for its own state.
 

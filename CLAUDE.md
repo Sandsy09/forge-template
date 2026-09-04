@@ -93,7 +93,7 @@ and option-schema vocabulary (protocols `1` and `2`, `format` support) in
 [template-engine API](docs/template-engine-api.md) in `engine.py` exposes
 package-bound discovery, strict validation, deterministic planning, in-memory
 rendering, structured failures, and the `map_legacy_library_answers` helper
-from the top-level package, at package version `0.4.0`. The `0.4.x` line keeps
+from the top-level package, at package version `0.4.1`. The `0.4.x` line keeps
 the `0.3.x` public facade and protocol tuples while adding the Data Science
 catalogue; ADR 0037's Stage 08 review and ADR 0056's Stage 14 confirmation
 define its Foundation boundary. The
