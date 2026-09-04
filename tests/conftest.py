@@ -1,9 +1,10 @@
 """Shared fixtures for the pytest-based validation suites.
 
-The `combos` and `update` markers select the slow suites (each scaffolds a
-real project via Copier and runs its full toolchain against it). The default
-`poe test` deselects both -- see `[tool.pytest.ini_options] markers` and the
-`test`/`combos`/`update` Poe tasks in pyproject.toml.
+The `combos`, `update`, `archetype`, and `crossrepo` markers select the slow
+suites (each scaffolds a real project -- via Copier, the engine, or a sibling
+create-forge checkout -- and runs its own toolchain against it). The default
+`poe test` deselects all four -- see `[tool.pytest.ini_options] markers` and
+the matching Poe tasks in pyproject.toml.
 """
 
 from __future__ import annotations
@@ -49,6 +50,17 @@ def pytest_addoption(parser: pytest.Parser) -> None:
             "other change -- see docs/composition-fixtures.md."
         ),
     )
+    parser.addoption(
+        "--create-forge-root",
+        default=None,
+        help=(
+            "Path to a sibling create-forge checkout for the `crossrepo` "
+            "marker (tests/test_cross_repository_validation.py). Defaults to "
+            "../create-forge next to this repository. Mirrors create-forge's "
+            "own --forge-template-root option. See "
+            "docs/cross-repository-validation.md."
+        ),
+    )
 
 
 @pytest.fixture(scope="session")
@@ -66,6 +78,29 @@ def update_goldens(pytestconfig: pytest.Config) -> bool:
     the composition-contract goldens and the archetype regression digests.
     """
     return bool(pytestconfig.getoption("--update-goldens"))
+
+
+@pytest.fixture(scope="session")
+def create_forge_root(pytestconfig: pytest.Config) -> Path:
+    """Resolve the sibling create-forge checkout for the `crossrepo` marker.
+
+    `--create-forge-root` overrides the default `../create-forge` sibling
+    path. Skips the whole session the moment this fixture is first requested
+    if no such checkout is present -- every `crossrepo`-marked test depends
+    on it, so one skip message covers the module rather than one per test.
+    """
+    override = pytestconfig.getoption("--create-forge-root")
+    root = Path(override) if override else REPO_ROOT.parent / "create-forge"
+    pyproject = root / "pyproject.toml"
+    if not pyproject.is_file() or 'name = "create-forge"' not in pyproject.read_text(
+        encoding="utf-8"
+    ):
+        pytest.skip(
+            f"no create-forge checkout found at {root} -- pass "
+            "--create-forge-root=<path> or place one at ../create-forge "
+            "next to this repository (see docs/cross-repository-validation.md)"
+        )
+    return root
 
 
 @pytest.fixture(scope="session", autouse=True)

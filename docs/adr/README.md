@@ -59,6 +59,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0054 — Ship the Data Science notebook and artefact layout](0054-data-science-notebook-and-artefact-layout.md)
 - [0055 — Validate Data Science generated projects](0055-validate-data-science-generated-projects.md)
 - [0056 — Confirm the three-archetype composition boundaries](0056-three-archetype-composition-boundary-review.md)
+- [0057 — Validate the cross-repository Data Science line](0057-validate-the-cross-repository-data-science-line.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

@@ -22,8 +22,8 @@ index records every forge-template roadmap-v2 epic and child.
 | FT-12.04 | [#112](https://github.com/Sandsy09/forge-template/issues/112) | Complete | [#98](https://github.com/Sandsy09/forge-template/issues/98) | [#111](https://github.com/Sandsy09/forge-template/issues/111) (complete) | Data Science Archetype — Stage 12 |
 | FT-EPIC-14 | [#99](https://github.com/Sandsy09/forge-template/issues/99) | In progress | — | [create-forge#103](https://github.com/Sandsy09/create-forge/issues/103) (complete) | Data Science Validation and Rollout — Stage 14 |
 | FT-14.01 | [#113](https://github.com/Sandsy09/forge-template/issues/113) | Complete | [#99](https://github.com/Sandsy09/forge-template/issues/99) | [create-forge#110](https://github.com/Sandsy09/create-forge/issues/110) (complete) | Data Science Validation and Rollout — Stage 14 |
-| FT-14.02 | [#114](https://github.com/Sandsy09/forge-template/issues/114) | Open | [#99](https://github.com/Sandsy09/forge-template/issues/99) | [#113](https://github.com/Sandsy09/forge-template/issues/113) (complete) | Data Science Validation and Rollout — Stage 14 |
-| FT-14.03 | [#115](https://github.com/Sandsy09/forge-template/issues/115) | Blocked | [#99](https://github.com/Sandsy09/forge-template/issues/99) | [#114](https://github.com/Sandsy09/forge-template/issues/114) | Data Science Validation and Rollout — Stage 14 |
+| FT-14.02 | [#114](https://github.com/Sandsy09/forge-template/issues/114) | Complete | [#99](https://github.com/Sandsy09/forge-template/issues/99) | [#113](https://github.com/Sandsy09/forge-template/issues/113) (complete) | Data Science Validation and Rollout — Stage 14 |
+| FT-14.03 | [#115](https://github.com/Sandsy09/forge-template/issues/115) | Open | [#99](https://github.com/Sandsy09/forge-template/issues/99) | [#114](https://github.com/Sandsy09/forge-template/issues/114) (complete) | Data Science Validation and Rollout — Stage 14 |
 
 ## Cross-repository continuation
 

@@ -18,7 +18,9 @@ Stages 10–13 are complete. The package-bound Data Science catalogue is
 available in [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0),
 and current `create-forge` `main` consumes it behind `--engine-preview` with
 the `forge-template>=0.4,<0.5` range. FT-14.01 has completed the provider
-boundary review; FT-14.02 cross-repository validation is next.
+boundary review, and FT-14.02 has completed cross-repository validation of
+both `main` branches paired locally; FT-14.03's reviewed `0.4.1` release is
+next.
 
 ## Repository roles
 

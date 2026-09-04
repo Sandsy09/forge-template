@@ -33,8 +33,8 @@ composition can be presented generically.
 
 Stages 10 through 13 are complete. Current `create-forge` `main` consumes the
 immutable `forge-template 0.4.0` provider line behind `--engine-preview`.
-FT-14.01's boundary review is complete, and FT-14.02 cross-repository
-validation is the next delivery step.
+FT-14.01's boundary review and FT-14.02's cross-repository validation are
+both complete; FT-14.03's reviewed `0.4.1` release is the next delivery step.
 
 ## Delivery rules
 

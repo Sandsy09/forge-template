@@ -111,6 +111,10 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [composition-architecture-review.md](composition-architecture-review.md) —
   the Stage 14 three-archetype/five-component ownership, duplication,
   Foundation-boundary, extension-point, quality, and client hand-off review.
+- [cross-repository-validation.md](cross-repository-validation.md) — FT-14.02's
+  proof that current forge-template and create-forge `main` pair and pass
+  together through a local, non-PyPI install: every accepted composition,
+  deterministic failure cleanup, and re-measured package size.
 - [compatibility-policy.md](compatibility-policy.md) — the Forge-Blueprint
   compatibility policy: every versioned engine axis, compatible ranges,
   deprecation windows, and unsupported-version reporting requirements.

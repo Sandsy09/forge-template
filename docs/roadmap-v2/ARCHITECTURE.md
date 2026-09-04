@@ -65,8 +65,10 @@ the
 [compatibility and acceptance contract](../data-science-compatibility-and-acceptance.md):
 only the package version and the discovered-component set move. FT-14.01's
 [three-archetype review](../composition-architecture-review.md) confirms the
-resulting line without changing any versioned surface; FT-14.02 next validates
-the two repositories together before final rollout.
+resulting line without changing any versioned surface; FT-14.02's
+[cross-repository validation](../cross-repository-validation.md) then
+confirmed both repositories work together, locally paired, before final
+rollout.
 
 The default Copier path, `template/`, `copier.yml`, and stored Copier answers
 are outside this roadmap unless a later, separately accepted cutover changes
