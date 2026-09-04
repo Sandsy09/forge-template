@@ -89,9 +89,9 @@ entry points, and the four neutral Foundation extension points it shares
 with Library. The published `0.4.0` catalogue's `discover_components()` result
 is `("cli", "data-science", "jupyter", "library", "scientific-python")`.
 The [composition architecture review](docs/composition-architecture-review.md)
-records which duplicated resources remain archetype-owned, which accidental
-Foundation assumptions were removed, and why lock resolution belongs to
-client finalisation. The
+records every retained duplicate and all eleven Foundation extension points,
+proves the boundary across all three archetypes and both capabilities, and
+explains why lock resolution belongs to client finalisation. The
 [Forge-Blueprint compatibility policy](docs/compatibility-policy.md) defines
 every versioned engine axis, compatible ranges, deprecation windows, and the
 facts a conformant unsupported-version report must carry, without changing

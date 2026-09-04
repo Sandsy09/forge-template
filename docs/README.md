@@ -87,9 +87,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   discriminated Foundation/component contribution target.
 - [composition-order.md](composition-order.md) — deterministic tier and
   within-tier application order, cross-tier dependency handling, cycle
-  rejection, and content-path ordering for the future composition engine.
+  rejection, and content-path ordering for the composition engine.
 - [file-conflicts.md](file-conflicts.md) — output targets, dispositions,
-  extension points, and collision-safety rules for the future composition
+  extension points, and collision-safety rules for the composition
   engine.
 - [extension-points.md](extension-points.md) — the complete sanctioned
   extension surface, the denial of any `override` grant, and the published,
@@ -97,7 +97,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   FT-11.01 added three Foundation points for capability tooling.
 - [template-variables.md](template-variables.md) — the rendered
   template-variable namespace, component option declarations, and
-  resolution/rejection rules for the future composition engine.
+  resolution/rejection rules for the composition engine.
 - [composition-fixtures.md](composition-fixtures.md) — golden composed-output
   fixtures, invalid-catalogue scenarios, and the determinism guarantee they
   prove for the composition, file-conflict, and template-variable contracts
@@ -109,8 +109,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   side-effect-free plan/output, `pyproject.toml`, and template-completion checks
   every successful engine render passes.
 - [composition-architecture-review.md](composition-architecture-review.md) —
-  the two-archetype duplication, Foundation-boundary, quality, and client
-  finalisation review that closes Stage 08.
+  the Stage 14 three-archetype/five-component ownership, duplication,
+  Foundation-boundary, extension-point, quality, and client hand-off review.
 - [compatibility-policy.md](compatibility-policy.md) — the Forge-Blueprint
   compatibility policy: every versioned engine axis, compatible ranges,
   deprecation windows, and unsupported-version reporting requirements.

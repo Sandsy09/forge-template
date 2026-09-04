@@ -67,8 +67,8 @@ Foundation owns the underlying provider-neutral commands and outcomes. A
 platform component may invoke them, but the platform does not redefine them.
 The composed implementation uses repository-wide Ruff, mypy, and pytest
 discovery so Foundation needs no knowledge of an archetype's source or test
-layout. The [two-archetype review](composition-architecture-review.md)
-records the concrete correction.
+layout. The [Stage 14 composition review](composition-architecture-review.md)
+confirms that boundary across all three archetypes and both capabilities.
 
 ### Neutral handoff material
 

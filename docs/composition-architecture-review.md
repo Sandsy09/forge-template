@@ -1,109 +1,175 @@
 # Composition Architecture Review
 
-This is the living record of the Stage 08 review performed after both
-production reference archetypes became usable through the public engine and
-the `create-forge` reference client. It applies the canonical
-[Foundation scope](foundation-scope.md), [component ownership](component-manifests.md),
-and [engine API](template-engine-api.md) contracts to concrete Library and CLI
-Application output. [ADR 0037](adr/0037-two-archetype-composition-review.md)
-records why the resulting boundary changes were accepted.
+This is the living record of Forge's production composition reviews. Stage 08
+reviewed Library and CLI Application after both became usable through the
+public engine; [ADR 0037](adr/0037-two-archetype-composition-review.md)
+records the corrections that review accepted. Stage 14 repeats the review
+after Data Science, Jupyter, and Scientific Python became real catalogue
+entries and create-forge Stage 13 exercised them through the shared preview
+pipeline. [ADR 0056](adr/0056-three-archetype-composition-boundary-review.md)
+records the accepted result.
 
-## Review result
+## Stage 14 review result
 
-The composition model remains archetype-neutral. `library` and `cli` are
-independent selections with no requirement, conflict, inheritance, or
-cross-component resource access. Foundation remains implicit and runtime-free;
-ProjectSpec protocol `1`, manifest protocol `2`, option-schema protocol `2`,
-Foundation protocol `1`, and the public engine facade are unchanged.
+The three-archetype model remains correctly separated. Foundation is implicit,
+mandatory, runtime-free, shape-neutral, and provider-neutral. Each archetype
+owns a complete primary project shape; Jupyter and Scientific Python own their
+optional reusable concerns; create-forge owns selection UX and filesystem
+finalisation.
 
-The comparison did expose four implementation leaks, all corrected in the
-`0.3.2` compatibility line:
+The review found no new production boundary defect. The Stage 08 corrections
+remain effective: Foundation contains no package-layout assumption, typed
+classifier, coverage or pre-commit capability, component runtime, domain tool,
+or client orchestration. Consequently FT-14.01 changes no engine module,
+Foundation/component resource, manifest, rendered byte, public signature,
+protocol, component version, or package version. It updates the executable
+review and the mutable contracts that still described the pre-Data Science
+state.
 
-| Finding | Previous placement | Accepted correction |
-| --- | --- | --- |
-| Typed-package classifier | Foundation always emitted `Typing :: Typed`. | Each archetype contributes the classifier through the existing `pyproject-classifiers` point because each owns its `py.typed` marker. |
-| Quality target layout | Foundation named `src`, `tests`, and `tests.*`. | Ruff, mypy, and pytest use repository-wide discovery; the aggregate gate remains mandatory without assuming an archetype layout. |
-| Coverage | Foundation installed and configured `pytest-cov`. | Removed until a selected capability owns reporting or thresholds. Plain pytest remains the mandatory test gate. |
-| Pre-commit feedback | Foundation installed `pre-commit` and described a hook the engine path did not generate. | Removed until a selected capability owns hook configuration. Neutral ignore safeguards remain in Foundation. |
+## Selection and ownership
 
-No new extension point is required. The existing classifier point already
-expresses typed-distribution ownership, while the layout-neutral tool defaults
-remove source/test path data rather than creating another archetype-to-
-Foundation configuration channel.
+| Selection | Owned contract |
+| --- | --- |
+| `library` | Package-backed Library shape; three packaging modes and the only production component option schema. No requirements or conflicts. |
+| `cli` | Fixed uv-build package, Typer runtime, console/module entry points, command tests, and usage guidance. No options, requirements, or conflicts. |
+| `data-science` | Fixed uv-build package, smoke test, starter notebook, scientific classifiers, and local data/model/artefact conventions. Requires `jupyter>=1,<2`; no options or conflicts. |
+| `jupyter` | Reusable development-only notebook dependencies, authoring and validation tasks, safe validator, checkpoint ignore rule, and guidance. No options, requirements, or conflicts. |
+| `scientific-python` | Reusable optional scientific runtime dependencies, import test, and guidance. No options, requirements, or conflicts. |
+| Foundation | Neutral identity, licence, root handoff documents, repository hygiene, development environment, quality commands, and extension targets. It is not selectable. |
+| create-forge | Discovery-driven prompts and flags, ProjectSpec construction, compatibility diagnostics, staging, lock resolution, cleanup, and atomic destination placement. |
+
+Library and CLI accept any of: no capabilities, Jupyter, Scientific Python,
+or both. Data Science accepts Jupyter or Jupyter plus Scientific Python. These
+ten valid compositions plan and render deterministically. Data Science without
+Jupyter, an incorrectly typed or duplicate selection, an unknown component,
+an invalid option, or an unsatisfied requirement fails through the existing
+structured engine errors before rendering.
 
 ## Deliberate duplication
 
-The two archetypes currently carry byte-identical source templates for their
-package-root `__init__.py`, empty `py.typed` markers, and empty test-package
-markers. This is deliberate duplication, not a missing shared component:
+The package contains the following byte-identical resources. They remain
+separate because ownership and independent evolution matter more than textual
+deduplication.
 
-- each archetype owns its complete primary project shape;
-- the package-root API and version shim may diverge independently later;
-- `py.typed` belongs to the distribution that ships it; and
-- Foundation cannot own package or test-package runtime structure without
-  becoming package-shaped itself.
+| Resource | Owners | Rationale |
+| --- | --- | --- |
+| Package-root `__init__.py` | Library, CLI, Data Science | Each archetype owns its public package API and version shim and may evolve it independently. Foundation cannot own generated runtime/package code. |
+| `py.typed` | Library, CLI, Data Science | The distribution that publishes inline typing owns its marker. |
+| `tests/__init__.py` | Library, CLI, Data Science | Each archetype owns its complete test-package shape. |
+| `tests/test_smoke.py` | Library, Data Science | Both currently test import/version behaviour, but their acceptance suites and future domain behaviour are independent. |
+| Static project version fragment | CLI, Data Science | Both currently start generated projects at `0.1.0`; initial version remains an archetype packaging decision. |
+| uv-build configuration fragment | CLI, Data Science | Both currently use the same fixed `src/` packaging layout; Library's configurable packaging contract proves this is not universal. |
+| uv-build system fragment | CLI, Data Science | Both select the same backend today, but backend selection defines the archetype rather than Foundation. |
 
-Tests therefore verify both the coincidental equality and the distinct
-`ComponentOwner` recorded in each generation plan. Deduplicating those files
-would require an explicit future capability with real independent value, not
-archetype inheritance or an implicit shared runtime base.
+Extracting any row into Foundation would make it package-shaped. Making one
+archetype read another's resource would create inheritance and hidden coupling.
+A new capability would add selection complexity without independent user
+value. The review tests therefore pin current byte equality and distinct
+`ComponentOwner` attribution while allowing a later accepted decision to let
+the copies diverge.
 
-## Lock state and finalisation
+The seven groups add 892 raw bytes beyond keeping one copy of each distinct
+resource. That cost is accepted and small relative to the clarity of complete
+component ownership.
 
-Foundation guarantees committed, machine-readable dependency lock state and
-automatic drift detection. The generated project exposes `lock:check` and the
-canonical aggregate command is `uv run --locked poe check`; the outer
-`--locked` prevents uv from silently updating stale state before the check.
-Intentional dependency changes use `uv lock`, followed by review and commit.
+## Extension-point ownership
 
-`render_project()` remains side-effect-free and returns only reviewed,
-deterministic component content. A dependency lock is resolved against an
-index and therefore cannot truthfully be part of that in-memory render. The
-client materialising a successful project must resolve `uv.lock` after writing
-the rendered files and before making the destination visible.
+Foundation owns the three mixed root targets and publishes eleven stable
+extension points. Components own only the fragments they contribute; no
+production component publishes another point or may override a target.
 
-The `create-forge` reference client implements that boundary by running
-`uv lock` inside its adjacent staging directory before the atomic rename. The
-lock is a finalisation artefact, not a `GenerationPlan` or `RenderedProject`
-entry. Resolution failure removes staging and leaves the destination
-untouched. It creates no `.git`, `.venv`, hook, or Forge runtime dependency.
-The implementation is recorded by
-[create-forge ADR 0021](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0021-client-finalises-engine-lockfiles.md)
-and [create-forge PR #94](https://github.com/Sandsy09/create-forge/pull/94),
-released as `create-forge 0.2.1` against `forge-template 0.3.2`.
+| Extension point | Contributors | Why it remains separate |
+| --- | --- | --- |
+| `pyproject-build-system` | Library, CLI, Data Science | Build backend and requirements are archetype packaging choices. |
+| `pyproject-archetype-metadata` | Library, CLI, Data Science | Version/dynamic-version metadata belongs to the selected archetype. |
+| `pyproject-build-configuration` | Library, CLI, Data Science | Backend configuration follows the archetype's package layout. |
+| `pyproject-runtime-dependencies` | CLI, Scientific Python | Runtime dependencies belong to the behaviour that imports them. |
+| `pyproject-classifiers` | Library, CLI, Data Science | Typed, console, and scientific classifiers describe owned project shapes. |
+| `pyproject-entry-points` | CLI | Executable entry points belong only to the executable archetype. |
+| `pyproject-development-dependencies` | Jupyter | Notebook tooling is optional development behaviour. |
+| `pyproject-task-definitions` | Jupyter | Notebook commands exist only with their owning capability. |
+| `pyproject-aggregate-check` | Jupyter | The capability extends the universal gate with its own validation. |
+| `readme-project-shape` | All five components | Each selected owner appends only its project-shape or usage guidance. |
+| `gitignore-project-shape` | Library, Data Science, Jupyter | Generated-version, working-tree, and checkpoint rules stay with their owners. |
 
-## Current output contract
+The inventory needs no new point. Contributions compose in tier and lexical
+order; an unfilled point emits zero bytes. The Foundation-owned target remains
+one `PlannedFile`, and every fragment remains a `PlannedExtension` attributed
+to its selected component.
 
-Both archetypes retain Ruff formatting/linting, strict mypy coverage of
-project-owned Python found from the repository root, pytest discovery, Poe's
-aggregate task, deterministic builds, and their archetype-owned tests. Library
-continues to build all three packaging modes; CLI continues to build, install,
-and execute both its console and module entry points.
+## Determinism and validation
 
-The legacy direct-Copier Library path is intentionally unchanged. Its existing
-coverage, pre-commit, GitHub, task, answer, and update behavior remains the
-monolithic compatibility surface until a coordinated cutover or migration is
-accepted separately.
+- `discover_components()` returns the path-free, lexically ordered tuple
+  `("cli", "data-science", "jupyter", "library", "scientific-python")`.
+- ProjectSpec protocol `1` expresses exactly one archetype, ordered component
+  kinds, and namespaced options. Catalogue validation remains the authority
+  for kinds, compatibility, requirements, conflicts, and option schemas.
+- Planning orders the archetype before capabilities and orders capabilities
+  lexically. Repetition, input reordering, catalogue filesystem order, and
+  `PYTHONHASHSEED` do not move the plan or rendered bytes.
+- Rendering remains side-effect-free and in memory. Every returned project has
+  passed plan/output, universal `pyproject.toml`, and extension-completion
+  validation.
+- Generated-project tests retain real lock, build, install, import, typing,
+  task, and notebook execution evidence at Python 3.11 and 3.14. Library and
+  CLI output remains byte-pinned across all capability selections.
 
-## Compatibility
+## Operational consequences
 
-This is a point-in-time review snapshot at Stage 08's completion;
-[compatibility-policy.md](compatibility-policy.md) is the living table and
-the durable rules governing every axis below.
+| Concern | Review conclusion and evidence |
+| --- | --- |
+| Security | Foundation keeps only neutral secret ignores and reporting guidance. Jupyter validates and executes discarded temporary copies with safe diagnostics; Scientific Python adds runtime packages only when selected. No component gains override, plugin, policy, provider, or client authority. |
+| Reproducibility | Engine plans and renders are deterministic; create-forge resolves `uv.lock` in staging before atomic finalisation; generated checks run from committed lock state. This remains declared-input repeatability, not a byte-identical-build promise. |
+| Package size | A 2026-09-04 local `uv build --wheel` produced a 72,566-byte wheel. Foundation and the five component trees contain 39,182 raw bytes across 60 files, including 892 bytes of deliberate duplicate overhead. `poe check:wheel` verifies every required resource remains packaged and repository-only tooling remains excluded. |
+| Maintenance | Eight bounded direct dependencies are split by owner: four Jupyter development dependencies and four Scientific Python runtime dependencies. Bound changes require owner-specific compatibility review and Python-endpoint evidence. Duplicate files may diverge only through an explicit reviewed component change. |
 
-- `forge-template` package: `0.3.2`;
-- `library` component: `1.0.1`;
-- `cli` component: `1.0.1`;
-- ProjectSpec: protocol `1`;
-- component manifests: protocol `2`;
-- option schemas: protocol `2`;
-- Foundation source: protocol `1`.
+## Client boundary
 
-The engine correction shipped in
-[`forge-template 0.3.2`](https://github.com/Sandsy09/forge-template/releases/tag/v0.3.2),
-and the client finalisation shipped in
-[`create-forge 0.2.1`](https://github.com/Sandsy09/create-forge/releases/tag/v0.2.1).
+create-forge Stage 13 now consumes the public facade behind
+`new --engine-preview`. Its current `main` branch declares
+`forge-template>=0.4,<0.5`, derives selections and required-capability hints
+from descriptors, constructs ProjectSpec protocol `1`, and sends invalid
+selections to the engine unchanged. Its shipped modules contain no hard-coded
+production component identifier or copied catalogue rule.
 
-The package and component patch increments identify corrected generated
-content and ownership. They do not alter selection, schema, planning models,
-error codes, or public Python signatures.
+The latest released create-forge remains `0.2.1` with the older
+`forge-template>=0.3.1,<0.4` range. The future `0.3.0` release adopts the
+reviewed `0.4` line only after forge-template `0.4.1` is published. This does
+not change the direct-Copier Library path.
+
+Lock resolution remains a client-finalisation artefact. `render_project()`
+does not perform network or filesystem work; create-forge writes into an
+adjacent staging directory, resolves `uv.lock`, and exposes the destination
+only after success. Failure removes staging and leaves the destination
+untouched.
+
+## Compatibility and FT-14.02 handoff
+
+FT-14.01 hands the following decision-complete candidate to FT-14.02:
+
+| Axis | Reviewed value |
+| --- | --- |
+| Source package version | `0.4.0`; FT-14.03 alone bumps and publishes `0.4.1` |
+| ProjectSpec protocols | `(1,)` |
+| Component manifest protocols | `(1, 2)` |
+| Option-schema protocols | `(1, 2)` |
+| Foundation source protocol | `1` |
+| Components | `library`/`cli` `1.0.1`; `data-science`/`jupyter`/`scientific-python` `1.0.0` |
+| Extension points | The unchanged eleven-entry inventory above |
+| Public facade and errors | Unchanged signatures, result fields, and `EngineErrorCode` values |
+| Generated output | Unchanged; existing regression digests remain authoritative |
+
+FT-14.02 may start when #113 is merged, ADR 0056 is accepted, create-forge
+Stage 13 remains complete, and both repositories' `main` branches are clean
+and synchronised. Its inputs are the `forge-template 0.4.0` source catalogue,
+the create-forge `forge-template>=0.4,<0.5` preview range, ProjectSpec protocol
+`1`, component-manifest protocols `(1, 2)`, option-schema protocols `(1, 2)`,
+Foundation source protocol `1`, the five component versions above, and the
+unchanged eleven-point inventory.
+
+FT-14.02 must validate current forge-template and create-forge `main` together
+through the local sibling source, exercise all accepted Data Science
+compositions plus Library and CLI, confirm deterministic failure cleanup,
+re-check wheel resources and measured size, and record evidence without an
+unpublished registry dependency. It must not tag, release, change the client
+dependency range, or alter the default Copier path.

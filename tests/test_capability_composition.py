@@ -72,7 +72,6 @@ _DESCRIPTOR_FIELDS = {
     "conflicts",
     "options",
 }
-# Foundation must never name a capability, an archetype, or a domain tool.
 _NEUTRALITY_TOKENS = (
     "jupyter",
     "ipynb",
@@ -83,6 +82,28 @@ _NEUTRALITY_TOKENS = (
     "scikit-learn",
     "sklearn",
     "scientific-python",
+)
+
+# Foundation must also never name an archetype-only domain path, framework,
+# provider, or client. Generic architecture terms such as "archetype" and
+# "capability" remain valid in source comments and neutral generated guidance.
+_FOUNDATION_EXCLUDED_TOKENS = (
+    *_NEUTRALITY_TOKENS,
+    "data-science",
+    "data science",
+    "/data/raw/",
+    "/data/interim/",
+    "/data/processed/",
+    "/models/",
+    "/artifacts/",
+    "typer",
+    "django",
+    "fastapi",
+    "flask",
+    "github actions",
+    "gitlab ci",
+    "create-forge",
+    "copier",
 )
 
 
@@ -399,7 +420,7 @@ def test_foundation_source_names_no_capability_or_domain_tool() -> None:
         if not path.is_file() or "__pycache__" in path.parts:
             continue
         haystack = path.read_bytes().lower()
-        for token in _NEUTRALITY_TOKENS:
+        for token in _FOUNDATION_EXCLUDED_TOKENS:
             assert token.encode() not in haystack, f"{token!r} leaked into {path}"
 
 

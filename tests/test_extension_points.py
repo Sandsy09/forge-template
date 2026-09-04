@@ -38,11 +38,60 @@ _ROOT = Path(__file__).parents[1] / "src" / "forge_template"
 _FOUNDATION_TOML = _ROOT / "foundation" / "foundation.toml"
 _COMPONENTS = _ROOT / "components"
 
+_EXPECTED_CONTRIBUTIONS = {
+    "library": {
+        "pyproject-build-system",
+        "pyproject-archetype-metadata",
+        "pyproject-build-configuration",
+        "pyproject-classifiers",
+        "readme-project-shape",
+        "gitignore-project-shape",
+    },
+    "cli": {
+        "pyproject-build-system",
+        "pyproject-archetype-metadata",
+        "pyproject-build-configuration",
+        "pyproject-runtime-dependencies",
+        "pyproject-classifiers",
+        "pyproject-entry-points",
+        "readme-project-shape",
+    },
+    "data-science": {
+        "pyproject-build-system",
+        "pyproject-archetype-metadata",
+        "pyproject-build-configuration",
+        "pyproject-classifiers",
+        "readme-project-shape",
+        "gitignore-project-shape",
+    },
+    "jupyter": {
+        "pyproject-development-dependencies",
+        "pyproject-task-definitions",
+        "pyproject-aggregate-check",
+        "readme-project-shape",
+        "gitignore-project-shape",
+    },
+    "scientific-python": {
+        "pyproject-runtime-dependencies",
+        "readme-project-shape",
+    },
+}
+
+_COMPONENT_SELECTIONS = {
+    "library": ("library", ()),
+    "cli": ("cli", ()),
+    "data-science": ("data-science", ("jupyter",)),
+    "jupyter": ("library", ("jupyter",)),
+    "scientific-python": ("library", ("scientific-python",)),
+}
+
 FIXTURES = Path(__file__).parent / "fixtures" / "component_manifests"
 INVALID_FIXTURES = Path(__file__).parent / "fixtures" / "invalid_components"
 
 
-def _production_payload(archetype: str) -> dict[str, object]:
+def _production_payload(
+    archetype: str, capabilities: tuple[str, ...] = ()
+) -> dict[str, object]:
     component_options: dict[str, object] = {}
     if archetype == "library":
         component_options = {
@@ -64,7 +113,7 @@ def _production_payload(archetype: str) -> dict[str, object]:
         "python": {"minimum": "3.11", "development": "3.13"},
         "components": {
             "archetype": archetype,
-            "capabilities": [],
+            "capabilities": list(capabilities),
             "platforms": [],
         },
         "component_options": component_options,
@@ -110,11 +159,20 @@ def test_published_extension_point_inventory_matches_the_contract() -> None:
         ("gitignore-project-shape", "content/.gitignore.jinja"),
     }
 
-    # Neither production archetype publishes an extension point of its own --
-    # both only contribute into Foundation's.
-    for archetype in ("library", "cli"):
-        manifest = load_component_manifest(_COMPONENTS / archetype / "component.toml")
+    # No production component publishes an extension point of its own; all five
+    # contribute only into Foundation's reviewed inventory.
+    for component_id, expected in _EXPECTED_CONTRIBUTIONS.items():
+        manifest = load_component_manifest(
+            _COMPONENTS / component_id / "component.toml"
+        )
         assert manifest.extension_points == ()
+        assert {
+            contribution.extension_point for contribution in manifest.contributions
+        } == expected
+        assert all(
+            contribution.target.model_dump() == {"kind": "foundation"}
+            for contribution in manifest.contributions
+        )
 
 
 def test_foundation_files_without_extension_points_stay_create_only() -> None:
@@ -174,7 +232,7 @@ def test_manifest_rejects_a_disposition_grant_field() -> None:
 
 def test_production_contributions_reach_the_public_plan_as_extensions() -> None:
     """The granted ``extend`` mechanism actually functions for real
-    production content: each archetype's contributions surface as
+    production content: every component's contributions surface as
     ``PlannedExtension`` entries on the Foundation-owned target its
     published point lives in."""
     foundation = load_foundation_source(_FOUNDATION_TOML)
@@ -186,15 +244,17 @@ def test_production_contributions_reach_the_public_plan_as_extensions() -> None:
         for point in foundation.extension_points
     }
 
-    for archetype in ("library", "cli"):
-        manifest = load_component_manifest(_COMPONENTS / archetype / "component.toml")
+    for component_id, (archetype, capabilities) in _COMPONENT_SELECTIONS.items():
+        manifest = load_component_manifest(
+            _COMPONENTS / component_id / "component.toml"
+        )
         expected: dict[str, set[str]] = {}
         for contribution in manifest.contributions:
             target = point_target[contribution.extension_point]
             expected.setdefault(target, set()).add(contribution.extension_point)
-        assert expected, f"{archetype} contributes to no Foundation extension point"
+        assert expected, f"{component_id} contributes to no Foundation extension point"
 
-        spec = parse_project_spec(_production_payload(archetype))
+        spec = parse_project_spec(_production_payload(archetype, capabilities))
         plan = plan_generation(spec)
         by_target = {item.target: item for item in plan.files}
 
@@ -204,7 +264,7 @@ def test_production_contributions_reach_the_public_plan_as_extensions() -> None:
             actual = {
                 extension.extension_point
                 for extension in planned.extensions
-                if extension.component_id == archetype
+                if extension.component_id == component_id
             }
             assert actual == extension_point_ids
 

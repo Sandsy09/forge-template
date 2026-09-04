@@ -22,15 +22,16 @@ added the third archetype, `data-science`. Discovery from current source
 returns `("cli", "data-science", "jupyter", "library", "scientific-python")`.
 The three archetypes are independent and compose over the same implicit
 Foundation source; a ProjectSpec selects exactly one. The released Copier path
-remains the monolithic `template/` tree and is unaffected -- `create-forge`
-continues to consume only that path until a later, separate cutover decision.
+remains the monolithic `template/` tree and is unaffected. The current
+`create-forge` `main` branch consumes the public component catalogue behind
+`new --engine-preview`; a default-path cutover remains a separate decision.
 
 The [initial Data Science capability contracts](data-science-capabilities.md)
 define manifest-protocol-2 `jupyter` and `scientific-python` capabilities.
 Jupyter is a source-catalogue entry under [ADR
 0050](adr/0050-production-jupyter-capability.md), and Scientific Python under
 [ADR 0051](adr/0051-production-scientific-python-capability.md). Data Science
-will declare a hard `jupyter>=1,<2` reference, while both capability manifests
+declares a hard `jupyter>=1,<2` reference, while both capability manifests
 declare no requirements or conflicts
 themselves.
 

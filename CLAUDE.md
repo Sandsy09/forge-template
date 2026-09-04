@@ -95,7 +95,8 @@ package-bound discovery, strict validation, deterministic planning, in-memory
 rendering, structured failures, and the `map_legacy_library_answers` helper
 from the top-level package, at package version `0.4.0`. The `0.4.x` line keeps
 the `0.3.x` public facade and protocol tuples while adding the Data Science
-catalogue; ADR 0037's Stage 08 review remains its Foundation boundary. The
+catalogue; ADR 0037's Stage 08 review and ADR 0056's Stage 14 confirmation
+define its Foundation boundary. The
 [Forge-Blueprint compatibility policy](docs/compatibility-policy.md)
 ([ADR 0041](docs/adr/0041-forge-blueprint-compatibility-policy.md)) defines
 every versioned axis above (package, both protocols, component versions,
@@ -303,7 +304,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0055 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0056 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -331,8 +332,8 @@ the future optionless package, test, starter-notebook, ignored working-tree,
 and ownership shape without adding it to the production catalogue.
 FT-10.02's [initial capability contracts](docs/data-science-capabilities.md)
 define reusable optionless `jupyter` development tooling and an independently
-optional `scientific-python` runtime stack. Data Science will explicitly
-require Jupyter. FT-11.02 ships Jupyter in the source catalogue; FT-11.03
+optional `scientific-python` runtime stack. Data Science explicitly requires
+Jupyter. FT-11.02 ships Jupyter in the source catalogue; FT-11.03
 ships Scientific Python.
 FT-10.03's [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
 ([ADR 0047](docs/adr/0047-notebook-data-and-model-safeguards.md)) fix the
@@ -469,6 +470,16 @@ on [PyPI](https://pypi.org/project/forge-template/0.4.0/), with the public API
 and protocols unchanged. **FT-12.01 through FT-12.04 are complete;
 `FT-EPIC-12 / #98` and its milestone are closed.**
 
+Create-forge Stage 13 is complete. Its current `main` branch constructs and
+consumes ProjectSpec behind `new --engine-preview` with the compatible
+`forge-template>=0.4,<0.5` range. FT-14.01 / #113's
+[three-archetype composition review](docs/composition-architecture-review.md)
+([ADR 0056](docs/adr/0056-three-archetype-composition-boundary-review.md))
+finds no production boundary defect, records all deliberate duplication and
+all eleven Foundation extension points, and deterministically exercises all
+ten valid compositions. FT-14.02 / #114 is the next actionable issue;
+FT-14.03 / #115 alone owns the reviewed `0.4.1` release. Stage 14 remains open.
+
 FT-08.02 populated the
 production component catalogue under the
 [Library archetype contract](docs/library-archetype.md) — additive, package-bound
@@ -482,6 +493,8 @@ optionless package-bound shape, equally additive and equally untouched by
 keeps deliberate archetype-owned duplication while removing layout,
 classifier, coverage, and pre-commit leakage from Foundation; coordinated
 client lock finalisation shipped in `create-forge 0.2.1`, completing Stage 08.
+Stage 14 extends that review across Data Science, Jupyter, and Scientific
+Python without changing production content or public contracts.
 A future cutover that actually
 retires `template/` in favour of this catalogue is the `_migrations` moment:
 plan it before moving template paths and keep Library paths stable where

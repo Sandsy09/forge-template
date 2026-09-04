@@ -12,9 +12,11 @@ This contract itself bumped no version or published package. Stages 11 and 12
 subsequently implemented the two capabilities and Data Science archetype, and
 FT-12.04 published them in
 [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
-on [PyPI](https://pypi.org/project/forge-template/0.4.0/). Stage 14 reviews the
-result and publishes the reviewed line. Nothing here changes the direct-Copier
-Library path.
+on [PyPI](https://pypi.org/project/forge-template/0.4.0/). FT-14.01's
+[composition review](composition-architecture-review.md) found no production
+boundary defect; FT-14.02 next validates both repositories, and FT-14.03 alone
+publishes the reviewed line. Nothing here changes the direct-Copier Library
+path.
 
 It completes the Stage 10 set:
 [the archetype shape](data-science-archetype.md) (FT-10.01),
@@ -202,6 +204,12 @@ never by silently widening a bound or raising the Python floor.
 | The real console script generates Data Science, resolves its lock, and passes its canonical checks and notebook validation | CF-14.02 | `create-forge` end-to-end suite | CF-14.02 / create-forge#112 |
 | Plain `create-forge` installs stay importable and usable without the engine extra | CF-13.01 | `create-forge` packaging tests | CF-13.01 / create-forge#106 |
 | No component identifier, catalogue copy, or compatibility rule is duplicated into `create-forge` | CF-13.01 | `create-forge` review + tests | every CF Stage 13–14 child |
+
+Create-forge Stage 13 has completed these preview-client rows. Its current
+`main` branch constructs ProjectSpec behind `new --engine-preview` and accepts
+`forge-template>=0.4,<0.5`; the latest released create-forge line remains on
+its earlier engine range until Stage 14 release adoption. FT-14.02 owns the
+cross-repository rerun and records the exact revisions and commands.
 
 ### Regression checks
 

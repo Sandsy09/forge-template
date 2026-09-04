@@ -131,7 +131,8 @@ safe diagnostics for that archetype's notebooks, and the
 classifies every versioned axis for the `0.4.0` line and fixes the executable
 acceptance matrix and release gates. The
 [composition architecture review](docs/composition-architecture-review.md)
-records the Stage 08 boundary corrections proven by both archetypes, and
+records the Stage 08 corrections and Stage 14 confirmation across all three
+archetypes and both capabilities, and
 the [Python support policy](docs/python-support.md) defines the
 supported CPython window and lifecycle, the
 [editor integration strategy](docs/editor-integration.md) keeps the baseline
