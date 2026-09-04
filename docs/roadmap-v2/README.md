@@ -14,13 +14,17 @@ not selected here; Stage 10 owns those decisions.
 Delivery remains behind `create-forge new --engine-preview`. Retiring the
 default direct-Copier path is a separate future initiative.
 
-Stages 10–13 are complete. The package-bound Data Science catalogue is
-available in [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0),
+Stages 10–13 are complete, and forge-template's provider side of Stage 14 is
+now complete too. The package-bound Data Science catalogue is available in
+[`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0),
 and current `create-forge` `main` consumes it behind `--engine-preview` with
-the `forge-template>=0.4,<0.5` range. FT-14.01 has completed the provider
-boundary review, and FT-14.02 has completed cross-repository validation of
-both `main` branches paired locally; FT-14.03's reviewed `0.4.1` release is
-next.
+the `forge-template>=0.4,<0.5` range. FT-14.01 completed the provider boundary
+review, FT-14.02 completed cross-repository validation of both `main`
+branches paired locally, and FT-14.03 published that same unchanged catalogue
+as the reviewed
+[`forge-template 0.4.1`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.1)
+— `FT-EPIC-14` is closed. `create-forge`'s client-side rollout (`CF-EPIC-14`)
+remains open.
 
 ## Repository roles
 

@@ -134,7 +134,8 @@ production component identifier or copied catalogue rule.
 
 The latest released create-forge remains `0.2.1` with the older
 `forge-template>=0.3.1,<0.4` range. The future `0.3.0` release adopts the
-reviewed `0.4` line only after forge-template `0.4.1` is published. This does
+reviewed `0.4` line now that
+[forge-template `0.4.1` is published](reviewed-engine-release.md). This does
 not change the direct-Copier Library path.
 
 Lock resolution remains a client-finalisation artefact. `render_project()`
@@ -149,7 +150,7 @@ FT-14.01 hands the following decision-complete candidate to FT-14.02:
 
 | Axis | Reviewed value |
 | --- | --- |
-| Source package version | `0.4.0`; FT-14.03 alone bumps and publishes `0.4.1` |
+| Source package version | `0.4.0`, republished unchanged as `0.4.1` by FT-14.03 |
 | ProjectSpec protocols | `(1,)` |
 | Component manifest protocols | `(1, 2)` |
 | Option-schema protocols | `(1, 2)` |
@@ -186,5 +187,13 @@ destination, and reproduces this review's package-size figures exactly
 canonical `tests/test_engine_cross_repository.py` passes against the same
 pair. See
 [cross-repository-validation.md](cross-repository-validation.md) for the
-exact commands, revisions, and outcomes. The candidate above is unchanged;
-FT-14.03 alone bumps and publishes `0.4.1`.
+exact commands, revisions, and outcomes. The candidate above is unchanged.
+
+## FT-14.03 published the reviewed line
+
+[docs/reviewed-engine-release.md](reviewed-engine-release.md) records
+FT-14.03's result: the unchanged candidate above is tagged, released, and
+published to PyPI as `forge-template 0.4.1`, and its published artefacts are
+audited directly -- the `0.4.1` wheel's Foundation and component trees are
+byte-identical to the published `0.4.0` wheel's. `create-forge` Stage 14 now
+has an immutable reviewed engine target.

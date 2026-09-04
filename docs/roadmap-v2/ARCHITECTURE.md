@@ -68,7 +68,8 @@ only the package version and the discovered-component set move. FT-14.01's
 resulting line without changing any versioned surface; FT-14.02's
 [cross-repository validation](../cross-repository-validation.md) then
 confirmed both repositories work together, locally paired, before final
-rollout.
+rollout; FT-14.03's [reviewed release](../reviewed-engine-release.md)
+republished that unchanged line as `forge-template 0.4.1`.
 
 The default Copier path, `template/`, `copier.yml`, and stored Copier answers
 are outside this roadmap unless a later, separately accepted cutover changes

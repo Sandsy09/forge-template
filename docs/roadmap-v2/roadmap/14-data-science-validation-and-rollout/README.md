@@ -24,8 +24,9 @@ forge-template completes provider review first:
    `main` branches, paired through a local, non-PyPI install
    ([evidence](../../../cross-repository-validation.md)).
 3. [FT-14.03 / #115](https://github.com/Sandsy09/forge-template/issues/115)
-   is next: it publishes and verifies the reviewed `forge-template` 0.4.1
-   release.
+   is complete: it published and verified the reviewed `forge-template` 0.4.1
+   release
+   ([evidence](../../../reviewed-engine-release.md)). `FT-EPIC-14` is closed.
 
 create-forge then completes client rollout:
 

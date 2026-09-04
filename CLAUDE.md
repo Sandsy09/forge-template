@@ -298,9 +298,10 @@ closed); all four Copier combos green
 locally and in CI, update merge validated, root and template
 `.gitattributes` both in place, no byte-empty template files remain,
 `task_runner`/`make` removed (it was the one untested, 100%-broken
-conditional — see Deferred). **`v0.4.0` is the latest tagged release and the
-first published five-component Data Science line.** `v0.3.2` carries the
-reviewed Stage 08 boundary corrections. `v0.3.0` first carried
+conditional — see Deferred). **`v0.4.1` is the latest tagged release: the
+Stage 14-reviewed republication of the five-component Data Science line first
+published at `v0.4.0`, unchanged at the catalogue level.** `v0.3.2` carries
+the reviewed Stage 08 boundary corrections. `v0.3.0` first carried
 the production
 engine catalogue (both `library` and `cli`) alongside the direct-Copier
 template. Root repo hygiene is done:
@@ -497,8 +498,15 @@ ADR 0056 package-size figures (60 files, 39,182 bytes, 892 bytes of
 duplicate overhead) are now pinned executably alongside a wheel-size ceiling
 in `scripts/check_wheel.py`. The new `crossrepo` pytest marker
 (`uv run poe crossrepo`) is sibling-gated and deliberately absent from CI.
-**FT-14.01 and FT-14.02 are complete;** FT-14.03 / #115 alone owns the
-reviewed `0.4.1` release. Stage 14 remains open.
+FT-14.03's [reviewed-engine-release.md](docs/reviewed-engine-release.md)
+closes Stage 14: [`forge-template 0.4.1`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.1)
+is tagged, released, and published on
+[PyPI](https://pypi.org/project/forge-template/0.4.1/) at commit
+`9f7ed8187d931c10016d76bb271de72ddb89a4c0`, and its published-artefact audit
+confirms the `0.4.1` wheel's Foundation and component trees are
+byte-identical to `0.4.0`'s -- the catalogue is unchanged; only the version
+republished. **FT-14.01, FT-14.02, and FT-14.03 are complete; `FT-EPIC-14`
+(forge-template#99) and its milestone are closed.**
 
 FT-08.02 populated the
 production component catalogue under the

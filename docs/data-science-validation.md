@@ -156,6 +156,12 @@ wheel into temporary projects. Each resolved a lock, restored with
 wheel and sdist, and installed in isolation. Their generated runtime metadata
 and lock state contain neither Forge package.
 
+Stage 14 reviewed this line and republished it unchanged as `forge-template`
+`0.4.1` — see
+[reviewed-engine-release.md](reviewed-engine-release.md#published-artefact-audit)
+for that audit, including the byte-identical catalogue diff against this
+`0.4.0` wheel.
+
 ## What remains open
 
 - **create-forge.** Client option and capability selection, `--engine-preview`

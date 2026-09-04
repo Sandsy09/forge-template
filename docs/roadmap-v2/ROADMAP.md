@@ -33,8 +33,11 @@ composition can be presented generically.
 
 Stages 10 through 13 are complete. Current `create-forge` `main` consumes the
 immutable `forge-template 0.4.0` provider line behind `--engine-preview`.
-FT-14.01's boundary review and FT-14.02's cross-repository validation are
-both complete; FT-14.03's reviewed `0.4.1` release is the next delivery step.
+FT-14.01's boundary review, FT-14.02's cross-repository validation, and
+FT-14.03's publication of the reviewed
+[`forge-template 0.4.1`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.1)
+release are all complete — `FT-EPIC-14` is closed. `CF-EPIC-14`'s client-side
+rollout is the next delivery step.
 
 ## Delivery rules
 

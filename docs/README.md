@@ -115,6 +115,10 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   proof that current forge-template and create-forge `main` pair and pass
   together through a local, non-PyPI install: every accepted composition,
   deterministic failure cleanup, and re-measured package size.
+- [reviewed-engine-release.md](reviewed-engine-release.md) — FT-14.03's record
+  of the published, reviewed `forge-template` `0.4.1` release: the release
+  chain, published artefacts, and the audit proving the catalogue is
+  byte-identical to `0.4.0`.
 - [compatibility-policy.md](compatibility-policy.md) — the Forge-Blueprint
   compatibility policy: every versioned engine axis, compatible ranges,
   deprecation windows, and unsupported-version reporting requirements.

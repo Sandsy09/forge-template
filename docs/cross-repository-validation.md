@@ -145,7 +145,8 @@ resource ships while repository-only tooling stays excluded.
   `0.4.1` release, not this local pair.
 - **A `create-forge` dependency-range change.** `create-forge` continues to
   declare `forge-template>=0.4,<0.5`; nothing here moves it.
-- **A published-artefact audit.** That is FT-14.03's responsibility once
-  `0.4.1` is tagged and released, mirroring
+- **A published-artefact audit.** FT-14.03's
+  [reviewed-engine-release.md](reviewed-engine-release.md) performs that
+  audit against the tagged and released `0.4.1` line, mirroring
   [data-science-validation.md](data-science-validation.md#published-040-release-verification)'s
   audit of `0.4.0`.
