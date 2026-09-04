@@ -17,8 +17,8 @@ successfully generated project. Archetypes, capabilities, platforms, profiles,
 and organisation policies may strengthen a guarantee, but they may not weaken
 or remove one.
 
-The contract applies to the project state produced by Forge and, when the
-future composition model exists, to the result of composition. It does not
+The contract applies to the project state produced by Forge, including the
+result of engine composition. It does not
 prevent a project owner from changing their independent repository after
 handoff. Foundation provides a sound starting contract rather than a runtime
 enforcement framework inside generated projects.

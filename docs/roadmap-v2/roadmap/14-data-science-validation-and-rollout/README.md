@@ -17,9 +17,11 @@ by FT-EPIC-14, enforcing provider review and release before client adoption.
 forge-template completes provider review first:
 
 1. [FT-14.01 / #113](https://github.com/Sandsy09/forge-template/issues/113)
-   reviews and corrects three-archetype composition boundaries after CF-13.05.
+   is complete: it reviewed the three-archetype composition boundaries after
+   CF-13.05 and found no production defect.
 2. [FT-14.02 / #114](https://github.com/Sandsy09/forge-template/issues/114)
-   runs cross-repository compatibility validation against both main branches.
+   is next: it runs cross-repository compatibility validation against both
+   main branches.
 3. [FT-14.03 / #115](https://github.com/Sandsy09/forge-template/issues/115)
    publishes and verifies the reviewed `forge-template` 0.4.1 release.
 
@@ -37,8 +39,10 @@ create-forge then completes client rollout:
 
 ## Entry criteria
 
-- create-forge Stage 13 exercises the full Data Science composition.
+- create-forge Stage 13 exercises the full Data Science composition. Met.
 - All three archetypes and the selected capabilities have executable evidence.
+  Met by FT-14.01's
+  [composition review](../../../composition-architecture-review.md).
 
 ## Outcomes
 

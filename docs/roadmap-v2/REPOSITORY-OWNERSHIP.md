@@ -51,7 +51,10 @@ runtime operation.
 - deterministic selection validation, planning, rendering, and generated
   output validation;
 - generated notebook, package, test, metadata, and documentation behavior;
-- the three-archetype composition review; and
+- the accepted
+  [three-archetype composition review](../composition-architecture-review.md),
+  including retained duplication, extension-point ownership, and the #114
+  provider hand-off; and
 - engine versioning, packaging, and releases.
 
 ## create-forge owns

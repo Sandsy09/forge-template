@@ -118,12 +118,13 @@ first production component catalogue available under the accepted
 (the `archetype` marker) additionally proves wheel/sdist/import/version
 outcomes this validator does not check itself (wheel and sdist contents are
 explicitly out of this boundary, above). FT-08.04 added the independent CLI
-Application archetype, and the
-[Stage 08 composition review](composition-architecture-review.md) proves both
-shapes against the same validation and ownership boundary.
+Application archetype; FT-12.01 added Data Science. The
+[Stage 14 composition review](composition-architecture-review.md) proves all
+three shapes and both capabilities against the same validation and ownership
+boundary.
 
 Notebook cleanliness and execution are a generated-project concern owned by
-the future `notebook:check` task under the
+the Data Science `notebook:check` task under the
 [notebook, data, and model safeguards](notebook-data-and-model-safeguards.md)
 contract. That task runs after handoff in the project's own environment; it
 is not an engine render check and adds no `ForgeEngineError` code.

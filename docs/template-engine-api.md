@@ -301,7 +301,7 @@ must migrate to `owner` before adopting `0.3.x`.
 The generated-project validator, Foundation/protocol-`2` mechanism, and
 production `library`/`cli` manifests above are all part of the `0.3.x` line,
 released initially at `v0.3.0`. `v0.3.2` applies the accepted
-[two-archetype composition review](composition-architecture-review.md)
+[Stage 08 composition review](composition-architecture-review.md)
 without changing the facade or protocols. Released `create-forge` assigns the
 compatible `forge-template>=0.3.1,<0.4` engine range behind its engine path;
 the direct-Copier Library path remains separately compatible.
@@ -309,3 +309,7 @@ the direct-Copier Library path remains separately compatible.
 The `0.4.x` line retains that facade and both protocol tuples. It adds the
 package-bound `data-science`, `jupyter`, and `scientific-python` components;
 clients adopt the new catalogue deliberately by moving their package range.
+The current `create-forge` `main` branch accepts `forge-template>=0.4,<0.5`
+behind `new --engine-preview`; the Stage 14 review in
+[ADR 0056](adr/0056-three-archetype-composition-boundary-review.md) changes no
+public interface or protocol.

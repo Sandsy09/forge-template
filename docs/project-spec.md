@@ -7,8 +7,10 @@ by the strict Pydantic models in
 
 The [stable template-engine API](template-engine-api.md) now parses and
 validates this protocol and uses it for deterministic planning and in-memory
-rendering. The current Copier path does not consume ProjectSpec, and protocol
-1 is not yet a supported `create-forge` integration line.
+rendering. The direct Copier path does not consume ProjectSpec. The current
+`create-forge` `main` branch constructs protocol `1` requests behind
+`new --engine-preview` and accepts `forge-template>=0.4,<0.5`; the released
+default Copier path remains separate.
 
 ## Wire contract
 

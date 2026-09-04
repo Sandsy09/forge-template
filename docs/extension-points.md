@@ -52,13 +52,16 @@ published by the installed catalogue at the time of this decision is:
 | `content/README.md.jinja` | `readme-project-shape` |
 | `content/.gitignore.jinja` | `gitignore-project-shape` |
 
-All eleven are published by the implicit Foundation content source. **Neither
-production archetype publishes an extension point of its own** — `library`
-and `cli` only contribute into Foundation's points, through manifest protocol
-`2`'s `target.kind = "foundation"`
+All eleven are published by the implicit Foundation content source. **No
+production component publishes an extension point of its own** — `library`,
+`cli`, `data-science`, `jupyter`, and `scientific-python` contribute only into
+Foundation's points, through manifest protocol `2`'s
+`target.kind = "foundation"`
 ([component-manifests.md](component-manifests.md#accepted-manifest-protocol-v2-target-owner)).
-This is unchanged by [ADR 0037](adr/0037-two-archetype-composition-review.md):
-the Stage 08 review found no new point was required.
+This is unchanged by [ADR 0037](adr/0037-two-archetype-composition-review.md)
+and confirmed for the five-component catalogue by
+[ADR 0056](adr/0056-three-archetype-composition-boundary-review.md): neither
+review required a new point.
 
 The last three `pyproject.toml.jinja` IDs were added additively by
 [FT-11.01 / #105](https://github.com/Sandsy09/forge-template/issues/105) and

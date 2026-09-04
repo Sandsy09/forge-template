@@ -209,8 +209,9 @@ against, are now defined by
 The executable schema is owned by `forge-template`; `create-forge` and future
 clients construct it. The [stable template-engine API](template-engine-api.md)
 now parses and validates protocol v1 and renders a validated selection in
-memory. The current CLI path does not yet consume it, under the ownership and
-compatibility boundary accepted by
+memory. The current `create-forge` `main` branch constructs it behind
+`new --engine-preview`, under the ownership and compatibility boundary
+accepted by
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
 
 ## Composition and authority

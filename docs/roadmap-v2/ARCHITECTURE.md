@@ -49,8 +49,8 @@ create-forge staging, uv lock, atomic finalisation
   output-free starter notebook and the ignored working trees. FT-12.03
   validates both compositions across Python 3.11 and 3.14 and byte-pins
   `library`/`cli` output. FT-12.04 published the complete catalogue in
-  [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0),
-  making create-forge Stage 13 actionable.
+  [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0).
+  Create-forge Stage 13 now consumes ProjectSpec behind `--engine-preview`.
 - Capabilities remain bundled, reviewed forge-template components. This
   roadmap does not introduce plugins or remote component registries.
 - create-forge consumes public descriptors and never recreates component
@@ -63,8 +63,10 @@ and engine-package versions remain independently governed by the canonical
 compatibility policy. Stage 10 has classified every required version change in
 the
 [compatibility and acceptance contract](../data-science-compatibility-and-acceptance.md):
-only the package version and the discovered-component set move. Stage 14
-reviews the resulting line before final client rollout.
+only the package version and the discovered-component set move. FT-14.01's
+[three-archetype review](../composition-architecture-review.md) confirms the
+resulting line without changing any versioned surface; FT-14.02 next validates
+the two repositories together before final rollout.
 
 The default Copier path, `template/`, `copier.yml`, and stored Copier answers
 are outside this roadmap unless a later, separately accepted cutover changes

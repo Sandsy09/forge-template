@@ -14,9 +14,11 @@ not selected here; Stage 10 owns those decisions.
 Delivery remains behind `create-forge new --engine-preview`. Retiring the
 default direct-Copier path is a separate future initiative.
 
-Stages 10–12 are complete. The package-bound Data Science catalogue is
-available in [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0);
-Stage 13 now owns deliberate adoption and discovery-driven CLI integration.
+Stages 10–13 are complete. The package-bound Data Science catalogue is
+available in [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0),
+and current `create-forge` `main` consumes it behind `--engine-preview` with
+the `forge-template>=0.4,<0.5` range. FT-14.01 has completed the provider
+boundary review; FT-14.02 cross-repository validation is next.
 
 ## Repository roles
 
