@@ -204,14 +204,17 @@ Released `create-forge` declares the compatible
 `forge-template>=0.3.1,<0.4` engine range
 ([template-engine-api.md](template-engine-api.md#compatibility-and-current-cutover-boundary)).
 
-The Data Science line advanced the package to `0.4.0`, now available as the
+The Data Science line advanced the package to `0.4.0`, first available as the
 [`v0.4.0` GitHub Release](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
 and [PyPI distribution](https://pypi.org/project/forge-template/0.4.0/), and
 added `data-science`, `jupyter`, and `scientific-python` at component version
 `1.0.0`, with every protocol integer unchanged. The
 [Data Science compatibility and acceptance contract](data-science-compatibility-and-acceptance.md)
-classifies each axis and the release gate. FT-14.03 prepares the reviewed
-`0.4.1` line here pending publication, the same way FT-12.04 did for `0.4.0`;
+classifies each axis and the release gate. FT-14.03 then republished that
+same unchanged catalogue as the reviewed
+[`v0.4.1` GitHub Release](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.1)
+and [PyPI distribution](https://pypi.org/project/forge-template/0.4.1/) —
+see [reviewed-engine-release.md](reviewed-engine-release.md);
 [python-support.md](python-support.md) uses the same living snapshot pattern
 for its own state.
 

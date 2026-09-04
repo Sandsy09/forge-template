@@ -64,8 +64,11 @@ on [PyPI](https://pypi.org/project/forge-template/0.4.0/), making the complete
 five-component catalogue available to engine clients. Stage 14's
 [composition review](docs/composition-architecture-review.md) and
 [cross-repository validation](docs/cross-repository-validation.md) found no
-production boundary defect; the source package is now prepared at `0.4.1`
-pending FT-14.03's publication of that reviewed line. The default
+production boundary defect, and FT-14.03 published that same unchanged
+catalogue as the reviewed
+[`forge-template 0.4.1`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.1)
+on [PyPI](https://pypi.org/project/forge-template/0.4.1/) — see
+[reviewed-engine-release.md](docs/reviewed-engine-release.md). The default
 direct-Copier Library path remains unchanged.
 
 ## Two repos
