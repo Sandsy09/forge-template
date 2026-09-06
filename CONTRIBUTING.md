@@ -323,6 +323,31 @@ immutable; a decision that changes later gets a new ADR that supersedes the
 old one, not an edit to it. `uv run poe check` verifies the set stays
 consistent (filenames, numbering, that the index links every record).
 
+## User documentation
+
+The [shared Forge user guide](https://sandsy09.github.io/create-forge/) lives
+in the sibling `create-forge` repository under `docs/user-guide/`. This
+repo owns template and engine technical contracts. Keep its root README
+focused on generated content, essential usage, and links to the guide.
+
+When changing generated behaviour, update affected recipes and README
+examples in coordinated PRs. Keep current features separate from preview
+and future contracts, and exercise changed commands in disposable projects.
+From the sibling `create-forge` checkout:
+
+```bash
+uv sync --locked
+uv run poe docs
+uv run poe docs:build
+```
+
+The site preview is at `http://127.0.0.1:8000/create-forge/`. Check links and
+the rendered pages before review. For the initial site rollout, merge this
+repo's links only after the create-forge site has been reviewed, deployed,
+and verified. Subsequent user-guide changes publish from create-forge main.
+See its [contribution guide](https://github.com/Sandsy09/create-forge/blob/main/CONTRIBUTING.md)
+for deployment and release-maintenance details.
+
 ## Commit messages
 
 Conventional Commits (`feat:`, `fix:`, `chore:`, ...); a `commit-msg` hook

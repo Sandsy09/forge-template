@@ -1,0 +1,31 @@
+name: Documentation feedback
+description: Correct instructions or suggest a missing guide or example.
+labels: ["type:docs", "area:docs"]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        For the shared Forge user-guide site, use
+        [create-forge documentation feedback](https://github.com/Sandsy09/create-forge/issues/new?template=documentation.yml).
+        Use this form for this repository's README and technical documentation.
+  - type: input
+    id: page
+    attributes:
+      label: Page URL
+      description: Link the page you were reading, or the closest related guide.
+    validations:
+      required: true
+  - type: textarea
+    id: request
+    attributes:
+      label: What needs improving?
+      description: Describe the unclear or incorrect step, question, or missing use case.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested wording or example
+      description: Optional; you do not need to know the solution to report a gap.
+    validations:
+      required: false
