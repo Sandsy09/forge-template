@@ -1,7 +1,13 @@
 name: Bug report
-description: Report something that isn't working as expected
+description: Report a problem with generated content or the template engine.
 labels: ["type:bug"]
 body:
+  - type: markdown
+    attributes:
+      value: >-
+        For CLI installation, prompts, or command options, use
+        [create-forge issues](https://github.com/Sandsy09/create-forge/issues/new/choose).
+        Remove credentials and private data from commands and logs.
   - type: textarea
     id: what-happened
     attributes:
@@ -9,34 +15,43 @@ body:
       description: What did you expect instead?
     validations:
       required: true
-
+  - type: dropdown
+    id: workflow
+    attributes:
+      label: Workflow
+      options:
+        - Copier (directly or through create-forge)
+        - create-forge engine preview
+        - Python engine API
+    validations:
+      required: true
   - type: textarea
     id: reproduce
     attributes:
       label: Steps to reproduce
-      description: >
-        Include the answers (or which combo, if this is about
-        `tests/test_combos.py`) that reproduce it.
-      placeholder: |
-        1.
-        2.
-        3.
+      description: Include the command, template answers or component selections, and error output.
     validations:
       required: true
-
   - type: input
     id: template-version
     attributes:
-      label: Template version
-      description: The tag `copier` scaffolded from, or `main` at a commit SHA
-      placeholder: "e.g. v0.1.1"
+      label: Template tag or engine package version
+      description: For Copier, _commit in .copier-answers.yml; for the engine, the installed forge-template version.
+      placeholder: "e.g. v0.4.1 (Copier) or 0.4.1 (engine)"
     validations:
       required: true
-
   - type: input
-    id: copier-version
+    id: client-version
     attributes:
-      label: Copier version
-      placeholder: "e.g. 9.4.1 (uv run copier --version)"
-    validations:
-      required: false
+      label: create-forge or Copier version
+      description: Report the version from the same environment used to generate the project.
+  - type: input
+    id: environment
+    attributes:
+      label: Operating system and Python version
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Diagnostics (if using create-forge)
+      description: Run doctor through the same create-forge installation and package constraints.
+      render: text
