@@ -162,10 +162,11 @@ Stage 14 reviewed this line and republished it unchanged as `forge-template`
 for that audit, including the byte-identical catalogue diff against this
 `0.4.0` wheel.
 
-## What remains open
+## Downstream and later work
 
 - **create-forge.** Client option and capability selection, `--engine-preview`
-  delivery, and the end-to-end console-script proof are create-forge Stages
-  13 and 14.
+  delivery, and the end-to-end console-script proof were create-forge Stages
+  13 and 14, both completed and released as
+  [`create-forge 0.3.0`](https://pypi.org/project/create-forge/0.3.0/).
 - **A wider Python window.** Admitting a new CPython release or moving the
   floor is owned by [python-support.md](python-support.md).

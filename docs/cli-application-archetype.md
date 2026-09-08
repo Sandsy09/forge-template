@@ -9,12 +9,16 @@ implemented by FT-08.04
 
 FT-08.04 introduced this contract in the installed engine catalogue at
 package version `0.3.0`, beside the [Library archetype](library-archetype.md)
-it neither inherits from nor reads resources from. It changes no Copier
-template, question, or generated output: the released Copier path still
-renders only the Library tree, unchanged, while `create-forge --engine-preview`
-selects either public-engine archetype. The Stage 08
+it neither inherits from nor reads resources from. The Stage 08
 [composition review](composition-architecture-review.md) corrects their
-shared Foundation boundary at package `0.3.2` and component `1.0.1`.
+shared Foundation boundary at package `0.3.2` and component `1.0.1`, and `cli`
+ships unchanged at `1.0.1` in the current
+[`forge-template` `0.4.1`](reviewed-engine-release.md) catalogue alongside the
+`library` and `data-science` archetypes and the `jupyter` and
+`scientific-python` capabilities. This contract changes no Copier template,
+question, or generated output: the released Copier path still renders only the
+Library tree, unchanged, while `create-forge --engine-preview` composes any of
+the three public-engine archetypes.
 
 ## Selection rationale
 
@@ -57,8 +61,8 @@ commands. Mixed files do not transfer ownership: Foundation owns
 sections through declared extension points.
 
 CLI Application does not inherit from, select, require, or read resources
-from Library. The two are independent archetypes layered over the same
-implicit Foundation source; a ProjectSpec selects exactly one.
+from Library or Data Science. The three archetypes are independent, layered
+over the same implicit Foundation source; a ProjectSpec selects exactly one.
 
 ## Production component contract
 
@@ -235,7 +239,7 @@ archetype`, real `uv build`):
 The production catalogue now contains `cli` alongside `library`,
 `data-science`, and the two capabilities, proven end-to-end:
 `discover_components()` returns `cli` among them,
-`plan_generation`/`render_project` compose either archetype with Foundation
+`plan_generation`/`render_project` compose each archetype with Foundation
 into a real project, and `uv run poe archetype` builds a real wheel and sdist,
 installs them, and exercises the documented console-script and `python -m`
 command contract for real.

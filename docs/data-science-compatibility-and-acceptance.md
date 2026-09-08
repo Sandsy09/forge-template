@@ -61,7 +61,8 @@ remains explicit.
 `get_engine_info()`, `discover_components()`, `parse_project_spec()`,
 `plan_generation()`, `render_project()`, `validate_rendered_project()`, and
 `map_legacy_library_answers()` keep their current signatures, result fields,
-and `EngineErrorCode` values from package version `0.3.2` through `0.4.0`
+and `EngineErrorCode` values from the pre-rollout `0.3.2` baseline through
+the published `0.4.0` and `0.4.1` releases
 ([template-engine-api.md](template-engine-api.md)). The Data Science line adds
 catalogue content behind that unchanged facade:
 
@@ -135,10 +136,13 @@ describes the scaffolded repository. The two never move together.
 ## The acceptance matrix
 
 Every row names one non-interactive command with a binary outcome and one
-owner. A row is "executable" when the command exists and can be run the moment
-its stage arrives — not when it passes today, since the components are
-unbuilt. `FT` owners run in this repository; `CF` owners run in `create-forge`
-against a released or locally overridden engine.
+owner. When this matrix was written, a row was "executable" once its command
+existed and could be run the moment its stage arrived, not once it passed —
+the components were still unbuilt. They are built now: the `0.4.1` line ships
+all three components, every `FT` row below is marked **done**, and
+`create-forge 0.3.0` consumes the line. `FT` owners run in this repository;
+`CF` owners run in `create-forge` against a released or locally overridden
+engine.
 
 ### Engine and catalogue checks
 
@@ -207,18 +211,16 @@ never by silently widening a bound or raising the Python floor.
 | Plain `create-forge` installs stay importable and usable without the engine extra | CF-13.01 | `create-forge` packaging tests | CF-13.01 / create-forge#106 |
 | No component identifier, catalogue copy, or compatibility rule is duplicated into `create-forge` | CF-13.01 | `create-forge` review + tests | every CF Stage 13–14 child |
 
-Create-forge Stage 13 has completed these preview-client rows. Its current
-`main` branch constructs ProjectSpec behind `new --engine-preview` and accepts
-`forge-template>=0.4,<0.5`; the latest released create-forge line remains on
-its earlier engine range until Stage 14 release adoption. FT-14.02 ran the
+Create-forge Stages 13 and 14 have completed every row here.
+[`create-forge 0.3.0`](https://pypi.org/project/create-forge/0.3.0/)
+constructs ProjectSpec behind `new --engine-preview` and declares the
+compatible `forge-template>=0.4.1,<0.5` engine range. FT-14.02 ran the
 cross-repository rerun this row set anticipated: both `main` branches, paired
 through a local (non-PyPI) install, generate and pass their own checks for
-every accepted composition. See
-[cross-repository-validation.md](cross-repository-validation.md) for the
-exact revisions, commands, and outcomes. The installed-console release
-validation this table's CF-14.02 row still names remains create-forge's own
-Stage 14 obligation, run against the eventual `0.4.1` release rather than
-this local pairing.
+every accepted composition (see
+[cross-repository-validation.md](cross-repository-validation.md)). The
+installed-console release validation the CF-14.02 row names was then completed
+by create-forge against the published `0.4.1` release.
 
 ### Regression checks
 
@@ -272,9 +274,9 @@ not a competing procedure.
 | Gate | Owner | Entry criteria | Exit criteria |
 | --- | --- | --- | --- |
 | `forge-template` `0.4.0` | FT-12.04 / #112 — **complete** | Every Engine, Generated-project, Python-endpoint, and Regression row above passed on protected [`main`](https://github.com/Sandsy09/forge-template/actions/runs/33736737699); the [dry run](https://github.com/Sandsy09/forge-template/actions/runs/33737131150) was inspected | The [release run](https://github.com/Sandsy09/forge-template/actions/runs/33737307302), tag, [GitHub Release](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0), and [PyPI artefacts](https://pypi.org/project/forge-template/0.4.0/) name commit `91f1cc5606778379a10b1b7591c9d924e0ba6218`; installed discovery and both Data Science compositions passed the [published artefact audit](data-science-validation.md#published-040-release-verification) |
-| `create-forge` `>=0.4,<0.5` adoption | CF-13.01 / create-forge#106 | `v0.4.0` is an immutable published target; contract tests pass against it | Engine extra is `>=0.4,<0.5`; lock refreshed; `0.3` and out-of-range engines fail before generation; plain installs unaffected |
+| `create-forge` `>=0.4,<0.5` adoption | CF-13.01 / create-forge#106 — **complete** | `v0.4.0` is an immutable published target; contract tests pass against it | Engine extra moved to `>=0.4,<0.5` (later tightened to `>=0.4.1,<0.5` by CF-14.01); lock refreshed; `0.3` and out-of-range engines fail before generation; plain installs unaffected |
 | Reviewed `forge-template` `0.4.1` | FT-14.03 / #115 — **complete** | FT-14.01 composition review and FT-14.02 cross-repository validation completed on protected [`main`](https://github.com/Sandsy09/forge-template/actions/runs/33905406877); the [dry run](https://github.com/Sandsy09/forge-template/actions/runs/33905776966) was inspected | The [release run](https://github.com/Sandsy09/forge-template/actions/runs/33906621638), tag, [GitHub Release](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.1), and [PyPI artefacts](https://pypi.org/project/forge-template/0.4.1/) name commit `9f7ed8187d931c10016d76bb271de72ddb89a4c0`; isolated public-import, discovery, and both Data Science compositions passed the [published artefact audit](reviewed-engine-release.md#published-artefact-audit) |
-| `create-forge` `0.3.0` | CF-14.04 / create-forge#114 | `v0.4.1` published; CF-14.01 adoption, CF-14.02 end-to-end, and CF-14.03 regressions complete | Tag `v0.3.0`; the released pair generates and validates the accepted Data Science compositions behind `--engine-preview`; both Stage 14 milestones close with no open issues |
+| `create-forge` `0.3.0` | CF-14.04 / create-forge#114 — **complete** | `v0.4.1` published; CF-14.01 adoption, CF-14.02 end-to-end, and CF-14.03 regressions complete | [Tag `v0.3.0`](https://pypi.org/project/create-forge/0.3.0/); the released pair generates and validates the accepted Data Science compositions behind `--engine-preview`; both Stage 14 milestones closed with no open issues |
 
 Merging is not releasing. A merge to `main` leaves it untagged and invisible
 to `copier update` and to a version-pinned engine client until
@@ -312,9 +314,11 @@ earlier Stage 10 decisions. What genuinely remains open is narrow.
 This contract does not decide or implement:
 
 - the `create-forge` capability and option selection UX, or its adoption of
-  the `0.4` and `0.4.1` ranges — owned by create-forge Stages 13 and 14;
-- both `forge-template` releases are complete: `0.4.0` (FT-12.04) and the
-  reviewed `0.4.1` republication (FT-14.03);
+  the `0.4` and `0.4.1` ranges — owned by create-forge Stages 13 and 14, both
+  since completed and released as `create-forge 0.3.0`;
+- the `forge-template` releases that carry the line — performed by FT-12.04
+  (`0.4.0`) and FT-14.03 (the reviewed `0.4.1` republication), not by this
+  contract;
 - admitting a new CPython release or moving the Python floor — owned by
   [python-support.md](python-support.md); or
 - retiring the direct-Copier Library path, which remains a separate future

@@ -141,10 +141,11 @@ resource ships while repository-only tooling stays excluded.
 - **Installed-console release validation.** This pairing installs both
   working trees from local source. The real end-to-end proof against a
   *published* `forge-template` release, through an installed `create-forge`
-  console script, is `create-forge`'s own CF-14.02 — run against the eventual
-  `0.4.1` release, not this local pair.
-- **A `create-forge` dependency-range change.** `create-forge` continues to
-  declare `forge-template>=0.4,<0.5`; nothing here moves it.
+  console script, was `create-forge`'s own CF-14.02, since run against the
+  published `0.4.1` release rather than this local pair.
+- **A `create-forge` dependency-range change.** FT-14.02 moved nothing;
+  `create-forge` declared `forge-template>=0.4,<0.5` at the time and CF-14.01
+  later tightened it to `>=0.4.1,<0.5`.
 - **A published-artefact audit.** FT-14.03's
   [reviewed-engine-release.md](reviewed-engine-release.md) performs that
   audit against the tagged and released `0.4.1` line, mirroring

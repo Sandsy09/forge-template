@@ -137,5 +137,7 @@ orchestration on their side of that boundary.
 
 A future public resolver or component-distribution mechanism requires its own
 contract and ADR. It must not be inferred from the private test catalogue or
-from this proof. The current API, package version `0.3.2`, and every protocol
-version remain unchanged.
+from this proof. FT-09.05 changed no API, no package version (`0.3.2` at the
+time), and no protocol version; the boundary this document records holds
+unchanged in the current
+[`forge-template` `0.4.1`](reviewed-engine-release.md) catalogue.

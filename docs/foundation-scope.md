@@ -11,9 +11,13 @@ The boundary applies to concerns, not whole files. A generated file such as
 archetype without making every setting in that file part of Foundation --
 exactly what FT-08.02 implemented: Foundation and the production `library`
 component both contribute to `pyproject.toml` through declared extension
-points (see [library-archetype.md](library-archetype.md)). The *released
-Copier scaffold* remains monolithic and unaffected by this; the mapping below
-describes both the conceptual boundary and, since FT-08.02, the real
+points (see [library-archetype.md](library-archetype.md)). That catalogue has
+since grown to the five components published in
+[`forge-template` `0.4.1`](reviewed-engine-release.md) -- the `library`,
+`cli`, and `data-science` archetypes and the `jupyter` and `scientific-python`
+capabilities -- each composing over the same one Foundation source. The
+*released Copier scaffold* remains monolithic and unaffected by this; the
+mapping below describes both the conceptual boundary and the real
 package-bound engine catalogue's file-level separation.
 
 ## Inclusion rule
@@ -204,7 +208,10 @@ platform remains conceptual for that path. The canonical
 [Library archetype contract](library-archetype.md) is now real for the
 *engine* path: FT-08.02 implemented Foundation and the production `library`
 component as genuinely separate content sources composed through the stable
-extension points below.
+extension points below, and the
+[`0.4.1` catalogue](reviewed-engine-release.md) has since added the `cli` and
+`data-science` archetypes and the `jupyter` and `scientific-python`
+capabilities on the same footing.
 
 | Current concern | Conceptual owner |
 | --- | --- |
@@ -212,8 +219,8 @@ extension points below.
 | Project identity, neutral metadata, licence, root README/contribution/security starters, base repository hygiene, [secret-handling safeguards](secret-handling.md), and Copier update state | **Foundation**, as neutral handoff or update/provenance material. |
 | `src/` package layout, distributable-package metadata, build backend, versioning, typed-package marker, build/release behaviour, and the Library-specific smoke target | **Library archetype**. |
 | Console-script and module entry points, the Typer runtime, starter command behaviour, and command-specific tests/documentation | **CLI Application archetype**, implemented by FT-08.04 per the [canonical contract](cli-application-archetype.md), composed over the same Foundation as Library. |
-| A typed package, import/version smoke test, starter notebook, scientific classifiers, and local data/model/artefact working-tree conventions | **Data Science archetype**, defined by the [canonical contract](data-science-archetype.md) for later Stage 12 implementation. Notebook tooling and scientific dependencies remain capability concerns. |
-| Coverage reporting, pre-commit feedback, documentation, changelog support, dependency-update automation, configuration examples, and editor-specific integration | **Capabilities**; a future profile may select them, while the Forge default profile remains editor-neutral. |
+| A typed package, import/version smoke test, starter notebook, scientific classifiers, and local data/model/artefact working-tree conventions | **Data Science archetype**, defined by the [canonical contract](data-science-archetype.md) and shipped in the `0.4.x` catalogue by FT-12.01/FT-12.02. Notebook tooling and the scientific stack stay with the `jupyter` and `scientific-python` capabilities. |
+| Coverage reporting, pre-commit feedback, documentation, changelog support, dependency-update automation, configuration examples, and editor-specific integration | **Capabilities**. `jupyter` and `scientific-python` are shipped; the rest remain unbuilt capability concerns that a future profile may select, while the Forge default profile stays editor-neutral. |
 | Runtime configuration, logging/observability, path/resource behaviour, and exception conventions | The **archetype or capability that contributes the runtime behaviour**; Foundation adds no shared runtime layer, configuration follows the [owner-local convention](configuration-ownership.md), logging follows the [structured capability contract](structured-logging.md), path/resource access follows the [path and resource ownership conventions](paths-and-resources.md), and exception handling follows the [exception ownership conventions](exception-ownership.md). |
 | GitHub Actions, issue and pull-request templates, CODEOWNERS, and other GitHub-specific adapters | **GitHub platform** contributions. Provider-specific files used by a capability are supplied through that platform integration, and remote workflow dependencies follow the [GitHub Action pinning policy](github-action-pinning.md). |
 

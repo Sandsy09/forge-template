@@ -72,10 +72,10 @@ in composition order, and a valid option value reaches the rendered output.
 
 ### Discovery descriptors stay path-free
 
-All four production descriptors expose exactly the published
-`ComponentDescriptor` field set, carry no `content_root`, `options_schema`,
+Every production descriptor exposes exactly the published
+`ComponentDescriptor` field set, carries no `content_root`, `options_schema`,
 `extensions/`, `content/`, `component.toml`, package path, or path separator
-in their serialised form, reject attribute assignment, and compare equal and
+in its serialised form, rejects attribute assignment, and compares equal and
 sorted across repeated `discover_components()` calls.
 
 ### Foundation stays neutral, generated projects stay Forge-free
@@ -101,16 +101,19 @@ undiscoverable or unusable catalogue.
 
 ## The fixture catalogue
 
-The production catalogue cannot express an unsatisfied `requires` edge, a
-`conflicts` edge, or a capability option: all four shipped components declare
-`requires = []` and `conflicts = []`, and only `library` carries an
-`options_schema`. Three synthetic capabilities under
+When FT-11.04 landed, no shipped component could express an unsatisfied
+`requires` edge, a `conflicts` edge, or a capability option. FT-12.01 later
+added `data-science` with `requires = [{ id = "jupyter", version = ">=1,<2" }]`,
+so a real hard-dependency edge now exists; but no production component
+declares a `conflicts` edge, and only `library` carries an `options_schema`.
+Three synthetic capabilities under
 [`tests/fixtures/capability_composition/`](../tests/fixtures/capability_composition/)
-fill that gap:
+fill the remaining gaps and let this proof exercise the `requires` failure
+branch without depending on the archetype catalogue:
 
 | Fixture | Declares | Exercises |
 | --- | --- | --- |
-| `requires-jupyter` | `requires = [{ id = "jupyter", version = ">=1,<2" }]` | The hard-dependency edge — the exact shape the future `data-science` archetype declares |
+| `requires-jupyter` | `requires = [{ id = "jupyter", version = ">=1,<2" }]` | The hard-dependency edge — the same shape the shipped `data-science` archetype declares |
 | `conflicts-jupyter` | `conflicts = [{ id = "jupyter" }]` | The conflict branch of selection validation |
 | `optioned-tooling` | an `options_schema` with a required and a `choices` option, contributing a task fragment that reads them | Capability option validation and rendering |
 
@@ -158,6 +161,8 @@ carry their own owners and evidence commands.
 composition rules, and this proof. The proof pins behaviour that later
 Data Science work builds on: a change that alters composition order, a
 rejection's `EngineErrorCode`, or the packaged-resource set must update this
-document and `tests/test_capability_composition.py` together. The public
-engine API, package version `0.3.2`, and every protocol version remain
-unchanged by this validation.
+document and `tests/test_capability_composition.py` together. FT-11.04
+changed no public engine API, no package version (`0.3.2` at the time), and
+no protocol version; the `data-science` archetype (FT-12.01) and the
+[`0.4.1` release](reviewed-engine-release.md) then built on this layer with
+those tuples still unchanged.

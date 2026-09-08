@@ -43,7 +43,7 @@ without generating a mandatory scanner. The
 the SBOM and release-provenance behaviour a future capability must satisfy,
 without generating either until a real release/publish path exists.
 The [ProjectSpec protocol](docs/project-spec.md) defines the strict,
-engine-owned generation request that future clients construct without taking
+engine-owned generation request that clients construct without taking
 ownership of template or composition validation. The
 [organisation policy protocol](docs/organisation-policy.md) defines the
 strict, order-independent defaults and constraints a downstream client applies
@@ -53,7 +53,7 @@ authority; the
 proves that protocol executably against a test-only resolver. The
 [component manifest protocol](docs/component-manifests.md) defines the strict
 TOML metadata, compatibility, owned resources, dependencies, and conflicts
-that future engine discovery will consume. The
+that engine discovery consumes. The
 [composition order contract](docs/composition-order.md) defines the single
 deterministic order a validated selection of those components applies in. The
 [file conflict and override rules](docs/file-conflicts.md) define the output
@@ -99,10 +99,10 @@ the public facade or package version. The
 [no-copy inheritance proof](docs/no-copy-inheritance.md) demonstrates that a
 downstream client can keep policy and orchestration local while consuming
 Foundation and component output only through that supported facade.
-The [Data Science roadmap](docs/roadmap-v2/README.md) continues this completed
-architecture through Stages 10–14. It plans a package-backed,
+The [Data Science roadmap](docs/roadmap-v2/README.md) continued this
+architecture through Stages 10–14, delivering a package-backed,
 notebook-oriented third archetype and reusable capabilities without changing
-the default Copier path during roadmap creation.
+the default Copier path.
 The canonical [Data Science archetype contract](docs/data-science-archetype.md)
 fixed that shape's package, notebook, working-tree, and ownership boundary
 before implementation; FT-12.01 / ADR 0053 implemented the manifest, its owned
@@ -118,7 +118,7 @@ ADR 0051 ships `scientific-python`; both capabilities are published in the
 The [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
 fix the fail-closed notebook-validation order, deterministic failure
 identifiers, output-free diagnostics, and the prose-only working-tree
-guidance those future owners must satisfy. The
+guidance the shipped `jupyter` and `data-science` owners satisfy. The
 [Data Science compatibility and acceptance contract](docs/data-science-compatibility-and-acceptance.md)
 classifies every versioned engine axis for the `0.4.0` line, fixes the
 executable acceptance matrix and its per-check owners, and states the
@@ -155,6 +155,13 @@ generated `mypy --strict` failure on untyped `pandas`/`sklearn`, and a
 stay `1.0.0`. `library`/`cli` stay `1.0.1`. FT-12.04 published and verified
 [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
 on [PyPI](https://pypi.org/project/forge-template/0.4.0/), closing Stage 12.
+Stage 14 then reviewed the three-archetype composition boundary
+([ADR 0056](docs/adr/0056-three-archetype-composition-boundary-review.md)),
+validated the [cross-repository Data Science line](docs/cross-repository-validation.md)
+([ADR 0057](docs/adr/0057-validate-the-cross-repository-data-science-line.md)),
+and republished the same five-component catalogue unchanged as the current
+[`forge-template 0.4.1`](docs/reviewed-engine-release.md) release;
+`create-forge 0.3.0` adopted that line and closed roadmap v2.
 
 ## Branching and pull requests
 
