@@ -311,7 +311,7 @@ Changes that also modify `create-forge` follow its canonical
 [cross-repository contributor workflow](https://github.com/Sandsy09/create-forge/blob/main/docs/cross-repository-workflow.md)
 for sibling-checkout validation, trust boundaries, and merge/release order.
 
-## Updating GitHub Actions
+## Updating dependencies
 
 Remote actions and reusable workflows follow the canonical
 [GitHub Action pinning policy](docs/github-action-pinning.md): use a full
@@ -320,6 +320,18 @@ Root Dependabot proposes updates weekly, but every update requires human review
 of the upstream release and source, independent tag-to-SHA verification, and a
 green protected status before merge. Never replace a pin with a branch, tag,
 or shortened SHA.
+
+This repository's own Python dependencies (root `pyproject.toml` and
+`uv.lock`) follow the
+[dependency update policy](docs/dependency-updates.md): a bounded weekly `uv`
+Dependabot entry that ignores major bumps for the engine-runtime
+(`jinja2`, `packaging`, `pydantic`) and test-only (`copier`, and the
+notebook-validation stack) compatibility lines, so those move only as
+deliberate pull requests. That automation covers this repository's
+environment only — never the dependencies rendered into generated projects,
+which each scaffold configures through `copier.yml`'s `dependency_updates`
+question and owns after handoff. `tests/test_dependency_updates.py` keeps the
+bounds and the ignore rules in sync.
 
 ## Recording a decision
 

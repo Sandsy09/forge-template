@@ -69,6 +69,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   criteria implementation must satisfy.
 - [github-action-pinning.md](github-action-pinning.md) — immutable remote
   workflow references and their reviewed automated or manual update paths.
+- [dependency-updates.md](dependency-updates.md) — bounded weekly `uv`
+  updates for this repository's own environment, the gated compatibility
+  lines, and the repository-versus-generated-project boundary.
 - [project-spec.md](project-spec.md) — strict ProjectSpec protocol v1,
   effective selections, provenance, and schema boundaries for the
   composition engine.
