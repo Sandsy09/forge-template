@@ -121,8 +121,11 @@ not a standalone scaffolding command.
 
 ## What's next
 
-The Foundation and Data Science roadmaps are complete. Making the engine
-the CLI's default workflow is planned but unscheduled. Follow
+The Foundation and Data Science roadmaps are complete. The prepared
+[Engine-Default Cutover](docs/roadmap-v3/README.md) and
+[Streamlit Archetype](docs/roadmap-v4/README.md) roadmaps describe future work;
+their issues are not yet filed and no release is scheduled. Streamlit waits
+for the cutover contracts, not necessarily the completed cutover release. Follow
 [open work](https://github.com/Sandsy09/forge-template/issues) and
 [releases](https://github.com/Sandsy09/forge-template/releases), or suggest
 a useful project type or capability.
