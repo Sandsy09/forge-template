@@ -182,7 +182,7 @@ rendered bytes.
 
 ## Current compatibility state
 
-Living snapshot, reviewed 2026-09-04. Advancing it in line with the rules
+Living snapshot, reviewed 2026-09-08. Advancing it in line with the rules
 above does not require a new ADR; a semantic change to those rules does (see
 "Ownership and change process").
 
@@ -201,7 +201,7 @@ above does not require a new ADR; a semantic change to those rules does (see
 | Organisation-policy protocol | `1` (doc-only; see above) |
 
 Released `create-forge` declares the compatible
-`forge-template>=0.3.1,<0.4` engine range
+`forge-template>=0.4.1,<0.5` engine range
 ([template-engine-api.md](template-engine-api.md#compatibility-and-current-cutover-boundary)).
 
 The Data Science line advanced the package to `0.4.0`, first available as the

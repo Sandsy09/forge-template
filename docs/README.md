@@ -14,9 +14,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   routing rules that keep Foundation conservative and runtime-free.
 - [library-archetype.md](library-archetype.md) — the distributable Python
   package contract and accepted requirements for the Stage 08 migration.
-- [cli-application-archetype.md](cli-application-archetype.md) — the selected
-  second reference archetype's package, dependency, command, and future
-  composition contract.
+- [cli-application-archetype.md](cli-application-archetype.md) — the second
+  reference archetype's package, dependency, command, and composition
+  contract.
 - [data-science-archetype.md](data-science-archetype.md) — the published
   package-plus-notebooks shape and ownership boundary for the third production
   archetype.
@@ -70,7 +70,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [github-action-pinning.md](github-action-pinning.md) — immutable remote
   workflow references and their reviewed automated or manual update paths.
 - [project-spec.md](project-spec.md) — strict ProjectSpec protocol v1,
-  effective selections, provenance, and schema boundaries for the future
+  effective selections, provenance, and schema boundaries for the
   composition engine.
 - [organisation-policy.md](organisation-policy.md) — strict JSON policy
   protocol v1, deterministic selection precedence, conflict rules, and future

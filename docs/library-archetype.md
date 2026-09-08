@@ -9,10 +9,14 @@ implemented by FT-08.02
 FT-08.02 introduced this contract in the installed engine catalogue at
 package version `0.3.0`; the Stage 08
 [composition review](composition-architecture-review.md) corrects its
-Foundation boundary at `0.3.2`. It changes no Copier template, question, or
-generated output: the released Copier path still renders one monolithic
-Library tree, while `create-forge --engine-preview` consumes the public
-catalogue. Both paths coexist until a deliberate cutover.
+Foundation boundary at `0.3.2`. `library` ships unchanged at component
+version `1.0.1` in the current
+[`forge-template` `0.4.1`](reviewed-engine-release.md) catalogue, now beside
+the `cli` and `data-science` archetypes and the `jupyter` and
+`scientific-python` capabilities. This contract changes no Copier template,
+question, or generated output: the released Copier path still renders one
+monolithic Library tree, while `create-forge --engine-preview` consumes the
+public catalogue. Both paths coexist until a deliberate cutover.
 
 ## Archetype boundary
 
@@ -54,7 +58,7 @@ has this identity:
 | Conflicts | none |
 
 Component version `1.0.1`, manifest protocol `2`, ProjectSpec protocol `1`,
-and the `forge-template` package version (`0.3.2`) are independent
+and the `forge-template` package version (`0.4.1`) are independent
 compatibility axes. `discover_components()` returns `library` alongside the
 independent `cli`, `data-science`, `jupyter`, and `scientific-python`
 descriptors. Foundation is never returned as a component descriptor.
@@ -144,9 +148,11 @@ continues to govern the exit criteria for that future work.
 Optional documentation sites, changelogs, coverage reporting,
 dependency-update automation, pre-commit feedback, configuration examples,
 and GitHub-specific files remain with their existing capability or platform
-owners -- none exist in the production catalogue yet. Selecting Library alone
-does not silently select them, and today it is the *only* thing a ProjectSpec
-can select.
+owners -- none of those exist in the production catalogue yet. Selecting
+Library alone does not silently select them. A ProjectSpec selects exactly
+one archetype -- `library`, `cli`, or `data-science` -- and may add the
+`jupyter` or `scientific-python` capability; it cannot select Library and
+have any other component follow implicitly.
 
 ## Implicit Foundation source
 

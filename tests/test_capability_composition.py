@@ -12,12 +12,13 @@ domain capabilities landed on it, and that every manifest-declared resource is
 packaged.
 
 Three synthetic capabilities under ``tests/fixtures/capability_composition/``
-exercise the ``requires``, ``conflicts``, and options paths the production
-catalogue cannot reach -- all four shipped components declare
-``requires = []``, ``conflicts = []``, and only ``library`` carries an
-``options_schema``. They overlay a copy of the *real* production catalogue
-with the *real* Foundation source still live; see
-``docs/capability-composition-validation.md``.
+exercise the ``conflicts`` and options paths the production catalogue cannot
+reach and the ``requires`` failure branch without depending on the archetype
+catalogue: no production component declares a ``conflicts`` edge, only
+``library`` carries an ``options_schema``, and the only production
+``requires`` edge is ``data-science`` -> ``jupyter`` (FT-12.01). They overlay
+a copy of the *real* production catalogue with the *real* Foundation source
+still live; see ``docs/capability-composition-validation.md``.
 """
 
 from __future__ import annotations

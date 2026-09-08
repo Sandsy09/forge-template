@@ -8,10 +8,12 @@ A [Copier](https://copier.readthedocs.io/) template and public composition
 engine that scaffold modern Python projects. The source catalogue contains
 independent **library**, **CLI Application**, and **Data Science** archetypes
 plus the optionless **Jupyter** and **Scientific Python** capabilities. The
-published [`v0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
-catalogue contains all five components with the public facade and protocol
-tuples unchanged from `0.3.x`. The direct-Copier compatibility path remains
-Library-only.
+five-component catalogue was published at
+[`v0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0) and
+republished unchanged as the reviewed
+[`v0.4.1`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.1)
+(the current release), with the public facade and protocol tuples unchanged
+from `0.3.x`. The direct-Copier compatibility path remains Library-only.
 
 Copier was chosen over Cookiecutter specifically for `copier update`, which
 three-way merges template changes into projects generated months earlier. Every
@@ -234,7 +236,7 @@ uv run poe check             # fast: this repo's own lint/typecheck + schema/ADR
 uv run poe combos            # slow: 4 combos in parallel, render assertions, each combo's own poe check
 ./scripts/verify-ci.sh <org> # pushes poe combos' output to throwaway repos, watches CI
 uv run poe update             # slow: both copier update scenarios (local edits survive; latest tag -> HEAD)
-uv run poe archetype          # slow: real uv build/install/import for the Library archetype, 3 packaging modes
+uv run poe archetype          # slow: real uv build/install/import for all three archetypes + both capabilities (pytest -m archetype -n 4)
 uv run poe crossrepo          # slow, sibling-gated: pairs this repo with a local create-forge checkout
 ```
 
@@ -244,9 +246,10 @@ skips itself when no `create-forge` checkout is found at `../create-forge` or
 [ADR 0057](docs/adr/0057-validate-the-cross-repository-data-science-line.md).
 
 `poe check`, `poe combos`, `poe update`, and `poe archetype` are all `pytest`
-under a marker select (`tests/test_combos.py` / `tests/test_update.py` /
-`tests/test_library_build.py` carry the `combos` / `update` / `archetype`
-markers; `poe check` runs everything else). `tests/`, ported from the
+under a marker select (`tests/test_combos.py` carries `combos`,
+`tests/test_update.py` carries `update`, and the `test_*_build.py` modules
+plus `tests/test_data_science_endpoints.py` carry `archetype`; `poe check`
+runs everything else). `tests/`, ported from the
 former `scripts/test-combos.sh` and `scripts/test-update.sh` — see
 [#5](https://github.com/Sandsy09/forge-template/issues/5), done — is a single
 definition of every assertion, called from both here and CI's
@@ -311,7 +314,7 @@ root
 holds checks for `copier.yml` itself (layout, computed-value defaults, the
 `versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
 via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0056 recording the rationale behind
+`docs/adr/` holds contiguous ADRs through 0057 recording the rationale behind
 decisions already made, checked for internal consistency by
 `src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
 gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
@@ -326,17 +329,18 @@ path renders to a valid filename or empty, never something in between).
 
 The completed
 [Foundation roadmap](docs/roadmap-v1/github-issues/forge-template/ISSUE-INDEX.md)
-is the historical source for Stages 00–09. The live
+is the historical source for Stages 00–09. The
 [Data Science epic index](docs/roadmap-v2/github-issues/forge-template/ISSUE-INDEX.md)
-continues through Stages 10–14 under
+covered Stages 10–14 under
 [ADR 0044](docs/adr/0044-plan-data-science-as-the-third-archetype.md): a
 package-backed, notebook-oriented third archetype, reusable optional
-  capabilities, and create-forge delivery that remains behind
-  `--engine-preview`. All 24 child issues are filed and attached to their
-  epics; GitHub issue bodies and native relationships are authoritative.
-FT-10.01's [Data Science contract](docs/data-science-archetype.md) now fixes
-the future optionless package, test, starter-notebook, ignored working-tree,
-and ownership shape without adding it to the production catalogue.
+capabilities, and create-forge delivery behind `--engine-preview`. All of the
+forge-template side is complete; `create-forge 0.3.0` closed the client side.
+GitHub issue bodies and native relationships are authoritative.
+FT-10.01's [Data Science contract](docs/data-science-archetype.md) fixed the
+optionless package, test, starter-notebook, ignored working-tree, and
+ownership shape before implementation; FT-12.01/FT-12.02 then shipped it into
+the production catalogue.
 FT-10.02's [initial capability contracts](docs/data-science-capabilities.md)
 define reusable optionless `jupyter` development tooling and an independently
 optional `scientific-python` runtime stack. Data Science explicitly requires

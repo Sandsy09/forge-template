@@ -113,17 +113,18 @@ the same precedent FT-12.04's `0.4.0` audit set.
   through the engine's public facade directly, the same way
   [data-science-validation.md](data-science-validation.md#published-040-release-verification)'s
   `0.4.0` audit did. The real proof against an installed `create-forge`
-  console script consuming this published release is CF-14.02.
+  console script consuming this published release was CF-14.02.
 - **A `create-forge` release.** `create-forge`'s own `0.3.0` release, adopting
-  this `0.4.1` line, is CF-14.04 — out of scope for this issue by its own
+  this `0.4.1` line, was CF-14.04 — out of scope for this issue by its own
   stated exclusions.
 - **A default-path cutover.** `create-forge new --engine-preview` remains a
   preview; the direct-Copier Library path is unchanged.
 
-## What remains
+## Downstream adoption
 
-`create-forge` Stage 14 now has an immutable reviewed engine target. CF-14.01
-adopts the `0.4.1` line (already within its declared
-`forge-template>=0.4,<0.5` range), CF-14.02 and CF-14.03 complete client-side
-end-to-end and regression validation, and CF-14.04 publishes `create-forge
-0.3.0` and closes the roadmap.
+This release gave `create-forge` Stage 14 an immutable reviewed engine
+target. CF-14.01 adopted the `0.4.1` line and tightened the engine extra to
+`forge-template>=0.4.1,<0.5`, CF-14.02 and CF-14.03 completed client-side
+end-to-end and regression validation, and CF-14.04 published
+[`create-forge 0.3.0`](https://pypi.org/project/create-forge/0.3.0/), closing
+roadmap v2.

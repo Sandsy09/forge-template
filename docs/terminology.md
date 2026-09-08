@@ -13,9 +13,13 @@ package-bound discovery, validation, planning, and in-memory rendering.
 
 The public engine model is accepted and its `forge-template` side is
 implemented under
-[create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md),
-while CLI consumption and production components remain later work. Where a
-term describes an unimplemented layer, it is marked accordingly.
+[create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
+The [`0.4.1` catalogue](reviewed-engine-release.md) ships five production
+components -- the `library`, `cli`, and `data-science` archetypes and the
+`jupyter` and `scientific-python` capabilities -- and `create-forge` consumes
+them behind `new --engine-preview`. The layers still unimplemented are
+platforms, profiles, and organisation policy; where a term describes one of
+those, it is marked accordingly.
 
 ## Ecosystem terms
 
@@ -91,10 +95,12 @@ that ships it.
 ### Capability
 
 A capability is an optional, reusable project concern that can apply across
-archetypes. A project may select zero or more capabilities. Documentation,
-changelog support, release provenance, or an optional editor bridge are
-examples of concerns that can be modelled as capabilities when the composition
-engine exists. Editor-specific integration follows the canonical
+archetypes. A project may select zero or more capabilities. The `jupyter` and
+`scientific-python` capabilities ship in the
+[`0.4.1` catalogue](reviewed-engine-release.md); documentation, changelog
+support, release provenance, and an optional editor bridge are further
+concerns that can be modelled as capabilities but are not yet built.
+Editor-specific integration follows the canonical
 [editor integration strategy](editor-integration.md). Release provenance is
 defined concretely by the
 [supply-chain provenance contract](supply-chain-provenance.md), which names
@@ -271,7 +277,7 @@ surface and the denial of any `override` grant — is now defined by
 The v0.1.x Library scaffold is monolithic; it does not yet implement these as
 components. Its existing choices can nevertheless be described consistently:
 
-- Foundation is the future shared baseline beneath every archetype; its exact
+- Foundation is the shared baseline beneath every archetype; its exact
   outcomes are defined by the
   [Foundation guarantees](foundation-guarantees.md).
 - Library is the single archetype and owns the Python-library project shape,
@@ -289,10 +295,10 @@ already separated into components.
 ### A future combined CLI composition
 
 `cli` is implemented (FT-08.04): a ProjectSpec selecting it composes
-Foundation and `cli` into a real project today. A future request combining
-Foundation, `cli`, `<capability-a>`, and `<platform>`, with `<profile>`
-supplying convenient defaults and `<organisation-policy>` constraining
-allowed selections, still depends on capability, platform, profile, and
+Foundation and `cli` into a real project today, and can add the `jupyter` or
+`scientific-python` capability. A future request that also names `<platform>`,
+with `<profile>` supplying convenient defaults and `<organisation-policy>`
+constraining allowed selections, still depends on platform, profile, and
 policy concepts that do not exist in the production catalogue yet. The
 canonical [CLI Application contract](cli-application-archetype.md) assigns
 the executable project shape to `cli`; the other placeholders remain neutral.

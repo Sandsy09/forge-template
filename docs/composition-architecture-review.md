@@ -125,18 +125,17 @@ to its selected component.
 
 ## Client boundary
 
-create-forge Stage 13 now consumes the public facade behind
-`new --engine-preview`. Its current `main` branch declares
-`forge-template>=0.4,<0.5`, derives selections and required-capability hints
-from descriptors, constructs ProjectSpec protocol `1`, and sends invalid
-selections to the engine unchanged. Its shipped modules contain no hard-coded
-production component identifier or copied catalogue rule.
+create-forge consumes the public facade behind `new --engine-preview`. It
+derives selections and required-capability hints from descriptors, constructs
+ProjectSpec protocol `1`, and sends invalid selections to the engine
+unchanged. Its shipped modules contain no hard-coded production component
+identifier or copied catalogue rule.
 
-The latest released create-forge remains `0.2.1` with the older
-`forge-template>=0.3.1,<0.4` range. The future `0.3.0` release adopts the
-reviewed `0.4` line now that
-[forge-template `0.4.1` is published](reviewed-engine-release.md). This does
-not change the direct-Copier Library path.
+[`create-forge 0.3.0`](https://pypi.org/project/create-forge/0.3.0/) is the
+released client on the reviewed `0.4` line, declaring
+`forge-template>=0.4.1,<0.5`; the earlier `0.2.1` release stayed on
+`forge-template>=0.3.1,<0.4`. This does not change the direct-Copier Library
+path.
 
 Lock resolution remains a client-finalisation artefact. `render_project()`
 does not perform network or filesystem work; create-forge writes into an

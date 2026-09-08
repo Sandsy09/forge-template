@@ -113,8 +113,10 @@ real-catalogue proof from additive private-fixture coverage.
 
 ## What this does not implement
 
-- No shipped resolver, parser, or public API. `forge_template`'s facade,
-  `EngineErrorCode`, and package version (`0.3.2`) are all unchanged.
+- No shipped resolver, parser, or public API. FT-09.03 left `forge_template`'s
+  facade, `EngineErrorCode`, and package version (`0.3.2` then) unchanged, and
+  the current [`forge-template` `0.4.1`](reviewed-engine-release.md) catalogue
+  still ships none.
 - No profile implementation. The authority order's lowest tier is modelled
   as a plain keyword argument to the reference resolver
   (`profile_default_archetype` and friends), not a delivered profile
