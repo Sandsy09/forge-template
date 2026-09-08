@@ -10,3 +10,53 @@ updates:
     labels: ["type:chore", "area:ci"]
     commit-message:
       prefix: ci
+
+  # This repository's own Python environment: root pyproject.toml plus the
+  # committed uv.lock. It does NOT cover the dependencies rendered into
+  # generated projects (template/pyproject.toml.jinja, the Foundation content
+  # tree, component fragments) or .pre-commit-config.yaml's pinned hook
+  # revisions -- both stay manual. See docs/dependency-updates.md.
+  #
+  # tests/test_dependency_updates.py reads this entry; every strictly-bounded
+  # dependency in pyproject.toml must have a matching semver-major ignore
+  # rule below, and a rule must not exist for an unbounded one.
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    labels: ["type:chore", "area:packaging"]
+    commit-message:
+      prefix: chore
+    groups:
+      # Routine development-tooling minor/patch bumps arrive as one PR a week.
+      # Runtime dependencies and every major update stay individual and
+      # separately reviewable.
+      dev-tooling:
+        dependency-type: development
+        update-types: ["minor", "patch"]
+    ignore:
+      # Engine runtime lines (project.dependencies). Crossing one of these
+      # changes the resolvable range of the published wheel for every engine
+      # consumer -- it must move the bound, the lockfile, docs/compatibility-
+      # policy.md, and the affected slow suites together, never as an
+      # automated PR. See docs/dependency-updates.md and ADR 0041.
+      - dependency-name: "jinja2"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "packaging"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "pydantic"
+        update-types: ["version-update:semver-major"]
+      # Test-only compatibility lines. copier<10 is the direct-Copier path
+      # this repo still supports (CLAUDE.md invariant 4); the notebook stack
+      # is pinned to the range the generated jupyter validator is written
+      # against. A major bump here is a deliberate, reviewed change.
+      - dependency-name: "copier"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "ipykernel"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "nbclient"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "nbformat"
+        update-types: ["version-update:semver-major"]

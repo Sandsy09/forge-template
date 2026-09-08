@@ -537,6 +537,16 @@ possible.
 `.pre-commit-config.yaml`, ruleset in `.markdownlint-cli2.jsonc`
 (`docs/adr/` is exempt from line-length only, since records are immutable).
 
+[#137](https://github.com/Sandsy09/forge-template/issues/137), done —
+`.github/dependabot.yml` gained a bounded weekly `uv` entry for this repo's
+own `pyproject.toml`/`uv.lock` alongside the existing `github-actions` one.
+It ignores semver-major bumps for the engine-runtime (`jinja2`, `packaging`,
+`pydantic`) and test-only (`copier`, `ipykernel`, `nbclient`, `nbformat`)
+compatibility lines; `tests/test_dependency_updates.py` derives that gated
+set from `pyproject.toml` so a bound added without a matching ignore rule
+fails `poe check`. Policy: [docs/dependency-updates.md](docs/dependency-updates.md).
+It covers this repository only, never generated-project dependencies.
+
 Also open, not yet scheduled:
 [#1](https://github.com/Sandsy09/forge-template/issues/1) (reintroduce `make`,
 see Deferred below).
