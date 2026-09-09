@@ -129,5 +129,10 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   responsibility matrix: every default-Copier question, file and mechanic
   assigned to provider, client or exclusion, with a cutover tier and an
   implementation owner, pinned by `tests/test_parity_inventory.py`.
+- [generation-provenance.md](generation-provenance.md) — FT-15.02's versioned
+  provider contract for the metadata that reproduces or updates a generated
+  project: the document shape, the reproducibility guarantee, owner-declared
+  renames and never-clobber targets, and the reserved failure codes, pinned by
+  `tests/test_generation_provenance.py`.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

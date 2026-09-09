@@ -61,6 +61,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0056 — Confirm the three-archetype composition boundaries](0056-three-archetype-composition-boundary-review.md)
 - [0057 — Validate the cross-repository Data Science line](0057-validate-the-cross-repository-data-science-line.md)
 - [0058 — Inventory default-Copier parity and assign ownership](0058-inventory-default-copier-parity.md)
+- [0059 — Generation provenance and reproducible-update inputs](0059-generation-provenance-and-reproducible-updates.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

@@ -98,6 +98,12 @@ Organisation-policy protocol `1` now defines the external document, conflict,
 and failure semantics; executable parsing and resolution remain unscheduled
 client-owned work in roadmap v1 and do not alter this ProjectSpec wire shape.
 
+This is *selection* provenance — why the effective request is what it is. It
+is distinct from *generation* provenance — what a render produced — which
+[generation-provenance.md](generation-provenance.md) (FT-15.02) specifies as a
+separate provider-assembled document that embeds this whole spec verbatim
+rather than adding a field to it.
+
 ### Component options
 
 `component_options` is an object keyed by a selected archetype, capability, or

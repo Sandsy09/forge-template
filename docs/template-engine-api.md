@@ -196,6 +196,13 @@ Rendering is an in-memory operation. Before returning, it applies the canonical
 A successful result does not imply that a target directory exists or that any
 file has been written.
 
+[generation-provenance.md](generation-provenance.md) (FT-15.02) specifies a
+versioned provenance document the engine will assemble alongside a render —
+the effective spec, the ownership map, and a digest per target — so a client
+can reproduce or update the project later. It is a reserved contract, not a
+shipped result field; [FT-17.01](https://github.com/Sandsy09/forge-template/issues/150)
+implements it.
+
 ## Foundation
 
 Every generation applies one implicit, mandatory, non-selectable Foundation
