@@ -512,6 +512,29 @@ byte-identical to `0.4.0`'s -- the catalogue is unchanged; only the version
 republished. **FT-14.01, FT-14.02, and FT-14.03 are complete; `FT-EPIC-14`
 (forge-template#99) and its milestone are closed.**
 
+The [Engine-Default Cutover roadmap](docs/roadmap-v3/README.md) (Stages 15–18,
+`FT-EPIC-15`/#141 through `FT-EPIC-18`/#143, plus create-forge's `CF-EPIC-16`
+and `CF-EPIC-18`) plans making the engine the default generator; the
+[Streamlit roadmap](docs/roadmap-v4/README.md) (Stages 19–21) follows it. Both
+packs are filed, mirrored byte-for-byte into the sibling create-forge repo,
+and pinned by `scripts/check_roadmaps.py` / `tests/test_roadmap_packs.py`:
+that checker hash-pins every issue body to its filed GitHub body, requires an
+unticked acceptance checklist, and requires `status:blocked` to match the
+recorded blockers, so **completion bookkeeping happens on GitHub only — never
+edit `docs/roadmap-v3/**` or `docs/roadmap-v4/**` to reflect progress**
+(doing so breaks `poe check` and forces a matching create-forge PR). Stage 15
+is a contract-only stage: no runtime, generated-content, protocol, version or
+release change. FT-15.01 / #146 is complete — its
+[engine-default parity inventory](docs/engine-default-parity.md)
+([ADR 0058](docs/adr/0058-inventory-default-copier-parity.md), pinned by
+`tests/test_parity_inventory.py` which derives its expected rows from
+`copier.yml` and `template/**`) assigns every default-Copier question, file
+and mechanic to provider, client or a maintainer-approved exclusion, tiers
+each gap `cutover-blocking` or `deferred`, and flags rows with no filed
+implementation child `needs a bounded issue` for FT-15.04 to reconcile.
+With #146 merged, FT-15.02 / #147 and FT-15.03 / #148 are unblocked;
+FT-15.04 / #149 stays blocked on both.
+
 FT-08.02 populated the
 production component catalogue under the
 [Library archetype contract](docs/library-archetype.md) — additive, package-bound

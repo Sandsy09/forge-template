@@ -162,6 +162,13 @@ validated the [cross-repository Data Science line](docs/cross-repository-validat
 and republished the same five-component catalogue unchanged as the current
 [`forge-template 0.4.1`](docs/reviewed-engine-release.md) release;
 `create-forge 0.3.0` adopted that line and closed roadmap v2.
+The [Engine-Default Cutover roadmap](docs/roadmap-v3/README.md) then opened
+Stage 15: FT-15.01's
+[engine-default parity inventory](docs/engine-default-parity.md)
+([ADR 0058](docs/adr/0058-inventory-default-copier-parity.md)) is the
+responsibility matrix assigning every default-Copier behaviour to the
+provider, the client or an explicit exclusion, with no runtime, content or
+version change.
 
 ## Branching and pull requests
 

@@ -204,7 +204,10 @@ not duplicate those APIs or algorithms.
 
 The v0.1.x Copier Library scaffold still emits one combined template, and
 this table's mapping of ITS concerns to Foundation/archetype/capability/
-platform remains conceptual for that path. The canonical
+platform remains conceptual for that path.
+[engine-default-parity.md](engine-default-parity.md) applies this routing
+concretely to every default-Copier question, file and mechanic as FT-15.01's
+responsibility matrix for the engine-default cutover. The canonical
 [Library archetype contract](library-archetype.md) is now real for the
 *engine* path: FT-08.02 implemented Foundation and the production `library`
 component as genuinely separate content sources composed through the stable
