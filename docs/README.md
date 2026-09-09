@@ -125,5 +125,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [compatibility-policy.md](compatibility-policy.md) — the Forge-Blueprint
   compatibility policy: every versioned engine axis, compatible ranges,
   deprecation windows, and unsupported-version reporting requirements.
+- [engine-default-parity.md](engine-default-parity.md) — FT-15.01's
+  responsibility matrix: every default-Copier question, file and mechanic
+  assigned to provider, client or exclusion, with a cutover tier and an
+  implementation owner, pinned by `tests/test_parity_inventory.py`.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.
