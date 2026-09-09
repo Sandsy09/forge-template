@@ -532,8 +532,19 @@ release change. FT-15.01 / #146 is complete — its
 and mechanic to provider, client or a maintainer-approved exclusion, tiers
 each gap `cutover-blocking` or `deferred`, and flags rows with no filed
 implementation child `needs a bounded issue` for FT-15.04 to reconcile.
-With #146 merged, FT-15.02 / #147 and FT-15.03 / #148 are unblocked;
-FT-15.04 / #149 stays blocked on both.
+FT-15.02 / #147 is complete — its
+[generation provenance contract](docs/generation-provenance.md)
+([ADR 0059](docs/adr/0059-generation-provenance-and-reproducible-updates.md),
+pinned by `tests/test_generation_provenance.py`) fixes the versioned metadata
+that reproduces or updates a generated project: a typed provenance document
+(effective spec, `{ id, version }` per component, target→owner→digest→
+regeneration map), a reproducibility guarantee the client provisions the
+recorded release against, owner-declared rename records, an opt-in degraded
+two-way update, a reserved ninth compatibility axis (`metadata_version`), and
+two reserved `EngineErrorCode` values (`invalid-generation-metadata`,
+`unsupported-generation-metadata`) that FT-17.01 will add — the test fails
+deliberately when they land. With #146 and #147 merged, FT-15.03 / #148 is
+unblocked; FT-15.04 / #149 stays blocked on #148.
 
 FT-08.02 populated the
 production component catalogue under the

@@ -52,6 +52,21 @@ another.
 The last three are deliberately unpublished; see "What the engine publishes
 for negotiation" below for why that is a considered choice, not a gap.
 
+## Reserved axis: generation metadata
+
+[FT-15.02](https://github.com/Sandsy09/forge-template/issues/147)'s
+[generation provenance contract](generation-provenance.md) reserves a ninth
+axis: `metadata_version`, the schema version of the document the engine hands
+a client so a generated project can be reproduced or updated. It is not in the
+table above because nothing publishes or emits it yet —
+[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) adds it to
+`get_engine_info()` as a backward-compatible addition and lists it in the
+"Current compatibility state" table below. Until then it version-controls
+nothing. When shipped it is client-visible, negotiated exactly like the
+protocol tuples, and governed by every rule in this document; an unsupported
+value fails closed as `unsupported-generation-metadata` with the four report
+facts from "Reporting an unsupported Forge version".
+
 ## Compatible ranges
 
 **Package.** Below `1.0`, a supported dependency range stays within one minor

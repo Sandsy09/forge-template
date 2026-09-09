@@ -1,0 +1,135 @@
+{
+  "metadata_version": 1,
+  "provider": {
+    "distribution": "forge-template",
+    "version": "0.4.1"
+  },
+  "protocols": {
+    "projectspec": 1,
+    "component_manifest": [
+      1,
+      2
+    ]
+  },
+  "spec": {
+    "protocol_version": 1,
+    "project": {
+      "name": "Example Library",
+      "package_name": "example_library",
+      "repository_name": "example-library",
+      "description": "A worked generation-provenance reference.",
+      "licence": "mit",
+      "authors": [
+        {
+          "name": "Example Author",
+          "email": "author@example.com"
+        }
+      ]
+    },
+    "python": {
+      "minimum": "3.11",
+      "development": "3.13"
+    },
+    "components": {
+      "archetype": "library",
+      "capabilities": [],
+      "platforms": []
+    },
+    "provenance": {
+      "profile": null,
+      "policies": []
+    },
+    "component_options": {
+      "library": {
+        "packaging_mode": "uv-build-static",
+        "initial_version": "0.1.0"
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "library",
+      "version": "1.0.1"
+    }
+  ],
+  "output": [
+    {
+      "target": ".editorconfig",
+      "owner": "foundation",
+      "digest": "sha256:a10720f6f50dcdf97ba7b7c019c8c343ba956e4856aa01533dfafc76e3d4c88a",
+      "regeneration": "replace"
+    },
+    {
+      "target": ".gitattributes",
+      "owner": "foundation",
+      "digest": "sha256:373dea2f58df869861b527c087fd1809edf12baf10c0c20941effca0863f9dbc",
+      "regeneration": "replace"
+    },
+    {
+      "target": ".gitignore",
+      "owner": "foundation",
+      "digest": "sha256:631b2635295d9277940b7398af0f57ba5a3c3b92433136d2eb55b2910879e76c",
+      "regeneration": "replace"
+    },
+    {
+      "target": ".python-version",
+      "owner": "foundation",
+      "digest": "sha256:02e735b3dfe1c32833eb550b7ff8ffa17f5f2bc3fa1e7bae61a8f5a3883ce398",
+      "regeneration": "replace"
+    },
+    {
+      "target": "CONTRIBUTING.md",
+      "owner": "foundation",
+      "digest": "sha256:b88281483e2e715231d7e42ed528b5e28cabd9499347a2acda3441f69a7c97b3",
+      "regeneration": "replace"
+    },
+    {
+      "target": "LICENSE",
+      "owner": "foundation",
+      "digest": "sha256:b11fb014f2219e79056946e6771e17b5a3620045c737e9eb27834ffc95e38376",
+      "regeneration": "replace"
+    },
+    {
+      "target": "README.md",
+      "owner": "foundation",
+      "digest": "sha256:d0edc8f00be94ac41ca2ed1ca42cc47ba35d6d761f43929a227c67e1e65f9b63",
+      "regeneration": "replace"
+    },
+    {
+      "target": "SECURITY.md",
+      "owner": "foundation",
+      "digest": "sha256:7c57518ad1c3f16884042ae3469801a28fe0f11b43338653225a46ab402688e2",
+      "regeneration": "replace"
+    },
+    {
+      "target": "pyproject.toml",
+      "owner": "foundation",
+      "digest": "sha256:2375797856399d61871b3591ac0deb889f0b2d46a70dde3330a815f53d5f5c64",
+      "regeneration": "replace"
+    },
+    {
+      "target": "src/example_library/__init__.py",
+      "owner": "component:library",
+      "digest": "sha256:ad325a9dde675c3d710fb389aa901fcd3c42696e545103cd38dbcbe8c3d4ea66",
+      "regeneration": "replace"
+    },
+    {
+      "target": "src/example_library/py.typed",
+      "owner": "component:library",
+      "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "regeneration": "replace"
+    },
+    {
+      "target": "tests/__init__.py",
+      "owner": "component:library",
+      "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "regeneration": "replace"
+    },
+    {
+      "target": "tests/test_smoke.py",
+      "owner": "component:library",
+      "digest": "sha256:c788e1dcd407352ad3676ae03bdc0bc057b00d09518e67bab92d08d05b84f69a",
+      "regeneration": "replace"
+    }
+  ]
+}

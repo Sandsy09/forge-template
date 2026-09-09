@@ -1,0 +1,8 @@
+{
+  "metadata_version": 1,
+  "provider": { "distribution": "acme-forge", "version": "" },
+  "protocols": { "projectspec": 1, "component_manifest": [1, 2] },
+  "spec": {},
+  "components": [],
+  "output": []
+}

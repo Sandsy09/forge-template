@@ -168,7 +168,13 @@ Stage 15: FT-15.01's
 ([ADR 0058](docs/adr/0058-inventory-default-copier-parity.md)) is the
 responsibility matrix assigning every default-Copier behaviour to the
 provider, the client or an explicit exclusion, with no runtime, content or
-version change.
+version change. FT-15.02's
+[generation provenance contract](docs/generation-provenance.md)
+([ADR 0059](docs/adr/0059-generation-provenance-and-reproducible-updates.md))
+then specifies the versioned metadata that reproduces or updates a generated
+project — output ownership, a reproducibility guarantee, owner-declared
+renames and never-clobber targets, and two reserved failure codes — again
+without a runtime, content or version change.
 
 ## Branching and pull requests
 

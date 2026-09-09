@@ -209,8 +209,8 @@ before Stage 17 can implement:
   reconciles them against Stage 17's six children.
 - **No engine-native update.** `copier update`'s three-way merge has no
   engine equivalent. FT-15.02 specifies the reproducible old/new render
-  inputs; FT-17.04 implements the reproducible rendering; the client owns the
-  filesystem merge.
+  inputs in [generation-provenance.md](generation-provenance.md); FT-17.04
+  implements the reproducible rendering; the client owns the filesystem merge.
 
 ## Explicit exclusions
 
@@ -234,10 +234,13 @@ Nothing in this inventory moves any of these toward the provider.
 
 Reserved for the later Stage 15 children and their ADRs:
 
-- the generation-metadata filename, schema and version-negotiation rules, and
-  which questions become metadata versus component options (FT-15.02);
-- the merge, conflict and recovery policy for engine-native updates
-  (FT-15.02);
+- the generation-metadata schema and version-negotiation rules are now fixed
+  by [generation-provenance.md](generation-provenance.md) (FT-15.02); its
+  persisted filename stays a client decision, and which unrouted questions
+  become metadata versus a component option is FT-15.03's;
+- the merge, conflict and recovery policy for engine-native updates is
+  client-side (CF-16.02); FT-15.02 fixed only the reproducible render inputs
+  it consumes;
 - the concrete GitHub platform descriptor, its options and its Foundation
   extension points (FT-15.03);
 - whether `type_checking` becomes a capability or an accepted mypy-only

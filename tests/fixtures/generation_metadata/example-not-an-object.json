@@ -1,0 +1,4 @@
+[
+  "A generation-metadata document must be a JSON object, not an array.",
+  "validate_metadata rejects this at parse with invalid-generation-metadata."
+]
