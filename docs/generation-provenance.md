@@ -269,6 +269,16 @@ Reserved for other owners:
   scope reconciles
   ([FT-15.04](https://github.com/Sandsy09/forge-template/issues/149)).
 
+FT-15.04 has since settled the last two:
+[cutover-compatibility-and-acceptance.md](cutover-compatibility-and-acceptance.md)
+([ADR 0061](adr/0061-provider-compatibility-failure-and-release-gates.md))
+classifies the cutover as `forge-template` `0.5.0` with component-manifest
+protocol `3` — the rename and regeneration-disposition records above are new
+`extra="forbid"` manifest fields, so they cannot ride protocol `2` — and
+`metadata_version` moving from reserved to a published `1`, every other axis
+unchanged. It also fixes the immutable-release and supported-`0.4.x`-window
+rollback rules and closes the flagged parity rows by reference to FT-17.03.
+
 ## Validation
 
 `tests/test_generation_provenance.py` runs under `uv run poe check`. Following

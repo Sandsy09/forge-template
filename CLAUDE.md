@@ -558,8 +558,24 @@ and Copier's free-text `codeowners_team` as narrowings, and confirms no new
 archetype (FT-ROADMAP-01-EX-03). Decision 7 reverses ADR 0049's limit that a
 capability cannot declare its own named dependency group; `foundation.toml` is
 unchanged and the eight points are reserved for FT-17.02/FT-17.03 to publish.
-With #146, #147 and #148 merged, FT-15.04 / #149 is fully unblocked and is the
-last open Stage 15 child.
+FT-15.04 / #149 is complete — its
+[cutover compatibility, failure and acceptance contract](docs/cutover-compatibility-and-acceptance.md)
+([ADR 0061](docs/adr/0061-provider-compatibility-failure-and-release-gates.md),
+pinned by `tests/test_cutover_gates.py`) classifies the three axes the
+engine-default cutover moves (`forge-template` → `0.5.0`; component-manifest
+protocol → `(1, 2, 3)` because the FT-15.02 rename records are new
+`extra="forbid"` manifest fields; generation metadata → published
+`metadata_version = 1`), holds every other axis and the public facade fixed
+bar three additive names, keeps the direct-Copier `template/` path retained
+and un-deprecated, sets the immutable-release + supported-`0.4.x`-window
+rollback rule, fixes the executable acceptance matrix (every provider child
+FT-17.01 through FT-18.01 owns a row), and closes the nine
+`needs a bounded issue` parity rows by reference to FT-17.03 (no new issue;
+the frozen roadmap-v3 mirror stays byte-identical). No runtime, content,
+protocol, version or release change. **FT-15.01 through FT-15.04 are
+complete; `FT-EPIC-15 / #141` and its milestone are closed.** The next
+actionable roadmap work is create-forge's CF-16.01; `FT-EPIC-17 / #142`
+stays blocked on CF-16.03.
 
 FT-08.02 populated the
 production component catalogue under the

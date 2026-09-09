@@ -128,6 +128,17 @@ outside the accepted trust model.
 downstream client may rely on across this axis and every other versioned
 surface the engine publishes.
 
+`manifest_version` is `1` or `2` today. A third protocol is **reserved, not
+implemented**:
+[FT-15.04](https://github.com/Sandsy09/forge-template/issues/149) /
+[ADR 0061](adr/0061-provider-compatibility-failure-and-release-gates.md)
+classifies the engine-default cutover as moving this axis to `(1, 2, 3)`,
+because the owner-declared rename and regeneration-disposition records
+[generation-provenance.md](generation-provenance.md) reserves are new manifest
+fields and the models forbid unknown keys, so they cannot ride protocol `2`.
+[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) adds
+protocol `3`; protocol-`1` and protocol-`2` manifests stay accepted unchanged.
+
 ### Compatibility
 
 `compatibility.projectspec_protocols` is a non-empty, unique set of ProjectSpec

@@ -138,5 +138,11 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   assignment of every optional-tooling and host-integration parity gap to one
   `github` platform or one of eight capabilities, with five reserved Foundation
   extension points, pinned by `tests/test_platform_composition.py`.
+- [cutover-compatibility-and-acceptance.md](cutover-compatibility-and-acceptance.md)
+  — FT-15.04's classification of the versioned axes the engine-default cutover
+  moves (`forge-template` `0.5.0`, component-manifest protocol `3`, published
+  `metadata_version`), the failure and rollback guarantees, the executable
+  acceptance matrix and the cross-repository release gates, pinned by
+  `tests/test_cutover_gates.py`.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

@@ -325,3 +325,17 @@ Stage 14 had an immutable target. Released `create-forge` now declares the
 compatible `forge-template>=0.4.1,<0.5` engine range behind `new
 --engine-preview`; the direct-Copier Library path remains separately
 compatible.
+
+[FT-15.04](https://github.com/Sandsy09/forge-template/issues/149) /
+[ADR 0061](adr/0061-provider-compatibility-failure-and-release-gates.md)
+classifies the engine-default cutover as a new minor line, `0.5.0`. Every
+top-level name, signature and result field described above is carried through
+it **additively only** — nothing is renamed, removed or narrowed, and no
+deprecation is opened. The cutover adds `metadata_version` on `EngineInfo`,
+the two `EngineErrorCode` values
+[generation-provenance.md](generation-provenance.md) reserves, and the
+generation-metadata hand-off surface
+[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) builds; it
+moves the component-manifest protocol tuple to `(1, 2, 3)` while accepting
+protocol-`1` and protocol-`2` manifests unchanged. A client written against
+`0.4.1` keeps working against `0.5.0` within a widened range.

@@ -65,6 +65,39 @@ a backward-compatible change carrying the package-version bump this document
 already requires for any observable Foundation change
 ([extension-points.md](extension-points.md#stability-and-versioning)).
 
+## Classified: the engine-default cutover transition
+
+[FT-15.04](https://github.com/Sandsy09/forge-template/issues/149) /
+[ADR 0061](adr/0061-provider-compatibility-failure-and-release-gates.md)
+classifies which axes the engine-default cutover moves, against the rules in
+this document. It is a classification, not a transition: nothing below the
+"Current compatibility state" table changes until Stage 17 implements and
+[FT-17.06](https://github.com/Sandsy09/forge-template/issues/155) publishes.
+The classified move is:
+
+- **`forge-template` package** → a new minor line, `0.5.0`. Below `1.0` a
+  supported range is minor-scoped, so `create-forge`'s `>=0.4.1,<0.5` cannot
+  drift into it and must widen deliberately; `1.0.0` is explicitly not
+  promised.
+- **Component manifest protocol** → `(1, 2, 3)`. The rename and
+  regeneration-disposition records
+  [FT-15.02](https://github.com/Sandsy09/forge-template/issues/147) reserved
+  are new manifest fields, and the models forbid unknown keys, so they cannot
+  ride protocol `2`. Protocol-`1` and protocol-`2` manifests stay accepted
+  unchanged — this is a backward-compatible protocol addition.
+- **Generation metadata** → published `metadata_version = 1` through
+  `get_engine_info()` (FT-17.01), moving it out of the "Reserved axis" section
+  above and into the live table.
+- **Every other axis, and the whole public facade bar three additive names**
+  (the `metadata_version` field and the two reserved `EngineErrorCode`
+  values) → unchanged. That is a requirement on Stage 17, not a prediction.
+
+Provider release rollback is immutable-forward: a defective release is yanked
+and corrected in a higher version, never mutated, and the `0.4.x` line stays
+supported for this document's deprecation window past the cutover so a client
+can pin back. Full detail and the acceptance matrix live in
+[cutover-compatibility-and-acceptance.md](cutover-compatibility-and-acceptance.md).
+
 ## Reserved axis: generation metadata
 
 [FT-15.02](https://github.com/Sandsy09/forge-template/issues/147)'s
