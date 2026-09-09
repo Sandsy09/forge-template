@@ -371,6 +371,17 @@ Reserved for other owners:
   ([FT-15.04](https://github.com/Sandsy09/forge-template/issues/149));
 - the Streamlit archetype and its layout ([roadmap-v4](roadmap-v4/README.md)).
 
+FT-15.04 settled its two items:
+[cutover-compatibility-and-acceptance.md](cutover-compatibility-and-acceptance.md)
+([ADR 0061](adr/0061-provider-compatibility-failure-and-release-gates.md))
+classifies the cutover as `forge-template` `0.5.0`, component-manifest
+protocol `3` and a published `metadata_version`, with the five reserved
+Foundation points and `ci-jobs` / `ci-steps` / `api-reference` an additive,
+package-bumped change to the extension-point-inventory axis; and it closes the
+`needs a bounded issue` rows **by reference to FT-17.03** — no new issue —
+with `engine-default-parity.md`'s nine owner cells now reading
+`FT-15.03 → FT-17.03`.
+
 ## Validation
 
 `tests/test_platform_composition.py` runs under `uv run poe check`. Following

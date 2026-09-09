@@ -63,6 +63,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0058 — Inventory default-Copier parity and assign ownership](0058-inventory-default-copier-parity.md)
 - [0059 — Generation provenance and reproducible-update inputs](0059-generation-provenance-and-reproducible-updates.md)
 - [0060 — Platform composition and generated-tooling parity](0060-platform-composition-and-generated-tooling.md)
+- [0061 — Provider compatibility, failure and release gates](0061-provider-compatibility-failure-and-release-gates.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

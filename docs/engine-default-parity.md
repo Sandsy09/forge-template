@@ -88,8 +88,8 @@ The 23 `copier.yml` questions. A `shipped` input reaches the engine through a
 | `initial_version` | Static version literal | shipped | provider | n/a | `library` option `initial_version` | `tests/test_library_archetype.py` |
 | `type_checking` | CI gate, `[tool.mypy]` / `[tool.pyright]`, `typecheck` task | gap | provider | deferred | FT-15.03 → FT-17.03 | FT-15.03 decides: a type-checker capability, or an accepted mypy-only narrowing (Foundation is mypy-only today, `tests/test_composition_architecture_review.py`) |
 | `coverage_fail_under` | `[tool.coverage]` gate, `--cov` addopts | gap | provider | deferred | FT-15.03 → FT-17.03 | Foundation deliberately excludes coverage (ADR 0037); a coverage capability owns the gate. `tests/test_composition_architecture_review.py` pins the current exclusion |
-| `dependency_updates` | `renovate.json` / `.github/dependabot.yml` | gap | provider | cutover-blocking | FT-15.03: `needs a bounded issue` | a dependency-automation capability or platform contributes the selected config; no filed child is scoped for it |
-| `use_docs` | MkDocs site, `docs/` tree, CI docs job, `docs` dependency group, Documentation URL | gap | provider | deferred | FT-15.03: `needs a bounded issue` | a documentation capability; larger than FT-17.03's single content-parity slice, so FT-15.04 must file it |
+| `dependency_updates` | `renovate.json` / `.github/dependabot.yml` | gap | provider | cutover-blocking | FT-15.03 → FT-17.03 | the `dependabot` / `renovate` capability pair contributes the selected config (FT-15.03 / ADR 0060) |
+| `use_docs` | MkDocs site, `docs/` tree, CI docs job, `docs` dependency group, Documentation URL | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability (FT-15.03 / ADR 0060); FT-17.03 delivers the site, tree, job, group and URL |
 | `changelog_tool` | `CHANGELOG.md`, git-cliff config, `changelog` task | gap | provider | deferred | FT-15.03 → FT-17.03 | a changelog capability contributes the file, config and task |
 
 ## Generated files
@@ -123,8 +123,8 @@ rendered base path (`template/mkdocs.yml`,
 | `template/.copier-answers.yml` | Update/regeneration provenance state | gap | provider | cutover-blocking | FT-15.02 → FT-17.01 | engine emits equivalent versioned generation metadata; secret-free; sufficient to reproduce an earlier render |
 | `template/.github/workflows/ci.yml` | Lint, type-check, test matrix, build jobs | gap | provider | cutover-blocking | FT-15.03 → FT-17.02 | GitHub platform contributes the workflow; pinned actions follow `docs/github-action-pinning.md` |
 | `template/.github/CODEOWNERS` | Review routing | gap | provider | cutover-blocking | FT-15.03 → FT-17.02 | GitHub platform renders CODEOWNERS from `github_org` + team option |
-| `template/.github/dependabot.yml` | Weekly `uv` + actions updates (when `dependency_updates == dependabot`) | gap | provider | cutover-blocking | FT-15.03: `needs a bounded issue` | dependency-automation owner renders the selected config |
-| `template/renovate.json` | Renovate config (when `dependency_updates == renovate`) | gap | provider | cutover-blocking | FT-15.03: `needs a bounded issue` | dependency-automation owner renders the selected config |
+| `template/.github/dependabot.yml` | Weekly `uv` + actions updates (when `dependency_updates == dependabot`) | gap | provider | cutover-blocking | FT-15.03 → FT-17.03 | the `dependabot` capability renders the selected config |
+| `template/renovate.json` | Renovate config (when `dependency_updates == renovate`) | gap | provider | cutover-blocking | FT-15.03 → FT-17.03 | the `renovate` capability renders the selected config |
 | `template/.pre-commit-config.yaml` | Fast local hooks, `commit-msg` enforcement | gap | provider | cutover-blocking | FT-15.03 → FT-17.03 | a pre-commit capability contributes the config; Foundation stays hook-free (ADR 0037), client still owns hook installation |
 | `template/.env.example` | Placeholder-only environment template | gap | provider | cutover-blocking | FT-15.03 → FT-17.03 | secret-handling capability contributes the file; `docs/secret-handling.md` enforces placeholder-only content |
 
@@ -137,11 +137,11 @@ rendered base path (`template/mkdocs.yml`,
 | `template/.github/ISSUE_TEMPLATE/feature_request.yml` | Feature request form | gap | provider | deferred | FT-15.03 → FT-17.02 | GitHub platform contribution |
 | `template/.github/pull_request_template.md` | PR checklist | gap | provider | deferred | FT-15.03 → FT-17.02 | GitHub platform contribution |
 | `template/CHANGELOG.md` | Changelog seed | gap | provider | deferred | FT-15.03 → FT-17.03 | changelog capability contribution; `_skip_if_exists` behaviour reconciled by FT-15.02 |
-| `template/docs/index.md` | MkDocs landing page | gap | provider | deferred | FT-15.03: `needs a bounded issue` | documentation capability |
-| `template/docs/reference.md` | mkdocstrings API page | gap | provider | deferred | FT-15.03: `needs a bounded issue` | documentation capability |
-| `template/docs/adr/0001-record-architecture-decisions.md` | Seed ADR | gap | provider | deferred | FT-15.03: `needs a bounded issue` | documentation capability |
-| `template/docs/adr/README.md` | ADR index | gap | provider | deferred | FT-15.03: `needs a bounded issue` | documentation capability |
-| `template/mkdocs.yml` | MkDocs site config | gap | provider | deferred | FT-15.03: `needs a bounded issue` | documentation capability |
+| `template/docs/index.md` | MkDocs landing page | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability |
+| `template/docs/reference.md` | mkdocstrings API page | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability, via the `api-reference` point |
+| `template/docs/adr/0001-record-architecture-decisions.md` | Seed ADR | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability |
+| `template/docs/adr/README.md` | ADR index | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability |
+| `template/mkdocs.yml` | MkDocs site config | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability |
 
 ## Gaps within shipped files
 
@@ -252,16 +252,23 @@ Reserved for the later Stage 15 children and their ADRs:
 - the bounded issues the `needs a bounded issue` rows require, and how they
   reconcile with Stage 17's filed children (FT-15.04).
 
-FT-15.03 has since settled the platform, `type_checking` and documentation
-items above:
+FT-15.03 settled the platform, `type_checking` and documentation items above:
 [platform-and-tooling-parity.md](platform-and-tooling-parity.md)
 ([ADR 0060](adr/0060-platform-composition-and-generated-tooling.md)) assigns
 every provider-owned `gap` row here to one `github` platform or one of eight
-capabilities and reserves the Foundation extension points they need. The row
-cells in this document are unchanged — those surfaces stay `gap` until
-FT-17.02 and FT-17.03 ship them — and the `needs a bounded issue` markers
-stand until FT-15.04 reconciles them (they now all resolve to `documentation`
-or the `dependabot` / `renovate` pair).
+capabilities and reserves the Foundation extension points they need.
+
+FT-15.04 then settled the two items it owned:
+[cutover-compatibility-and-acceptance.md](cutover-compatibility-and-acceptance.md)
+([ADR 0061](adr/0061-provider-compatibility-failure-and-release-gates.md))
+classifies the cutover as `forge-template` `0.5.0` with component-manifest
+protocol `3` and a published `metadata_version`, every other axis and the
+public facade unchanged, and closes the `needs a bounded issue` rows **by
+reference to FT-17.03** — no new issue is filed. Those nine owner cells now
+read `FT-15.03 → FT-17.03`; their `status`, `disposition` and `tier` are
+untouched, so those surfaces stay `gap` until FT-17.02 and FT-17.03 ship them
+and `tests/test_parity_inventory.py` still pins every row against a real
+render.
 
 ## Validation
 

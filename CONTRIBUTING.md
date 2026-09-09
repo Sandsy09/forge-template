@@ -179,7 +179,13 @@ without a runtime, content or version change. FT-15.03's
 ([ADR 0060](docs/adr/0060-platform-composition-and-generated-tooling.md)) then
 assigns every remaining host-integration and optional-tooling parity gap to one
 `github` platform or one of eight capabilities and reserves five Foundation
-extension points, still with no runtime, content or version change.
+extension points, still with no runtime, content or version change. FT-15.04's
+[cutover compatibility, failure and acceptance contract](docs/cutover-compatibility-and-acceptance.md)
+([ADR 0061](docs/adr/0061-provider-compatibility-failure-and-release-gates.md))
+then classifies the axes the cutover moves — `forge-template` `0.5.0`,
+component-manifest protocol `3`, a published `metadata_version` — fixes the
+immutable-release and `0.4.x`-window rollback rules and the executable
+acceptance matrix, and closes Stage 15 with no version bump.
 
 ## Branching and pull requests
 
