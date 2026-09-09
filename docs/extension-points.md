@@ -96,6 +96,13 @@ Foundation owns six further files with **no** extension point at all:
 `CONTRIBUTING.md.jinja`, `LICENSE.jinja`, and `SECURITY.md.jinja`. These are
 sole-owner `create` content, deliberately not extensible — stated here rather
 than left to be inferred from the absence of a declaration.
+[FT-15.03](https://github.com/Sandsy09/forge-template/issues/148) /
+[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) reserves a
+host-link point on `CONTRIBUTING.md.jinja` and `SECURITY.md.jinja` for the
+`github` platform to contribute repository-scoped links; `.editorconfig`,
+`.gitattributes`, `.python-version.jinja` and `LICENSE.jinja` stay sole-owner.
+See [Reserved points](#reserved-points) below. The reservation is a decision,
+not a publication — `foundation.toml` is unchanged until FT-17.02 ships them.
 
 ## Capability tooling extends the same Foundation content
 
@@ -146,10 +153,16 @@ added for either. This is the surface
 [notebook-data-and-model-safeguards.md](notebook-data-and-model-safeguards.md#local-working-trees)
 defers to FT-11.01.
 
-A capability does **not** get to declare its own named dependency group: that
-would need a second point inside `[dependency-groups]` plus an `include-group`
-entry, and is deliberately out of scope. Development dependencies a capability
-needs go into Foundation's `dev` group, which `[tool.uv]
+Under ADR 0049 a capability did **not** get to declare its own named dependency
+group. [FT-15.03](https://github.com/Sandsy09/forge-template/issues/148) /
+[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) reverses
+that: two reserved points inside `[dependency-groups]` —
+`pyproject-named-dependency-groups` for a new `name = [ ... ]` group and
+`pyproject-dependency-group-includes` for an `{ include-group = "name" }` line
+in the `dev` group — let the `documentation` capability declare a real `docs`
+group, matching the Copier scaffold. See [Reserved points](#reserved-points).
+A capability whose dependencies do not need a separately installable group
+still puts them straight into Foundation's `dev` group, which `[tool.uv]
 default-groups = ["dev"]` already installs.
 
 ## When an override is allowed
@@ -228,6 +241,36 @@ publishes. A future engine release may publish a new extension point on
 existing owner content; that is additive catalogue evolution, not a policy
 grant. Neither policy nor a client ever gains authority to replace content
 directly.
+
+## Reserved points
+
+[FT-15.03](https://github.com/Sandsy09/forge-template/issues/148) /
+[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) decides
+eight extension points but publishes **none** of them — `foundation.toml` and
+every component manifest are unchanged.
+[FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) and
+[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) add each one
+as an additive change when they build the component that needs it, under the
+same stability rules below.
+
+| Reserved point | Owner content | Publisher |
+| --- | --- | --- |
+| `pyproject-project-urls` | Foundation `content/pyproject.toml.jinja` | FT-17.02 |
+| `contributing-project-shape` | Foundation `content/CONTRIBUTING.md.jinja` | FT-17.02 |
+| `security-project-shape` | Foundation `content/SECURITY.md.jinja` | FT-17.02 |
+| `pyproject-named-dependency-groups` | Foundation `content/pyproject.toml.jinja` | FT-17.03 |
+| `pyproject-dependency-group-includes` | Foundation `content/pyproject.toml.jinja` | FT-17.03 |
+| `ci-jobs` | the `github` platform's own CI content | FT-17.02 |
+| `ci-steps` | the `github` platform's own CI content | FT-17.02 |
+| `api-reference` | the `documentation` capability's own content | FT-17.03 |
+
+`ci-jobs`, `ci-steps` and `api-reference` are the first points this repository
+plans for a component to publish on its *own* content rather than
+contributing into Foundation's; `library-archetype.md` already names `ci-jobs`
+and `api-reference` for "that (not yet existing) optional component".
+[platform-and-tooling-parity.md](platform-and-tooling-parity.md) is the
+contract; `tests/test_platform_composition.py` fails when a reserved
+Foundation point lands in `foundation.toml` ahead of its owning issue.
 
 ## Stability and versioning
 

@@ -189,10 +189,16 @@ Library contributes to these stable extension-point targets:
 Library's `hatchling-vcs` packaging mode generates `src/<package_name>/_version.py`
 at build time, and this point is where Library ignores it -- empty in the two
 static modes. The `github`/`documentation` rows describe stable integration
-contracts for components that do not exist in the production catalogue yet;
-selecting `library` alone never requires them. An unsupported or absent
-target fails under the composition contract rather than disappearing or using
-last-write-wins replacement.
+contracts for components the production catalogue does not carry;
+selecting `library` alone never requires them.
+[FT-15.03](https://github.com/Sandsy09/forge-template/issues/148) /
+[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) fixes the
+owner of both points — `ci-jobs` on the `github` platform, `api-reference` on
+the `documentation` capability — as reserved contracts that
+[FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) and
+[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) publish. An
+unsupported or absent target fails under the composition contract rather than
+disappearing or using last-write-wins replacement.
 
 `pyproject-library-metadata` was renamed `pyproject-archetype-metadata` when
 FT-08.04 needed the same static-version-metadata point for a second, distinct

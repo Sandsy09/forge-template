@@ -1,0 +1,24 @@
+# Synthetic capability for FT-15.03 / ADR 0060. NOT a production component.
+# Contributes one step into the synthetic platform's `ci-steps` point -- the
+# canonical case that runs against tier order (a capability extending a
+# platform, though capabilities apply first). See
+# docs/platform-and-tooling-parity.md.
+manifest_version = 2
+id = "host-ci-extension"
+name = "Host CI Extension"
+description = "Synthetic capability contributing a CI step into the platform."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[[contributions]]
+target.kind = "component"
+target.id = "reference-host"
+extension_point = "ci-steps"
+content = "extensions/ci-step.yml.jinja"
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

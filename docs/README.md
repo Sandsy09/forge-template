@@ -134,5 +134,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   project: the document shape, the reproducibility guarantee, owner-declared
   renames and never-clobber targets, and the reserved failure codes, pinned by
   `tests/test_generation_provenance.py`.
+- [platform-and-tooling-parity.md](platform-and-tooling-parity.md) — FT-15.03's
+  assignment of every optional-tooling and host-integration parity gap to one
+  `github` platform or one of eight capabilities, with five reserved Foundation
+  extension points, pinned by `tests/test_platform_composition.py`.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

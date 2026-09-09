@@ -1,0 +1,18 @@
+# Synthetic capability for FT-15.03 / ADR 0060. NOT a production component.
+# Models decision 6's `dependabot` shape: a hard cross-tier dependency on the
+# platform, plus a `conflicts` edge with the host-free updater. Exercises the
+# exact `requires`/`conflicts` pair the decided `dependabot`/`renovate` split
+# declares. See docs/platform-and-tooling-parity.md.
+manifest_version = 2
+id = "host-bound-updates"
+name = "Host Bound Updates"
+description = "Synthetic capability that requires the reference host."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = [{ id = "reference-host", version = ">=1,<2" }]
+conflicts = [{ id = "host-free-updates" }]
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

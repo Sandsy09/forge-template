@@ -86,6 +86,12 @@ release-provenance capability may hard-require the `github` platform (see
 makes `github` a mandatory co-selection — composition still applies every
 capability before every platform, so the provenance capability is never
 pushed after the platform it depends on.
+[FT-15.03](https://github.com/Sandsy09/forge-template/issues/148) /
+[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) makes the
+first concrete instance: the `dependabot` capability declares
+`requires = [{ id = "github", version = ">=1,<2" }]`, so selecting Dependabot
+selects the GitHub platform too, while `dependabot` still applies in the
+capability tier ahead of `github`.
 
 The shipped [Data Science capability contract](data-science-capabilities.md#data-science-requires-jupyter)
 provides the reverse cross-tier shape: the `data-science` archetype declares
