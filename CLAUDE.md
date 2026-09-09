@@ -543,8 +543,23 @@ recorded release against, owner-declared rename records, an opt-in degraded
 two-way update, a reserved ninth compatibility axis (`metadata_version`), and
 two reserved `EngineErrorCode` values (`invalid-generation-metadata`,
 `unsupported-generation-metadata`) that FT-17.01 will add — the test fails
-deliberately when they land. With #146 and #147 merged, FT-15.03 / #148 is
-unblocked; FT-15.04 / #149 stays blocked on #148.
+deliberately when they land.
+FT-15.03 / #148 is complete — its
+[platform composition and generated-tooling parity](docs/platform-and-tooling-parity.md)
+([ADR 0060](docs/adr/0060-platform-composition-and-generated-tooling.md), pinned
+by `tests/test_platform_composition.py`) assigns every provider-owned parity gap
+to one `github` platform (one required `organisation` option, everything else
+derived; publishes `ci-jobs` and `ci-steps`) or one of eight capabilities
+(`coverage`, `pre-commit`, `pyright`, `changelog`, `documentation`,
+`dotenv-example`, and a `dependabot`/`renovate` pair with a `requires`/
+`conflicts` edge), reserves five new Foundation extension points plus
+`api-reference` on `documentation`, records `type_checking`'s mypy-less answer
+and Copier's free-text `codeowners_team` as narrowings, and confirms no new
+archetype (FT-ROADMAP-01-EX-03). Decision 7 reverses ADR 0049's limit that a
+capability cannot declare its own named dependency group; `foundation.toml` is
+unchanged and the eight points are reserved for FT-17.02/FT-17.03 to publish.
+With #146, #147 and #148 merged, FT-15.04 / #149 is fully unblocked and is the
+last open Stage 15 child.
 
 FT-08.02 populated the
 production component catalogue under the

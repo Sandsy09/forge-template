@@ -252,6 +252,17 @@ Reserved for the later Stage 15 children and their ADRs:
 - the bounded issues the `needs a bounded issue` rows require, and how they
   reconcile with Stage 17's filed children (FT-15.04).
 
+FT-15.03 has since settled the platform, `type_checking` and documentation
+items above:
+[platform-and-tooling-parity.md](platform-and-tooling-parity.md)
+([ADR 0060](adr/0060-platform-composition-and-generated-tooling.md)) assigns
+every provider-owned `gap` row here to one `github` platform or one of eight
+capabilities and reserves the Foundation extension points they need. The row
+cells in this document are unchanged — those surfaces stay `gap` until
+FT-17.02 and FT-17.03 ship them — and the `needs a bounded issue` markers
+stand until FT-15.04 reconciles them (they now all resolve to `documentation`
+or the `dependabot` / `renovate` pair).
+
 ## Validation
 
 `tests/test_parity_inventory.py` derives the expected row set from

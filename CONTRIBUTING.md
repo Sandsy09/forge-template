@@ -174,7 +174,12 @@ version change. FT-15.02's
 then specifies the versioned metadata that reproduces or updates a generated
 project — output ownership, a reproducibility guarantee, owner-declared
 renames and never-clobber targets, and two reserved failure codes — again
-without a runtime, content or version change.
+without a runtime, content or version change. FT-15.03's
+[platform composition and generated-tooling parity](docs/platform-and-tooling-parity.md)
+([ADR 0060](docs/adr/0060-platform-composition-and-generated-tooling.md)) then
+assigns every remaining host-integration and optional-tooling parity gap to one
+`github` platform or one of eight capabilities and reserves five Foundation
+extension points, still with no runtime, content or version change.
 
 ## Branching and pull requests
 

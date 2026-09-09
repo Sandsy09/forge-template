@@ -1,0 +1,31 @@
+# Synthetic platform for FT-15.03 / ADR 0060. NOT a production component --
+# it exists only to exercise the platform composition path the catalogue does
+# not ship yet (`discover_components()` returns no platform). Deliberately not
+# named `github`: a fixture named for the decided catalogue would be
+# indistinguishable from shipping it, which the Stage 15 exclusions forbid.
+# See docs/platform-and-tooling-parity.md.
+manifest_version = 2
+id = "reference-host"
+name = "Reference Host"
+description = "Synthetic platform exercising deterministic platform composition."
+kind = "platform"
+version = "1.0.0"
+content_root = "content"
+options_schema = "options.schema.json"
+requires = []
+conflicts = []
+
+# Publishes both granularities decision 9 fixes on the real `github` platform:
+# a whole workflow job, and a step inside an existing job. Both markers live in
+# the one owned CI file and each must appear exactly once.
+[[extension_points]]
+id = "ci-jobs"
+content = "content/ci.yml.jinja"
+
+[[extension_points]]
+id = "ci-steps"
+content = "content/ci.yml.jinja"
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

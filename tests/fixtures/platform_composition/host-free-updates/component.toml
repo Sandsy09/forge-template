@@ -1,0 +1,16 @@
+# Synthetic capability for FT-15.03 / ADR 0060. NOT a production component.
+# Models decision 6's `renovate` shape: a host-free updater that conflicts
+# with the host-bound one. See docs/platform-and-tooling-parity.md.
+manifest_version = 2
+id = "host-free-updates"
+name = "Host Free Updates"
+description = "Synthetic capability with no host requirement."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

@@ -52,6 +52,19 @@ another.
 The last three are deliberately unpublished; see "What the engine publishes
 for negotiation" below for why that is a considered choice, not a gap.
 
+[FT-15.03](https://github.com/Sandsy09/forge-template/issues/148) /
+[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) reserves
+five additions to the extension-point-inventory axis
+(`pyproject-project-urls`, `contributing-project-shape`,
+`security-project-shape`, `pyproject-named-dependency-groups`,
+`pyproject-dependency-group-includes`) plus `ci-jobs`, `ci-steps` and
+`api-reference` on component content. None is published yet;
+[FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) and
+[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) add each as
+a backward-compatible change carrying the package-version bump this document
+already requires for any observable Foundation change
+([extension-points.md](extension-points.md#stability-and-versioning)).
+
 ## Reserved axis: generation metadata
 
 [FT-15.02](https://github.com/Sandsy09/forge-template/issues/147)'s
