@@ -1,0 +1,15 @@
+## Documentation
+
+Build and serve the docs site locally:
+
+```bash
+uv run poe docs
+```
+
+Build with warnings treated as errors (the CI check):
+
+```bash
+uv run --locked poe docs:build
+```
+
+The API reference is generated from docstrings by mkdocstrings.

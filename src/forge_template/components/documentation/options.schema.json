@@ -1,0 +1,10 @@
+{
+  "schema_version": 2,
+  "options": [
+    {
+      "name": "site_name",
+      "type": "string",
+      "description": "Title shown on the documentation site. When omitted, the project name is used."
+    }
+  ]
+}

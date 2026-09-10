@@ -50,11 +50,19 @@ def _payload(
 def test_discovery_exposes_library_with_cli_and_capabilities() -> None:
     descriptors = discover_components()
     assert [descriptor.id for descriptor in descriptors] == [
+        "changelog",
         "cli",
+        "coverage",
         "data-science",
+        "dependabot",
+        "documentation",
+        "dotenv-example",
         "github",
         "jupyter",
         "library",
+        "pre-commit",
+        "pyright",
+        "renovate",
         "scientific-python",
     ]
 

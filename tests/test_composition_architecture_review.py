@@ -60,23 +60,31 @@ _DUPLICATE_CONTENT_TARGETS = {
 
 # The package-size pin. ADR 0056 first measured it (60 files, 39,182 bytes) and
 # FT-14.02 pinned it executably (docs/cross-repository-validation.md). FT-17.02 /
-# ADR 0063 re-baselines it: the `github` platform tree (12 files) plus the three
-# byte-neutral Foundation marker lines. FT-17.03 moves it again for the eight
-# capabilities. "The package" here means Foundation plus every catalogue
-# component's tree -- not the built wheel, whose zip metadata (timestamps,
-# compression) is not byte-reproducible across machines; `scripts/check_wheel.py`
-# ceilings that separately.
+# ADR 0063 re-baselined it for the `github` platform (72 files, 48,350 bytes);
+# FT-17.03 / ADR 0064 re-baselines it again for the eight tooling capabilities
+# and the one-line `license-files` Foundation addition. "The package" here means
+# Foundation plus every catalogue component's tree -- not the built wheel, whose
+# zip metadata (timestamps, compression) is not byte-reproducible across
+# machines; `scripts/check_wheel.py` ceilings that separately.
 _FOUNDATION_ROOT = Path(__file__).parents[1] / "src" / "forge_template" / "foundation"
 _OWNED_COMPONENTS = (
+    "changelog",
     "cli",
+    "coverage",
     "data-science",
+    "dependabot",
+    "documentation",
+    "dotenv-example",
     "github",
     "jupyter",
     "library",
+    "pre-commit",
+    "pyright",
+    "renovate",
     "scientific-python",
 )
-_EXPECTED_CONTENT_FILE_COUNT = 72
-_EXPECTED_CONTENT_BYTES = 48_350
+_EXPECTED_CONTENT_FILE_COUNT = 112
+_EXPECTED_CONTENT_BYTES = 68_378
 _EXPECTED_DUPLICATE_OVERHEAD_BYTES = 892
 
 
@@ -158,14 +166,15 @@ def test_independent_archetypes_keep_coincidentally_shared_files_owned() -> None
 
 def test_package_content_size_matches_the_recorded_review_baseline() -> None:
     """Pins the catalogue's content size: Foundation plus every catalogue
-    component's tree total 72 files and 48,350 raw bytes, of which 892 bytes
+    component's tree total 112 files and 68,378 raw bytes, of which 892 bytes
     are the seven duplicate groups' overhead
     (docs/composition-architecture-review.md, "Operational consequences").
     ADR 0056's 2026-09-04 measurement (60 files, 39,182 bytes) stands as the
     pre-cutover record; FT-17.02 / ADR 0063 re-baselined it for the `github`
-    platform. Content only -- `__pycache__` is excluded, matching how the review
-    byte count was taken. A deliberate content change should move this pin and
-    the prose figures together, per FT-14.02's cross-repository record.
+    platform, and FT-17.03 / ADR 0064 for the eight tooling capabilities.
+    Content only -- `__pycache__` is excluded, matching how the review byte
+    count was taken. A deliberate content change should move this pin and the
+    prose figures together, per FT-14.02's cross-repository record.
     """
     trees = (_FOUNDATION_ROOT, *(_COMPONENTS / owner for owner in _OWNED_COMPONENTS))
     files = [

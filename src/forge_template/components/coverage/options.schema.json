@@ -1,0 +1,10 @@
+{
+  "schema_version": 2,
+  "options": [
+    {
+      "name": "fail_under",
+      "type": "integer",
+      "description": "Minimum total coverage percentage the CI gate enforces. 0 (the default when the option is omitted) disables the threshold; the report is still produced."
+    }
+  ]
+}

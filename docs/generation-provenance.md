@@ -107,13 +107,13 @@ allowlist "Secret-free persisted and displayed data" makes executable.
 - **`regeneration`** — `"replace"` (the default) or `"skip-if-exists"`. The
   owning component declares a target regeneration-unsafe through a manifest
   protocol `3` `[[regeneration]]` record (ADR 0062); the reference set is
-  `CHANGELOG.md` and `.env`, matching `copier.yml`'s `_skip_if_exists`, and no
-  shipped component declares one yet — [FT-17.03](https://github.com/Sandsy09/forge-template/issues/152)
-  adds the first. The flag travels with whoever owns the content, so a
-  documentation or changelog owner carries its own. A Foundation-owned target
-  is always `"replace"` — Foundation declares no such record (ADR 0062
-  decision 2). The engine records the disposition in `PlannedFile.regeneration`
-  and the metadata; the client applies the skip.
+  `CHANGELOG.md` and `.env`, matching `copier.yml`'s `_skip_if_exists`. The
+  `changelog` capability (FT-17.03 / ADR 0064) is the first shipped component
+  to declare one — `CHANGELOG.md` `skip-if-exists`. The flag travels with
+  whoever owns the content. A Foundation-owned target is always `"replace"` —
+  Foundation declares no such record (ADR 0062 decision 2). The engine records
+  the disposition in `PlannedFile.regeneration` and the metadata; the client
+  applies the skip.
 
 ## Identity and reproduction
 

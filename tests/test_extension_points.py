@@ -75,6 +75,17 @@ _EXPECTED_CONTRIBUTIONS = {
         "pyproject-runtime-dependencies",
         "readme-project-shape",
     },
+    # FT-17.03 tooling capabilities that contribute only into Foundation.
+    "changelog": {
+        "pyproject-development-dependencies",
+        "pyproject-task-definitions",
+    },
+    "pre-commit": {
+        "pyproject-development-dependencies",
+    },
+    "dotenv-example": {
+        "readme-project-shape",
+    },
 }
 
 _COMPONENT_SELECTIONS = {
@@ -83,6 +94,9 @@ _COMPONENT_SELECTIONS = {
     "data-science": ("data-science", ("jupyter",)),
     "jupyter": ("library", ("jupyter",)),
     "scientific-python": ("library", ("scientific-python",)),
+    "changelog": ("library", ("changelog",)),
+    "pre-commit": ("library", ("pre-commit",)),
+    "dotenv-example": ("library", ("dotenv-example",)),
 }
 
 FIXTURES = Path(__file__).parent / "fixtures" / "component_manifests"
@@ -161,12 +175,17 @@ def test_published_extension_point_inventory_matches_the_contract() -> None:
         ("pyproject-project-urls", "content/pyproject.toml.jinja"),
         ("contributing-project-shape", "content/CONTRIBUTING.md.jinja"),
         ("security-project-shape", "content/SECURITY.md.jinja"),
+        # Named dependency-group points (FT-17.03 / ADR 0064).
+        ("pyproject-named-dependency-groups", "content/pyproject.toml.jinja"),
+        ("pyproject-dependency-group-includes", "content/pyproject.toml.jinja"),
     }
 
-    # The five archetype/capability components publish no extension point of
-    # their own; they contribute only into Foundation's reviewed inventory. The
-    # `github` platform (FT-17.02) is the one component that publishes its own
-    # points (`ci-jobs` / `ci-steps`) -- it is checked in tests/test_github_platform.py.
+    # Foundation-only contributors publish no point of their own and target
+    # only Foundation. Two components are exceptions, checked separately: the
+    # `github` platform publishes `ci-jobs` / `ci-steps`
+    # (tests/test_github_platform.py) and the `documentation` capability
+    # publishes `api-reference` (tests/test_documentation_capability.py); both,
+    # plus `coverage` and `pyright`, also contribute into `github`'s CI content.
     for component_id, expected in _EXPECTED_CONTRIBUTIONS.items():
         manifest = load_component_manifest(
             _COMPONENTS / component_id / "component.toml"
@@ -179,6 +198,18 @@ def test_published_extension_point_inventory_matches_the_contract() -> None:
             contribution.target.model_dump() == {"kind": "foundation"}
             for contribution in manifest.contributions
         )
+
+    published_by = {
+        manifest.id: {point.id for point in manifest.extension_points}
+        for path in _COMPONENTS.iterdir()
+        if (path / "component.toml").is_file()
+        for manifest in [load_component_manifest(path / "component.toml")]
+        if manifest.extension_points
+    }
+    assert published_by == {
+        "github": {"ci-jobs", "ci-steps"},
+        "documentation": {"api-reference"},
+    }
 
 
 def test_foundation_files_without_extension_points_stay_create_only() -> None:

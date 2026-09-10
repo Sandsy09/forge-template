@@ -385,11 +385,19 @@ def test_valid_capability_options_reach_output(overlaid_catalogue: Path) -> None
 def test_production_descriptors_are_immutable_and_path_free() -> None:
     descriptors = {d.id: d for d in discover_components()}
     assert set(descriptors) == {
+        "changelog",
         "cli",
+        "coverage",
         "data-science",
+        "dependabot",
+        "documentation",
+        "dotenv-example",
         "github",
         "jupyter",
         "library",
+        "pre-commit",
+        "pyright",
+        "renovate",
         "scientific-python",
     }
 
@@ -498,10 +506,18 @@ def test_every_manifest_declared_resource_is_reachable_as_a_package_resource() -
             assert (child / contribution.content).is_file(), contribution.content
 
     assert seen_ids == {
+        "changelog",
         "cli",
+        "coverage",
         "data-science",
+        "dependabot",
+        "documentation",
+        "dotenv-example",
         "github",
         "jupyter",
         "library",
+        "pre-commit",
+        "pyright",
+        "renovate",
         "scientific-python",
     }

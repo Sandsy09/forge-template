@@ -1,0 +1,52 @@
+# The production documentation capability. See docs/platform-and-tooling-parity.md
+# and ADR 0060/0064. Owns a MkDocs + mkdocstrings site and a real `docs`
+# dependency group (via the two `[dependency-groups]` Foundation points FT-17.03
+# publishes). Publishes `api-reference` on its own reference page for a later
+# archetype fill. Requires `library` -- a docs site for the other archetypes is
+# a separate future decision.
+manifest_version = 2
+id = "documentation"
+name = "Documentation"
+description = "A MkDocs + mkdocstrings documentation site."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+options_schema = "options.schema.json"
+requires = [{ id = "library", version = ">=1,<2" }]
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+# Published on documentation's own reference page, for an archetype to add
+# further API sections. Unfilled by the shipped catalogue (renders zero bytes).
+[[extension_points]]
+id = "api-reference"
+content = "content/docs/reference.md.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-named-dependency-groups"
+content = "extensions/named-dependency-groups.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-dependency-group-includes"
+content = "extensions/dependency-group-includes.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-task-definitions"
+content = "extensions/task-definitions.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "readme-project-shape"
+content = "extensions/readme-project-shape.md.jinja"
+
+[[contributions]]
+target.kind = "component"
+target.id = "github"
+extension_point = "ci-jobs"
+content = "extensions/ci-job.yml.jinja"

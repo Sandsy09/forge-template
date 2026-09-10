@@ -46,15 +46,23 @@ def test_discovery_exposes_cli_with_library_and_capabilities() -> None:
     descriptors = discover_components()
 
     assert [descriptor.id for descriptor in descriptors] == [
+        "changelog",
         "cli",
+        "coverage",
         "data-science",
+        "dependabot",
+        "documentation",
+        "dotenv-example",
         "github",
         "jupyter",
         "library",
+        "pre-commit",
+        "pyright",
+        "renovate",
         "scientific-python",
     ]
 
-    cli = descriptors[0]
+    cli = next(descriptor for descriptor in descriptors if descriptor.id == "cli")
     assert cli.kind == "archetype"
     assert cli.version == "1.0.1"
     assert cli.requires == ()

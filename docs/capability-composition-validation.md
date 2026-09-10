@@ -102,11 +102,12 @@ undiscoverable or unusable catalogue.
 ## The fixture catalogue
 
 When FT-11.04 landed, no shipped component could express an unsatisfied
-`requires` edge, a `conflicts` edge, or a capability option. FT-12.01 later
-added `data-science` with `requires = [{ id = "jupyter", version = ">=1,<2" }]`,
-so a real hard-dependency edge now exists; but no production component
-declares a `conflicts` edge, and only `library` carries an `options_schema`.
-Three synthetic capabilities under
+`requires` edge, a `conflicts` edge, or a capability option. FT-12.01 added
+`data-science` with `requires = [{ id = "jupyter", version = ">=1,<2" }]`, and
+FT-17.03 / ADR 0064 added the `dependabot` / `renovate` mutual `conflicts`, the
+`dependabot → github` and `documentation → library` `requires` edges, and the
+`coverage` (`fail_under`) and `documentation` (`site_name`) options — so every
+shape now has a production instance. The three synthetic capabilities under
 [`tests/fixtures/capability_composition/`](../tests/fixtures/capability_composition/)
 fill the remaining gaps and let this proof exercise the `requires` failure
 branch without depending on the archetype catalogue:

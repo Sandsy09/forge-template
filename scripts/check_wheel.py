@@ -25,11 +25,13 @@ PyPI"):
 
 FT-14.02 (docs/cross-repository-validation.md) added the size ceiling below:
 ADR 0056 measured a 72,566-byte local review wheel; the published `0.4.0`
-wheel is 72,544 bytes. `_MAX_WHEEL_BYTES` is a generous ceiling around that
-figure, not a tight pin -- zip metadata (timestamps, compression) makes an
-exact byte count non-reproducible across machines, but an unbounded content
-addition (a new archetype or capability outgrowing the reviewed catalogue)
-should still fail loudly here rather than silently ship.
+wheel is 72,544 bytes. FT-17.02 (the `github` platform) took a local wheel to
+~85 KB and FT-17.03 (the eight tooling capabilities) to ~105 KB, still under
+the 128 KiB ceiling. `_MAX_WHEEL_BYTES` is a deliberately loose bound, not a
+tight pin -- zip metadata (timestamps, compression) makes an exact byte count
+non-reproducible across machines, but an unbounded content addition (a new
+archetype or capability outgrowing the reviewed catalogue) should still fail
+loudly here rather than silently ship.
 """
 
 from __future__ import annotations
@@ -53,12 +55,28 @@ _MUST_CONTAIN = (
     # `exclude` that dropped `component.toml`, `extensions/`, or a component's
     # `options.schema.json` would otherwise publish an unusable catalogue --
     # see FT-11.04 / ADR 0052.
+    "forge_template/components/changelog/component.toml",
+    "forge_template/components/changelog/content/",
+    "forge_template/components/changelog/extensions/",
     "forge_template/components/cli/component.toml",
     "forge_template/components/cli/content/",
     "forge_template/components/cli/extensions/",
+    "forge_template/components/coverage/component.toml",
+    "forge_template/components/coverage/content/",
+    "forge_template/components/coverage/extensions/",
+    "forge_template/components/coverage/options.schema.json",
     "forge_template/components/data-science/component.toml",
     "forge_template/components/data-science/content/",
     "forge_template/components/data-science/extensions/",
+    "forge_template/components/dependabot/component.toml",
+    "forge_template/components/dependabot/content/",
+    "forge_template/components/documentation/component.toml",
+    "forge_template/components/documentation/content/",
+    "forge_template/components/documentation/extensions/",
+    "forge_template/components/documentation/options.schema.json",
+    "forge_template/components/dotenv-example/component.toml",
+    "forge_template/components/dotenv-example/content/",
+    "forge_template/components/dotenv-example/extensions/",
     "forge_template/components/github/component.toml",
     "forge_template/components/github/content/",
     "forge_template/components/github/extensions/",
@@ -70,6 +88,14 @@ _MUST_CONTAIN = (
     "forge_template/components/library/content/",
     "forge_template/components/library/extensions/",
     "forge_template/components/library/options.schema.json",
+    "forge_template/components/pre-commit/component.toml",
+    "forge_template/components/pre-commit/content/",
+    "forge_template/components/pre-commit/extensions/",
+    "forge_template/components/pyright/component.toml",
+    "forge_template/components/pyright/content/",
+    "forge_template/components/pyright/extensions/",
+    "forge_template/components/renovate/component.toml",
+    "forge_template/components/renovate/content/",
     "forge_template/components/scientific-python/component.toml",
     "forge_template/components/scientific-python/content/",
     "forge_template/components/scientific-python/extensions/",
@@ -88,8 +114,9 @@ _SMOKE_IMPORT = (
     "descriptors = forge_template.discover_components(); "
     "ids = sorted(d.id for d in descriptors); "
     "assert ids == "
-    "['cli', 'data-science', 'github', 'jupyter', 'library', "
-    "'scientific-python'], ids; "
+    "['changelog', 'cli', 'coverage', 'data-science', 'dependabot', "
+    "'documentation', 'dotenv-example', 'github', 'jupyter', 'library', "
+    "'pre-commit', 'pyright', 'renovate', 'scientific-python'], ids; "
     "print('discovered:', ids)"
 )
 

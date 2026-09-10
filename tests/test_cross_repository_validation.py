@@ -345,21 +345,38 @@ def test_installed_engine_metadata_matches_the_reviewed_candidate(
     # and published metadata_version, both additive.
     assert payload["component_manifest_protocols"] == [1, 2, 3]
     assert payload["metadata_version"] == 1
-    # FT-17.02 / ADR 0063 added the `github` platform, additive.
+    # FT-17.02 / ADR 0063 added the `github` platform; FT-17.03 / ADR 0064 the
+    # eight tooling capabilities. All additive.
     assert payload["component_ids"] == [
+        "changelog",
         "cli",
+        "coverage",
         "data-science",
+        "dependabot",
+        "documentation",
+        "dotenv-example",
         "github",
         "jupyter",
         "library",
+        "pre-commit",
+        "pyright",
+        "renovate",
         "scientific-python",
     ]
     assert payload["component_versions"] == {
+        "changelog": "1.0.0",
         "cli": "1.0.1",
+        "coverage": "1.0.0",
         "data-science": "1.0.0",
+        "dependabot": "1.0.0",
+        "documentation": "1.0.0",
+        "dotenv-example": "1.0.0",
         "github": "1.0.0",
         "jupyter": "1.0.0",
         "library": "1.0.1",
+        "pre-commit": "1.0.0",
+        "pyright": "1.0.0",
+        "renovate": "1.0.0",
         "scientific-python": "1.0.0",
     }
     assert payload["data_science_requires"] == [["jupyter", "<2,>=1"]]

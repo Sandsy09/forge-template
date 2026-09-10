@@ -150,6 +150,46 @@ def _github_render_targets() -> set[str]:
     return {item.target for item in render_project(spec).files}
 
 
+_ALL_CAPABILITIES_BAR_UPDATER = [
+    "changelog",
+    "coverage",
+    "documentation",
+    "dotenv-example",
+    "jupyter",
+    "pre-commit",
+    "pyright",
+    "scientific-python",
+]
+
+
+def _capability_render_targets() -> set[str]:
+    """Targets from ``library`` + ``github`` + every FT-17.03 capability --
+    the ``.pre-commit-config.yaml`` / ``.env.example`` / ``CHANGELOG.md`` /
+    ``docs/**`` / ``mkdocs.yml`` / dependency-updater rows are ``shipped``
+    against this (FT-17.03 / ADR 0064). ``dependabot`` and ``renovate``
+    conflict, so each is swept in its own render."""
+    targets: set[str] = set()
+    for updater in ("dependabot", "renovate"):
+        payload: dict[str, object] = {
+            **_REFERENCE_PAYLOAD,
+            "components": {
+                "archetype": "library",
+                "capabilities": [*_ALL_CAPABILITIES_BAR_UPDATER, updater],
+                "platforms": ["github"],
+            },
+            "component_options": {
+                "library": {
+                    "packaging_mode": "uv-build-static",
+                    "initial_version": "0.1.0",
+                },
+                "github": {"organisation": "reference-org"},
+            },
+        }
+        spec = parse_project_spec(payload)
+        targets |= {item.target for item in render_project(spec).files}
+    return targets
+
+
 def test_every_copier_question_and_template_file_has_a_row() -> None:
     """A question or templated file with no disposition fails the suite."""
     required = _copier_questions() | _template_keys()
@@ -204,7 +244,11 @@ def test_every_row_is_well_formed() -> None:
 
 def test_shipped_file_rows_match_a_real_library_render() -> None:
     """Every template/** row's status agrees with what the engine produces."""
-    targets = _library_render_targets() | _github_render_targets()
+    targets = (
+        _library_render_targets()
+        | _github_render_targets()
+        | _capability_render_targets()
+    )
     checked = 0
     for row in _doc_rows():
         key = row["key"]
@@ -223,16 +267,14 @@ def test_shipped_file_rows_match_a_real_library_render() -> None:
 
 
 def test_known_input_gaps_and_deliveries_are_classified() -> None:
-    """The questions with and without a ProjectSpec route are marked right."""
-    # FT-17.02 / ADR 0063 shipped the `github` platform, moving github_org,
-    # repo_url, codeowners_team and python_matrix out of this set.
-    gap_questions = {
-        "type_checking",
-        "coverage_fail_under",
-        "dependency_updates",
-        "use_docs",
-        "changelog_tool",
-    }
+    """The questions with and without a ProjectSpec route are marked right.
+
+    FT-17.02 / ADR 0063 (the `github` platform) and FT-17.03 / ADR 0064 (the
+    eight tooling capabilities) closed the last of them: every `copier.yml`
+    question now routes to a ProjectSpec field, a component option, or a
+    component selection, so every question row is `shipped`.
+    """
+    gap_questions: set[str] = set()
     shipped_questions = _copier_questions() - gap_questions
     by_key = {row["key"]: row for row in _doc_rows()}
     for question in gap_questions:

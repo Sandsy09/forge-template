@@ -94,11 +94,19 @@ def test_published_compatibility_state_matches_the_engine() -> None:
 
     components = {c.id: c for c in discover_components()}
     assert components.keys() == {
+        "changelog",
         "cli",
+        "coverage",
         "data-science",
+        "dependabot",
+        "documentation",
+        "dotenv-example",
         "github",
         "jupyter",
         "library",
+        "pre-commit",
+        "pyright",
+        "renovate",
         "scientific-python",
     }
     assert components["library"].version == "1.0.1"
@@ -107,6 +115,17 @@ def test_published_compatibility_state_matches_the_engine() -> None:
     assert components["jupyter"].version == "1.0.0"
     assert components["scientific-python"].version == "1.0.0"
     assert components["github"].version == "1.0.0"
+    for capability in (
+        "changelog",
+        "coverage",
+        "dependabot",
+        "documentation",
+        "dotenv-example",
+        "pre-commit",
+        "pyright",
+        "renovate",
+    ):
+        assert components[capability].version == "1.0.0"
 
 
 def test_component_versions_are_canonical_pep440() -> None:

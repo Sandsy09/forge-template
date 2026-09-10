@@ -16,6 +16,7 @@ description = "{{ project.description }}"
 readme = "README.md"
 requires-python = "{{ python.requires_python }}"
 license = "{{ spdx_license }}"
+license-files = ["LICENSE"]
 {%- if project.authors %}
 authors = [
 {%- for author in project.authors %}
@@ -51,10 +52,12 @@ test = [
 typecheck = [
     "mypy>=1.14",
 ]
+[[forge:extension pyproject-named-dependency-groups]]
 dev = [
     { include-group = "lint" },
     { include-group = "test" },
     { include-group = "typecheck" },
+    [[forge:extension pyproject-dependency-group-includes]]
     "poethepoet>=0.31",
     [[forge:extension pyproject-development-dependencies]]
 ]

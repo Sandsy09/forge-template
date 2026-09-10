@@ -1,0 +1,40 @@
+# The production pyright capability. See docs/platform-and-tooling-parity.md
+# and ADR 0060/0064. Adds pyright (basic mode) on top of Foundation's
+# unconditional mypy gate -- the shape ADR 0006 defined for the Copier path's
+# `both` answer. Foundation's mypy `typecheck` task is left intact; pyright runs
+# as a distinct `typecheck:pyright` task and a dedicated CI job (a recorded
+# narrowing). Copier's mypy-*less* pyright answer stays unreachable.
+manifest_version = 2
+id = "pyright"
+name = "Pyright"
+description = "Pyright type checking alongside the mypy gate."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-development-dependencies"
+content = "extensions/development-dependencies.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-task-definitions"
+content = "extensions/task-definitions.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-aggregate-check"
+content = "extensions/aggregate-check.toml.jinja"
+
+[[contributions]]
+target.kind = "component"
+target.id = "github"
+extension_point = "ci-jobs"
+content = "extensions/ci-job.yml.jinja"

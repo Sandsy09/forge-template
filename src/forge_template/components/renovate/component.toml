@@ -1,0 +1,17 @@
+# The production Renovate capability. See docs/platform-and-tooling-parity.md
+# and ADR 0060/0064. Renders host-agnostic Renovate configuration and declares
+# no host requirement; it conflicts with `dependabot` -- a project runs one
+# updater, never both.
+manifest_version = 2
+id = "renovate"
+name = "Renovate"
+description = "Renovate dependency-update configuration."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = [{ id = "dependabot" }]
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

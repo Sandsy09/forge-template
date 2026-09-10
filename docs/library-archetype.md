@@ -182,8 +182,8 @@ Library contributes to these stable extension-point targets:
 | Foundation | `pyproject-build-configuration` | required |
 | Foundation | `readme-project-shape` | required |
 | Foundation | `gitignore-project-shape` | required |
-| `github` platform | `ci-jobs` | published by FT-17.02 / ADR 0063 (unfilled by `library` until FT-17.03) |
-| `documentation` component | `api-reference` | only when that (not yet existing) optional component is selected |
+| `github` platform | `ci-jobs` | published by FT-17.02 / ADR 0063; `library` does not fill it |
+| `documentation` capability | `api-reference` | published by FT-17.03 / ADR 0064; `library` does not fill it |
 
 `gitignore-project-shape` is additive against the original four-point table:
 Library's `hatchling-vcs` packaging mode generates `src/<package_name>/_version.py`
@@ -196,12 +196,16 @@ owner of both points — `ci-jobs` on the `github` platform, `api-reference` on
 the `documentation` capability.
 [FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) /
 [ADR 0063](adr/0063-implement-the-github-platform.md) shipped the `github`
-platform and published `ci-jobs` (which `library` does not yet fill);
-[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) ships the
-`documentation` capability and `api-reference`, and is where `library` fills
-both, moving to `1.1.0`. An unsupported or absent target fails under the
-composition contract rather than disappearing or using last-write-wins
-replacement.
+platform and published `ci-jobs`;
+[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) /
+[ADR 0064](adr/0064-implement-approved-generated-content-parity.md) shipped the
+`documentation` capability and published `api-reference` (self-filled with
+`::: <package_name>`). Both points are filled only by capabilities;
+[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) left the
+archetypes untouched, so `library` stays `1.0.1` — an archetype `ci-jobs` fill
+and the matching `1.1.0` move are a later child. An unsupported or absent
+target fails under the composition contract rather than disappearing or using
+last-write-wins replacement.
 
 `pyproject-library-metadata` was renamed `pyproject-archetype-metadata` when
 FT-08.04 needed the same static-version-metadata point for a second, distinct

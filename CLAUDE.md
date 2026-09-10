@@ -152,10 +152,12 @@ real Data Science wheel/install/`__version__`/`py.typed` plus its own locked
 over the real starter notebook and a live kernel, and since FT-12.03 sweeps
 both `data-science` compositions (with and without `scientific-python`) across
 Python 3.11 and 3.14.
-`discover_components()` now returns
-`("cli", "data-science", "github", "jupyter", "library", "scientific-python")`
-— five archetypes/capabilities plus the `github` platform (FT-17.02 / ADR
-0063). No
+`discover_components()` now returns fourteen components —
+`("changelog", "cli", "coverage", "data-science", "dependabot", "documentation",
+"dotenv-example", "github", "jupyter", "library", "pre-commit", "pyright",
+"renovate", "scientific-python")` — three archetypes, ten capabilities, and the
+`github` platform (FT-17.02 / ADR 0063 shipped `github`; FT-17.03 / ADR 0064
+shipped the eight tooling capabilities). No
 archetype inherits from or reads
 resources from another; a ProjectSpec selects exactly one. These
 contracts are not
@@ -507,7 +509,8 @@ check` at Python 3.11/3.13/3.14, create-forge's own
 `tests/test_engine_cross_repository.py` passes against the pair, and the
 ADR 0056 package-size figures (then 60 files, 39,182 bytes, 892 bytes of
 duplicate overhead; re-baselined by FT-17.02 / ADR 0063 to 72 files and
-48,350 bytes) are pinned executably alongside a wheel-size ceiling
+48,350 bytes, and by FT-17.03 / ADR 0064 to 112 files and 68,378 bytes) are
+pinned executably alongside a wheel-size ceiling
 in `scripts/check_wheel.py`. The new `crossrepo` pytest marker
 (`uv run poe crossrepo`) is sibling-gated and deliberately absent from CI.
 FT-14.03's [reviewed-engine-release.md](docs/reviewed-engine-release.md)
@@ -564,8 +567,8 @@ derived; publishes `ci-jobs` and `ci-steps`) or one of eight capabilities
 `api-reference` on `documentation`, records `type_checking`'s mypy-less answer
 and Copier's free-text `codeowners_team` as narrowings, and confirms no new
 archetype (FT-ROADMAP-01-EX-03). Decision 7 reverses ADR 0049's limit that a
-capability cannot declare its own named dependency group; `foundation.toml` is
-unchanged and the eight points are reserved for FT-17.02/FT-17.03 to publish.
+capability cannot declare its own named dependency group. FT-17.02 / ADR 0063
+and FT-17.03 / ADR 0064 have since shipped every one of those eight points.
 FT-15.04 / #149 is complete — its
 [cutover compatibility, failure and acceptance contract](docs/cutover-compatibility-and-acceptance.md)
 ([ADR 0061](docs/adr/0061-provider-compatibility-failure-and-release-gates.md),
@@ -590,8 +593,9 @@ release) is now the active forge-template roadmap. **FT-17.01 / #150 is
 complete** — [ADR 0062](docs/adr/0062-generation-metadata-and-manifest-protocol-3.md)
 ships manifest protocol `3` (two optional arrays `[[renames]]` and
 `[[regeneration]]`; `COMPONENT_MANIFEST_PROTOCOL_VERSIONS == (1, 2, 3)`,
-protocol-`1`/`2` manifests unchanged, every shipped component stays
-`manifest_version = 2`), the generation-metadata surface
+protocol-`1`/`2` manifests unchanged; every shipped component stayed
+`manifest_version = 2` until FT-17.03's `changelog` became the first at `3`),
+the generation-metadata surface
 (`GenerationMetadata` on `RenderedProject.metadata`,
 `generation_metadata.py`, `parse_generation_metadata` /
 `verify_generation_metadata`, `EngineInfo.metadata_version == 1` as the ninth
@@ -615,12 +619,28 @@ running the generated `poe` tasks) plus `.github/CODEOWNERS`, the three
 unfilled). Foundation gains three host-link points —
 `pyproject-project-urls`, `contributing-project-shape`,
 `security-project-shape` (inventory 11 → 14; `foundation_version` stays `1`;
-byte-neutral for a render that does not select `github`). `discover_components()`
-returns six components. The eleven `github`-owned rows in
-`docs/engine-default-parity.md` flip to `shipped`. No `library` / `cli` /
-`data-science` content or version change, no `copier.yml` or `template/**`
-change; `main` stays `0.4.1` and untagged. `FT-17.03 / #152` (the eight
-capabilities) is unblocked.
+byte-neutral for a render that does not select `github`). The eleven
+`github`-owned rows in `docs/engine-default-parity.md` flip to `shipped`. No
+`library` / `cli` / `data-science` content or version change, no `copier.yml`
+or `template/**` change; `main` stays `0.4.1` and untagged.
+
+**FT-17.03 / #152 is complete** —
+[ADR 0064](docs/adr/0064-implement-approved-generated-content-parity.md) ships
+the eight tooling capabilities — `coverage`, `pre-commit`, `pyright`,
+`changelog` (first shipped `manifest_version = 3`, for its `CHANGELOG.md`
+`skip-if-exists` record), `documentation` (`requires` `library`; publishes
+`api-reference`; `site_name` option), `dotenv-example`, `dependabot` (`requires`
+`github`, `conflicts` `renovate`) and `renovate` — plus the two
+`[dependency-groups]` Foundation extension points (inventory 14 → 16, byte
+neutral) and `license-files = ["LICENSE"]` on the Foundation `pyproject.toml`
+contribution (the one deliberate output change; regression digests
+regenerated). `[tool.coverage]` / `[tool.pyright]` relocate to standalone
+`.coveragerc` / `pyrightconfig.json`; `documentation` and `pyright` fill
+`github`'s `ci-jobs`, `coverage` fills `ci-steps`; the archetypes are
+untouched (`library` / `cli` / `data-science` stay `1.0.1` / `1.0.1` /
+`1.0.0`). `discover_components()` returns fourteen components; every
+`copier.yml` question now has an engine route. No `copier.yml` or
+`template/**` change; `main` stays `0.4.1` and untagged.
 
 FT-08.02 populated the
 production component catalogue under the

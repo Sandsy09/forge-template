@@ -96,9 +96,11 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   engine.
 - [extension-points.md](extension-points.md) — the complete sanctioned
   extension surface, the denial of any `override` grant, and the published,
-  versioned content extension-point inventory, now fourteen Foundation entries
+  versioned content extension-point inventory, now sixteen Foundation entries
   (FT-11.01 added three for capability tooling; FT-17.02 / ADR 0063 three for
-  host-scoped links) plus `ci-jobs` / `ci-steps` on the `github` platform.
+  host-scoped links; FT-17.03 / ADR 0064 two for named dependency groups) plus
+  `ci-jobs` / `ci-steps` on the `github` platform and `api-reference` on the
+  `documentation` capability.
 - [template-variables.md](template-variables.md) — the rendered
   template-variable namespace, component option declarations, and
   resolution/rejection rules for the composition engine.
@@ -138,8 +140,10 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [platform-and-tooling-parity.md](platform-and-tooling-parity.md) — FT-15.03's
   assignment of every optional-tooling and host-integration parity gap to one
   `github` platform or one of eight capabilities; FT-17.02 / ADR 0063 shipped
-  the `github` platform and published five of its extension points, pinned by
-  `tests/test_platform_composition.py` and `tests/test_github_platform.py`.
+  the `github` platform and FT-17.03 / ADR 0064 the eight capabilities and the
+  last three reserved extension points, pinned by
+  `tests/test_platform_composition.py`, `tests/test_github_platform.py`, and
+  the per-capability `tests/test_*_capability.py` modules.
 - [cutover-compatibility-and-acceptance.md](cutover-compatibility-and-acceptance.md)
   — FT-15.04's classification of the versioned axes the engine-default cutover
   moves (`forge-template` `0.5.0`, component-manifest protocol `3`, published
