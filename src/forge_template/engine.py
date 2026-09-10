@@ -9,6 +9,7 @@ file set. Destination orchestration deliberately remains a client concern.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import tomllib
@@ -45,6 +46,14 @@ from forge_template.file_conflicts import (
     resolve_output_plan,
 )
 from forge_template.foundation_source import FoundationPlacement, foundation_placement
+from forge_template.generation_metadata import (
+    GENERATION_METADATA_VERSION,
+    GenerationMetadata,
+    MetadataProtocols,
+    OutputRecord,
+    ProviderIdentity,
+    SelectedComponent,
+)
 from forge_template.project_spec import PROJECT_SPEC_PROTOCOL_VERSION, ProjectSpec
 from forge_template.template_variables import (
     OptionSchema,
@@ -60,7 +69,13 @@ SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS: tuple[int, ...] = (
 )
 """Component manifest protocols accepted by this engine compatibility line."""
 
-_DISTRIBUTION_NAME = "forge-template"
+_SUPPORTED_GENERATION_METADATA_VERSIONS: frozenset[int] = frozenset(
+    {GENERATION_METADATA_VERSION}
+)
+"""Generation-metadata schema versions this engine line reads. Single-valued
+today; a client negotiates against ``EngineInfo.metadata_version``."""
+
+_DISTRIBUTION_NAME: Literal["forge-template"] = "forge-template"
 _LEGACY_PACKAGING_MODE: dict[tuple[str, str], str] = {
     ("uv_build", "static"): "uv-build-static",
     ("hatchling", "static"): "hatchling-static",
@@ -94,6 +109,11 @@ _FOUNDATION_ROOT_OVERRIDE: Path | None = None
 ProjectSpecPayload: TypeAlias = ProjectSpec | Mapping[str, object] | str | bytes
 """Inputs accepted by :func:`parse_project_spec`."""
 
+GenerationMetadataPayload: TypeAlias = (
+    GenerationMetadata | Mapping[str, object] | str | bytes
+)
+"""Inputs accepted by :func:`parse_generation_metadata`."""
+
 
 class _PublicModel(BaseModel):
     """Shared strict and immutable behaviour for public result models."""
@@ -107,6 +127,10 @@ class EngineInfo(_PublicModel):
     package_version: str
     projectspec_protocols: tuple[int, ...]
     component_manifest_protocols: tuple[int, ...]
+    metadata_version: int
+    """The generation-metadata schema version this engine writes and reads --
+    the ninth versioned compatibility axis, negotiated exactly like the
+    protocol tuples above. See docs/generation-provenance.md."""
 
 
 class ComponentRelation(_PublicModel):
@@ -169,6 +193,11 @@ class PlannedFile(_PublicModel):
     target: str
     owner: Owner = Field(discriminator="kind")
     extensions: tuple[PlannedExtension, ...] = ()
+    regeneration: Literal["replace", "skip-if-exists"] = "replace"
+    """The owning component's declared regeneration disposition for this
+    target (manifest protocol 3 ``[[regeneration]]``). ``"replace"`` unless a
+    record names the target ``"skip-if-exists"``; the client applies the
+    skip. Foundation-owned targets are always ``"replace"``."""
 
 
 class GenerationPlan(_PublicModel):
@@ -186,10 +215,16 @@ class RenderedFile(_PublicModel):
 
 
 class RenderedProject(_PublicModel):
-    """A generation plan and its deterministic in-memory file set."""
+    """A generation plan, its deterministic in-memory file set, and provenance."""
 
     plan: GenerationPlan
     files: tuple[RenderedFile, ...]
+    metadata: GenerationMetadata | None = None
+    """The generation-metadata document for this render. ``render_project``
+    always populates it; it is ``None`` only on a ``RenderedProject`` a caller
+    constructs by hand to pass to ``validate_rendered_project``. A client
+    persists ``metadata.to_json()`` and hands it back to reproduce or update
+    the project -- see docs/generation-provenance.md."""
 
 
 class EngineErrorCode(StrEnum):
@@ -202,6 +237,8 @@ class EngineErrorCode(StrEnum):
     GENERATION_PLAN_FAILED = "generation-plan-failed"
     TEMPLATE_RENDER_FAILED = "template-render-failed"
     GENERATED_PROJECT_INVALID = "generated-project-invalid"
+    INVALID_GENERATION_METADATA = "invalid-generation-metadata"
+    UNSUPPORTED_GENERATION_METADATA = "unsupported-generation-metadata"
 
 
 class EngineErrorDetail(_PublicModel):
@@ -285,6 +322,7 @@ def get_engine_info() -> EngineInfo:
         package_version=_package_version(),
         projectspec_protocols=SUPPORTED_PROJECTSPEC_PROTOCOLS,
         component_manifest_protocols=SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS,
+        metadata_version=GENERATION_METADATA_VERSION,
     )
 
 
@@ -301,6 +339,21 @@ def _validation_details(exc: ValidationError) -> tuple[EngineErrorDetail, ...]:
 
 def _single_detail(code: str, message: str) -> tuple[EngineErrorDetail, ...]:
     return (EngineErrorDetail(code=code, message=message),)
+
+
+def _metadata_error(
+    code: EngineErrorCode,
+    operation: Literal["parse", "validate"],
+    path: tuple[str | int, ...],
+    message: str,
+) -> ForgeEngineError:
+    """One structured generation-metadata failure, never ``operation="render"``."""
+    return ForgeEngineError(
+        code=code,
+        operation=operation,
+        message=message,
+        details=(EngineErrorDetail(code=code.value, path=path, message=message),),
+    )
 
 
 def _detail_sort_key(
@@ -805,9 +858,80 @@ def _extension_owner_id(owner: Owner) -> str:
     return owner.id
 
 
+def _regeneration_for(
+    output: OutputFile,
+    dispositions_by_owner: Mapping[str, Mapping[str, str]],
+) -> Literal["replace", "skip-if-exists"]:
+    """Resolve one target's regeneration disposition from its owner's manifest.
+
+    A ``[[regeneration]]`` record only takes effect for a target its own
+    component owns -- the disposition travels with the content owner
+    (ADR 0059 decision 8). Foundation-owned targets are always ``"replace"``.
+    """
+    owner = output.base.owner
+    if isinstance(owner, FoundationOwner):
+        return "replace"
+    disposition = dispositions_by_owner.get(owner.id, {}).get(output.target, "replace")
+    return "skip-if-exists" if disposition == "skip-if-exists" else "replace"
+
+
+def _owner_token(owner: Owner) -> str:
+    """Restate ``PlannedFile.owner`` as the metadata document's owner string."""
+    if isinstance(owner, FoundationOwner):
+        return "foundation"
+    return f"component:{owner.id}"
+
+
+def _build_generation_metadata(
+    spec: ProjectSpec,
+    plan: GenerationPlan,
+    rendered: tuple[RenderedFile, ...],
+    versions_by_id: Mapping[str, str],
+) -> GenerationMetadata:
+    """Assemble the provenance document for one completed render.
+
+    Every value comes from the effective spec, the resolved plan, the
+    installed catalogue, the rendered bytes, or the fixed distribution
+    identity -- the "Secret-free persisted and displayed data" allowlist.
+    """
+    planned_by_target = {file.target: file for file in plan.files}
+    output = tuple(
+        OutputRecord(
+            target=file.target,
+            owner=_owner_token(planned_by_target[file.target].owner),
+            digest="sha256:" + hashlib.sha256(file.content).hexdigest(),
+            regeneration=planned_by_target[file.target].regeneration,
+        )
+        for file in rendered
+    )
+    return GenerationMetadata(
+        metadata_version=GENERATION_METADATA_VERSION,
+        provider=ProviderIdentity(
+            distribution=_DISTRIBUTION_NAME, version=_package_version()
+        ),
+        protocols=MetadataProtocols(
+            projectspec=spec.protocol_version,
+            component_manifest=SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS,
+        ),
+        spec=spec.model_dump(mode="json"),
+        components=tuple(
+            SelectedComponent(id=component_id, version=versions_by_id[component_id])
+            for component_id in plan.component_order
+        ),
+        output=output,
+    )
+
+
 def _public_plan(
     placements: tuple[ComponentPlacement, ...], outputs: tuple[OutputFile, ...]
 ) -> GenerationPlan:
+    dispositions_by_owner = {
+        placement.manifest.id: {
+            record.target: record.disposition
+            for record in placement.manifest.regeneration
+        }
+        for placement in placements
+    }
     return GenerationPlan(
         component_order=tuple(placement.manifest.id for placement in placements),
         files=tuple(
@@ -821,6 +945,7 @@ def _public_plan(
                     )
                     for extension in output.extensions
                 ),
+                regeneration=_regeneration_for(output, dispositions_by_owner),
             )
             for output in outputs
         ),
@@ -1103,7 +1228,17 @@ def render_project(spec: ProjectSpec) -> RenderedProject:
             details=_single_detail("template-render-failed", str(exc)),
         ) from exc
 
-    project = RenderedProject(plan=prepared.plan, files=tuple(rendered))
+    rendered_files = tuple(rendered)
+    versions_by_id = {
+        record.manifest.id: record.manifest.version for record in prepared.records
+    }
+    project = RenderedProject(
+        plan=prepared.plan,
+        files=rendered_files,
+        metadata=_build_generation_metadata(
+            spec, prepared.plan, rendered_files, versions_by_id
+        ),
+    )
     return validate_rendered_project(spec, project)
 
 
@@ -1171,3 +1306,167 @@ def map_legacy_library_answers(
             details=_single_detail("unsupported-legacy-answer-combination", msg),
         )
     return {"packaging_mode": packaging_mode}
+
+
+def _negotiate_generation_metadata(document: GenerationMetadata) -> None:
+    """Fail closed on an out-of-range recorded schema or protocol integer."""
+    if document.metadata_version not in _SUPPORTED_GENERATION_METADATA_VERSIONS:
+        raise _metadata_error(
+            EngineErrorCode.UNSUPPORTED_GENERATION_METADATA,
+            "validate",
+            ("metadata_version",),
+            f"metadata_version {document.metadata_version!r} is not supported; "
+            f"this engine reads {sorted(_SUPPORTED_GENERATION_METADATA_VERSIONS)}.",
+        )
+    if document.protocols.projectspec not in SUPPORTED_PROJECTSPEC_PROTOCOLS:
+        raise _metadata_error(
+            EngineErrorCode.UNSUPPORTED_GENERATION_METADATA,
+            "validate",
+            ("protocols", "projectspec"),
+            f"recorded ProjectSpec protocol {document.protocols.projectspec!r} is "
+            f"outside the supported set {list(SUPPORTED_PROJECTSPEC_PROTOCOLS)}.",
+        )
+    unsupported = sorted(
+        protocol
+        for protocol in document.protocols.component_manifest
+        if protocol not in SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS
+    )
+    if unsupported:
+        raise _metadata_error(
+            EngineErrorCode.UNSUPPORTED_GENERATION_METADATA,
+            "validate",
+            ("protocols", "component_manifest"),
+            f"recorded component-manifest protocol(s) {unsupported} are outside "
+            f"the supported set {list(SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS)}.",
+        )
+
+
+def _validate_recorded_selection(document: GenerationMetadata) -> None:
+    """Check the embedded spec parses and every recorded component is real."""
+    try:
+        spec = parse_project_spec(document.spec)
+    except ForgeEngineError as exc:
+        raise _metadata_error(
+            EngineErrorCode.INVALID_GENERATION_METADATA,
+            "validate",
+            ("spec",),
+            "the embedded ProjectSpec does not parse.",
+        ) from exc
+
+    catalogue = {component.id: component.version for component in discover_components()}
+    for index, component in enumerate(document.components):
+        if component.id not in catalogue:
+            raise _metadata_error(
+                EngineErrorCode.INVALID_GENERATION_METADATA,
+                "validate",
+                ("components", index),
+                f"recorded component {component.id!r} is not in the installed "
+                "catalogue.",
+            )
+        if catalogue[component.id] != component.version:
+            raise _metadata_error(
+                EngineErrorCode.INVALID_GENERATION_METADATA,
+                "validate",
+                ("components", index, "version"),
+                f"recorded {component.id!r} version {component.version!r} does not "
+                f"match the installed {catalogue[component.id]!r}.",
+            )
+
+    selected = {
+        spec.components.archetype,
+        *spec.components.capabilities,
+        *spec.components.platforms,
+    }
+    if {component.id for component in document.components} != selected:
+        raise _metadata_error(
+            EngineErrorCode.INVALID_GENERATION_METADATA,
+            "validate",
+            ("components",),
+            "recorded components do not match the embedded spec's selection.",
+        )
+
+
+def parse_generation_metadata(
+    payload: GenerationMetadataPayload,
+) -> GenerationMetadata:
+    """Validate one generation-metadata document a client hands back.
+
+    Closed-world structural validation first, then negotiation:
+    ``metadata_version`` and every recorded protocol integer must be in this
+    engine's supported set, the embedded spec must parse, and every recorded
+    component must be a real catalogue entry at the recorded version. This
+    never renders, so it never verifies digests -- see
+    :func:`verify_generation_metadata`. Failures are
+    ``invalid-generation-metadata`` (malformed, inconsistent, or an unknown
+    component) or ``unsupported-generation-metadata`` (an out-of-range
+    version), always with ``operation`` in ``{"parse", "validate"}`` and a
+    fixed safe message -- no rendered content, no absolute path, no secret.
+    """
+    if isinstance(payload, GenerationMetadata):
+        document = payload
+    elif isinstance(payload, (str, bytes)):
+        document = _parse_metadata_json(payload)
+    elif isinstance(payload, Mapping):
+        document = _parse_metadata_json(json.dumps(dict(payload)))
+    else:
+        raise _metadata_error(
+            EngineErrorCode.INVALID_GENERATION_METADATA,
+            "parse",
+            (),
+            "a generation-metadata document must be a JSON object.",
+        )
+
+    _negotiate_generation_metadata(document)
+    _validate_recorded_selection(document)
+    return document
+
+
+def _parse_metadata_json(raw: str | bytes) -> GenerationMetadata:
+    try:
+        return GenerationMetadata.model_validate_json(raw)
+    except ValidationError as exc:
+        raise ForgeEngineError(
+            code=EngineErrorCode.INVALID_GENERATION_METADATA,
+            operation="validate",
+            message="The generation-metadata document is malformed.",
+            details=_validation_details(exc),
+        ) from exc
+    except ValueError as exc:
+        raise _metadata_error(
+            EngineErrorCode.INVALID_GENERATION_METADATA,
+            "parse",
+            (),
+            "the generation-metadata document is not valid JSON.",
+        ) from exc
+
+
+def verify_generation_metadata(
+    metadata: GenerationMetadata, project: RenderedProject
+) -> None:
+    """Check a document's digests and coverage against a re-rendered project.
+
+    The caller reproduces the project -- ``render_project`` on the recorded
+    spec, provisioned on the recorded release -- and passes the result here.
+    Every ``output`` entry's digest must match the reproduced target's bytes,
+    and the entry set must cover exactly the rendered targets. A mismatch is
+    ``invalid-generation-metadata`` / ``validate``: a local edit, a tampered
+    file, or a document from a different render. Never renders or writes.
+    """
+    rendered = {file.target: file.content for file in project.files}
+    if {entry.target for entry in metadata.output} != set(rendered):
+        raise _metadata_error(
+            EngineErrorCode.INVALID_GENERATION_METADATA,
+            "validate",
+            ("output",),
+            "recorded output does not cover exactly the reproduced targets.",
+        )
+    for index, entry in enumerate(metadata.output):
+        expected = "sha256:" + hashlib.sha256(rendered[entry.target]).hexdigest()
+        if entry.digest != expected:
+            raise _metadata_error(
+                EngineErrorCode.INVALID_GENERATION_METADATA,
+                "validate",
+                ("output", index, "digest"),
+                f"recorded digest for {entry.target!r} does not match the "
+                "reproduced content.",
+            )

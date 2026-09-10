@@ -77,7 +77,8 @@ add policy parsing, resolution, public exports, or `ForgeEngineError` values
 to `src/forge_template` itself — a shipped implementation remains
 unscheduled,
 [component manifest protocol](docs/component-manifests.md) models and loader
-in `component_manifest.py` (manifest protocols `1` and `2`), the implicit
+in `component_manifest.py` (manifest protocols `1`, `2`, and `3` — FT-17.01
+added `3`'s `[[renames]]` / `[[regeneration]]` records), the implicit
 [Foundation content source](docs/component-manifests.md#foundation-content-source)
 in `foundation_source.py`,
 [composition order](docs/composition-order.md) tier and within-tier ordering
@@ -94,11 +95,15 @@ and option-schema vocabulary (protocols `1` and `2`, `format` support) in
 `template_variables.py`. The supported
 [template-engine API](docs/template-engine-api.md) in `engine.py` exposes
 package-bound discovery, strict validation, deterministic planning, in-memory
-rendering, structured failures, and the `map_legacy_library_answers` helper
-from the top-level package, at package version `0.4.1`. The `0.4.x` line keeps
-the `0.3.x` public facade and protocol tuples while adding the Data Science
-catalogue; ADR 0037's Stage 08 review and ADR 0056's Stage 14 confirmation
-define its Foundation boundary. The
+rendering, structured failures, the `map_legacy_library_answers` helper, and
+(since FT-17.01 / ADR 0062) the generation-metadata surface —
+`GenerationMetadata` on `RenderedProject.metadata` plus
+`parse_generation_metadata` / `verify_generation_metadata` and
+`generation_metadata.py` — from the top-level package, at package version
+`0.4.1`. The `0.4.x` line keeps the `0.3.x` public facade and protocol tuples
+(the component-manifest tuple is now `(1, 2, 3)`, `metadata_version` is
+published) while adding the Data Science catalogue; ADR 0037's Stage 08 review
+and ADR 0056's Stage 14 confirmation define its Foundation boundary. The
 [Forge-Blueprint compatibility policy](docs/compatibility-policy.md)
 ([ADR 0041](docs/adr/0041-forge-blueprint-compatibility-policy.md)) defines
 every versioned axis above (package, both protocols, component versions,
@@ -573,9 +578,31 @@ FT-17.01 through FT-18.01 owns a row), and closes the nine
 `needs a bounded issue` parity rows by reference to FT-17.03 (no new issue;
 the frozen roadmap-v3 mirror stays byte-identical). No runtime, content,
 protocol, version or release change. **FT-15.01 through FT-15.04 are
-complete; `FT-EPIC-15 / #141` and its milestone are closed.** The next
-actionable roadmap work is create-forge's CF-16.01; `FT-EPIC-17 / #142`
-stays blocked on CF-16.03.
+complete; `FT-EPIC-15 / #141` and its milestone are closed.**
+
+create-forge's `CF-EPIC-16 / #152` (Stage 16 client contracts) is closed,
+including `CF-16.03` ([create-forge ADR 0042](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0042-engine-cutover-acceptance-and-support-policy.md)),
+which unblocked `FT-EPIC-17 / #142`. Stage 17 (provider implementation and
+release) is now the active forge-template roadmap. **FT-17.01 / #150 is
+complete** — [ADR 0062](docs/adr/0062-generation-metadata-and-manifest-protocol-3.md)
+ships manifest protocol `3` (two optional arrays `[[renames]]` and
+`[[regeneration]]`; `COMPONENT_MANIFEST_PROTOCOL_VERSIONS == (1, 2, 3)`,
+protocol-`1`/`2` manifests unchanged, all five shipped components stay
+`manifest_version = 2`), the generation-metadata surface
+(`GenerationMetadata` on `RenderedProject.metadata`,
+`generation_metadata.py`, `parse_generation_metadata` /
+`verify_generation_metadata`, `EngineInfo.metadata_version == 1` as the ninth
+compatibility axis, `PlannedFile.regeneration`, the two `EngineErrorCode`
+values, `DEFAULT_GENERATION_METADATA_TARGET == ".forge/generation.json"`
+adopted from create-forge ADR 0041), the retired
+`tests/generation_provenance_contract.py` shadow, and the turned-over
+tripwires in `tests/test_cutover_gates.py` /
+`tests/test_generation_provenance.py`. Foundation is deferred —
+`foundation_version` stays `1`. No content, `copier.yml`, or package-version
+change; `main` stays `0.4.1` and untagged (FT-17.06 releases `0.5.0`).
+`FT-17.02 / #151` (approved platform compositions) is the next actionable
+child and is independent of FT-17.01; `FT-17.04 / #153` was unblocked by
+FT-17.01.
 
 FT-08.02 populated the
 production component catalogue under the

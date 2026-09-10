@@ -12,19 +12,24 @@ from pydantic import ValidationError
 
 import forge_template.engine as engine_module
 from forge_template import (
+    DEFAULT_GENERATION_METADATA_TARGET,
+    GENERATION_METADATA_VERSION,
     ComponentOwner,
     EngineErrorCode,
     ForgeEngineError,
     FoundationOwner,
+    GenerationMetadata,
     PlannedExtension,
     ProjectSpec,
     discover_components,
     get_engine_info,
     map_legacy_library_answers,
+    parse_generation_metadata,
     parse_project_spec,
     plan_generation,
     render_project,
     validate_project_spec,
+    verify_generation_metadata,
 )
 from forge_template.schema import REPO_ROOT
 
@@ -94,7 +99,8 @@ def test_engine_info_reports_package_and_protocols_without_discovery(
 
     assert info.package_version == "0.4.1"
     assert info.projectspec_protocols == (1,)
-    assert info.component_manifest_protocols == (1, 2)
+    assert info.component_manifest_protocols == (1, 2, 3)
+    assert info.metadata_version == 1
 
 
 def test_installed_catalogue_contains_the_production_components() -> None:
@@ -684,6 +690,84 @@ def test_public_result_models_are_frozen(fixture_catalogue: Path) -> None:
 
     with pytest.raises(ValidationError, match="frozen"):
         plan.component_order = ("changed",)
+
+
+def _metadata_spec() -> ProjectSpec:
+    """A real ``library`` spec with production options, for metadata tests."""
+    return parse_project_spec(
+        _payload(
+            component_options={
+                "library": {
+                    "packaging_mode": "uv-build-static",
+                    "initial_version": "0.1.0",
+                }
+            }
+        )
+    )
+
+
+def test_render_project_attaches_a_generation_metadata_document() -> None:
+    project = render_project(_metadata_spec())
+    metadata = project.metadata
+    assert isinstance(metadata, GenerationMetadata)
+    assert metadata.metadata_version == GENERATION_METADATA_VERSION
+    assert metadata.provider.distribution == "forge-template"
+    assert metadata.provider.version == get_engine_info().package_version
+    assert metadata.protocols.component_manifest == (1, 2, 3)
+    assert {entry.target for entry in metadata.output} == {
+        file.target for file in project.files
+    }
+    # A hand-built RenderedProject for validate_rendered_project may omit it.
+    assert "metadata" in type(project).model_fields
+
+
+def test_generation_metadata_round_trips_through_the_public_functions() -> None:
+    project = render_project(_metadata_spec())
+    assert project.metadata is not None
+    document = json.loads(project.metadata.to_json())
+
+    parsed = parse_generation_metadata(document)
+    verify_generation_metadata(parsed, project)
+    assert parsed == project.metadata
+    assert DEFAULT_GENERATION_METADATA_TARGET == ".forge/generation.json"
+
+
+def test_parse_generation_metadata_failures_stay_in_the_parse_validate_band() -> None:
+    project = render_project(_metadata_spec())
+    assert project.metadata is not None
+    document: dict[str, Any] = json.loads(project.metadata.to_json())
+
+    cases: list[Any] = [
+        ["not", "an", "object"],
+        {**document, "metadata_version": 7},
+        {**document, "protocols": {**document["protocols"], "projectspec": 7}},
+        {**document, "protocols": {**document["protocols"], "component_manifest": []}},
+        {**document, "surprise": True},
+        {**document, "components": [{"id": "nonesuch", "version": "9.9.9"}]},
+    ]
+    for payload in cases:
+        with pytest.raises(ForgeEngineError) as caught:
+            parse_generation_metadata(payload)
+        assert caught.value.code in {
+            EngineErrorCode.INVALID_GENERATION_METADATA,
+            EngineErrorCode.UNSUPPORTED_GENERATION_METADATA,
+        }
+        assert caught.value.operation in {"parse", "validate"}
+        for detail in caught.value.details:
+            assert "\\" not in detail.message
+            assert not detail.message.startswith(("/", "C:\\"))
+
+
+def test_verify_generation_metadata_rejects_a_tampered_digest() -> None:
+    project = render_project(_metadata_spec())
+    assert project.metadata is not None
+    document = json.loads(project.metadata.to_json())
+    document["output"][0]["digest"] = "sha256:" + "1" * 64
+
+    with pytest.raises(ForgeEngineError) as caught:
+        verify_generation_metadata(parse_generation_metadata(document), project)
+    assert caught.value.code is EngineErrorCode.INVALID_GENERATION_METADATA
+    assert caught.value.operation == "validate"
 
 
 def test_project_version_and_release_workflow_share_one_source() -> None:

@@ -1,12 +1,15 @@
 """Executable pin for docs/generation-provenance.md (FT-15.02 / ADR 0059).
 
 The contract is only useful if the reference document it describes stays
-derivable from the engine. These tests build a real generation-metadata
-document for a ``library`` render through the public facade and check that its
-ownership map, recorded identities, digests and field set all agree with what
-the engine actually produces -- and that the two ``EngineErrorCode`` values
-the contract reserves are still absent from the shipped enum, so this file
-fails deliberately when FT-17.01 adds them.
+derivable from the engine. Since FT-17.01 / ADR 0062 shipped the real
+generation-metadata surface, these tests drive that surface directly: a real
+``library`` render's ``RenderedProject.metadata``, its canonical
+serialisation, and ``parse_generation_metadata`` /
+``verify_generation_metadata``. They check the ownership map, recorded
+identities, digests and field set all agree with what the engine actually
+produces, that the two ``EngineErrorCode`` values are shipped and stay in the
+``parse`` / ``validate`` band, and that the static fixtures still fail with
+the documented code.
 """
 
 from __future__ import annotations
@@ -19,33 +22,37 @@ from typing import Any
 import pytest
 
 from forge_template import (
+    DEFAULT_GENERATION_METADATA_TARGET,
+    GENERATION_METADATA_VERSION,
     EngineErrorCode,
+    ForgeEngineError,
+    GenerationMetadata,
     ProjectSpec,
     discover_components,
     get_engine_info,
+    parse_generation_metadata,
     parse_project_spec,
     plan_generation,
     render_project,
+    verify_generation_metadata,
 )
 from tests.generation_provenance_contract import (
     CLASSIFICATIONS,
     OPTIONAL_FIELDS,
     REQUIRED_FIELDS,
-    RESERVED_ERROR_CODES,
     SKIP_IF_EXISTS,
-    MetadataError,
     RenameRecord,
-    build_metadata,
     classify_update,
     digest,
     selected_ids,
-    validate_metadata,
 )
 
 ROOT = Path(__file__).parents[1]
 DOC = ROOT / "docs" / "generation-provenance.md"
 COPIER = ROOT / "copier.yml"
 FIXTURES = ROOT / "tests" / "fixtures" / "generation_metadata"
+
+_RESERVED_CODES = ("invalid-generation-metadata", "unsupported-generation-metadata")
 
 _REFERENCE_PAYLOAD: dict[str, Any] = {
     "protocol_version": 1,
@@ -67,6 +74,12 @@ _REFERENCE_PAYLOAD: dict[str, Any] = {
 
 def _reference_spec() -> ProjectSpec:
     return parse_project_spec(_REFERENCE_PAYLOAD)
+
+
+def _metadata(spec: ProjectSpec) -> GenerationMetadata:
+    document = render_project(spec).metadata
+    assert document is not None
+    return document
 
 
 def _rendered(spec: ProjectSpec) -> dict[str, bytes]:
@@ -98,25 +111,36 @@ def _copier_skip_if_exists() -> set[str]:
     return set(re.findall(r"-\s+(\S+)", block.group(1)))
 
 
-def test_reference_document_validates_and_reproduces_its_digests() -> None:
-    """A freshly built document round-trips: validation reproduces the render
-    and every recorded digest matches."""
+def test_render_result_carries_a_metadata_document_that_round_trips() -> None:
+    """``render_project`` attaches the document; its canonical JSON parses
+    back and verifies against the same render."""
     spec = _reference_spec()
-    document = build_metadata(spec)
+    project = render_project(spec)
+    assert project.metadata is not None
 
-    returned = validate_metadata(document)
-    assert returned.model_dump() == spec.model_dump()
+    document = json.loads(project.metadata.to_json())
+    parsed = parse_generation_metadata(document)
+    verify_generation_metadata(parsed, project)
 
+    assert parse_project_spec(parsed.spec).model_dump() == spec.model_dump()
+    assert parsed.metadata_version == GENERATION_METADATA_VERSION == 1
+    assert DEFAULT_GENERATION_METADATA_TARGET == ".forge/generation.json"
+
+
+def test_recorded_digests_reproduce_the_render() -> None:
+    spec = _reference_spec()
+    metadata = _metadata(spec)
     rendered = _rendered(spec)
-    assert len(document["output"]) == len(rendered)
-    for entry in document["output"]:
-        assert entry["digest"] == digest(rendered[entry["target"]])
+
+    assert len(metadata.output) == len(rendered)
+    for entry in metadata.output:
+        assert entry.digest == digest(rendered[entry.target])
 
 
 def test_output_ownership_matches_the_plan() -> None:
     """No `output` row claims ownership the engine's plan does not resolve."""
     spec = _reference_spec()
-    document = build_metadata(spec)
+    metadata = _metadata(spec)
     plan = plan_generation(spec)
     expected = {
         item.target: (
@@ -126,27 +150,27 @@ def test_output_ownership_matches_the_plan() -> None:
         )
         for item in plan.files
     }
-    actual = {row["target"]: row["owner"] for row in document["output"]}
+    actual = {entry.target: entry.owner for entry in metadata.output}
     assert actual == expected
+
+    regeneration = {entry.target: entry.regeneration for entry in metadata.output}
+    planned_regeneration = {item.target: item.regeneration for item in plan.files}
+    assert regeneration == planned_regeneration
 
 
 def test_recorded_identities_are_real() -> None:
     """Provider version, protocol integers and component versions are the
     engine's own, not literals."""
     spec = _reference_spec()
-    document = build_metadata(spec)
+    metadata = _metadata(spec)
     info = get_engine_info()
     catalogue = {c.id: c.version for c in discover_components()}
 
-    assert document["provider"] == {
-        "distribution": "forge-template",
-        "version": info.package_version,
-    }
-    assert document["protocols"]["projectspec"] == spec.protocol_version
-    assert document["protocols"]["component_manifest"] == list(
-        info.component_manifest_protocols
-    )
-    recorded = {entry["id"]: entry["version"] for entry in document["components"]}
+    assert metadata.provider.distribution == "forge-template"
+    assert metadata.provider.version == info.package_version
+    assert metadata.protocols.projectspec == spec.protocol_version
+    assert metadata.protocols.component_manifest == info.component_manifest_protocols
+    recorded = {entry.id: entry.version for entry in metadata.components}
     assert recorded == {cid: catalogue[cid] for cid in selected_ids(spec)}
 
 
@@ -155,7 +179,7 @@ def test_every_string_leaf_traces_to_an_allowed_source() -> None:
     is invented -- each comes from the spec, the catalogue, the plan, a
     digest, or the fixed engine identity."""
     spec = _reference_spec()
-    document = build_metadata(spec, reproduction="degraded", reason="release yanked")
+    metadata = _metadata(spec)
     plan = plan_generation(spec)
 
     allowed: set[str] = set(_string_leaves(spec.model_dump(mode="json")))
@@ -163,9 +187,9 @@ def test_every_string_leaf_traces_to_an_allowed_source() -> None:
         allowed |= {component.id, component.version, f"component:{component.id}"}
     allowed |= {item.target for item in plan.files}
     allowed |= {"forge-template", "foundation", get_engine_info().package_version}
-    allowed |= {"replace", "skip-if-exists", "exact", "degraded", "release yanked"}
+    allowed |= {"replace", "skip-if-exists", "exact", "degraded"}
 
-    for leaf in _string_leaves(document):
+    for leaf in _string_leaves(json.loads(metadata.to_json())):
         if re.fullmatch(r"sha256:[0-9a-f]{64}", leaf):
             continue
         assert leaf in allowed, f"untraceable string leaf: {leaf!r}"
@@ -178,19 +202,30 @@ def test_field_table_and_document_are_a_bijection() -> None:
     assert set(documented) == set(REQUIRED_FIELDS) | set(OPTIONAL_FIELDS)
     assert [f for f in documented if f in REQUIRED_FIELDS] == list(REQUIRED_FIELDS)
 
+    built = _metadata(_reference_spec())
+    serialised = set(json.loads(built.to_json()))
+    # ``reproduction`` is absent on an exact render; every other field present.
+    assert serialised == set(REQUIRED_FIELDS)
+    assert set(GenerationMetadata.model_fields) == set(REQUIRED_FIELDS) | set(
+        OPTIONAL_FIELDS
+    )
 
-def test_reserved_error_codes_are_not_yet_in_the_shipped_enum() -> None:
-    """Tripwire: this fails when FT-17.01 adds the codes, forcing the contract
-    and the implementation back into step."""
+
+def test_reserved_error_codes_are_shipped_and_parse_or_validate_only() -> None:
+    """The two codes docs/generation-provenance.md reserved are now
+    ``EngineErrorCode`` members, and every metadata failure carries
+    ``operation`` in ``{parse, validate}`` -- never ``render``."""
     shipped = {code.value for code in EngineErrorCode}
-    for reserved in RESERVED_ERROR_CODES:
-        assert reserved not in shipped, (
-            f"{reserved!r} is now shipped -- update docs/generation-provenance.md "
-            "and tests/generation_provenance_contract.py to use EngineErrorCode"
-        )
-    text = DOC.read_text(encoding="utf-8")
-    for reserved in RESERVED_ERROR_CODES:
-        assert reserved in text
+    for reserved in _RESERVED_CODES:
+        assert reserved in shipped
+        assert reserved in DOC.read_text(encoding="utf-8")
+
+    for name in _STATIC_FIXTURES:
+        document = json.loads((FIXTURES / name).read_text(encoding="utf-8"))
+        with pytest.raises(ForgeEngineError) as caught:
+            parse_generation_metadata(document)
+        assert caught.value.code.value in _RESERVED_CODES
+        assert caught.value.operation in {"parse", "validate"}
 
 
 _STATIC_FIXTURES = {
@@ -213,56 +248,53 @@ def test_static_fixtures_fail_with_the_documented_code(
     name: str, expected: tuple[str, str]
 ) -> None:
     document = json.loads((FIXTURES / name).read_text(encoding="utf-8"))
-    with pytest.raises(MetadataError) as caught:
-        validate_metadata(document)
-    assert (caught.value.code, caught.value.operation) == expected
+    with pytest.raises(ForgeEngineError) as caught:
+        parse_generation_metadata(document)
+    assert (caught.value.code.value, caught.value.operation) == expected
 
 
-def test_checked_in_baseline_is_a_faithful_shape_reference() -> None:
-    """example-library.json need not carry live digests, but its structure,
-    targets and identities must still be real."""
+def test_checked_in_baseline_reproduces_a_real_library_render() -> None:
+    """example-library.json is a faithful, fully live reference: it parses,
+    negotiates, and verifies against a fresh ``library`` render."""
     document = json.loads(
         (FIXTURES / "example-library.json").read_text(encoding="utf-8")
     )
     assert set(document) <= set(REQUIRED_FIELDS) | set(OPTIONAL_FIELDS)
     assert set(REQUIRED_FIELDS) <= set(document)
 
-    spec = parse_project_spec(document["spec"])
-    targets = set(_rendered(spec))
-    catalogue = {c.id: c.version for c in discover_components()}
-    for entry in document["output"]:
-        assert entry["target"] in targets
-        owner = entry["owner"]
-        assert owner == "foundation" or owner.removeprefix("component:") in catalogue
-        assert entry["regeneration"] in {"replace", "skip-if-exists"}
-    for entry in document["components"]:
-        assert catalogue.get(entry["id"]) == entry["version"]
+    parsed = parse_generation_metadata(document)
+    project = render_project(parse_project_spec(parsed.spec))
+    verify_generation_metadata(parsed, project)
 
 
 def test_live_negatives_are_rejected() -> None:
     spec = _reference_spec()
+    project = render_project(spec)
+    metadata = project.metadata
+    assert metadata is not None
+    document = json.loads(metadata.to_json())
 
-    tampered = build_metadata(spec)
+    tampered = json.loads(json.dumps(document))
     tampered["output"][0]["digest"] = "sha256:" + "0" * 64
-    with pytest.raises(MetadataError) as caught:
-        validate_metadata(tampered)
-    assert caught.value.code == "invalid-generation-metadata"
+    with pytest.raises(ForgeEngineError) as caught:
+        verify_generation_metadata(parse_generation_metadata(tampered), project)
+    assert caught.value.code is EngineErrorCode.INVALID_GENERATION_METADATA
     assert caught.value.operation == "validate"
 
-    unknown_component = build_metadata(spec)
+    unknown_component = json.loads(json.dumps(document))
     unknown_component["components"].append({"id": "nonesuch", "version": "1.0.0"})
-    with pytest.raises(MetadataError):
-        validate_metadata(unknown_component)
+    with pytest.raises(ForgeEngineError):
+        parse_generation_metadata(unknown_component)
 
-    short_output = build_metadata(spec)
+    short_output = json.loads(json.dumps(document))
     short_output["output"].pop()
-    with pytest.raises(MetadataError):
-        validate_metadata(short_output)
+    with pytest.raises(ForgeEngineError):
+        verify_generation_metadata(parse_generation_metadata(short_output), project)
 
-    extra_field = build_metadata(spec)
-    extra_field["generated_at"] = "2026-09-09T00:00:00Z"
-    with pytest.raises(MetadataError):
-        validate_metadata(extra_field)
+    extra_field = json.loads(json.dumps(document))
+    extra_field["generated_at"] = "2026-09-10T00:00:00Z"
+    with pytest.raises(ForgeEngineError):
+        parse_generation_metadata(extra_field)
 
 
 def test_classify_update_uses_only_the_documented_vocabulary() -> None:

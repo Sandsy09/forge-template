@@ -2,8 +2,7 @@
 
 Component manifests are the machine-readable metadata for the archetypes,
 capabilities, and platforms bundled with a `forge-template` engine release.
-Two protocols are implemented, both by the strict models and provisional
-validators in
+Three protocols are implemented, all by the strict models and validators in
 [`forge_template.component_manifest`](../src/forge_template/component_manifest.py):
 protocol `1` (FT-06.02/[ADR 0024](adr/0024-component-manifest-protocol-v1.md))
 models component-to-component contributions only; protocol `2`
@@ -12,8 +11,11 @@ contract](library-archetype.md)/[ADR 0031](adr/0031-library-archetype-contract.m
 adds a discriminated contribution target so a contribution can also name the
 implicit Foundation content source — described below, and implemented by
 [`forge_template.foundation_source`](../src/forge_template/foundation_source.py)
-— rather than only another component. Protocol `1` parsing remains supported
-unchanged for existing component-to-component manifests.
+— rather than only another component; protocol `3`
+(FT-17.01/[ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md))
+adds owner-declared `[[renames]]` and `[[regeneration]]` records for the
+engine-native update contract — see "Manifest protocol 3" below. Protocol `1`
+and protocol `2` parsing remains supported unchanged.
 
 FT-08.02 populated the installed production catalogue with the first real
 manifest, `library`; FT-08.04 added `cli`, FT-11.02/FT-11.03 added the
@@ -74,7 +76,7 @@ the Library scaffold is already composed.
 
 | Field | Type | Meaning |
 | --- | --- | --- |
-| `manifest_version` | integer, `1` or `2` | Component manifest protocol. |
+| `manifest_version` | integer, `1`, `2`, or `3` | Component manifest protocol. |
 | `id` | lower-case kebab-case string | Canonical globally unique component identifier. |
 | `name` | non-empty string | Human-facing display name. |
 | `description` | non-empty string | Human-facing discovery summary. |
@@ -128,16 +130,31 @@ outside the accepted trust model.
 downstream client may rely on across this axis and every other versioned
 surface the engine publishes.
 
-`manifest_version` is `1` or `2` today. A third protocol is **reserved, not
-implemented**:
-[FT-15.04](https://github.com/Sandsy09/forge-template/issues/149) /
-[ADR 0061](adr/0061-provider-compatibility-failure-and-release-gates.md)
-classifies the engine-default cutover as moving this axis to `(1, 2, 3)`,
-because the owner-declared rename and regeneration-disposition records
-[generation-provenance.md](generation-provenance.md) reserves are new manifest
-fields and the models forbid unknown keys, so they cannot ride protocol `2`.
-[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) adds
-protocol `3`; protocol-`1` and protocol-`2` manifests stay accepted unchanged.
+### Manifest protocol 3
+
+`manifest_version` is `1`, `2`, or `3`.
+[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) /
+[ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md) added
+protocol `3`: a protocol-`3` `component.toml` may declare two optional arrays
+the owner-declared update contract
+([generation-provenance.md](generation-provenance.md)) needs —
+
+- **`[[renames]]`** — `from` and `to` normalised project-relative POSIX
+  paths, `since` a canonical PEP 440 component version. An identity move or a
+  duplicate `from` is rejected. The provider surfaces the records whose
+  `since` falls between a project's recorded and installed component versions;
+  the client applies each move before diffing.
+- **`[[regeneration]]`** — `target` a normalised project-relative POSIX path,
+  `disposition` `"replace"` (the implicit default) or `"skip-if-exists"` for a
+  never-clobber target. A duplicate `target` is rejected. The engine records
+  the disposition in `PlannedFile.regeneration` and the generation metadata;
+  the client applies the skip.
+
+Both arrays are rejected on a protocol-`1` or protocol-`2` manifest, and both
+default to empty — the shipped five components stay at `manifest_version = 2`
+and declare neither. Protocol-`1` and protocol-`2` manifests are accepted
+exactly as before. The Foundation content source declares no such records —
+`foundation_version` stays `1` (ADR 0062 decision 2).
 
 ### Compatibility
 

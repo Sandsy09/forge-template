@@ -110,8 +110,22 @@ def test_production_policy_and_direct_clients_render_identically() -> None:
     assert downstream.spec.provenance.policies == ("example-production-library",)
     assert direct_spec.provenance.policies == ()
     assert downstream.plan == direct_plan
-    assert downstream.project == direct_project
+    assert downstream.project.model_dump(
+        exclude={"metadata"}
+    ) == direct_project.model_dump(exclude={"metadata"})
     assert _files(downstream.project) == _files(direct_project)
+
+    # Generation metadata embeds the effective spec, so it carries the policy
+    # provenance -- but every rendered-byte digest and every other recorded
+    # fact is identical, so a downstream client's provenance still cannot
+    # change what is produced.
+    downstream_metadata = downstream.project.metadata
+    direct_metadata = direct_project.metadata
+    assert downstream_metadata is not None and direct_metadata is not None
+    assert downstream_metadata.output == direct_metadata.output
+    assert downstream_metadata.model_dump(
+        exclude={"spec"}
+    ) == direct_metadata.model_dump(exclude={"spec"})
 
     planned = _planned_files(downstream.plan)
     assert isinstance(planned["pyproject.toml"].owner, FoundationOwner)

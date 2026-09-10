@@ -53,7 +53,9 @@ authority; the
 proves that protocol executably against a test-only resolver. The
 [component manifest protocol](docs/component-manifests.md) defines the strict
 TOML metadata, compatibility, owned resources, dependencies, and conflicts
-that engine discovery consumes. The
+that engine discovery consumes — protocols `1`, `2`, and (FT-17.01 / ADR 0062)
+`3`, which adds owner-declared `[[renames]]` and `[[regeneration]]` records
+for the engine-native update contract. The
 [composition order contract](docs/composition-order.md) defines the single
 deterministic order a validated selection of those components applies in. The
 [file conflict and override rules](docs/file-conflicts.md) define the output
@@ -185,7 +187,16 @@ extension points, still with no runtime, content or version change. FT-15.04's
 then classifies the axes the cutover moves — `forge-template` `0.5.0`,
 component-manifest protocol `3`, a published `metadata_version` — fixes the
 immutable-release and `0.4.x`-window rollback rules and the executable
-acceptance matrix, and closes Stage 15 with no version bump.
+acceptance matrix, and closes Stage 15 with no version bump. Stage 17 then
+implements the provider side: FT-17.01 /
+[ADR 0062](docs/adr/0062-generation-metadata-and-manifest-protocol-3.md) ships
+manifest protocol `3` (the `[[renames]]` / `[[regeneration]]` records), the
+`GenerationMetadata` surface on `RenderedProject.metadata` with
+`parse_generation_metadata` / `verify_generation_metadata`,
+`EngineInfo.metadata_version`, `PlannedFile.regeneration`, the two
+`invalid`/`unsupported-generation-metadata` error codes, and
+`DEFAULT_GENERATION_METADATA_TARGET` — all additive, with `main` staying on
+`0.4.1` and untagged until FT-17.06 releases `0.5.0`.
 
 ## Branching and pull requests
 

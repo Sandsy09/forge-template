@@ -9,6 +9,7 @@
         "id": "library",
         "kind": "component"
       },
+      "regeneration": "replace",
       "target": "pyproject.toml"
     }
   },

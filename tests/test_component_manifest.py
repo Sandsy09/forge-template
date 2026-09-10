@@ -17,6 +17,8 @@ from forge_template.component_manifest import (
     Contribution,
     ExtensionPoint,
     FoundationTarget,
+    RegenerationRecord,
+    RenameRecord,
     load_component_manifest,
     validate_manifest_selection,
     validate_manifest_set,
@@ -136,7 +138,7 @@ def test_models_are_strict_frozen_and_generate_json_schema() -> None:
     manifest = _manifest("example")
     schema = ComponentManifest.model_json_schema()
 
-    assert schema["properties"]["manifest_version"]["enum"] == [1, 2]
+    assert schema["properties"]["manifest_version"]["enum"] == [1, 2, 3]
     assert schema["additionalProperties"] is False
 
     with pytest.raises(ValidationError, match="frozen"):
@@ -153,7 +155,7 @@ def test_models_are_strict_frozen_and_generate_json_schema() -> None:
     assert "extra_forbidden" in error_types
 
 
-@pytest.mark.parametrize("manifest_version", [None, 3, True])
+@pytest.mark.parametrize("manifest_version", [None, 4, True])
 def test_missing_unsupported_or_coerced_manifest_version_is_rejected(
     manifest_version: object,
 ) -> None:
@@ -163,6 +165,106 @@ def test_missing_unsupported_or_coerced_manifest_version_is_rejected(
     else:
         payload["manifest_version"] = manifest_version
 
+    with pytest.raises(ValidationError):
+        ComponentManifest.model_validate(payload)
+
+
+# --- manifest protocol 3: rename and regeneration records (FT-17.01) -------
+
+
+def test_protocol_three_manifest_loads_rename_and_regeneration_records() -> None:
+    payload = _manifest_payload("changelog")
+    payload["manifest_version"] = 3
+    payload["renames"] = (
+        {"from": "docs/CHANGELOG.md", "to": "CHANGELOG.md", "since": "1.2.0"},
+    )
+    payload["regeneration"] = (
+        {"target": "CHANGELOG.md", "disposition": "skip-if-exists"},
+        {"target": "src/changelog/notes.py", "disposition": "replace"},
+    )
+    manifest = ComponentManifest.model_validate(payload)
+
+    assert manifest.renames == (
+        RenameRecord.model_validate(
+            {"from": "docs/CHANGELOG.md", "to": "CHANGELOG.md", "since": "1.2.0"}
+        ),
+    )
+    assert manifest.renames[0].from_ == "docs/CHANGELOG.md"
+    assert manifest.regeneration[0] == RegenerationRecord(
+        target="CHANGELOG.md", disposition="skip-if-exists"
+    )
+
+
+def test_empty_protocol_three_manifest_needs_no_records() -> None:
+    payload = _manifest_payload("bare")
+    payload["manifest_version"] = 3
+    manifest = ComponentManifest.model_validate(payload)
+    assert manifest.renames == ()
+    assert manifest.regeneration == ()
+
+
+@pytest.mark.parametrize("manifest_version", [1, 2])
+@pytest.mark.parametrize("field", ["renames", "regeneration"])
+@pytest.mark.parametrize("with_contributions", [False, True])
+def test_rename_and_regeneration_records_need_protocol_three(
+    manifest_version: int, field: str, with_contributions: bool
+) -> None:
+    payload = _manifest_payload("early")
+    payload["manifest_version"] = manifest_version
+    # The gate must fire whether or not the manifest also has contributions --
+    # the contributions-shape check has an early return the gate must precede.
+    if with_contributions and manifest_version == 2:
+        payload["contributions"] = ()
+    payload[field] = (
+        {"from": "a.py", "to": "b.py", "since": "1.0.0"}
+        if field == "renames"
+        else {"target": "a.py", "disposition": "skip-if-exists"},
+    )
+    with pytest.raises(ValidationError, match="does not support"):
+        ComponentManifest.model_validate(payload)
+
+
+@pytest.mark.parametrize(
+    "record",
+    [
+        {"from": "a.py", "to": "a.py", "since": "1.0.0"},  # identity move
+        {"from": "/abs.py", "to": "b.py", "since": "1.0.0"},  # absolute
+        {"from": "../esc.py", "to": "b.py", "since": "1.0.0"},  # escape
+        {"from": "a.py", "to": "b.py", "since": "v1.0"},  # non-canonical version
+    ],
+)
+def test_invalid_rename_records_are_rejected(record: dict[str, str]) -> None:
+    payload = _manifest_payload("bad-rename")
+    payload["manifest_version"] = 3
+    payload["renames"] = (record,)
+    with pytest.raises(ValidationError):
+        ComponentManifest.model_validate(payload)
+
+
+def test_duplicate_rename_source_and_regeneration_target_are_rejected() -> None:
+    dup_rename = _manifest_payload("dup-rename")
+    dup_rename["manifest_version"] = 3
+    dup_rename["renames"] = (
+        {"from": "a.py", "to": "b.py", "since": "1.0.0"},
+        {"from": "a.py", "to": "c.py", "since": "1.1.0"},
+    )
+    with pytest.raises(ValidationError, match="same source twice"):
+        ComponentManifest.model_validate(dup_rename)
+
+    dup_target = _manifest_payload("dup-target")
+    dup_target["manifest_version"] = 3
+    dup_target["regeneration"] = (
+        {"target": "a.py", "disposition": "replace"},
+        {"target": "a.py", "disposition": "skip-if-exists"},
+    )
+    with pytest.raises(ValidationError, match="name a target twice"):
+        ComponentManifest.model_validate(dup_target)
+
+
+def test_unknown_regeneration_disposition_is_rejected() -> None:
+    payload = _manifest_payload("bad-disposition")
+    payload["manifest_version"] = 3
+    payload["regeneration"] = ({"target": "a.py", "disposition": "merge"},)
     with pytest.raises(ValidationError):
         ComponentManifest.model_validate(payload)
 

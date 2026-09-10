@@ -5,13 +5,17 @@ Forge's composition engine.  It deliberately does not discover components,
 order them, render their content, or expose stable engine errors; those
 remain later Stage 06/08 work.
 
-Two manifest protocols are understood. Protocol 1 (FT-06.02/ADR 0024) models
+Three manifest protocols are understood. Protocol 1 (FT-06.02/ADR 0024) models
 component-to-component contributions only. Protocol 2 (FT-08.02/ADR 0031, ADR
 0033) adds a discriminated contribution ``target`` so a contribution can also
 name the implicit Foundation content source -- see
 ``forge_template.foundation_source`` -- rather than only another component.
-Protocol 1 parsing remains supported unchanged for existing
-component-to-component fixtures; see docs/component-manifests.md.
+Protocol 3 (FT-17.01/ADR 0062) adds owner-declared ``[[renames]]`` and
+``[[regeneration]]`` records -- the metadata an engine-native update needs to
+carry a user's local edits across a path move and to leave a never-clobber
+target untouched (docs/generation-provenance.md). Protocol 1 and protocol 2
+parsing remains supported unchanged for existing fixtures; see
+docs/component-manifests.md.
 """
 
 from __future__ import annotations
@@ -38,13 +42,15 @@ from forge_template.project_spec import ProjectSpec
 if TYPE_CHECKING:
     from forge_template.foundation_source import FoundationSource
 
-COMPONENT_MANIFEST_PROTOCOL_VERSIONS: tuple[Literal[1, 2], ...] = (1, 2)
+COMPONENT_MANIFEST_PROTOCOL_VERSIONS: tuple[Literal[1, 2, 3], ...] = (1, 2, 3)
 """Every component manifest protocol this engine line understands.
 
 Protocol 1 predates the Foundation content source and models
 component-to-component contributions only. Protocol 2, added by FT-08.02,
-adds the discriminated Foundation/component contribution target. Both remain
-valid input on one manifest_version-keyed model.
+adds the discriminated Foundation/component contribution target. Protocol 3,
+added by FT-17.01, adds owner-declared ``renames`` and ``regeneration``
+records. All three remain valid input on one manifest_version-keyed model,
+and a protocol-1 or protocol-2 manifest is accepted exactly as before.
 """
 
 _NonEmptyString = Annotated[
@@ -73,7 +79,9 @@ _ProtocolSet = Annotated[
 class _ManifestModel(BaseModel):
     """Shared strict and immutable behaviour for manifest objects."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True, strict=True)
+    model_config = ConfigDict(
+        extra="forbid", frozen=True, strict=True, populate_by_name=True
+    )
 
 
 def _canonical_version(value: str) -> str:
@@ -226,6 +234,60 @@ def _contribution_target_key(contribution: Contribution) -> tuple[str, str]:
     return ("component", target.id)
 
 
+class RenameRecord(_ManifestModel):
+    """One owner-declared ``{ from, to, since }`` path-move record.
+
+    Manifest protocol 3 only. ``since`` is the canonical PEP 440 owner version
+    that introduced the move. During an engine-native update the provider
+    surfaces the records whose ``since`` falls between a project's recorded
+    component version and the installed one, and the client applies each move
+    before diffing so a user's local edits follow the path. This is the
+    catalogue's analogue of ``copier.yml``'s ``_migrations`` -- see
+    docs/generation-provenance.md and invariant 3.
+    """
+
+    from_: str = Field(alias="from")
+    to: str
+    since: str
+
+    @field_validator("from_", "to")
+    @classmethod
+    def _validate_move_path(cls, value: str) -> str:
+        return relative_resource_path(value)
+
+    @field_validator("since")
+    @classmethod
+    def _validate_since_version(cls, value: str) -> str:
+        return _canonical_version(value)
+
+    @model_validator(mode="after")
+    def _reject_identity_move(self) -> Self:
+        if self.from_ == self.to:
+            msg = "a rename record must move to a different path"
+            raise ValueError(msg)
+        return self
+
+
+class RegenerationRecord(_ManifestModel):
+    """One owner-declared per-target regeneration disposition.
+
+    Manifest protocol 3 only. ``disposition`` is ``"replace"`` -- the implicit
+    default for any target with no record -- or ``"skip-if-exists"`` for a
+    target a regeneration must never clobber, matching ``copier.yml``'s
+    ``_skip_if_exists``. The engine records the disposition in the plan and
+    the generation metadata; the client applies the skip. See
+    docs/generation-provenance.md.
+    """
+
+    target: str
+    disposition: Literal["replace", "skip-if-exists"]
+
+    @field_validator("target")
+    @classmethod
+    def _validate_target(cls, value: str) -> str:
+        return relative_resource_path(value)
+
+
 class ComponentCompatibility(_ManifestModel):
     """ProjectSpec protocol and generated-Python requirements."""
 
@@ -267,7 +329,7 @@ class ComponentCompatibility(_ManifestModel):
 class ComponentManifest(_ManifestModel):
     """One bundled archetype, capability, or platform declaration."""
 
-    manifest_version: Literal[1, 2]
+    manifest_version: Literal[1, 2, 3]
     id: _ForgeIdentifier
     name: _NonEmptyString
     description: _NonEmptyString
@@ -280,6 +342,8 @@ class ComponentManifest(_ManifestModel):
     conflicts: tuple[ComponentReference, ...] = ()
     extension_points: tuple[ExtensionPoint, ...] = ()
     contributions: tuple[Contribution, ...] = ()
+    renames: tuple[RenameRecord, ...] = ()
+    regeneration: tuple[RegenerationRecord, ...] = ()
 
     @model_validator(mode="before")
     @classmethod
@@ -297,6 +361,19 @@ class ComponentManifest(_ManifestModel):
         if not isinstance(value, dict):
             return value
         manifest_version = value.get("manifest_version")
+
+        if manifest_version in (1, 2):
+            declared = sorted(
+                field for field in ("renames", "regeneration") if field in value
+            )
+            if declared:
+                msg = (
+                    f"manifest protocol {manifest_version} does not support "
+                    + ", ".join(declared)
+                    + "; use protocol 3"
+                )
+                raise ValueError(msg)
+
         contributions = value.get("contributions")
         if not isinstance(contributions, (list, tuple)):
             return value
@@ -338,7 +415,13 @@ class ComponentManifest(_ManifestModel):
         return relative_resource_path(value)
 
     @field_validator(
-        "requires", "conflicts", "extension_points", "contributions", mode="before"
+        "requires",
+        "conflicts",
+        "extension_points",
+        "contributions",
+        "renames",
+        "regeneration",
+        mode="before",
     )
     @classmethod
     def _normalise_reference_array(cls, value: object) -> object:
@@ -429,6 +512,27 @@ class ComponentManifest(_ManifestModel):
                     f"outside content_root {self.content_root!r}"
                 )
                 raise ValueError(msg)
+        return self
+
+    @model_validator(mode="after")
+    def _validate_regeneration_and_rename_records(self) -> Self:
+        """Protocol-3 records must be internally consistent.
+
+        The engine matches these against rendered output targets by exact
+        string; a duplicate target or move source would make the disposition
+        or the applied move ambiguous. Whether a named target is one this
+        component actually renders is checked at plan time, not here -- a
+        manifest is validated before any render exists.
+        """
+        regeneration_targets = [record.target for record in self.regeneration]
+        if len(regeneration_targets) != len(set(regeneration_targets)):
+            msg = "regeneration records must not name a target twice"
+            raise ValueError(msg)
+
+        rename_sources = [record.from_ for record in self.renames]
+        if len(rename_sources) != len(set(rename_sources)):
+            msg = "rename records must not move the same source twice"
+            raise ValueError(msg)
         return self
 
 
