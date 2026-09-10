@@ -9,7 +9,9 @@ and adopted by [ADR 0039](adr/0039-deny-policy-file-overrides.md).
 [FT-11.01 / #105](https://github.com/Sandsy09/forge-template/issues/105) and
 [ADR 0049](adr/0049-foundation-capability-tooling-extension-points.md) later
 grew the published inventory from eight points to eleven for capability
-tooling — an additive change to the inventory, not to any rule here.
+tooling, and [FT-17.02 / #151](https://github.com/Sandsy09/forge-template/issues/151)
+/ [ADR 0063](adr/0063-implement-the-github-platform.md) to fourteen for
+host-scoped links — additive changes to the inventory, not to any rule here.
 
 ## Scope
 
@@ -48,20 +50,25 @@ published by the installed catalogue at the time of this decision is:
 
 | Owner file | Extension point IDs |
 | --- | --- |
-| `content/pyproject.toml.jinja` | `pyproject-build-system`, `pyproject-archetype-metadata`, `pyproject-build-configuration`, `pyproject-runtime-dependencies`, `pyproject-classifiers`, `pyproject-entry-points`, `pyproject-development-dependencies`, `pyproject-task-definitions`, `pyproject-aggregate-check` |
+| `content/pyproject.toml.jinja` | `pyproject-build-system`, `pyproject-archetype-metadata`, `pyproject-build-configuration`, `pyproject-runtime-dependencies`, `pyproject-classifiers`, `pyproject-entry-points`, `pyproject-development-dependencies`, `pyproject-task-definitions`, `pyproject-aggregate-check`, `pyproject-project-urls` |
 | `content/README.md.jinja` | `readme-project-shape` |
 | `content/.gitignore.jinja` | `gitignore-project-shape` |
+| `content/CONTRIBUTING.md.jinja` | `contributing-project-shape` |
+| `content/SECURITY.md.jinja` | `security-project-shape` |
 
-All eleven are published by the implicit Foundation content source. **No
-production component publishes an extension point of its own** — `library`,
-`cli`, `data-science`, `jupyter`, and `scientific-python` contribute only into
-Foundation's points, through manifest protocol `2`'s
+All fourteen are published by the implicit Foundation content source. In
+addition, the `github` platform (FT-17.02 / ADR 0063) publishes `ci-jobs` and
+`ci-steps` on its *own* `content/.github/workflows/ci.yml.jinja` — the first
+shipped component to publish a point on content it owns. The five
+archetype/capability components — `library`, `cli`, `data-science`, `jupyter`,
+and `scientific-python` — still publish none of their own and contribute only
+into Foundation's points, through manifest protocol `2`'s
 `target.kind = "foundation"`
 ([component-manifests.md](component-manifests.md#accepted-manifest-protocol-v2-target-owner)).
-This is unchanged by [ADR 0037](adr/0037-two-archetype-composition-review.md)
-and confirmed for the five-component catalogue by
-[ADR 0056](adr/0056-three-archetype-composition-boundary-review.md): neither
-review required a new point.
+[ADR 0037](adr/0037-two-archetype-composition-review.md) and
+[ADR 0056](adr/0056-three-archetype-composition-boundary-review.md) required no
+new point for those five; ADR 0060 reserved and ADR 0063 published the
+host-link additions.
 
 The last three `pyproject.toml.jinja` IDs were added additively by
 [FT-11.01 / #105](https://github.com/Sandsy09/forge-template/issues/105) and
@@ -91,18 +98,19 @@ contribution (the five root-anchored `data/`, `models/`, and `artifacts/`
 entries, composed ahead of `jupyter`'s `.ipynb_checkpoints/`); [ADR
 0054](adr/0054-data-science-notebook-and-artefact-layout.md) records that use.
 
-Foundation owns six further files with **no** extension point at all:
-`.editorconfig`, `.gitattributes`, `.python-version.jinja`,
-`CONTRIBUTING.md.jinja`, `LICENSE.jinja`, and `SECURITY.md.jinja`. These are
-sole-owner `create` content, deliberately not extensible — stated here rather
-than left to be inferred from the absence of a declaration.
-[FT-15.03](https://github.com/Sandsy09/forge-template/issues/148) /
-[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) reserves a
-host-link point on `CONTRIBUTING.md.jinja` and `SECURITY.md.jinja` for the
-`github` platform to contribute repository-scoped links; `.editorconfig`,
-`.gitattributes`, `.python-version.jinja` and `LICENSE.jinja` stay sole-owner.
-See [Reserved points](#reserved-points) below. The reservation is a decision,
-not a publication — `foundation.toml` is unchanged until FT-17.02 ships them.
+Foundation owns four further files with **no** extension point at all:
+`.editorconfig`, `.gitattributes`, `.python-version.jinja`, and
+`LICENSE.jinja`. These are sole-owner `create` content, deliberately not
+extensible — stated here rather than left to be inferred from the absence of a
+declaration. [FT-15.03](https://github.com/Sandsy09/forge-template/issues/148) /
+[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) reserved a
+host-link point on `CONTRIBUTING.md.jinja` and `SECURITY.md.jinja`, and
+[FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) /
+[ADR 0063](adr/0063-implement-the-github-platform.md) published them —
+`contributing-project-shape` and `security-project-shape` — for the `github`
+platform's repository-scoped links, alongside `pyproject-project-urls`.
+`.editorconfig`, `.gitattributes`, `.python-version.jinja` and `LICENSE.jinja`
+stay sole-owner.
 
 ## Capability tooling extends the same Foundation content
 
@@ -245,31 +253,27 @@ directly.
 ## Reserved points
 
 [FT-15.03](https://github.com/Sandsy09/forge-template/issues/148) /
-[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) decides
-eight extension points but publishes **none** of them — `foundation.toml` and
-every component manifest are unchanged.
-[FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) and
-[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) add each one
-as an additive change when they build the component that needs it, under the
-same stability rules below.
+[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) decided
+eight extension points and published none of them.
+[FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) /
+[ADR 0063](adr/0063-implement-the-github-platform.md) has since published five
+of them — the three host-link Foundation points now in the inventory above,
+plus `ci-jobs` and `ci-steps` on the `github` platform's own CI content.
+[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) publishes the
+last three:
 
 | Reserved point | Owner content | Publisher |
 | --- | --- | --- |
-| `pyproject-project-urls` | Foundation `content/pyproject.toml.jinja` | FT-17.02 |
-| `contributing-project-shape` | Foundation `content/CONTRIBUTING.md.jinja` | FT-17.02 |
-| `security-project-shape` | Foundation `content/SECURITY.md.jinja` | FT-17.02 |
 | `pyproject-named-dependency-groups` | Foundation `content/pyproject.toml.jinja` | FT-17.03 |
 | `pyproject-dependency-group-includes` | Foundation `content/pyproject.toml.jinja` | FT-17.03 |
-| `ci-jobs` | the `github` platform's own CI content | FT-17.02 |
-| `ci-steps` | the `github` platform's own CI content | FT-17.02 |
 | `api-reference` | the `documentation` capability's own content | FT-17.03 |
 
 `ci-jobs`, `ci-steps` and `api-reference` are the first points this repository
-plans for a component to publish on its *own* content rather than
-contributing into Foundation's; `library-archetype.md` already names `ci-jobs`
-and `api-reference` for "that (not yet existing) optional component".
+has a component publish on its *own* content rather than contributing into
+Foundation's; `library-archetype.md` already names `ci-jobs` and
+`api-reference` for "that (not yet existing) optional component".
 [platform-and-tooling-parity.md](platform-and-tooling-parity.md) is the
-contract; `tests/test_platform_composition.py` fails when a reserved
+contract; `tests/test_platform_composition.py` fails when a still-reserved
 Foundation point lands in `foundation.toml` ahead of its owning issue.
 
 ## Stability and versioning
@@ -292,10 +296,11 @@ way component IDs and manifest protocols are:
   option identifiers.
 
 A regression test in `tests/test_extension_points.py` pins the current
-eleven-entry inventory so a removal or rename is caught rather than shipped
-silently; `tests/test_capability_extension_points.py` pins the additive,
-byte-neutral, composition-ordered behaviour of the three capability-tooling
-points.
+fourteen-entry Foundation inventory so a removal or rename is caught rather
+than shipped silently; `tests/test_capability_extension_points.py` pins the
+additive, byte-neutral, composition-ordered behaviour of the capability-tooling
+points, and `tests/test_github_platform.py` pins the `github` platform's own
+`ci-jobs` / `ci-steps` points and its host-link contributions.
 
 ## Client boundary
 

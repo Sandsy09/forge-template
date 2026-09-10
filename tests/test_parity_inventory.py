@@ -127,6 +127,29 @@ def _library_render_targets() -> set[str]:
     return {item.target for item in render_project(spec).files}
 
 
+def _github_render_targets() -> set[str]:
+    """Targets from a ``library`` + ``github`` render -- the `github`-owned
+    ``template/.github/**`` rows are ``shipped`` against this, not the
+    library-only render (FT-17.02 / ADR 0063)."""
+    payload: dict[str, object] = {
+        **_REFERENCE_PAYLOAD,
+        "components": {
+            "archetype": "library",
+            "capabilities": [],
+            "platforms": ["github"],
+        },
+        "component_options": {
+            "library": {
+                "packaging_mode": "uv-build-static",
+                "initial_version": "0.1.0",
+            },
+            "github": {"organisation": "reference-org"},
+        },
+    }
+    spec = parse_project_spec(payload)
+    return {item.target for item in render_project(spec).files}
+
+
 def test_every_copier_question_and_template_file_has_a_row() -> None:
     """A question or templated file with no disposition fails the suite."""
     required = _copier_questions() | _template_keys()
@@ -181,7 +204,7 @@ def test_every_row_is_well_formed() -> None:
 
 def test_shipped_file_rows_match_a_real_library_render() -> None:
     """Every template/** row's status agrees with what the engine produces."""
-    targets = _library_render_targets()
+    targets = _library_render_targets() | _github_render_targets()
     checked = 0
     for row in _doc_rows():
         key = row["key"]
@@ -201,11 +224,9 @@ def test_shipped_file_rows_match_a_real_library_render() -> None:
 
 def test_known_input_gaps_and_deliveries_are_classified() -> None:
     """The questions with and without a ProjectSpec route are marked right."""
+    # FT-17.02 / ADR 0063 shipped the `github` platform, moving github_org,
+    # repo_url, codeowners_team and python_matrix out of this set.
     gap_questions = {
-        "github_org",
-        "repo_url",
-        "codeowners_team",
-        "python_matrix",
         "type_checking",
         "coverage_fail_under",
         "dependency_updates",

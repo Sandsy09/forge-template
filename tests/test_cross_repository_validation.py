@@ -345,9 +345,11 @@ def test_installed_engine_metadata_matches_the_reviewed_candidate(
     # and published metadata_version, both additive.
     assert payload["component_manifest_protocols"] == [1, 2, 3]
     assert payload["metadata_version"] == 1
+    # FT-17.02 / ADR 0063 added the `github` platform, additive.
     assert payload["component_ids"] == [
         "cli",
         "data-science",
+        "github",
         "jupyter",
         "library",
         "scientific-python",
@@ -355,6 +357,7 @@ def test_installed_engine_metadata_matches_the_reviewed_candidate(
     assert payload["component_versions"] == {
         "cli": "1.0.1",
         "data-science": "1.0.0",
+        "github": "1.0.0",
         "jupyter": "1.0.0",
         "library": "1.0.1",
         "scientific-python": "1.0.0",

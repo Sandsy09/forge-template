@@ -387,6 +387,7 @@ def test_production_descriptors_are_immutable_and_path_free() -> None:
     assert set(descriptors) == {
         "cli",
         "data-science",
+        "github",
         "jupyter",
         "library",
         "scientific-python",
@@ -499,6 +500,7 @@ def test_every_manifest_declared_resource_is_reachable_as_a_package_resource() -
     assert seen_ids == {
         "cli",
         "data-science",
+        "github",
         "jupyter",
         "library",
         "scientific-python",

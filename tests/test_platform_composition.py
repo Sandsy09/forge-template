@@ -3,19 +3,22 @@
 The contract assigns every provider-owned parity gap to a catalogue component
 and reserves eight extension points. These tests keep it honest:
 
-* every provider-owned ``gap`` row in ``engine-default-parity.md`` (bar the
-  FT-15.02 provenance rows) is assigned an owner here -- a row gaining none
-  fails;
-* the five reserved Foundation points are still absent from the live
+* every provider-owned row in ``engine-default-parity.md`` (bar the FT-15.02
+  provenance rows), whether still a ``gap`` or now ``shipped``, is assigned an
+  owner here -- a row gaining none fails;
+* FT-17.03's two reserved Foundation points are still absent from the live
   ``foundation.toml``, so this file fails deliberately when FT-17.03 publishes
-  them;
-* ``discover_components()`` still returns exactly three archetypes, two
-  capabilities and zero platforms, enforcing FT-ROADMAP-01-EX-03;
+  them (FT-17.02 / ADR 0063 published the other three);
+* ``discover_components()`` returns exactly three archetypes, two capabilities
+  and -- since FT-17.02 -- one platform (``github``), enforcing
+  FT-ROADMAP-01-EX-03's "no new archetype";
 * and a four-component synthetic catalogue -- overlaid on the *real* production
   catalogue with the *real* Foundation live, following FT-11.04's precedent --
-  proves the decided platform shape composes: a path-free descriptor with one
-  option, a capability step reaching a platform target against tier order, and
-  the cross-tier ``requires``/``conflicts`` edges rejecting before any render.
+  still proves the decided platform shape composes independently of the shipped
+  ``github`` component: a path-free descriptor with one option, a capability
+  step reaching a platform target against tier order, and the cross-tier
+  ``requires``/``conflicts`` edges (``dependabot`` / ``renovate`` still unshipped
+  at FT-17.03) rejecting before any render.
 """
 
 from __future__ import annotations
@@ -65,12 +68,17 @@ _CONTRACT_OWNERS = {
     "renovate",
 }
 
+# FT-17.02 / ADR 0063 published the three host-link points; FT-17.03 still owns
+# the two `[dependency-groups]` points below.
 _RESERVED_FOUNDATION_POINTS = {
+    "pyproject-named-dependency-groups",
+    "pyproject-dependency-group-includes",
+}
+
+_PUBLISHED_BY_FT_1702 = {
     "pyproject-project-urls",
     "contributing-project-shape",
     "security-project-shape",
-    "pyproject-named-dependency-groups",
-    "pyproject-dependency-group-includes",
 }
 
 
@@ -129,9 +137,9 @@ def _payload(
 # --- doc parsing --------------------------------------------------------------
 
 
-def _parity_gap_rows() -> set[str]:
-    """Provider-owned ``gap`` keys in engine-default-parity.md, minus the
-    FT-15.02 provenance rows FT-15.03 does not own."""
+def _provider_owned_parity_rows(*, statuses: set[str]) -> set[str]:
+    """Provider-owned keys in engine-default-parity.md whose status is in
+    ``statuses``, minus the FT-15.02 provenance rows FT-15.03 does not own."""
     keys: set[str] = set()
     for raw in _PARITY.read_text(encoding="utf-8").splitlines():
         line = raw.strip()
@@ -144,7 +152,7 @@ def _parity_gap_rows() -> set[str]:
         if key is None:
             continue
         _, _, status, disposition, _, owner, _ = cells
-        if status == "gap" and disposition == "provider" and "FT-15.02" not in owner:
+        if status in statuses and disposition == "provider" and "FT-15.02" not in owner:
             keys.add(key.group(1))
     return keys
 
@@ -178,14 +186,20 @@ def _live_foundation_point_ids() -> set[str]:
 
 
 def test_every_provider_owned_gap_row_has_exactly_one_assignment() -> None:
-    parity = _parity_gap_rows()
     ownership = _contract_ownership()
+    gap = _provider_owned_parity_rows(statuses={"gap"})
+    delivered = _provider_owned_parity_rows(statuses={"gap", "shipped"})
 
-    assert parity, "no provider-owned gap rows parsed from engine-default-parity.md"
-    assert set(ownership) == parity, (
-        "ownership table and the parity matrix disagree: "
-        f"unassigned={sorted(parity - set(ownership))}, "
-        f"stale={sorted(set(ownership) - parity)}"
+    assert delivered, "no provider-owned rows parsed from engine-default-parity.md"
+    # Every still-open provider gap row is assigned an owner here.
+    assert gap <= set(ownership), (
+        f"unassigned provider gap rows: {sorted(gap - set(ownership))}"
+    )
+    # Every assigned row is still a real provider-owned row -- a row FT-17.02
+    # flipped to `shipped` stays in the assignment table, not deleted from it.
+    assert set(ownership) <= delivered, (
+        f"assignment table names rows that are no longer provider-owned: "
+        f"{sorted(set(ownership) - delivered)}"
     )
     for key, owners in ownership.items():
         assert owners, f"{key}: names no owner"
@@ -197,8 +211,10 @@ def test_dependency_updates_names_both_updaters() -> None:
 
 
 def test_reserved_foundation_points_are_not_yet_published() -> None:
-    """Tripwire: fails when FT-17.03 adds one of these to foundation.toml,
-    forcing docs/platform-and-tooling-parity.md and ADR 0060 to be revisited."""
+    """Tripwire: fails when FT-17.03 adds one of the two `[dependency-groups]`
+    points to foundation.toml, forcing docs/platform-and-tooling-parity.md and
+    ADR 0060 to be revisited. FT-17.02 / ADR 0063 already published the three
+    host-link points."""
     live = _live_foundation_point_ids()
     for point in _RESERVED_FOUNDATION_POINTS:
         assert point not in live, (
@@ -206,6 +222,16 @@ def test_reserved_foundation_points_are_not_yet_published() -> None:
             "of the reserved set"
         )
         assert point in _CONTRACT.read_text(encoding="utf-8")
+
+
+def test_ft_1702_host_link_points_are_published() -> None:
+    """The three host-link points ADR 0063 ships are live in foundation.toml
+    and still named by the contract."""
+    live = _live_foundation_point_ids()
+    contract = _CONTRACT.read_text(encoding="utf-8")
+    for point in _PUBLISHED_BY_FT_1702:
+        assert point in live, f"{point!r} should be published by FT-17.02"
+        assert point in contract
 
 
 def test_existing_points_the_contract_reuses_are_live() -> None:
@@ -222,14 +248,19 @@ def test_contract_states_the_exclusion_and_the_archetype_set() -> None:
     assert "`cli`, `data-science`, `library`" in text
 
 
-# --- FT-ROADMAP-01-EX-03: the catalogue is unchanged ------------------------
+# --- FT-ROADMAP-01-EX-03: no new archetype ---------------------------------
 
 
-def test_discovery_is_still_three_archetypes_two_capabilities_no_platform() -> None:
-    """Runs against the real installed catalogue -- no overlay."""
-    kinds = sorted(component.kind for component in discover_components())
-    assert kinds == ["archetype", "archetype", "archetype", "capability", "capability"]
-    assert not [c for c in discover_components() if c.kind == "platform"]
+def test_discovery_is_three_archetypes_two_capabilities_and_one_platform() -> None:
+    """Runs against the real installed catalogue -- no overlay. FT-17.02 added
+    the first platform (``github``); the archetype set is still exactly
+    ``cli`` / ``data-science`` / ``library``."""
+    by_kind: dict[str, list[str]] = {}
+    for component in discover_components():
+        by_kind.setdefault(component.kind, []).append(component.id)
+    assert sorted(by_kind["archetype"]) == ["cli", "data-science", "library"]
+    assert len(by_kind["capability"]) == 2
+    assert by_kind["platform"] == ["github"]
 
 
 # --- synthetic platform composition ----------------------------------------

@@ -1,0 +1,50 @@
+# The production GitHub platform. See docs/platform-and-tooling-parity.md and
+# ADR 0060/0063. First shipped `kind = "platform"` component, and the first
+# component to publish extension points on its own owned content.
+manifest_version = 2
+id = "github"
+name = "GitHub"
+description = "GitHub repository, CI workflow, and issue/pull-request templates."
+kind = "platform"
+version = "1.0.0"
+content_root = "content"
+options_schema = "options.schema.json"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+# Points GitHub publishes on its own CI workflow content. `ci-jobs` takes a
+# whole workflow job, `ci-steps` a step inside the test job. Both markers
+# appear exactly once in ci.yml.jinja and render zero bytes when unfilled --
+# the shipped catalogue fills neither (FT-17.03 wires the capabilities).
+[[extension_points]]
+id = "ci-jobs"
+content = "content/.github/workflows/ci.yml.jinja"
+
+[[extension_points]]
+id = "ci-steps"
+content = "content/.github/workflows/ci.yml.jinja"
+
+# Host-scoped links contributed into Foundation's neutral project files.
+[[contributions]]
+extension_point = "pyproject-project-urls"
+content = "extensions/pyproject-project-urls.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "readme-project-shape"
+content = "extensions/readme-project-shape.md.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "contributing-project-shape"
+content = "extensions/contributing-project-shape.md.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "security-project-shape"
+content = "extensions/security-project-shape.md.jinja"
+target.kind = "foundation"

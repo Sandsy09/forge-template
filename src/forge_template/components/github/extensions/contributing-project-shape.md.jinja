@@ -1,0 +1,11 @@
+
+## Repository
+
+Clone with
+`git clone https://github.com/{{ options.github.organisation }}/{{ project.repository_name }}.git`.
+
+Pull requests are routed for review to
+`@{{ options.github.organisation }}/{{ project.repository_name }}-maintainers`
+through [`.github/CODEOWNERS`](.github/CODEOWNERS). Remote GitHub Actions under
+`.github/workflows/` are pinned to full commit SHAs with the release tag in a
+same-line comment -- keep that form when updating them.

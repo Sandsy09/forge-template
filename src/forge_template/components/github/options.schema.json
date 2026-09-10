@@ -1,0 +1,11 @@
+{
+  "schema_version": 2,
+  "options": [
+    {
+      "name": "organisation",
+      "type": "string",
+      "required": true,
+      "description": "GitHub organisation or user that owns the repository. The repository URL and CODEOWNERS handle are derived from it and project.repository_name."
+    }
+  ]
+}

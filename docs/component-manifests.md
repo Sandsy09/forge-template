@@ -19,11 +19,14 @@ and protocol `2` parsing remains supported unchanged.
 
 FT-08.02 populated the installed production catalogue with the first real
 manifest, `library`; FT-08.04 added `cli`, FT-11.02/FT-11.03 added the
-first production capabilities, `jupyter` and `scientific-python`, and FT-12.01
-added the third archetype, `data-science`. Discovery from current source
-returns `("cli", "data-science", "jupyter", "library", "scientific-python")`.
+first production capabilities, `jupyter` and `scientific-python`, FT-12.01
+added the third archetype, `data-science`, and FT-17.02/[ADR 0063](adr/0063-implement-the-github-platform.md)
+added the first `kind = "platform"` component, `github`. Discovery from current
+source returns
+`("cli", "data-science", "github", "jupyter", "library", "scientific-python")`.
 The three archetypes are independent and compose over the same implicit
-Foundation source; a ProjectSpec selects exactly one. The released Copier path
+Foundation source; a ProjectSpec selects exactly one, plus any capabilities and
+platforms. The released Copier path
 remains the monolithic `template/` tree and is unaffected. The current
 `create-forge` `main` branch consumes the public component catalogue behind
 `new --engine-preview`; a default-path cutover remains a separate decision.
@@ -151,8 +154,8 @@ the owner-declared update contract
   the client applies the skip.
 
 Both arrays are rejected on a protocol-`1` or protocol-`2` manifest, and both
-default to empty — the shipped five components stay at `manifest_version = 2`
-and declare neither. Protocol-`1` and protocol-`2` manifests are accepted
+default to empty — every shipped component stays at `manifest_version = 2`
+and declares neither. Protocol-`1` and protocol-`2` manifests are accepted
 exactly as before. The Foundation content source declares no such records —
 `foundation_version` stays `1` (ADR 0062 decision 2).
 
@@ -202,7 +205,10 @@ format, and required/unknown-option rejection are now defined by
 `extension_points` publishes named points a component's own owned content
 exposes for another to extend. Each entry names an `id` and a `content`
 path — component-relative like `options_schema`, and required to fall
-inside this component's own `content_root`.
+inside this component's own `content_root`. The shipped `github` platform
+(FT-17.02 / ADR 0063) is the first component to use this: it publishes
+`ci-jobs` and `ci-steps` on its own `content/.github/workflows/ci.yml.jinja`.
+The five archetype/capability components publish none of their own.
 
 `contributions` targets another owner's published point. Each entry names
 its `extension_point` id and this component's own `content` path — required
