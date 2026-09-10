@@ -1,0 +1,23 @@
+# The production dotenv-example capability. See docs/platform-and-tooling-parity.md,
+# docs/secret-handling.md, and ADR 0060/0064. Owns a tracked, placeholder-only
+# `.env.example`; Foundation's `.gitignore` already ignores the `.env` family
+# and negates `.env.example`, so this capability adds only the example file and
+# a setup note.
+manifest_version = 2
+id = "dotenv-example"
+name = "Dotenv Example"
+description = "A tracked, placeholder-only .env.example environment template."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "readme-project-shape"
+content = "extensions/readme-project-shape.md.jinja"

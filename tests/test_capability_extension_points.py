@@ -46,6 +46,15 @@ _CAPABILITY_TOOLING_POINTS = (
     "pyproject-aggregate-check",
 )
 
+# Every additive, byte-neutral `pyproject.toml.jinja` marker a capability may
+# fill -- the three FT-11.01 points above plus the two FT-17.03
+# `[dependency-groups]` points. The baseline render below strips all of them.
+_ADDITIVE_PYPROJECT_POINTS = (
+    *_CAPABILITY_TOOLING_POINTS,
+    "pyproject-named-dependency-groups",
+    "pyproject-dependency-group-includes",
+)
+
 
 def _payload(
     *,
@@ -86,18 +95,18 @@ def _render(payload: dict[str, object]) -> dict[str, bytes]:
 
 
 def _strip_capability_tooling_points(foundation_root: Path) -> None:
-    """Remove the three FT-11.01 points and their markers in place.
+    """Remove every additive `pyproject.toml.jinja` point and its marker in place.
 
-    Leaves a Foundation source that predates FT-11.01 entirely, so a render
-    against it is the byte-for-byte baseline the additive points must match
-    when no capability fills them.
+    Leaves a Foundation source that predates both FT-11.01 and FT-17.03, so a
+    render against it is the byte-for-byte baseline the additive points must
+    match when no capability fills them.
     """
     manifest = foundation_root / "foundation.toml"
     blocks = manifest.read_text(encoding="utf-8").split("[[extension_points]]")
     kept = [blocks[0]] + [
         block
         for block in blocks[1:]
-        if not any(f'id = "{point}"' in block for point in _CAPABILITY_TOOLING_POINTS)
+        if not any(f'id = "{point}"' in block for point in _ADDITIVE_PYPROJECT_POINTS)
     ]
     manifest.write_text("[[extension_points]]".join(kept), encoding="utf-8")
 
@@ -109,7 +118,7 @@ def _strip_capability_tooling_points(foundation_root: Path) -> None:
             for line in lines
             if not any(
                 line.strip() == f"[[forge:extension {point}]]"
-                for point in _CAPABILITY_TOOLING_POINTS
+                for point in _ADDITIVE_PYPROJECT_POINTS
             )
         ),
         encoding="utf-8",
@@ -151,10 +160,12 @@ def test_unfilled_points_render_production_archetypes_unchanged(
     _strip_capability_tooling_points(stripped)
     pre_capability_catalogue = tmp_path / "components"
     shutil.copytree(_PRODUCTION_COMPONENTS, pre_capability_catalogue)
-    # A pre-FT-11.01 catalogue has neither the capabilities nor anything that
-    # requires one: `data-science` declares `requires = ["jupyter"]`.
-    shutil.rmtree(pre_capability_catalogue / "jupyter")
-    shutil.rmtree(pre_capability_catalogue / "data-science")
+    # A catalogue that predates every additive point holds only the two
+    # single-package archetypes -- no capability, and nothing (`data-science`,
+    # `documentation`, `dependabot`, ...) that requires one.
+    for child in pre_capability_catalogue.iterdir():
+        if child.is_dir() and child.name not in {"library", "cli"}:
+            shutil.rmtree(child)
     monkeypatch.setattr(
         engine_module, "_CATALOGUE_ROOT_OVERRIDE", pre_capability_catalogue
     )

@@ -104,15 +104,23 @@ def test_engine_info_reports_package_and_protocols_without_discovery(
 
 
 def test_installed_catalogue_contains_the_production_components() -> None:
-    """The production source catalogue exposes both initial capabilities."""
+    """The production source catalogue exposes every shipped component."""
     descriptors = discover_components()
 
     assert [descriptor.id for descriptor in descriptors] == [
+        "changelog",
         "cli",
+        "coverage",
         "data-science",
+        "dependabot",
+        "documentation",
+        "dotenv-example",
         "github",
         "jupyter",
         "library",
+        "pre-commit",
+        "pyright",
+        "renovate",
         "scientific-python",
     ]
     library = next(d for d in descriptors if d.id == "library")

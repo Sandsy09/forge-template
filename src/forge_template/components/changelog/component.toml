@@ -1,0 +1,32 @@
+# The production changelog capability. See docs/platform-and-tooling-parity.md,
+# docs/generation-provenance.md, and ADR 0060/0064. Generates a git-cliff
+# CHANGELOG from Conventional Commits. The first shipped `manifest_version = 3`
+# component: its `[[regeneration]]` record marks `CHANGELOG.md` skip-if-exists
+# so an engine-native update never clobbers a project's own history.
+manifest_version = 3
+id = "changelog"
+name = "Changelog"
+description = "A git-cliff CHANGELOG generated from Conventional Commits."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-development-dependencies"
+content = "extensions/development-dependencies.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-task-definitions"
+content = "extensions/task-definitions.toml.jinja"
+
+[[regeneration]]
+target = "CHANGELOG.md"
+disposition = "skip-if-exists"

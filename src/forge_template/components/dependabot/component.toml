@@ -1,0 +1,17 @@
+# The production Dependabot capability. See docs/platform-and-tooling-parity.md
+# and ADR 0060/0064. Renders GitHub-native dependency-update configuration, so
+# it requires the `github` platform; it conflicts with `renovate` -- a project
+# runs one updater, never both.
+manifest_version = 2
+id = "dependabot"
+name = "Dependabot"
+description = "GitHub-native weekly dependency-update configuration."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = [{ id = "github", version = ">=1,<2" }]
+conflicts = [{ id = "renovate" }]
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

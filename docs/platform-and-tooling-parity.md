@@ -22,13 +22,16 @@ This document decided no runtime behaviour, and added no component, no
 `EngineErrorCode` value, no public name, no protocol increment, and no
 `copier.yml` change. Its extension points were **reserved**;
 [FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) /
-[ADR 0063](adr/0063-implement-the-github-platform.md) has since shipped the
-`github` platform (`1.0.0`) and published five of them — `pyproject-project-urls`,
+[ADR 0063](adr/0063-implement-the-github-platform.md) then shipped the `github`
+platform (`1.0.0`) and published five of them — `pyproject-project-urls`,
 `contributing-project-shape`, `security-project-shape`, `ci-jobs`, `ci-steps`
-(Foundation inventory 11 → 14; `foundation_version` unchanged) —
-and [FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) publishes
-the last three with the eight capabilities. Rows below marked *(shipped,
-FT-17.02)* are live.
+(Foundation inventory 11 → 14) — and
+[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) /
+[ADR 0064](adr/0064-implement-approved-generated-content-parity.md) shipped the
+eight capabilities and published the last three — `pyproject-named-dependency-groups`,
+`pyproject-dependency-group-includes` (inventory 14 → 16) and `api-reference` on
+`documentation`. `foundation_version` stays `1` throughout. Every assignment
+below is now live.
 
 ## Why this exists
 
@@ -142,7 +145,7 @@ existing document accurate.
 
 | Foundation point | New? | What `github` contributes |
 | --- | --- | --- |
-| `pyproject-project-urls` | published FT-17.02 | `[project.urls]` Repository / Issues (Documentation is FT-17.03's `documentation` capability) |
+| `pyproject-project-urls` | published FT-17.02 | `[project.urls]` Repository / Issues (a Documentation URL is the `documentation` capability's) |
 | `contributing-project-shape` | published FT-17.02 | host-scoped links in `CONTRIBUTING.md` |
 | `security-project-shape` | published FT-17.02 | the vulnerability-report URL in `SECURITY.md` |
 | `readme-project-shape` | existing | clone and install URLs in `README.md` |
@@ -219,7 +222,7 @@ concrete instance of the cross-tier `requires` case
 Selecting neither `dependabot` nor `renovate` reproduces Copier's
 `dependency_updates == none`.
 
-## Extension points: published and still reserved
+## Extension points: all published
 
 ### Published by FT-17.02 / ADR 0063
 
@@ -235,14 +238,15 @@ The first three reversed
 [extension-points.md](extension-points.md#the-published-inventory)'s statement
 that `CONTRIBUTING.md.jinja` and `SECURITY.md.jinja` are sole-owner content
 with no extension point — additive, exactly as ADR 0049 grew the inventory from
-eight points to eleven; the Foundation inventory is now fourteen.
-`.editorconfig`, `.gitattributes`, `.python-version.jinja` and `LICENSE.jinja`
-stay sole-owner. Each marker is placed so a render that does not select
-`github` is byte-identical to before (ADR 0063). `ci-jobs` and `ci-steps` are
-the first points a shipped component publishes on its own content; both ship
-**unfilled** — `library` fills `ci-jobs` at FT-17.03.
+eight points to eleven. `.editorconfig`, `.gitattributes`,
+`.python-version.jinja` and `LICENSE.jinja` stay sole-owner. Each marker is
+placed so a render that does not select `github` is byte-identical to before
+(ADR 0063). `ci-jobs` and `ci-steps` are the first points a shipped component
+publishes on its own content; the `documentation` and `pyright` capabilities
+fill `ci-jobs` (a docs-build job and a pyright job) and `coverage` fills
+`ci-steps` (a coverage upload).
 
-### Still reserved for FT-17.03
+### Published by FT-17.03 / ADR 0064
 
 | Point | Owner file | A contribution supplies |
 | --- | --- | --- |
@@ -250,13 +254,15 @@ the first points a shipped component publishes on its own content; both ship
 | `pyproject-dependency-group-includes` | Foundation `content/pyproject.toml.jinja` | an `{ include-group = "name" }` line in the `dev` group |
 | `api-reference` | `documentation` (own content) | an mkdocstrings API page |
 
-The two Foundation points **reverse ADR 0049's stated limitation** that "a
-capability still cannot declare its own named dependency group". They let
-`documentation` declare a real `docs` group that `uv sync --group docs`
-resolves and that Foundation's `dev` group includes — matching the Copier
-scaffold, whose `docs` group is both separately installable and part of `dev`.
-`api-reference` is already named by
-[library-archetype.md](library-archetype.md)'s extension-point table.
+The two Foundation points (inventory 14 → 16) **reverse ADR 0049's stated
+limitation** that "a capability still cannot declare its own named dependency
+group". They let `documentation` declare a real `docs` group that
+`uv sync --group docs` resolves and that Foundation's `dev` group includes —
+matching the Copier scaffold, whose `docs` group is both separately installable
+and part of `dev`. Both markers are placed byte-neutral, so a render that does
+not select `documentation` is byte-identical to before (ADR 0064).
+`api-reference` is self-filled by `documentation` with `::: <package_name>`; the
+marker stays published for a later archetype fill.
 
 ## Generated tooling versus client execution
 
@@ -377,10 +383,11 @@ FT-15.04 settled its two items:
 classifies the cutover as `forge-template` `0.5.0`, component-manifest
 protocol `3` and a published `metadata_version`, with the five reserved
 Foundation points and `ci-jobs` / `ci-steps` / `api-reference` an additive,
-package-bumped change to the extension-point-inventory axis; and it closes the
-`needs a bounded issue` rows **by reference to FT-17.03** — no new issue —
-with `engine-default-parity.md`'s nine owner cells now reading
-`FT-15.03 → FT-17.03`.
+package-bumped change to the extension-point-inventory axis; and it closed the
+`needs a bounded issue` rows **by reference to FT-17.03** — no new issue.
+[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) /
+[ADR 0064](adr/0064-implement-approved-generated-content-parity.md) then shipped
+the eight capabilities and flipped every one of those rows to `shipped`.
 
 ## Validation
 
@@ -392,18 +399,18 @@ copy of the real production catalogue with the real Foundation source live.
 They are deliberately not named for the decided catalogue. The tests prove:
 
 - every provider-owned row in `engine-default-parity.md` (excluding the
-  FT-15.02 provenance rows), whether still a `gap` or flipped to `shipped` by
-  FT-17.02, appears in the ownership table above with an owner from the decided
-  set — a row gaining no owner fails;
+  FT-15.02 provenance rows), whether a `gap` or flipped to `shipped` by FT-17.02
+  or FT-17.03, appears in the ownership table above with an owner from the
+  decided set — a row gaining no owner fails;
 - every extension point this contract calls *existing* is really in the live
   `foundation.toml`;
-- **tripwire:** the two still-reserved `[dependency-groups]` Foundation points
-  are still absent from `foundation.toml`, so this file fails when FT-17.03
-  publishes them, forcing the contract to be revisited; FT-17.02 / ADR 0063
-  published the three host-link points, checked live;
+- **tripwire turned over:** every point ADR 0060 reserved is now published —
+  the three host-link points by FT-17.02 / ADR 0063 and the two
+  `[dependency-groups]` points by FT-17.03 / ADR 0064 — and this file fails if
+  any is walked back;
 - **FT-ROADMAP-01-EX-03 tripwire:** `discover_components()` still returns
-  exactly three archetypes and two capabilities — one platform (`github`) since
-  FT-17.02, and no new archetype;
+  exactly three archetypes — `cli`, `data-science`, `library` — plus ten
+  capabilities and one platform (`github`), and no new archetype;
 - the synthetic platform's public descriptor carries no filesystem path, and
   its option schema declares exactly one option;
 - a capability's contribution into the synthetic platform's `ci-steps` resolves

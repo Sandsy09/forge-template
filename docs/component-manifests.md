@@ -154,10 +154,12 @@ the owner-declared update contract
   the client applies the skip.
 
 Both arrays are rejected on a protocol-`1` or protocol-`2` manifest, and both
-default to empty — every shipped component stays at `manifest_version = 2`
-and declares neither. Protocol-`1` and protocol-`2` manifests are accepted
-exactly as before. The Foundation content source declares no such records —
-`foundation_version` stays `1` (ADR 0062 decision 2).
+default to empty. The `changelog` capability (FT-17.03 / ADR 0064) is the first
+shipped `manifest_version = 3` component: its one `[[regeneration]]` record
+marks `CHANGELOG.md` `skip-if-exists`. Every other shipped component stays at
+`manifest_version = 2` and declares neither array. Protocol-`1` and protocol-`2`
+manifests are accepted exactly as before. The Foundation content source
+declares no such records — `foundation_version` stays `1` (ADR 0062 decision 2).
 
 ### Compatibility
 
@@ -206,9 +208,11 @@ format, and required/unknown-option rejection are now defined by
 exposes for another to extend. Each entry names an `id` and a `content`
 path — component-relative like `options_schema`, and required to fall
 inside this component's own `content_root`. The shipped `github` platform
-(FT-17.02 / ADR 0063) is the first component to use this: it publishes
-`ci-jobs` and `ci-steps` on its own `content/.github/workflows/ci.yml.jinja`.
-The five archetype/capability components publish none of their own.
+(FT-17.02 / ADR 0063) is the first component to use this — it publishes
+`ci-jobs` and `ci-steps` on its own `content/.github/workflows/ci.yml.jinja` —
+and the `documentation` capability (FT-17.03 / ADR 0064) is the second, with
+`api-reference` on its own `content/docs/reference.md.jinja`. The archetypes
+and the other capabilities publish none of their own.
 
 `contributions` targets another owner's published point. Each entry names
 its `extension_point` id and this component's own `content` path — required

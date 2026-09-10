@@ -1,0 +1,22 @@
+# The production pre-commit capability. See docs/platform-and-tooling-parity.md
+# and ADR 0060/0064. Owns the hook configuration and contributes the
+# `pre-commit` development dependency; the client still owns hook installation
+# and execution (FT-ROADMAP-01-EX-01).
+manifest_version = 2
+id = "pre-commit"
+name = "pre-commit"
+description = "Fast local Git hooks and commit-message enforcement."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-development-dependencies"
+content = "extensions/development-dependencies.toml.jinja"

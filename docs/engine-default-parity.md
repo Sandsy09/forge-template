@@ -86,11 +86,11 @@ The 23 `copier.yml` questions. A `shipped` input reaches the engine through a
 | `versioning` | Static vs `hatch-vcs` version | shipped | provider | n/a | folded into `library` `packaging_mode` | `map_legacy_library_answers` |
 | `versioning_resolved` | Collapsed effective constraint | shipped | provider | n/a | folded into `library` `packaging_mode` (invalid pairs unrepresentable) | `map_legacy_library_answers` rejects `("uv_build", "vcs")` |
 | `initial_version` | Static version literal | shipped | provider | n/a | `library` option `initial_version` | `tests/test_library_archetype.py` |
-| `type_checking` | CI gate, `[tool.mypy]` / `[tool.pyright]`, `typecheck` task | gap | provider | deferred | FT-15.03 → FT-17.03 | FT-15.03 decides: a type-checker capability, or an accepted mypy-only narrowing (Foundation is mypy-only today, `tests/test_composition_architecture_review.py`) |
-| `coverage_fail_under` | `[tool.coverage]` gate, `--cov` addopts | gap | provider | deferred | FT-15.03 → FT-17.03 | Foundation deliberately excludes coverage (ADR 0037); a coverage capability owns the gate. `tests/test_composition_architecture_review.py` pins the current exclusion |
-| `dependency_updates` | `renovate.json` / `.github/dependabot.yml` | gap | provider | cutover-blocking | FT-15.03 → FT-17.03 | the `dependabot` / `renovate` capability pair contributes the selected config (FT-15.03 / ADR 0060) |
-| `use_docs` | MkDocs site, `docs/` tree, CI docs job, `docs` dependency group, Documentation URL | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability (FT-15.03 / ADR 0060); FT-17.03 delivers the site, tree, job, group and URL |
-| `changelog_tool` | `CHANGELOG.md`, git-cliff config, `changelog` task | gap | provider | deferred | FT-15.03 → FT-17.03 | a changelog capability contributes the file, config and task |
+| `type_checking` | CI gate, `[tool.mypy]` / `[tool.pyright]`, `typecheck` task | shipped | provider | n/a | `pyright` capability (FT-17.03 / ADR 0064) | selecting `pyright` adds `pyrightconfig.json`, a `typecheck:pyright` task and check entry, and a CI job on top of Foundation's mypy gate (Copier's mypy-less answer is a recorded narrowing); `tests/test_pyright_capability.py` |
+| `coverage_fail_under` | `[tool.coverage]` gate, `--cov` addopts | shipped | provider | n/a | `coverage` capability (FT-17.03 / ADR 0064) | the `coverage` capability's `fail_under` option drives `.coveragerc`'s threshold; Foundation stays coverage-free (`tests/test_composition_architecture_review.py`); `tests/test_coverage_capability.py` |
+| `dependency_updates` | `renovate.json` / `.github/dependabot.yml` | shipped | provider | n/a | `dependabot` / `renovate` capabilities (FT-17.03 / ADR 0064) | selecting `dependabot` (requires `github`), `renovate`, or neither reproduces Copier's three answers; the two `conflicts`; `tests/test_dependency_updates_capabilities.py` |
+| `use_docs` | MkDocs site, `docs/` tree, CI docs job, `docs` dependency group, Documentation URL | shipped | provider | n/a | `documentation` capability (FT-17.03 / ADR 0064) | the `documentation` capability owns the site, tree and `docs` group, and contributes the CI docs job; `tests/test_documentation_capability.py` |
+| `changelog_tool` | `CHANGELOG.md`, git-cliff config, `changelog` task | shipped | provider | n/a | `changelog` capability (FT-17.03 / ADR 0064) | the `changelog` capability owns `CHANGELOG.md` (skip-if-exists) and `cliff.toml` and contributes the `changelog` task; `tests/test_changelog_capability.py` |
 
 ## Generated files
 
@@ -123,10 +123,10 @@ rendered base path (`template/mkdocs.yml`,
 | `template/.copier-answers.yml` | Update/regeneration provenance state | gap | provider | cutover-blocking | FT-15.02 → FT-17.01 | engine emits equivalent versioned generation metadata; secret-free; sufficient to reproduce an earlier render |
 | `template/.github/workflows/ci.yml` | Lint, type-check, test matrix, build jobs | shipped | provider | n/a | `github` platform (FT-17.02 / ADR 0063) | `github` owns `content/.github/workflows/ci.yml.jinja` (four `poe`-task jobs; pinned actions per `docs/github-action-pinning.md`); `tests/test_github_platform.py` |
 | `template/.github/CODEOWNERS` | Review routing | shipped | provider | n/a | `github` platform (FT-17.02 / ADR 0063) | `github` owns `content/.github/CODEOWNERS.jinja`; `tests/test_github_platform.py` |
-| `template/.github/dependabot.yml` | Weekly `uv` + actions updates (when `dependency_updates == dependabot`) | gap | provider | cutover-blocking | FT-15.03 → FT-17.03 | the `dependabot` capability renders the selected config |
-| `template/renovate.json` | Renovate config (when `dependency_updates == renovate`) | gap | provider | cutover-blocking | FT-15.03 → FT-17.03 | the `renovate` capability renders the selected config |
-| `template/.pre-commit-config.yaml` | Fast local hooks, `commit-msg` enforcement | gap | provider | cutover-blocking | FT-15.03 → FT-17.03 | a pre-commit capability contributes the config; Foundation stays hook-free (ADR 0037), client still owns hook installation |
-| `template/.env.example` | Placeholder-only environment template | gap | provider | cutover-blocking | FT-15.03 → FT-17.03 | secret-handling capability contributes the file; `docs/secret-handling.md` enforces placeholder-only content |
+| `template/.github/dependabot.yml` | Weekly `uv` + actions updates (when `dependency_updates == dependabot`) | shipped | provider | n/a | `dependabot` capability (FT-17.03 / ADR 0064) | `dependabot` owns `content/.github/dependabot.yml` and requires `github`; `tests/test_dependency_updates_capabilities.py` |
+| `template/renovate.json` | Renovate config (when `dependency_updates == renovate`) | shipped | provider | n/a | `renovate` capability (FT-17.03 / ADR 0064) | `renovate` owns `content/renovate.json`; `tests/test_dependency_updates_capabilities.py` |
+| `template/.pre-commit-config.yaml` | Fast local hooks, `commit-msg` enforcement | shipped | provider | n/a | `pre-commit` capability (FT-17.03 / ADR 0064) | `pre-commit` owns the config and contributes `pre-commit` to the dev group; Foundation stays hook-free (ADR 0037), the client still owns hook installation; `tests/test_pre_commit_capability.py` |
+| `template/.env.example` | Placeholder-only environment template | shipped | provider | n/a | `dotenv-example` capability (FT-17.03 / ADR 0064) | `dotenv-example` owns a placeholder-only `.env.example`; `docs/secret-handling.md` enforces the content rule; `tests/test_dotenv_example_capability.py` |
 
 ### Gaps — deferred past the cutover gate
 
@@ -136,33 +136,35 @@ rendered base path (`template/mkdocs.yml`,
 | `template/.github/ISSUE_TEMPLATE/config.yml` | Issue chooser config | shipped | provider | n/a | `github` platform (FT-17.02 / ADR 0063) | `github` owns `content/.github/ISSUE_TEMPLATE/config.yml`; `tests/test_github_platform.py` |
 | `template/.github/ISSUE_TEMPLATE/feature_request.yml` | Feature request form | shipped | provider | n/a | `github` platform (FT-17.02 / ADR 0063) | `github` owns `content/.github/ISSUE_TEMPLATE/feature_request.yml`; `tests/test_github_platform.py` |
 | `template/.github/pull_request_template.md` | PR checklist | shipped | provider | n/a | `github` platform (FT-17.02 / ADR 0063) | `github` owns `content/.github/pull_request_template.md.jinja` (the "Docs updated" line is unconditional -- a recorded narrowing); `tests/test_github_platform.py` |
-| `template/CHANGELOG.md` | Changelog seed | gap | provider | deferred | FT-15.03 → FT-17.03 | changelog capability contribution; `_skip_if_exists` behaviour reconciled by FT-15.02 |
-| `template/docs/index.md` | MkDocs landing page | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability |
-| `template/docs/reference.md` | mkdocstrings API page | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability, via the `api-reference` point |
-| `template/docs/adr/0001-record-architecture-decisions.md` | Seed ADR | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability |
-| `template/docs/adr/README.md` | ADR index | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability |
-| `template/mkdocs.yml` | MkDocs site config | gap | provider | deferred | FT-15.03 → FT-17.03 | the `documentation` capability |
+| `template/CHANGELOG.md` | Changelog seed | shipped | provider | n/a | `changelog` capability (FT-17.03 / ADR 0064) | `changelog` owns `content/CHANGELOG.md` with a `[[regeneration]]` skip-if-exists record; `tests/test_changelog_capability.py` |
+| `template/docs/index.md` | MkDocs landing page | shipped | provider | n/a | `documentation` capability (FT-17.03 / ADR 0064) | `tests/test_documentation_capability.py` |
+| `template/docs/reference.md` | mkdocstrings API page | shipped | provider | n/a | `documentation` capability (FT-17.03 / ADR 0064) | `documentation` owns the page and publishes `api-reference` on it; `tests/test_documentation_capability.py` |
+| `template/docs/adr/0001-record-architecture-decisions.md` | Seed ADR | shipped | provider | n/a | `documentation` capability (FT-17.03 / ADR 0064) | `tests/test_documentation_capability.py` |
+| `template/docs/adr/README.md` | ADR index | shipped | provider | n/a | `documentation` capability (FT-17.03 / ADR 0064) | `tests/test_documentation_capability.py` |
+| `template/mkdocs.yml` | MkDocs site config | shipped | provider | n/a | `documentation` capability (FT-17.03 / ADR 0064) | `tests/test_documentation_capability.py` |
 
-## Gaps within shipped files
+## Fragments within `pyproject.toml`
 
-`pyproject.toml` is produced by the engine, but the following fragments the
-Copier template emits have no engine contributor yet. Each is assigned with
-its owning question or file row above:
+`pyproject.toml` is produced by the engine. The fragments the Copier template
+emits inside it that once had no engine contributor now all do, through the
+component that owns the concern:
 
-- `[tool.coverage.run]` / `[tool.coverage.report]` and the `--cov` /
-  `--cov-report` pytest `addopts` — coverage capability (`coverage_fail_under`).
-- `[tool.pyright]` and the chained `typecheck` task — type-checker capability
-  (`type_checking`).
-- `pre-commit>=4.0` in the `lint` dependency group — pre-commit capability
-  (`.pre-commit-config.yaml`).
+- `[tool.coverage.*]` and the `--cov` addopts — relocated to the `coverage`
+  capability's standalone `.coveragerc` and `coverage` task (FT-17.03 / ADR
+  0064, a recorded semantics-preserving relocation).
+- `[tool.pyright]` — relocated to the `pyright` capability's standalone
+  `pyrightconfig.json`; pyright runs as a `typecheck:pyright` task and CI job
+  (FT-17.03 / ADR 0064).
+- `pre-commit` in the dev group — contributed by the `pre-commit` capability.
 - the `docs` dependency group and the `mkdocs` / `docs:build` tasks —
-  documentation capability (`use_docs`).
-- `git-cliff>=2.7` in `dev` and the `[tool.git-cliff.*]` block — changelog
-  capability (`changelog_tool`).
-- `[project.urls]` (Repository / Issues / Documentation) — GitHub platform
-  (`repo_url`).
-- `license-files = ["LICENSE"]` — Foundation; a small addition to the
-  Foundation `pyproject.toml` contribution, in FT-17.03.
+  contributed by the `documentation` capability through the two
+  `[dependency-groups]` Foundation points (FT-17.03 / ADR 0064).
+- `git-cliff` in `dev` and the git-cliff config — contributed by the
+  `changelog` capability; the config is a standalone `cliff.toml`.
+- `[project.urls]` — contributed by the `github` platform (FT-17.02 / ADR
+  0063).
+- `license-files = ["LICENSE"]` — added to the Foundation `pyproject.toml`
+  contribution by FT-17.03 / ADR 0064.
 
 ## Copier generation mechanics
 
@@ -189,23 +191,23 @@ its owning question or file row above:
 The gaps above cluster into work the later Stage 15 children must resolve
 before Stage 17 can implement:
 
-- **Seven unrouted questions.** `github_org`, `repo_url`, `codeowners_team`,
-  `python_matrix` (the CI consumer), `type_checking`, `coverage_fail_under`,
-  `dependency_updates`, `use_docs` and `changelog_tool` have no `ProjectSpec`
-  field or component option. FT-15.02 decides which belong in generation
-  metadata versus a component option; FT-15.03 decides the platform and
-  capability owners.
+- **Unrouted questions.** *(Closed.)* `github_org`, `repo_url`,
+  `codeowners_team` and `python_matrix` became the `github` platform's
+  `organisation` option and template-derived values (FT-17.02 / ADR 0063);
+  `type_checking`, `coverage_fail_under`, `dependency_updates`, `use_docs` and
+  `changelog_tool` became capability selections and options (FT-17.03 / ADR
+  0064). Every `copier.yml` question now has an engine route.
 - **No GitHub platform component.** *(Closed by FT-17.02 / ADR 0063.)* At
   FT-15.01 the catalogue had three archetypes and two capabilities and
   `discover_components()` returned no platform. FT-15.03 defined the `github`
   platform and the Foundation extension points it needs; FT-17.02 shipped it,
   and the eleven `github`-owned rows above are now `shipped`.
-- **No optional-tooling capabilities.** Pre-commit configuration, coverage
-  gating, MkDocs documentation, changelog generation, secret scanning and
-  dependency-update automation are all capability-shaped concerns with no
-  filed implementation child scoped to build them. FT-15.03 assigns each an
-  owner; FT-15.04 files the bounded issues the marked rows need and
-  reconciles them against Stage 17's six children.
+- **No optional-tooling capabilities.** *(Closed by FT-17.03 / ADR 0064.)*
+  The eight capabilities `coverage`, `pre-commit`, `pyright`, `changelog`,
+  `documentation`, `dotenv-example`, `dependabot` and `renovate` ship, each
+  owning its concern's files and contributing through reviewed extension
+  points; the two `[dependency-groups]` Foundation points and `api-reference`
+  are published. `discover_components()` returns fourteen components.
 - **No engine-native update.** `copier update`'s three-way merge has no
   engine equivalent. FT-15.02 specifies the reproducible old/new render
   inputs in [generation-provenance.md](generation-provenance.md); FT-17.04
@@ -262,13 +264,16 @@ FT-15.04 then settled the two items it owned:
 ([ADR 0061](adr/0061-provider-compatibility-failure-and-release-gates.md))
 classifies the cutover as `forge-template` `0.5.0` with component-manifest
 protocol `3` and a published `metadata_version`, every other axis and the
-public facade unchanged, and closes the `needs a bounded issue` rows **by
-reference to FT-17.03** — no new issue is filed. Those nine owner cells now
-read `FT-15.03 → FT-17.03`; their `status`, `disposition` and `tier` are
-untouched, so those capability-owned surfaces stay `gap` until FT-17.03 ships
-them. FT-17.02 / ADR 0063 flipped the eleven `github`-owned rows to `shipped`;
+public facade unchanged, and closed the `needs a bounded issue` rows **by
+reference to FT-17.03** — no new issue was filed. FT-17.02 / ADR 0063 then
+shipped the `github` platform and flipped its eleven rows to `shipped`, and
+FT-17.03 / ADR 0064 shipped the eight tooling capabilities and flipped the
+remaining fourteen provider-owned rows (five questions, nine files) plus
+`license-files` to `shipped`. Every provider-owned row here is now `shipped`
+bar the FT-15.02 provenance rows FT-17.04 owns.
 `tests/test_parity_inventory.py` pins every `shipped` file row against a real
-`library` (and, for the `github` rows, `library` + `github`) render.
+`library` render, unioned with a `library` + `github` render and a
+`library` + every-capability render.
 
 ## Validation
 
@@ -280,4 +285,6 @@ cites is real (cross-checked against
 `docs/roadmap-v3/github-issues/filing-manifest.json` and the Streamlit pack's
 manifest — no invented numbers), and that each `shipped` file row matches
 what a real `render_project()` call produces — a `library` render, unioned
-with a `library` + `github` render for the `github`-owned rows.
+with a `library` + `github` render for the `github`-owned rows and a
+`library` + capabilities render (once selecting `dependabot`, once `renovate`)
+for the FT-17.03 rows.

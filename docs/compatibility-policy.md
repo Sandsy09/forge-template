@@ -65,12 +65,14 @@ five additions to the extension-point-inventory axis plus `ci-jobs`,
 [ADR 0063](adr/0063-implement-the-github-platform.md) published three of them —
 `pyproject-project-urls`, `contributing-project-shape`,
 `security-project-shape` (Foundation inventory 11 → 14) — and `ci-jobs` /
-`ci-steps` on the `github` platform's own content, all backward-compatible.
-[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) adds the
-remaining two Foundation points (`pyproject-named-dependency-groups`,
-`pyproject-dependency-group-includes`) and `api-reference`. Each carries the
-package-version bump this document already requires for any observable
-Foundation change
+`ci-steps` on the `github` platform's own content.
+[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) /
+[ADR 0064](adr/0064-implement-approved-generated-content-parity.md) published
+the remaining two Foundation points (`pyproject-named-dependency-groups`,
+`pyproject-dependency-group-includes`, inventory 14 → 16) and `api-reference`
+on the `documentation` capability. All are backward-compatible additions, and
+each carries the package-version bump this document already requires for any
+observable Foundation change
 ([extension-points.md](extension-points.md#stability-and-versioning)); that bump
 is FT-17.06's `0.5.0`.
 
@@ -274,6 +276,14 @@ above does not require a new ADR; a semantic change to those rules does (see
 | `jupyter` component | `1.0.0` |
 | `scientific-python` component | `1.0.0` |
 | `github` component | `1.0.0` (first shipped platform, FT-17.02) |
+| `changelog` component | `1.0.0` (first shipped `manifest_version = 3`, FT-17.03) |
+| `coverage` component | `1.0.0` (FT-17.03) |
+| `dependabot` component | `1.0.0` (FT-17.03) |
+| `documentation` component | `1.0.0` (FT-17.03) |
+| `dotenv-example` component | `1.0.0` (FT-17.03) |
+| `pre-commit` component | `1.0.0` (FT-17.03) |
+| `pyright` component | `1.0.0` (FT-17.03) |
+| `renovate` component | `1.0.0` (FT-17.03) |
 | Option-schema protocol | `1`, `2` |
 | Foundation source protocol | `1` (internal; see above) |
 | Organisation-policy protocol | `1` (doc-only; see above) |

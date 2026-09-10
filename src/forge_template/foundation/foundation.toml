@@ -67,3 +67,18 @@ content = "content/CONTRIBUTING.md.jinja"
 [[extension_points]]
 id = "security-project-shape"
 content = "content/SECURITY.md.jinja"
+
+# Named dependency groups (FT-17.03 / ADR 0064). A selected capability -- the
+# `documentation` capability is the first -- declares its own installable group
+# under `[dependency-groups]` and, through the second point, adds an
+# `{ include-group = "..." }` line to Foundation's `dev` group so a plain
+# `uv sync` still installs it. This reverses ADR 0049's one recorded limit;
+# both points emit zero bytes when unfilled. See
+# docs/platform-and-tooling-parity.md.
+[[extension_points]]
+id = "pyproject-named-dependency-groups"
+content = "content/pyproject.toml.jinja"
+
+[[extension_points]]
+id = "pyproject-dependency-group-includes"
+content = "content/pyproject.toml.jinja"

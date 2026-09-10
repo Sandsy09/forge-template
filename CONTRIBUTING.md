@@ -204,8 +204,19 @@ pull-request templates; the `ci-jobs` / `ci-steps` points on its own CI
 content; and three new host-link Foundation extension points
 (`pyproject-project-urls`, `contributing-project-shape`,
 `security-project-shape`, inventory 11 → 14, `foundation_version` unchanged).
-`discover_components()` returns six components; no other component's content or
-version moves, and `main` stays `0.4.1`.
+no other component's content or version moves, and `main` stays `0.4.1`.
+FT-17.03 /
+[ADR 0064](docs/adr/0064-implement-approved-generated-content-parity.md) then
+ships the eight tooling capabilities — `coverage`, `pre-commit`, `pyright`,
+`changelog` (the first shipped `manifest_version = 3`, for its `CHANGELOG.md`
+skip-if-exists record), `documentation` (publishes `api-reference`, requires
+`library`), `dotenv-example`, `dependabot` (requires `github`, conflicts
+`renovate`) and `renovate` — the two `[dependency-groups]` Foundation extension
+points (inventory 14 → 16) and `api-reference`, plus a one-line `license-files`
+Foundation addition. `[tool.coverage]` / `[tool.pyright]` relocate to standalone
+files; the archetypes stay untouched. `discover_components()` returns fourteen
+components, and every `copier.yml` question now has an engine route; `main`
+stays `0.4.1`.
 
 ## Branching and pull requests
 

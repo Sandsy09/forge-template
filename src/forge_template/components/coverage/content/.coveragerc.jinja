@@ -1,0 +1,20 @@
+[run]
+source =
+    src/{{ project.package_name }}
+branch = true
+{%- if components.archetype == "library" and options.library.packaging_mode == "hatchling-vcs" %}
+omit =
+    src/{{ project.package_name }}/_version.py
+{%- endif %}
+
+[report]
+show_missing = true
+{%- if options.coverage.get("fail_under", 0) > 0 %}
+fail_under = {{ options.coverage.fail_under }}
+{%- else %}
+# No threshold enforced. Set fail_under once the suite is meaningful.
+{%- endif %}
+exclude_also =
+    if TYPE_CHECKING:
+    raise NotImplementedError
+    @(abc\.)?abstractmethod

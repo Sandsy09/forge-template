@@ -66,6 +66,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0061 — Provider compatibility, failure and release gates](0061-provider-compatibility-failure-and-release-gates.md)
 - [0062 — Generation metadata and manifest protocol 3](0062-generation-metadata-and-manifest-protocol-3.md)
 - [0063 — Implement the GitHub platform](0063-implement-the-github-platform.md)
+- [0064 — Implement approved generated-content parity](0064-implement-approved-generated-content-parity.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

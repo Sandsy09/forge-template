@@ -1,0 +1,40 @@
+# The production coverage capability. See docs/platform-and-tooling-parity.md
+# and ADR 0060/0064. Owns a standalone `.coveragerc` (the gate lives here, not
+# in `pyproject.toml` -- a recorded semantics-preserving relocation), and adds a
+# `coverage` task plus a CI upload step. Foundation's pytest config stays
+# coverage-free (ADR 0037).
+manifest_version = 2
+id = "coverage"
+name = "Coverage"
+description = "Test-coverage measurement and an optional CI threshold gate."
+kind = "capability"
+version = "1.0.0"
+content_root = "content"
+options_schema = "options.schema.json"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-development-dependencies"
+content = "extensions/development-dependencies.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-task-definitions"
+content = "extensions/task-definitions.toml.jinja"
+
+[[contributions]]
+target.kind = "foundation"
+extension_point = "pyproject-aggregate-check"
+content = "extensions/aggregate-check.toml.jinja"
+
+[[contributions]]
+target.kind = "component"
+target.id = "github"
+extension_point = "ci-steps"
+content = "extensions/ci-step.yml.jinja"

@@ -58,15 +58,25 @@ def test_discovery_exposes_data_science_between_cli_and_jupyter() -> None:
     descriptors = discover_components()
 
     assert [descriptor.id for descriptor in descriptors] == [
+        "changelog",
         "cli",
+        "coverage",
         "data-science",
+        "dependabot",
+        "documentation",
+        "dotenv-example",
         "github",
         "jupyter",
         "library",
+        "pre-commit",
+        "pyright",
+        "renovate",
         "scientific-python",
     ]
 
-    data_science = descriptors[1]
+    data_science = next(
+        descriptor for descriptor in descriptors if descriptor.id == "data-science"
+    )
     assert data_science.kind == "archetype"
     assert data_science.version == "1.0.0"
     assert data_science.requires_python == ">=3.11"

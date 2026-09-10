@@ -76,9 +76,12 @@ generation metadata. Every other axis is unchanged, and that is a requirement
 on the implementing stage, not a prediction. FT-17.01 / ADR 0062 has since
 moved the component-manifest protocol to `(1, 2, 3)` and published
 `metadata_version = 1`; FT-17.02 / ADR 0063 has since published the `github`
-platform (`1.0.0`) and grown the Foundation inventory 11 → 14, both additive;
-the package version stays on the `0.4` line until FT-17.06 releases `0.5.0`.
-The "Current" column below is the live engine state.
+platform (`1.0.0`) and grown the Foundation inventory 11 → 14; FT-17.03 / ADR
+0064 has since published the eight tooling capabilities (`1.0.0` each), the two
+`[dependency-groups]` Foundation points and `api-reference` (inventory 14 →
+16), all additive, with `library` / `cli` / `data-science` content and
+versions unchanged. The package version stays on the `0.4` line until FT-17.06
+releases `0.5.0`. The "Current" column below is the live engine state.
 
 | Axis | Current | Cutover line | Change class |
 | --- | --- | --- | --- |
@@ -86,29 +89,35 @@ The "Current" column below is the live engine state.
 | ProjectSpec protocol | `1` | `1` | Unchanged — every unrouted question became a selection or a component option (FT-15.03), so no request-schema field is added |
 | Component manifest protocol | `1`, `2`, `3` | `1`, `2`, `3` | **Moved (FT-17.01)** — the owner-declared rename and regeneration-disposition records are manifest protocol `3` fields, and the manifest models forbid unknown keys, so they could not ride protocol `2`; protocol-`1` and protocol-`2` manifests are accepted unchanged |
 | Option-schema protocol | `1`, `2` | `1`, `2` | Unchanged — `coverage`'s `fail_under` is an `integer` option with a `default`, already expressible at protocol `2` |
-| Foundation source protocol | `1` | `1` | Unchanged — the new Foundation extension points are content, not a change to the source's TOML shape, exactly as FT-11.01 / ADR 0049 added three points without moving `foundation_version`; FT-17.02 / ADR 0063 added three more the same way; the rename and regeneration records are component-only (ADR 0062) |
+| Foundation source protocol | `1` | `1` | Unchanged — the new Foundation extension points are content, not a change to the source's TOML shape, exactly as FT-11.01 / ADR 0049 added three points without moving `foundation_version`; FT-17.02 / ADR 0063 added three more and FT-17.03 / ADR 0064 two more, the same way; the rename and regeneration records are component-only (ADR 0062) |
 | Organisation-policy protocol | `1` | `1` | Unchanged (documentation-only by design) |
-| Extension-point inventory | 14 Foundation points, plus `ci-jobs` / `ci-steps` on `github` | 16 Foundation points, plus `ci-jobs` / `ci-steps` / `api-reference` on component content | Additive only; no rename, no removal. FT-17.02 / ADR 0063 took Foundation 11 → 14 and published `ci-jobs` / `ci-steps`; FT-17.03 adds the last two Foundation points and `api-reference` |
+| Extension-point inventory | 16 Foundation points, plus `ci-jobs` / `ci-steps` on `github` and `api-reference` on `documentation` | 16 Foundation points, plus `ci-jobs` / `ci-steps` / `api-reference` on component content | Additive only; no rename, no removal. FT-17.02 / ADR 0063 took Foundation 11 → 14 and published `ci-jobs` / `ci-steps`; FT-17.03 / ADR 0064 published the two `[dependency-groups]` points (14 → 16) and `api-reference` |
 | Generation metadata (`metadata_version`) | `1` | `1` | **Published (FT-17.01)** through `get_engine_info().metadata_version`; was reserved and unpublished at `0.4.1` |
-| `library` component | `1.0.1` | `1.1.0` if it fills a new extension point, else `1.0.1` | Additive |
-| `cli` component | `1.0.1` | `1.1.0` if it fills a new extension point, else `1.0.1` | Additive |
-| `data-science` component | `1.0.0` | `1.1.0` if it fills a new extension point, else `1.0.0` | Additive |
+| `library` component | `1.0.1` | `1.0.1` | Unchanged — FT-17.03 / ADR 0064 left the archetypes untouched (no `ci-jobs` fill; the Copier scaffold has no publish job) |
+| `cli` component | `1.0.1` | `1.0.1` | Unchanged — as `library` |
+| `data-science` component | `1.0.0` | `1.0.0` | Unchanged — as `library` |
 | `jupyter` component | `1.0.0` | `1.0.0` | Unchanged unless it fills a new point |
 | `scientific-python` component | `1.0.0` | `1.0.0` | Unchanged unless it fills a new point |
 | `github` component | `1.0.0` | `1.0.0` | **New (FT-17.02)** — the first shipped `kind = "platform"` component |
-| eight capability components | — | `1.0.0` each | New — FT-17.03 |
+| `changelog` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** — first shipped `manifest_version = 3` component |
+| `coverage` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
+| `dependabot` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
+| `documentation` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** — publishes `api-reference` |
+| `dotenv-example` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
+| `pre-commit` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
+| `pyright` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
+| `renovate` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
 
 The rule that bounds the conditional component rows: an existing component
 moves its version only if the cutover changes its owned content or one of its
 extension-point contributions — a minor bump for an additive fill, per the
-compatibility policy's component-version rules.
-[library-archetype.md](library-archetype.md) already lists `ci-jobs` and
-`api-reference` as targets `library` will contribute to, so `library` is
-expected to move `1.0.1` → `1.1.0`; a component that gains nothing stays put.
-Which components move is
-[FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) and
-[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152)'s to fix
-within this rule.
+compatibility policy's component-version rules. FT-17.02 and FT-17.03 fixed
+which components move: **none of the archetypes**.
+[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) / ADR 0064
+left `library` / `cli` / `data-science` untouched — the `ci-jobs` point is
+filled only by capabilities (`documentation`, `pyright`) and `api-reference`
+is self-filled by `documentation`, so no archetype gains content. An archetype
+`ci-jobs` fill and the matching `1.1.0` move are a later child.
 
 ### Why `0.5.0` and not `1.0.0`
 

@@ -56,7 +56,7 @@
       "target": "SECURITY.md"
     },
     {
-      "digest": "sha256:2375797856399d61871b3591ac0deb889f0b2d46a70dde3330a815f53d5f5c64",
+      "digest": "sha256:254a719f29efe078ee446eb8eeeda17cb0e45af31291ff3dcea845ead17fde75",
       "owner": "foundation",
       "regeneration": "replace",
       "target": "pyproject.toml"

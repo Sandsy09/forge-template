@@ -1,0 +1,17 @@
+# {{ project.name }}
+
+{{ project.description }}
+
+## Installation
+
+{% if "github" in components.platforms -%}
+```bash
+uv add git+https://github.com/{{ options.github.organisation }}/{{ project.repository_name }}
+```
+{%- else -%}
+```bash
+uv add {{ project.repository_name }}
+```
+{%- endif %}
+
+See the [API Reference](reference.md).

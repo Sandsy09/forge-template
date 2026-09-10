@@ -1,15 +1,17 @@
 """Executable pin for docs/platform-and-tooling-parity.md (FT-15.03 / ADR 0060).
 
 The contract assigns every provider-owned parity gap to a catalogue component
-and reserves eight extension points. These tests keep it honest:
+and reserved eight extension points. FT-17.02 / ADR 0063 and FT-17.03 / ADR
+0064 have since shipped every one of them. These tests keep the contract
+honest:
 
 * every provider-owned row in ``engine-default-parity.md`` (bar the FT-15.02
   provenance rows), whether still a ``gap`` or now ``shipped``, is assigned an
   owner here -- a row gaining none fails;
-* FT-17.03's two reserved Foundation points are still absent from the live
-  ``foundation.toml``, so this file fails deliberately when FT-17.03 publishes
-  them (FT-17.02 / ADR 0063 published the other three);
-* ``discover_components()`` returns exactly three archetypes, two capabilities
+* every extension point the contract reserved is now published -- the three
+  host-link points by FT-17.02, the two ``[dependency-groups]`` points by
+  FT-17.03 -- and this file fails deliberately if any is walked back;
+* ``discover_components()`` returns exactly three archetypes, ten capabilities
   and -- since FT-17.02 -- one platform (``github``), enforcing
   FT-ROADMAP-01-EX-03's "no new archetype";
 * and a four-component synthetic catalogue -- overlaid on the *real* production
@@ -17,8 +19,7 @@ and reserves eight extension points. These tests keep it honest:
   still proves the decided platform shape composes independently of the shipped
   ``github`` component: a path-free descriptor with one option, a capability
   step reaching a platform target against tier order, and the cross-tier
-  ``requires``/``conflicts`` edges (``dependabot`` / ``renovate`` still unshipped
-  at FT-17.03) rejecting before any render.
+  ``requires``/``conflicts`` edges rejecting before any render.
 """
 
 from __future__ import annotations
@@ -68,17 +69,20 @@ _CONTRACT_OWNERS = {
     "renovate",
 }
 
-# FT-17.02 / ADR 0063 published the three host-link points; FT-17.03 still owns
-# the two `[dependency-groups]` points below.
-_RESERVED_FOUNDATION_POINTS = {
-    "pyproject-named-dependency-groups",
-    "pyproject-dependency-group-includes",
-}
+# FT-17.02 / ADR 0063 published the three host-link points; FT-17.03 / ADR 0064
+# published the two `[dependency-groups]` points and `api-reference`. Nothing
+# in this contract's reserved set is unpublished any more.
+_RESERVED_FOUNDATION_POINTS: set[str] = set()
 
 _PUBLISHED_BY_FT_1702 = {
     "pyproject-project-urls",
     "contributing-project-shape",
     "security-project-shape",
+}
+
+_PUBLISHED_BY_FT_1703 = {
+    "pyproject-named-dependency-groups",
+    "pyproject-dependency-group-includes",
 }
 
 
@@ -210,18 +214,12 @@ def test_dependency_updates_names_both_updaters() -> None:
     assert _contract_ownership()["dependency_updates"] == {"dependabot", "renovate"}
 
 
-def test_reserved_foundation_points_are_not_yet_published() -> None:
-    """Tripwire: fails when FT-17.03 adds one of the two `[dependency-groups]`
-    points to foundation.toml, forcing docs/platform-and-tooling-parity.md and
-    ADR 0060 to be revisited. FT-17.02 / ADR 0063 already published the three
-    host-link points."""
-    live = _live_foundation_point_ids()
-    for point in _RESERVED_FOUNDATION_POINTS:
-        assert point not in live, (
-            f"{point!r} is now published -- update the contract to move it out "
-            "of the reserved set"
-        )
-        assert point in _CONTRACT.read_text(encoding="utf-8")
+def test_no_foundation_point_this_contract_named_stays_reserved() -> None:
+    """Every extension point FT-15.03 / ADR 0060 reserved has since been
+    published -- the three host-link points by FT-17.02 / ADR 0063 and the two
+    `[dependency-groups]` points by FT-17.03 / ADR 0064. This asserts the
+    reserved set is empty; a non-empty set means a point was walked back."""
+    assert not _RESERVED_FOUNDATION_POINTS
 
 
 def test_ft_1702_host_link_points_are_published() -> None:
@@ -231,6 +229,16 @@ def test_ft_1702_host_link_points_are_published() -> None:
     contract = _CONTRACT.read_text(encoding="utf-8")
     for point in _PUBLISHED_BY_FT_1702:
         assert point in live, f"{point!r} should be published by FT-17.02"
+        assert point in contract
+
+
+def test_ft_1703_dependency_group_points_are_published() -> None:
+    """The two `[dependency-groups]` points ADR 0064 ships are live in
+    foundation.toml and still named by the contract."""
+    live = _live_foundation_point_ids()
+    contract = _CONTRACT.read_text(encoding="utf-8")
+    for point in _PUBLISHED_BY_FT_1703:
+        assert point in live, f"{point!r} should be published by FT-17.03"
         assert point in contract
 
 
@@ -251,15 +259,27 @@ def test_contract_states_the_exclusion_and_the_archetype_set() -> None:
 # --- FT-ROADMAP-01-EX-03: no new archetype ---------------------------------
 
 
-def test_discovery_is_three_archetypes_two_capabilities_and_one_platform() -> None:
+def test_discovery_is_three_archetypes_ten_capabilities_and_one_platform() -> None:
     """Runs against the real installed catalogue -- no overlay. FT-17.02 added
-    the first platform (``github``); the archetype set is still exactly
-    ``cli`` / ``data-science`` / ``library``."""
+    the first platform (``github``); FT-17.03 added the eight tooling
+    capabilities. The archetype set is still exactly
+    ``cli`` / ``data-science`` / ``library`` (FT-ROADMAP-01-EX-03)."""
     by_kind: dict[str, list[str]] = {}
     for component in discover_components():
         by_kind.setdefault(component.kind, []).append(component.id)
     assert sorted(by_kind["archetype"]) == ["cli", "data-science", "library"]
-    assert len(by_kind["capability"]) == 2
+    assert sorted(by_kind["capability"]) == [
+        "changelog",
+        "coverage",
+        "dependabot",
+        "documentation",
+        "dotenv-example",
+        "jupyter",
+        "pre-commit",
+        "pyright",
+        "renovate",
+        "scientific-python",
+    ]
     assert by_kind["platform"] == ["github"]
 
 
