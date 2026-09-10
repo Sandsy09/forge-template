@@ -285,7 +285,8 @@ def test_capability_extension_points_keep_protocols_and_component_versions() -> 
     info = get_engine_info()
     assert info.package_version == "0.4.1"
     assert info.projectspec_protocols == (1,)
-    assert info.component_manifest_protocols == (1, 2)
+    # (1, 2) when FT-11.01 landed; FT-17.01 added manifest protocol 3.
+    assert info.component_manifest_protocols == (1, 2, 3)
 
     for archetype in ("library", "cli"):
         manifest = load_component_manifest(

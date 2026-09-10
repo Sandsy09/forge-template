@@ -17,10 +17,18 @@ the reproducible rendering that consumes it.
 [ADR 0059](adr/0059-generation-provenance-and-reproducible-updates.md) records
 the decisions.
 
-This document decides no runtime behaviour. It adds no `EngineErrorCode`
-value, no public name, no protocol increment, no component or package version
-bump, and no `copier.yml` change. The names it reserves are implemented by the
-Stage 17 children above.
+This document is the contract; it decided no runtime behaviour itself.
+[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) /
+[ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md) has since
+implemented every name it reserves — the `GenerationMetadata` model on
+`RenderedProject.metadata`, `parse_generation_metadata` /
+`verify_generation_metadata`, the two `EngineErrorCode` values,
+`EngineInfo.metadata_version`, `PlannedFile.regeneration`, manifest protocol
+`3`, and `DEFAULT_GENERATION_METADATA_TARGET` — additively, with no generated
+content or `copier.yml` change and no package version bump. Where this
+document still says "reserved" or "FT-17.01's to finalise", read it as the
+contract that was fixed before the implementation; the implementation is
+recorded in ADR 0062.
 
 ## Why this exists
 
@@ -63,9 +71,13 @@ presentation. Nothing here moves any of those toward the provider.
 
 ## The generation metadata document
 
-One JSON document per generated project. The client persists it (the filename
-is a client decision — see "What this contract does not decide") and passes it
-back to the engine to reproduce or update.
+One JSON document per generated project. The client persists it — at
+`DEFAULT_GENERATION_METADATA_TARGET`, `.forge/generation.json`, by documented
+default (ADR 0062; the client still owns writing and committing it) — and
+passes it back to the engine to reproduce or update. `GenerationMetadata`
+models this shape; `GenerationMetadata.to_json()` is its canonical
+serialisation (sorted keys, two-space indent, trailing newline, no
+`reproduction` key on an `exact` render).
 
 | Field | Type | Meaning |
 | --- | --- | --- |
@@ -93,11 +105,15 @@ allowlist "Secret-free persisted and displayed data" makes executable.
   cannot hash itself, which is why the metadata is a provider-assembled
   document and not just another rendered target.
 - **`regeneration`** — `"replace"` (the default) or `"skip-if-exists"`. The
-  owning manifest declares a target regeneration-unsafe; today that set is
-  `CHANGELOG.md` and `.env`, matching `copier.yml`'s `_skip_if_exists`. The
-  flag travels with whoever owns the content, so a documentation or changelog
-  owner added later carries its own. The engine only records the disposition;
-  the client applies the skip.
+  owning component declares a target regeneration-unsafe through a manifest
+  protocol `3` `[[regeneration]]` record (ADR 0062); the reference set is
+  `CHANGELOG.md` and `.env`, matching `copier.yml`'s `_skip_if_exists`, and no
+  shipped component declares one yet — [FT-17.03](https://github.com/Sandsy09/forge-template/issues/152)
+  adds the first. The flag travels with whoever owns the content, so a
+  documentation or changelog owner carries its own. A Foundation-owned target
+  is always `"replace"` — Foundation declares no such record (ADR 0062
+  decision 2). The engine records the disposition in `PlannedFile.regeneration`
+  and the metadata; the client applies the skip.
 
 ## Identity and reproduction
 
@@ -158,13 +174,16 @@ Moving or deleting a templated path breaks a naive update: the user's local
 edits go with the old path and a fresh copy of the new path lands beside them
 ([invariant 3](invariants.md#3-moving-or-deleting-files-under-template-breaks-updates)).
 The engine's answer is the same shape as Copier's `_migrations`: the owning
-component or Foundation declares `{ from, to, since }` records, where `since`
-is the owner version that introduced the move. During an update the provider
+component declares `[[renames]]` records with `from`, `to` and `since`
+(manifest protocol `3`, ADR 0062), where `since` is the canonical PEP 440
+component version that introduced the move. During an update the provider
 surfaces the records whose `since` falls between the recorded component
 versions and the current ones; the client applies each move before diffing, so
-the edit is preserved. The catalogue declares none today; the field names are
-[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150)'s to finalise
-against the manifest schema.
+the edit is preserved. The catalogue declares none today. Foundation declares
+no rename records — a Foundation path move waits for a `foundation_version`
+bump (ADR 0062 decision 2). Surfacing which records apply between two versions,
+and the `unchanged / added / removed / changed / renamed` classifier, are
+[FT-17.04](https://github.com/Sandsy09/forge-template/issues/153)'s.
 
 ## Unavailable historical provider
 
@@ -186,20 +205,23 @@ next update knows the merge base was lost.
 
 ## Failure taxonomy
 
-Metadata the engine is asked to read fails through two **reserved**
-`EngineErrorCode` values,
-[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150)'s to add:
+Metadata the engine is asked to read fails through two `EngineErrorCode`
+values, added by [FT-17.01](https://github.com/Sandsy09/forge-template/issues/150)
+/ ADR 0062:
 
-| Reserved code | Raised when |
+| Code | Raised when |
 | --- | --- |
-| `invalid-generation-metadata` | the document is malformed, missing required fields, internally inconsistent, or a digest does not match a reproduced target |
+| `invalid-generation-metadata` | the document is malformed, missing required fields, internally inconsistent, or (from `verify_generation_metadata`) a digest does not match a reproduced target |
 | `unsupported-generation-metadata` | `metadata_version` is outside the engine's supported set, or a recorded protocol integer is |
 
-`ForgeEngineError.operation` is `parse` or `validate` for both — never
-`render`. A corrupt provenance document is always distinguishable from a
-malformed generation request. Diagnostics carry the field path and a fixed
-safe message only: no rendered content, no secret, no absolute path — the same
-discipline [notebook-data-and-model-safeguards.md](notebook-data-and-model-safeguards.md)
+`parse_generation_metadata` runs the closed-world structural check and the
+negotiation; `verify_generation_metadata` runs the digest and coverage check
+against a re-rendered project. `ForgeEngineError.operation` is `parse` or
+`validate` for both codes — never `render`. A corrupt provenance document is
+always distinguishable from a malformed generation request. Diagnostics carry
+the field path and a fixed safe message only: no rendered content, no secret,
+no absolute path — the same discipline
+[notebook-data-and-model-safeguards.md](notebook-data-and-model-safeguards.md)
 holds notebook diagnostics to.
 
 ## Secret-free persisted and displayed data
@@ -237,27 +259,29 @@ embedded — a policy is selection input, never rendered content
 
 ## Version negotiation
 
-Generation metadata is a **ninth versioned axis**
-([compatibility-policy.md](compatibility-policy.md#reserved-axis-generation-metadata)),
+Generation metadata is the **ninth versioned axis**
+([compatibility-policy.md](compatibility-policy.md#generation-metadata-metadata_version)),
 reserved by this contract and published by
-[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) through
-`get_engine_info()` as a backward-compatible addition. A client reading a
-document an older engine wrote negotiates `metadata_version` before parsing it,
-exactly as it already negotiates the ProjectSpec and component-manifest
-protocol tuples. An unsupported value fails closed as
-`unsupported-generation-metadata` with the four report facts; there is no
-automatic downgrade.
+[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) / ADR 0062
+through `get_engine_info().metadata_version` as a backward-compatible addition.
+A client reading a document an older engine wrote negotiates `metadata_version`
+before parsing it, exactly as it already negotiates the ProjectSpec and
+component-manifest protocol tuples. `parse_generation_metadata` fails an
+unsupported value closed as `unsupported-generation-metadata` with the four
+report facts; there is no automatic downgrade.
 
 ## What this contract does not decide
 
 Reserved for other owners:
 
-- the persisted metadata filename and on-disk location, the merge algorithm,
-  and the dry-run, cancellation and rollback policy — all client-side
-  ([CF-16.02](https://github.com/Sandsy09/create-forge/issues/156));
-- the concrete field names and manifest shape for the rename and
-  regeneration-disposition declarations
-  ([FT-17.01](https://github.com/Sandsy09/forge-template/issues/150));
+- the merge algorithm, and the dry-run, cancellation and rollback policy — all
+  client-side ([CF-16.02](https://github.com/Sandsy09/create-forge/issues/156));
+  the on-disk location is `.forge/generation.json` by the default this contract
+  and CF-16.02 agreed (ADR 0062), still written and committed by the client;
+- ~~the concrete field names and manifest shape for the rename and
+  regeneration-disposition declarations~~ — settled by
+  [ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md) as the
+  two-array `[[renames]]` / `[[regeneration]]` manifest protocol `3` shape;
 - which questions become generation metadata versus a component option — the
   parity inventory's seven unrouted questions are
   [FT-15.03](https://github.com/Sandsy09/forge-template/issues/148)'s to
@@ -281,25 +305,29 @@ rollback rules and closes the flagged parity rows by reference to FT-17.03.
 
 ## Validation
 
-`tests/test_generation_provenance.py` runs under `uv run poe check`. Following
-[ADR 0040](adr/0040-organisation-policy-reference-fixture.md)'s precedent, a
-test-only reference module `tests/generation_provenance_contract.py` builds a
-metadata document for a spec **from the public facade only** and validates one,
-raising its own `MetadataError` — never `ForgeEngineError`, so the public error
-surface stays where this issue leaves it. The tests prove, against a real
-`library` render:
+`tests/test_generation_provenance.py` runs under `uv run poe check` and drives
+the shipped surface (`RenderedProject.metadata`, `to_json()`,
+`parse_generation_metadata`, `verify_generation_metadata`) directly since
+FT-17.01 / ADR 0062. `tests/generation_provenance_contract.py` keeps only what
+a test must *not* read out of the engine — the documented field set, the
+classification vocabulary, and the `copier.yml`-derived `_skip_if_exists` set;
+its former shadow builder and validator are retired. The tests prove, against a
+real `library` render:
 
-- a document built for the reference spec reproduces its own digests when
-  re-rendered from the embedded spec alone;
-- its `output` ownership map equals `plan_generation()`'s, so the contract
-  cannot over-claim;
+- the document a render attaches verifies against a fresh render of its own
+  embedded spec, and its canonical JSON round-trips through
+  `parse_generation_metadata`;
+- its `output` ownership and `regeneration` map equals `plan_generation()`'s,
+  so the contract cannot over-claim;
 - every recorded component id and version is a real `discover_components()`
   entry and `provider.version` is `get_engine_info().package_version`;
 - every string leaf traces to the allowlist above;
-- the field table here and the reference document are a bijection;
-- both reserved `EngineErrorCode` values are absent from the shipped enum —
-  a deliberate tripwire that fails when FT-17.01 adds them, forcing this
-  contract to be revisited;
+- the field table here and `GenerationMetadata`'s fields are a bijection;
+- both `EngineErrorCode` values are shipped, appear in this document, and every
+  static and live negative fails with the documented code and an `operation` in
+  `{parse, validate}`;
+- `tests/fixtures/generation_metadata/example-library.json` is a fully live
+  reference that parses, negotiates and verifies against a real render;
 - classifying two real renders yields only the documented vocabulary, with a
   synthetic rename record exercising the `renamed` path the catalogue cannot
-  reach yet.
+  reach yet (FT-17.04 ships the real classifier).

@@ -35,7 +35,7 @@ bundled components. It complements, and does not restate:
 
 ## The versioned axes
 
-Eight surfaces version independently. Changing one never implicitly changes
+Nine surfaces version independently. Changing one never implicitly changes
 another.
 
 | Axis | What it versions | Client-visible today |
@@ -44,6 +44,7 @@ another.
 | ProjectSpec protocol | The generation-request wire schema | Yes — `get_engine_info().projectspec_protocols` |
 | Component manifest protocol | The component TOML metadata schema | Yes — `get_engine_info().component_manifest_protocols` |
 | Component content version | One component's own content and compatibility surface (PEP 440) | Yes — `ComponentDescriptor.version` per discovered component |
+| Generation metadata | The provenance document's schema (`metadata_version`) | Yes — `get_engine_info().metadata_version` (published by FT-17.01) |
 | Option-schema protocol | The `options_schema` JSON shape a component's options follow | No |
 | Foundation source protocol | The internal TOML shape of the implicit Foundation content source | No |
 | Organisation-policy protocol | The strict JSON policy wire format | No — doc-only by design, see [organisation-policy.md](organisation-policy.md) |
@@ -51,6 +52,10 @@ another.
 
 The last three are deliberately unpublished; see "What the engine publishes
 for negotiation" below for why that is a considered choice, not a gap.
+Generation metadata was reserved by FT-15.02 and moved into this table when
+[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) /
+[ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md) published
+it through `get_engine_info()`.
 
 [FT-15.03](https://github.com/Sandsy09/forge-template/issues/148) /
 [ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) reserves
@@ -78,19 +83,22 @@ The classified move is:
 - **`forge-template` package** → a new minor line, `0.5.0`. Below `1.0` a
   supported range is minor-scoped, so `create-forge`'s `>=0.4.1,<0.5` cannot
   drift into it and must widen deliberately; `1.0.0` is explicitly not
-  promised.
-- **Component manifest protocol** → `(1, 2, 3)`. The rename and
-  regeneration-disposition records
-  [FT-15.02](https://github.com/Sandsy09/forge-template/issues/147) reserved
-  are new manifest fields, and the models forbid unknown keys, so they cannot
-  ride protocol `2`. Protocol-`1` and protocol-`2` manifests stay accepted
-  unchanged — this is a backward-compatible protocol addition.
+  promised. FT-17.06 performs this release; `main` stays on `0.4.1` until then.
+- **Component manifest protocol** → `(1, 2, 3)`, **done** by
+  [FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) /
+  [ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md). The
+  owner-declared rename and regeneration-disposition records are new manifest
+  fields, and the models forbid unknown keys, so they could not ride protocol
+  `2`. Protocol-`1` and protocol-`2` manifests stay accepted unchanged — a
+  backward-compatible protocol addition.
 - **Generation metadata** → published `metadata_version = 1` through
-  `get_engine_info()` (FT-17.01), moving it out of the "Reserved axis" section
-  above and into the live table.
-- **Every other axis, and the whole public facade bar three additive names**
-  (the `metadata_version` field and the two reserved `EngineErrorCode`
-  values) → unchanged. That is a requirement on Stage 17, not a prediction.
+  `get_engine_info()`, **done** by FT-17.01 / ADR 0062; it now sits in the
+  "Current compatibility state" table below.
+- **Every other axis, and the whole public facade bar the additive
+  generation-metadata names** (the `metadata_version` field, the two
+  `EngineErrorCode` values, `PlannedFile.regeneration`,
+  `RenderedProject.metadata`, and the `GenerationMetadata` surface) →
+  unchanged. That is a requirement on Stage 17, not a prediction.
 
 Provider release rollback is immutable-forward: a defective release is yanked
 and corrected in a higher version, never mutated, and the `0.4.x` line stays
@@ -98,20 +106,23 @@ supported for this document's deprecation window past the cutover so a client
 can pin back. Full detail and the acceptance matrix live in
 [cutover-compatibility-and-acceptance.md](cutover-compatibility-and-acceptance.md).
 
-## Reserved axis: generation metadata
+## Generation metadata (`metadata_version`)
 
 [FT-15.02](https://github.com/Sandsy09/forge-template/issues/147)'s
-[generation provenance contract](generation-provenance.md) reserves a ninth
+[generation provenance contract](generation-provenance.md) reserved a ninth
 axis: `metadata_version`, the schema version of the document the engine hands
-a client so a generated project can be reproduced or updated. It is not in the
-table above because nothing publishes or emits it yet —
-[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) adds it to
-`get_engine_info()` as a backward-compatible addition and lists it in the
-"Current compatibility state" table below. Until then it version-controls
-nothing. When shipped it is client-visible, negotiated exactly like the
-protocol tuples, and governed by every rule in this document; an unsupported
-value fails closed as `unsupported-generation-metadata` with the four report
-facts from "Reporting an unsupported Forge version".
+a client so a generated project can be reproduced or updated.
+[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) /
+[ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md) published
+it through `get_engine_info().metadata_version` as a backward-compatible
+addition; it is now in "The versioned axes" and "Current compatibility state"
+tables. It is client-visible, negotiated exactly like the protocol tuples, and
+governed by every rule in this document; an unsupported recorded value fails
+closed as `unsupported-generation-metadata` with the four report facts from
+"Reporting an unsupported Forge version". The document itself is
+`.forge/generation.json` by documented default
+([DEFAULT_GENERATION_METADATA_TARGET](generation-provenance.md#version-negotiation));
+the client owns writing, reading and committing it.
 
 ## Compatible ranges
 
@@ -243,7 +254,7 @@ rendered bytes.
 
 ## Current compatibility state
 
-Living snapshot, reviewed 2026-09-08. Advancing it in line with the rules
+Living snapshot, reviewed 2026-09-10. Advancing it in line with the rules
 above does not require a new ADR; a semantic change to those rules does (see
 "Ownership and change process").
 
@@ -251,7 +262,8 @@ above does not require a new ADR; a semantic change to those rules does (see
 | --- | --- |
 | `forge-template` package | `0.4.1` |
 | ProjectSpec protocol | `1` |
-| Component manifest protocol | `1`, `2` |
+| Component manifest protocol | `1`, `2`, `3` |
+| Generation metadata (`metadata_version`) | `1` |
 | `library` component | `1.0.1` |
 | `cli` component | `1.0.1` |
 | `data-science` component | `1.0.0` |

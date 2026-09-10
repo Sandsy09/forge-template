@@ -73,18 +73,22 @@ extension-point inventory, and — reserved by FT-15.02 — a ninth axis,
 generation metadata. The cutover moves exactly three of them: the package
 version, the component-manifest protocol, and the published state of
 generation metadata. Every other axis is unchanged, and that is a requirement
-on the implementing stage, not a prediction.
+on the implementing stage, not a prediction. FT-17.01 / ADR 0062 has since
+moved the component-manifest protocol to `(1, 2, 3)` and published
+`metadata_version = 1`; the package version stays on the `0.4` line until
+FT-17.06 releases `0.5.0`. The "Current" column below is the live engine
+state.
 
 | Axis | Current | Cutover line | Change class |
 | --- | --- | --- | --- |
-| `forge-template` package | `0.4.1` | `0.5.0` | New minor compatibility line |
+| `forge-template` package | `0.4.1` | `0.5.0` | New minor compatibility line — FT-17.06 |
 | ProjectSpec protocol | `1` | `1` | Unchanged — every unrouted question became a selection or a component option (FT-15.03), so no request-schema field is added |
-| Component manifest protocol | `1`, `2` | `1`, `2`, `3` | **Moves** — the rename and regeneration-disposition records FT-15.02 reserved are new manifest fields, and the manifest models forbid unknown keys, so they cannot ride protocol `2` |
+| Component manifest protocol | `1`, `2`, `3` | `1`, `2`, `3` | **Moved (FT-17.01)** — the owner-declared rename and regeneration-disposition records are manifest protocol `3` fields, and the manifest models forbid unknown keys, so they could not ride protocol `2`; protocol-`1` and protocol-`2` manifests are accepted unchanged |
 | Option-schema protocol | `1`, `2` | `1`, `2` | Unchanged — `coverage`'s `fail_under` is an `integer` option with a `default`, already expressible at protocol `2` |
-| Foundation source protocol | `1` | `1` | Unchanged — the five new Foundation extension points are content, not a change to the source's TOML shape, exactly as FT-11.01 / ADR 0049 added three points without moving `foundation_version` |
+| Foundation source protocol | `1` | `1` | Unchanged — the five new Foundation extension points are content, not a change to the source's TOML shape, exactly as FT-11.01 / ADR 0049 added three points without moving `foundation_version`; the rename and regeneration records are component-only (ADR 0062) |
 | Organisation-policy protocol | `1` | `1` | Unchanged (documentation-only by design) |
 | Extension-point inventory | 11 Foundation points | 16 Foundation points, plus `ci-jobs` / `ci-steps` / `api-reference` on component content | Additive only; no rename, no removal |
-| Generation metadata (`metadata_version`) | Reserved, unpublished | `1`, published through `get_engine_info()` | New client-visible axis (FT-17.01) |
+| Generation metadata (`metadata_version`) | `1` | `1` | **Published (FT-17.01)** through `get_engine_info().metadata_version`; was reserved and unpublished at `0.4.1` |
 | `library` component | `1.0.1` | `1.1.0` if it fills a new extension point, else `1.0.1` | Additive |
 | `cli` component | `1.0.1` | `1.1.0` if it fills a new extension point, else `1.0.1` | Additive |
 | `data-science` component | `1.0.0` | `1.1.0` if it fills a new extension point, else `1.0.0` | Additive |
@@ -128,25 +132,35 @@ definition* today. Keeping the new fields on `2` would make one protocol
 integer name two incompatible schemas — the exact thing a protocol integer
 exists to prevent. So the rename and regeneration-disposition records FT-15.02
 reserved land at manifest protocol `3`, which
-[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) implements;
-the engine then publishes `component_manifest_protocols = (1, 2, 3)` and
-accepts protocol-`1` and protocol-`2` manifests unchanged. This is a
+[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) /
+[ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md)
+implemented as the two-array `[[renames]]` / `[[regeneration]]` shape; the
+engine now publishes `component_manifest_protocols = (1, 2, 3)` and accepts
+protocol-`1` and protocol-`2` manifests unchanged. This is a
 backward-compatible protocol addition under the compatibility policy: the
 integer moves because a new schema shape exists, not because an old one broke.
+Foundation declares neither record — `foundation_version` stays `1` — so a
+Foundation-owned target is always `replace` and never renamed (ADR 0062).
 
 ## The public facade is additive only
 
 Every name exported from `forge_template` keeps its signature and its result
 fields through the cutover. Nothing is renamed, removed, or narrowed, and no
-deprecation is opened. The cutover *adds*:
+deprecation is opened. The cutover *adds* — FT-17.01 / ADR 0062 has landed all
+of these:
 
-- `metadata_version` on `EngineInfo` (FT-17.01);
+- `metadata_version` on `EngineInfo`;
 - the two `EngineErrorCode` values FT-15.02 reserved,
-  `invalid-generation-metadata` and `unsupported-generation-metadata`
-  (FT-17.01);
-- the generation-metadata hand-off surface FT-17.01 and
-  [FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) build,
-  whose concrete shape is theirs to finalise.
+  `invalid-generation-metadata` and `unsupported-generation-metadata`, each
+  carrying `operation` only in `{parse, validate}`;
+- the generation-metadata hand-off surface: `GenerationMetadata` (and its
+  nested `ProviderIdentity` / `MetadataProtocols` / `SelectedComponent` /
+  `OutputRecord` / `ReproductionRecord` models) on `RenderedProject.metadata`,
+  the `parse_generation_metadata` and `verify_generation_metadata` functions,
+  and the `GENERATION_METADATA_VERSION` and
+  `DEFAULT_GENERATION_METADATA_TARGET` constants. `PlannedFile` gains a
+  `regeneration` field. [FT-17.04](https://github.com/Sandsy09/forge-template/issues/153)
+  builds the reproducible-render path that consumes this surface.
 
 A client written against `0.4.1` that ignores the new names keeps working
 against `0.5.0` within a widened range. That is the whole content of the
@@ -180,9 +194,9 @@ asserts it.
 
 ## Structured safe failures
 
-The post-cutover `EngineErrorCode` set is the seven shipped values plus the
-two FT-15.02 reserved. `operation` is the engine's own string for the phase
-that failed:
+The `EngineErrorCode` set is the seven original values plus the two FT-15.02
+reserved, which FT-17.01 shipped. `operation` is the engine's own string for
+the phase that failed:
 
 | Code | `operation` today | Class |
 | --- | --- | --- |
@@ -193,12 +207,12 @@ that failed:
 | `generation-plan-failed` | `plan` | planning |
 | `template-render-failed` | `render` | rendering |
 | `generated-project-invalid` | `validate-output` | post-render |
-| `invalid-generation-metadata` (reserved) | `parse` or `validate` | request |
-| `unsupported-generation-metadata` (reserved) | `parse` or `validate` | request |
+| `invalid-generation-metadata` | `parse` or `validate` | request |
+| `unsupported-generation-metadata` | `parse` or `validate` | request |
 
 No request, selection, options or metadata failure carries
 `operation="render"`: a corrupt request is always distinguishable from a
-rendering fault, and the two reserved metadata codes stay in the `parse` /
+rendering fault, and the two metadata codes stay in the `parse` /
 `validate` band the same way. Diagnostics carry a field path and a fixed safe
 message only — no rendered content, no secret, no absolute path — the same
 discipline
@@ -345,7 +359,7 @@ is narrow.
 
 | Issue | Fixed by Stage 15 | Still owned by the issue |
 | --- | --- | --- |
-| [FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) | The metadata document shape, the reproducibility guarantee, the reserved axis and the two error codes (FT-15.02); manifest protocol `3` as the home for the rename and regeneration-disposition records (here) | The concrete manifest-`3` field names and schema, the `get_engine_info()` addition, the public metadata hand-off surface |
+| [FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) | The metadata document shape, the reproducibility guarantee, the reserved axis and the two error codes (FT-15.02); manifest protocol `3` as the home for the rename and regeneration-disposition records (here) | **Done ([ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md))** — the two-array manifest-`3` schema, `EngineInfo.metadata_version`, `RenderedProject.metadata`, `parse_generation_metadata` / `verify_generation_metadata`, `DEFAULT_GENERATION_METADATA_TARGET`; Foundation deferred |
 | [FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) | One `github` platform, one required `organisation` option, the two CI points, the three Foundation host-link points, the `requires`/`conflicts` edges (FT-15.03) | The manifest bytes, the content trees, the CI matrix shape, the pinned action SHAs, whether `library`/`cli`/`data-science` move a version |
 | [FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) | The eight-capability set, the two dependency-group points, the `api-reference` point (FT-15.03); the nine `needs a bounded issue` rows resolve here (below) | Each capability's owned files, options, tasks and dependency bounds; whether a `pyproject` tool-config point is published or `[tool.coverage]` / `[tool.pyright]` relocate to standalone files |
 | [FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) | The old/new/working-tree diff model, the classification vocabulary, the unavailable-provider fail-closed rule and the degraded path (FT-15.02) | The reproducible-render implementation and the new-render inputs it hands the client |
@@ -436,15 +450,20 @@ document itself. It proves:
   `render_project`;
 - the contract names FT-ROADMAP-01-EX-02 and FT-ROADMAP-01-EX-04 literally.
 
-Tripwires — each fails deliberately when Stage 17 lands, forcing this contract
-back into step with the implementation, exactly as FT-15.02's reserved-code
-and FT-15.03's reserved-point tripwires do:
+Tripwires — each was written to fail deliberately when Stage 17 lands, forcing
+this contract back into step with the implementation, exactly as FT-15.02's
+reserved-code and FT-15.03's reserved-point tripwires did. FT-17.01 / ADR 0062
+has since turned four of them over:
 
-- `get_engine_info().package_version` is still on the `0.4` line;
-- `SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS == (1, 2)` — protocol `3` reserved,
-  not published;
-- `set(EngineErrorCode)` is still exactly the seven shipped values;
-- `EngineInfo` has no `metadata_version` field;
-- `forge_template.__all__` is exactly the recorded set of names;
+- `get_engine_info().package_version` is still on the `0.4` line — **holds**;
+  FT-17.06 releases `0.5.0`;
+- `SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS == (1, 2, 3)` — protocol `3` is
+  published, and a protocol-`1` or protocol-`2` manifest is still accepted;
+- `set(EngineErrorCode)` is the seven original values plus
+  `invalid-generation-metadata` and `unsupported-generation-metadata`, each
+  restricted to `operation` in `{parse, validate}`;
+- `EngineInfo` publishes `metadata_version == 1`;
+- `forge_template.__all__` adds the generation-metadata models, functions and
+  constants and renames or removes nothing;
 - `copier.yml` carries no `_migrations` block — decision 3's retention,
-  checked rather than asserted.
+  checked rather than asserted; **holds**.

@@ -33,6 +33,7 @@ from forge_template.foundation_source import (
     FOUNDATION_SOURCE_PROTOCOL_VERSION,
     load_foundation_source,
 )
+from forge_template.generation_metadata import GENERATION_METADATA_VERSION
 from forge_template.project_spec import PROJECT_SPEC_PROTOCOL_VERSION
 from forge_template.template_variables import OPTION_SCHEMA_PROTOCOL_VERSIONS
 
@@ -82,8 +83,9 @@ def test_published_compatibility_state_matches_the_engine() -> None:
     assert (
         info.component_manifest_protocols
         == COMPONENT_MANIFEST_PROTOCOL_VERSIONS
-        == (1, 2)
+        == (1, 2, 3)
     )
+    assert info.metadata_version == GENERATION_METADATA_VERSION == 1
     assert OPTION_SCHEMA_PROTOCOL_VERSIONS == (1, 2)
     assert FOUNDATION_SOURCE_PROTOCOL_VERSION == 1
 

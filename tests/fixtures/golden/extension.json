@@ -11,6 +11,7 @@
         "id": "coverage",
         "kind": "component"
       },
+      "regeneration": "replace",
       "target": ".coveragerc"
     },
     "ci.yml": {
@@ -24,6 +25,7 @@
         "id": "github",
         "kind": "component"
       },
+      "regeneration": "replace",
       "target": "ci.yml"
     },
     "pyproject.toml": {
@@ -32,6 +34,7 @@
         "id": "library",
         "kind": "component"
       },
+      "regeneration": "replace",
       "target": "pyproject.toml"
     }
   },

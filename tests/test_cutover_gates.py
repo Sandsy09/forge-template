@@ -14,11 +14,12 @@ gap. These tests:
 * check FT-15.04's parity-row reconciliation actually landed -- no matrix row
   in engine-default-parity.md still carries the ``needs a bounded issue``
   marker, and every provider-owned ``gap`` row now cites a filed issue;
-* and tripwire on each classified target (package still ``0.4.x``, manifest
-  protocols still ``(1, 2)``, exactly the seven shipped error codes, no
-  ``metadata_version`` on ``EngineInfo``, a frozen public facade, no
-  ``_migrations`` block) so this module fails deliberately the moment Stage 17
-  moves the line.
+* and tripwire on each classified target: the package is still ``0.4.x``
+  (FT-17.06 moves it) and ``copier.yml`` still carries no ``_migrations``
+  block, while FT-17.01 / ADR 0062 has moved manifest protocols to
+  ``(1, 2, 3)``, shipped the two generation-metadata error codes, published
+  ``metadata_version`` on ``EngineInfo``, and grown the public facade
+  additively -- the assertions below track the live state.
 """
 
 from __future__ import annotations
@@ -64,9 +65,10 @@ _PROVIDER_CHILDREN = {
     "FT-18.01",
 }
 
-# The seven EngineErrorCode values shipped in 0.4.1. FT-17.01 adds two more;
-# this set is a tripwire, not a moving target.
-_SHIPPED_ERROR_CODES = {
+# The seven EngineErrorCode values shipped through 0.4.1, plus the two
+# generation-metadata codes FT-17.01 / ADR 0062 added. The whole set is the
+# tripwire now: nothing else may join it in the cutover.
+_ORIGINAL_ERROR_CODES = {
     "invalid-project-spec",
     "component-discovery-failed",
     "invalid-component-selection",
@@ -75,11 +77,19 @@ _SHIPPED_ERROR_CODES = {
     "template-render-failed",
     "generated-project-invalid",
 }
+_GENERATION_METADATA_ERROR_CODES = {
+    "invalid-generation-metadata",
+    "unsupported-generation-metadata",
+}
+_SHIPPED_ERROR_CODES = _ORIGINAL_ERROR_CODES | _GENERATION_METADATA_ERROR_CODES
 
-# The public facade as of 0.4.1. The cutover adds names additively; this
-# frozen set fails deliberately when one lands so the contract is revisited.
+# The public facade as of 0.4.1, plus the additive generation-metadata names
+# FT-17.01 / ADR 0062 added. The cutover renames and removes nothing; this set
+# fails deliberately when any other name lands so the contract is revisited.
 _FROZEN_PUBLIC_API = frozenset(
     {
+        "DEFAULT_GENERATION_METADATA_TARGET",
+        "GENERATION_METADATA_VERSION",
         "PROJECT_SPEC_PROTOCOL_VERSION",
         "SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS",
         "SUPPORTED_PROJECTSPEC_PROTOCOLS",
@@ -94,23 +104,31 @@ _FROZEN_PUBLIC_API = frozenset(
         "EngineInfo",
         "ForgeEngineError",
         "FoundationOwner",
+        "GenerationMetadata",
         "GenerationPlan",
+        "MetadataProtocols",
+        "OutputRecord",
         "PlannedExtension",
         "PlannedFile",
         "ProjectMetadata",
         "ProjectSpec",
+        "ProviderIdentity",
         "PythonSelection",
         "RenderedFile",
         "RenderedProject",
+        "ReproductionRecord",
+        "SelectedComponent",
         "SelectionProvenance",
         "discover_components",
         "get_engine_info",
         "map_legacy_library_answers",
+        "parse_generation_metadata",
         "parse_project_spec",
         "plan_generation",
         "render_project",
         "validate_project_spec",
         "validate_rendered_project",
+        "verify_generation_metadata",
     }
 )
 
@@ -356,40 +374,49 @@ def test_contract_names_its_exclusions_literally() -> None:
     assert "FT-ROADMAP-01-AC-05" in text
 
 
-# --- tripwires: fail deliberately when Stage 17 lands -----------------
+# --- axis state: FT-17.01 has moved two of the three, FT-17.06 moves the last
 
 
-def test_tripwire_package_is_still_on_the_0_4_line() -> None:
+def test_package_is_still_on_the_0_4_line() -> None:
     assert get_engine_info().package_version.startswith("0.4."), (
-        "package version moved -- the cutover has begun; revisit "
+        "package version moved -- FT-17.06 releases 0.5.0; revisit "
         "docs/cutover-compatibility-and-acceptance.md and this pin"
     )
 
 
-def test_tripwire_manifest_protocol_three_is_reserved_not_published() -> None:
-    assert SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS == (1, 2), (
-        "manifest protocol 3 is now published -- FT-17.01 has landed; update "
-        "the contract's classification table and the axis tripwire"
+def test_manifest_protocol_three_is_published_and_backward_compatible() -> None:
+    assert SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS == (1, 2, 3), (
+        "manifest protocol 3 (FT-17.01 / ADR 0062) is expected published; a "
+        "protocol-1 or protocol-2 manifest must still be accepted"
     )
+    assert get_engine_info().component_manifest_protocols == (1, 2, 3)
 
 
-def test_tripwire_error_code_set_is_exactly_the_seven_shipped() -> None:
-    assert {code.value for code in EngineErrorCode} == _SHIPPED_ERROR_CODES, (
-        "the EngineErrorCode set changed -- if FT-17.01 added the reserved "
-        "generation-metadata codes, move them out of the reserved list"
+def test_generation_metadata_error_codes_are_shipped() -> None:
+    shipped = {code.value for code in EngineErrorCode}
+    assert shipped == _SHIPPED_ERROR_CODES, (
+        "the EngineErrorCode set is the seven original values plus exactly the "
+        "two generation-metadata codes; nothing else may join it in the cutover"
     )
+    for code in (
+        EngineErrorCode.INVALID_GENERATION_METADATA,
+        EngineErrorCode.UNSUPPORTED_GENERATION_METADATA,
+    ):
+        assert code.value in _GENERATION_METADATA_ERROR_CODES
 
 
-def test_tripwire_engine_info_has_no_metadata_version_field() -> None:
-    assert "metadata_version" not in EngineInfo.model_fields, (
-        "EngineInfo.metadata_version is now published -- FT-17.01 has landed"
+def test_engine_info_publishes_metadata_version() -> None:
+    assert "metadata_version" in EngineInfo.model_fields, (
+        "EngineInfo.metadata_version is expected published -- FT-17.01 / ADR 0062"
     )
+    assert get_engine_info().metadata_version == 1
 
 
-def test_tripwire_public_facade_is_frozen() -> None:
+def test_public_facade_grows_only_additively() -> None:
     assert set(forge_template.__all__) == _FROZEN_PUBLIC_API, (
-        "forge_template.__all__ changed -- the cutover adds names additively; "
-        "confirm the change is intended and update _FROZEN_PUBLIC_API"
+        "forge_template.__all__ changed -- the cutover adds names additively "
+        "and renames or removes nothing; update _FROZEN_PUBLIC_API only for a "
+        "reviewed additive change"
     )
 
 

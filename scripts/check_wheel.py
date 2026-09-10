@@ -43,6 +43,7 @@ from pathlib import Path
 _MUST_CONTAIN = (
     "forge_template/engine.py",
     "forge_template/project_spec.py",
+    "forge_template/generation_metadata.py",
     # The Foundation content source and its manifest -- the wheel is
     # undiscoverable without foundation.toml, and unusable without content/.
     "forge_template/foundation/foundation.toml",

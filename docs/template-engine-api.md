@@ -3,10 +3,12 @@
 This is the canonical living contract for the supported `forge-template`
 engine facade. [ADR 0029](adr/0029-stable-template-engine-api.md) records the
 decision to expose it. The current compatibility line is package version
-`0.4.x`; its public facade is unchanged from `0.3.x`, while the installed
-catalogue adds the Data Science archetype and its two capabilities (see
-"Compatibility and cutover boundary" below). ProjectSpec and
-component-manifest protocol versions remain separate from the package version.
+`0.4.x`; its public facade carries the `0.3.x` names unchanged and adds the
+generation-metadata surface additively (FT-17.01 / ADR 0062 — see
+"Compatibility and cutover boundary" below), while the installed catalogue
+adds the Data Science archetype and its two capabilities. ProjectSpec,
+component-manifest and generation-metadata protocol versions remain separate
+from the package version.
 
 The facade is side-effect-free. It discovers only reviewed components bundled
 in the installed wheel, validates an effective ProjectSpec, plans composition,
@@ -33,18 +35,30 @@ from forge_template import (
     discover_components,
     get_engine_info,
     map_legacy_library_answers,
+    parse_generation_metadata,
     parse_project_spec,
     plan_generation,
     render_project,
     validate_project_spec,
     validate_rendered_project,
+    verify_generation_metadata,
 )
 ```
 
 The package also re-exports the ProjectSpec models needed by typed clients,
 the immutable discovery, planning, and rendering result models
-(`ComponentOwner`/`FoundationOwner` included), and the structured error
-types. The wheel includes `py.typed`.
+(`ComponentOwner`/`FoundationOwner` included), the generation-metadata models
+(`GenerationMetadata` and its nested `ProviderIdentity` / `MetadataProtocols`
+/ `SelectedComponent` / `OutputRecord` / `ReproductionRecord`) plus
+`GENERATION_METADATA_VERSION` and `DEFAULT_GENERATION_METADATA_TARGET`, and the
+structured error types. The wheel includes `py.typed`.
+
+`parse_generation_metadata(payload) -> GenerationMetadata` and
+`verify_generation_metadata(metadata, project) -> None` read back the
+provenance document `render_project` attaches (see "Rendering"). Both fail
+closed with `ForgeEngineError` codes `invalid-generation-metadata` or
+`unsupported-generation-metadata`, `operation` in `{parse, validate}`
+(FT-17.01 / [ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md)).
 
 `map_legacy_library_answers(answers) -> dict[str, JsonValue]` is a pure,
 side-effect-free helper implementing the documented [legacy Copier answer
@@ -67,13 +81,15 @@ Undocumented names in `forge_template.engine`, `component_manifest`,
 `get_engine_info() -> EngineInfo` reports:
 
 - the installed `forge-template` package version;
-- supported ProjectSpec wire protocols; and
-- supported component-manifest protocols.
+- supported ProjectSpec wire protocols;
+- supported component-manifest protocols — `(1, 2, 3)` since FT-17.01; and
+- the generation-metadata schema version (`metadata_version`), the ninth
+  versioned axis, published since FT-17.01.
 
 It never scans the component catalogue. Package SemVer describes compatibility
-of the Python facade. ProjectSpec and manifest protocol integers describe
-their respective data formats; changing one does not implicitly change the
-others.
+of the Python facade. ProjectSpec, manifest, and generation-metadata protocol
+integers describe their respective data formats; changing one does not
+implicitly change the others.
 
 ## Discovery
 
@@ -175,9 +191,9 @@ fail before any rendering or destination activity.
 
 ## Rendering
 
-`render_project(spec) -> RenderedProject` returns the generation plan together
-with a target-sorted tuple of `RenderedFile(target, content)`. Content is
-always bytes:
+`render_project(spec) -> RenderedProject` returns the generation plan, a
+target-sorted tuple of `RenderedFile(target, content)`, and — since FT-17.01 —
+a `GenerationMetadata` on `RenderedProject.metadata`. Content is always bytes:
 
 - a source without a `.jinja` suffix is copied byte-for-byte;
 - a `.jinja` source is decoded and rendered as UTF-8;
@@ -196,12 +212,18 @@ Rendering is an in-memory operation. Before returning, it applies the canonical
 A successful result does not imply that a target directory exists or that any
 file has been written.
 
-[generation-provenance.md](generation-provenance.md) (FT-15.02) specifies a
-versioned provenance document the engine will assemble alongside a render —
-the effective spec, the ownership map, and a digest per target — so a client
-can reproduce or update the project later. It is a reserved contract, not a
-shipped result field; [FT-17.01](https://github.com/Sandsy09/forge-template/issues/150)
-implements it.
+[generation-provenance.md](generation-provenance.md) (FT-15.02) specifies the
+versioned provenance document, and
+[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) /
+[ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md) shipped it
+as `RenderedProject.metadata`: the effective spec, the `{ id, version }` per
+selected component, and a `{ target, owner, digest, regeneration }` entry per
+rendered file. `GenerationMetadata.to_json()` is its canonical serialisation;
+`DEFAULT_GENERATION_METADATA_TARGET` (`.forge/generation.json`) is the
+documented default path a client persists it at. `parse_generation_metadata`
+and `verify_generation_metadata` read one back to reproduce or update the
+project later. `PlannedFile` carries the per-target `regeneration` disposition
+(`"replace"` or `"skip-if-exists"`).
 
 ## Foundation
 
@@ -331,11 +353,16 @@ compatible.
 classifies the engine-default cutover as a new minor line, `0.5.0`. Every
 top-level name, signature and result field described above is carried through
 it **additively only** — nothing is renamed, removed or narrowed, and no
-deprecation is opened. The cutover adds `metadata_version` on `EngineInfo`,
-the two `EngineErrorCode` values
-[generation-provenance.md](generation-provenance.md) reserves, and the
-generation-metadata hand-off surface
-[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) builds; it
-moves the component-manifest protocol tuple to `(1, 2, 3)` while accepting
-protocol-`1` and protocol-`2` manifests unchanged. A client written against
-`0.4.1` keeps working against `0.5.0` within a widened range.
+deprecation is opened.
+[FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) /
+[ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md) has landed
+the additive names: `metadata_version` on `EngineInfo`, the two
+`EngineErrorCode` values `invalid-generation-metadata` and
+`unsupported-generation-metadata`, `PlannedFile.regeneration`,
+`RenderedProject.metadata`, the `GenerationMetadata` models,
+`parse_generation_metadata` / `verify_generation_metadata`, and the
+`GENERATION_METADATA_VERSION` / `DEFAULT_GENERATION_METADATA_TARGET` constants;
+the component-manifest protocol tuple is now `(1, 2, 3)` and protocol-`1` and
+protocol-`2` manifests are accepted unchanged. The package stays `0.4.1` until
+FT-17.06 releases `0.5.0`. A client written against `0.4.1` keeps working
+against `0.5.0` within a widened range.

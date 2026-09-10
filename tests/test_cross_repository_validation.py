@@ -312,6 +312,7 @@ payload = {
     "package_version": info.package_version,
     "projectspec_protocols": list(info.projectspec_protocols),
     "component_manifest_protocols": list(info.component_manifest_protocols),
+    "metadata_version": info.metadata_version,
     "component_ids": [d.id for d in components],
     "component_versions": {d.id: d.version for d in components},
     "data_science_requires": [
@@ -340,7 +341,10 @@ def test_installed_engine_metadata_matches_the_reviewed_candidate(
 
     assert payload["package_version"] == "0.4.1"
     assert payload["projectspec_protocols"] == [1]
-    assert payload["component_manifest_protocols"] == [1, 2]
+    # [1, 2] through the FT-14.01 handoff; FT-17.01 / ADR 0062 added protocol 3
+    # and published metadata_version, both additive.
+    assert payload["component_manifest_protocols"] == [1, 2, 3]
+    assert payload["metadata_version"] == 1
     assert payload["component_ids"] == [
         "cli",
         "data-science",
