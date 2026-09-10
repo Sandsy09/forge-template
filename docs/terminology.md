@@ -14,12 +14,13 @@ package-bound discovery, validation, planning, and in-memory rendering.
 The public engine model is accepted and its `forge-template` side is
 implemented under
 [create-forge ADR 0010](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0010-public-engine-integration-contract.md).
-The [`0.4.1` catalogue](reviewed-engine-release.md) ships five production
-components -- the `library`, `cli`, and `data-science` archetypes and the
-`jupyter` and `scientific-python` capabilities -- and `create-forge` consumes
-them behind `new --engine-preview`. The layers still unimplemented are
-platforms, profiles, and organisation policy; where a term describes one of
-those, it is marked accordingly.
+The released [`0.4.1` catalogue](reviewed-engine-release.md) ships the
+`library`, `cli`, and `data-science` archetypes and the `jupyter` and
+`scientific-python` capabilities; `main` adds the `github` platform (FT-17.02 /
+ADR 0063, not yet released). `create-forge` consumes the published catalogue
+behind `new --engine-preview`. The layers still unimplemented are profiles and
+organisation policy, and the platform layer beyond `github`; where a term
+describes one of those, it is marked accordingly.
 
 ## Ecosystem terms
 

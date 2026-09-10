@@ -74,9 +74,12 @@ component ownership.
 
 ## Extension-point ownership
 
-Foundation owns the three mixed root targets and publishes eleven stable
-extension points. Components own only the fragments they contribute; no
-production component publishes another point or may override a target.
+Foundation owns the three mixed root targets and, at Stage 14 review time,
+published eleven stable extension points (FT-17.02 / ADR 0063 later took the
+Foundation inventory to fourteen and had the `github` platform publish two
+points, `ci-jobs` / `ci-steps`, on its own CI content — the first component to
+publish its own point). Components own only the fragments they contribute; no
+component may override a target.
 
 | Extension point | Contributors | Why it remains separate |
 | --- | --- | --- |
@@ -99,8 +102,10 @@ to its selected component.
 
 ## Determinism and validation
 
-- `discover_components()` returns the path-free, lexically ordered tuple
-  `("cli", "data-science", "jupyter", "library", "scientific-python")`.
+- `discover_components()` returns a path-free, lexically ordered tuple; at
+  Stage 14 review time that was
+  `("cli", "data-science", "jupyter", "library", "scientific-python")`
+  (FT-17.02 added the `github` platform).
 - ProjectSpec protocol `1` expresses exactly one archetype, ordered component
   kinds, and namespaced options. Catalogue validation remains the authority
   for kinds, compatibility, requirements, conflicts, and option schemas.
@@ -120,7 +125,7 @@ to its selected component.
 | --- | --- |
 | Security | Foundation keeps only neutral secret ignores and reporting guidance. Jupyter validates and executes discarded temporary copies with safe diagnostics; Scientific Python adds runtime packages only when selected. No component gains override, plugin, policy, provider, or client authority. |
 | Reproducibility | Engine plans and renders are deterministic; create-forge resolves `uv.lock` in staging before atomic finalisation; generated checks run from committed lock state. This remains declared-input repeatability, not a byte-identical-build promise. |
-| Package size | A 2026-09-04 local `uv build --wheel` produced a 72,566-byte wheel. Foundation and the five component trees contain 39,182 raw bytes across 60 files, including 892 bytes of deliberate duplicate overhead. `poe check:wheel` verifies every required resource remains packaged and repository-only tooling remains excluded. |
+| Package size | A 2026-09-04 local `uv build --wheel` produced a 72,566-byte wheel; Foundation and the five component trees then contained 39,182 raw bytes across 60 files, including 892 bytes of deliberate duplicate overhead. FT-17.02 / ADR 0063 re-baselined this to 72 files and 48,350 bytes (the `github` platform tree plus three byte-neutral Foundation marker lines); FT-17.03 will move it again. `poe check:wheel` verifies every required resource remains packaged and repository-only tooling remains excluded. |
 | Maintenance | Eight bounded direct dependencies are split by owner: four Jupyter development dependencies and four Scientific Python runtime dependencies. Bound changes require owner-specific compatibility review and Python-endpoint evidence. Duplicate files may diverge only through an explicit reviewed component change. |
 
 ## Client boundary
@@ -180,9 +185,10 @@ dependency range, or alter the default Copier path.
 records FT-14.02's result: a paired local install of both `main` branches —
 never PyPI — generates and passes its own checks for all ten valid
 compositions, fails the documented rejections closed with no partial
-destination, and reproduces this review's package-size figures exactly
-(60 files, 39,182 bytes, 892 bytes of duplicate overhead), now pinned by
-`tests/test_composition_architecture_review.py`. `create-forge`'s own
+destination, and reproduced this review's package-size figures exactly at the
+time (60 files, 39,182 bytes, 892 bytes of duplicate overhead;
+`tests/test_composition_architecture_review.py` now pins the FT-17.02
+re-baseline of 72 files and 48,350 bytes). `create-forge`'s own
 canonical `tests/test_engine_cross_repository.py` passes against the same
 pair. See
 [cross-repository-validation.md](cross-repository-validation.md) for the

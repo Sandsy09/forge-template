@@ -153,7 +153,9 @@ over the real starter notebook and a live kernel, and since FT-12.03 sweeps
 both `data-science` compositions (with and without `scientific-python`) across
 Python 3.11 and 3.14.
 `discover_components()` now returns
-`("cli", "data-science", "jupyter", "library", "scientific-python")`. No
+`("cli", "data-science", "github", "jupyter", "library", "scientific-python")`
+— five archetypes/capabilities plus the `github` platform (FT-17.02 / ADR
+0063). No
 archetype inherits from or reads
 resources from another; a ProjectSpec selects exactly one. These
 contracts are not
@@ -503,8 +505,9 @@ new --engine-preview` console script with deterministic rendering and
 failure cleanup, both Data Science compositions pass their generated `poe
 check` at Python 3.11/3.13/3.14, create-forge's own
 `tests/test_engine_cross_repository.py` passes against the pair, and the
-ADR 0056 package-size figures (60 files, 39,182 bytes, 892 bytes of
-duplicate overhead) are now pinned executably alongside a wheel-size ceiling
+ADR 0056 package-size figures (then 60 files, 39,182 bytes, 892 bytes of
+duplicate overhead; re-baselined by FT-17.02 / ADR 0063 to 72 files and
+48,350 bytes) are pinned executably alongside a wheel-size ceiling
 in `scripts/check_wheel.py`. The new `crossrepo` pytest marker
 (`uv run poe crossrepo`) is sibling-gated and deliberately absent from CI.
 FT-14.03's [reviewed-engine-release.md](docs/reviewed-engine-release.md)
@@ -587,7 +590,7 @@ release) is now the active forge-template roadmap. **FT-17.01 / #150 is
 complete** — [ADR 0062](docs/adr/0062-generation-metadata-and-manifest-protocol-3.md)
 ships manifest protocol `3` (two optional arrays `[[renames]]` and
 `[[regeneration]]`; `COMPONENT_MANIFEST_PROTOCOL_VERSIONS == (1, 2, 3)`,
-protocol-`1`/`2` manifests unchanged, all five shipped components stay
+protocol-`1`/`2` manifests unchanged, every shipped component stays
 `manifest_version = 2`), the generation-metadata surface
 (`GenerationMetadata` on `RenderedProject.metadata`,
 `generation_metadata.py`, `parse_generation_metadata` /
@@ -600,9 +603,24 @@ tripwires in `tests/test_cutover_gates.py` /
 `tests/test_generation_provenance.py`. Foundation is deferred —
 `foundation_version` stays `1`. No content, `copier.yml`, or package-version
 change; `main` stays `0.4.1` and untagged (FT-17.06 releases `0.5.0`).
-`FT-17.02 / #151` (approved platform compositions) is the next actionable
-child and is independent of FT-17.01; `FT-17.04 / #153` was unblocked by
-FT-17.01.
+`FT-17.04 / #153` was unblocked by FT-17.01.
+
+**FT-17.02 / #151 is complete** —
+[ADR 0063](docs/adr/0063-implement-the-github-platform.md) ships the first
+`kind = "platform"` component, `github` `1.0.0`: one required `organisation`
+option, a four-job CI workflow (`lint` / `typecheck` / `test` / `build`, all
+running the generated `poe` tasks) plus `.github/CODEOWNERS`, the three
+`.github/ISSUE_TEMPLATE/` forms and `.github/pull_request_template.md`, and the
+`ci-jobs` / `ci-steps` extension points on its own CI content (published,
+unfilled). Foundation gains three host-link points —
+`pyproject-project-urls`, `contributing-project-shape`,
+`security-project-shape` (inventory 11 → 14; `foundation_version` stays `1`;
+byte-neutral for a render that does not select `github`). `discover_components()`
+returns six components. The eleven `github`-owned rows in
+`docs/engine-default-parity.md` flip to `shipped`. No `library` / `cli` /
+`data-science` content or version change, no `copier.yml` or `template/**`
+change; `main` stays `0.4.1` and untagged. `FT-17.03 / #152` (the eight
+capabilities) is unblocked.
 
 FT-08.02 populated the
 production component catalogue under the

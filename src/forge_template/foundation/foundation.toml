@@ -50,3 +50,20 @@ content = "content/README.md.jinja"
 [[extension_points]]
 id = "gitignore-project-shape"
 content = "content/.gitignore.jinja"
+
+# Host-scoped project links (FT-17.02 / ADR 0063). A selected platform -- the
+# `github` platform is the first -- attaches repository, issue-tracker, and
+# vulnerability-report links through these; Foundation itself stays host- and
+# CI-neutral and an unfilled point emits zero bytes. See
+# docs/platform-and-tooling-parity.md.
+[[extension_points]]
+id = "pyproject-project-urls"
+content = "content/pyproject.toml.jinja"
+
+[[extension_points]]
+id = "contributing-project-shape"
+content = "content/CONTRIBUTING.md.jinja"
+
+[[extension_points]]
+id = "security-project-shape"
+content = "content/SECURITY.md.jinja"

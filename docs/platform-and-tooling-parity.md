@@ -18,24 +18,29 @@ path-free descriptors — shared with
 [ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) records the
 decisions.
 
-This document decides no runtime behaviour. It adds no component, no
-`EngineErrorCode` value, no public name, no protocol increment, no component or
-package version bump, no `copier.yml` change, and no `foundation.toml` change.
-Every extension point it names is **reserved** —
-[FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) and
-[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) publish them
-when they build the components.
+This document decided no runtime behaviour, and added no component, no
+`EngineErrorCode` value, no public name, no protocol increment, and no
+`copier.yml` change. Its extension points were **reserved**;
+[FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) /
+[ADR 0063](adr/0063-implement-the-github-platform.md) has since shipped the
+`github` platform (`1.0.0`) and published five of them — `pyproject-project-urls`,
+`contributing-project-shape`, `security-project-shape`, `ci-jobs`, `ci-steps`
+(Foundation inventory 11 → 14; `foundation_version` unchanged) —
+and [FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) publishes
+the last three with the eight capabilities. Rows below marked *(shipped,
+FT-17.02)* are live.
 
 ## Why this exists
 
-The engine's `ProjectSpec` accepts a `platforms` tuple, but
-`discover_components()` returns
+The engine's `ProjectSpec` accepts a `platforms` tuple, but at FT-15.03 time
+`discover_components()` returned
 `("cli", "data-science", "jupyter", "library", "scientific-python")` — three
 archetypes, two capabilities, and no platform. So the direct-Copier scaffold's
 CI workflow, CODEOWNERS, issue and pull-request templates, pre-commit
 configuration, coverage gate, changelog, MkDocs site, `.env.example`, and
-dependency-update automation have no owner in the engine path. Twenty-six
-provider-owned `gap` rows in `engine-default-parity.md` point here; until each
+dependency-update automation had no owner in the engine path. Twenty-six
+provider-owned `gap` rows in `engine-default-parity.md` point here (FT-17.02 /
+ADR 0063 flipped eleven of them to `shipped`); until each
 has an owner, [Stage 17](roadmap-v3/README.md) cannot implement and the cutover
 cannot be scoped.
 
@@ -137,9 +142,9 @@ existing document accurate.
 
 | Foundation point | New? | What `github` contributes |
 | --- | --- | --- |
-| `pyproject-project-urls` | reserved (new) | `[project.urls]` Repository / Issues / Documentation |
-| `contributing-project-shape` | reserved (new) | host-scoped links in `CONTRIBUTING.md` |
-| `security-project-shape` | reserved (new) | the vulnerability-report URL in `SECURITY.md` |
+| `pyproject-project-urls` | published FT-17.02 | `[project.urls]` Repository / Issues (Documentation is FT-17.03's `documentation` capability) |
+| `contributing-project-shape` | published FT-17.02 | host-scoped links in `CONTRIBUTING.md` |
+| `security-project-shape` | published FT-17.02 | the vulnerability-report URL in `SECURITY.md` |
 | `readme-project-shape` | existing | clone and install URLs in `README.md` |
 
 ## Path-free descriptors and deterministic selection
@@ -214,49 +219,44 @@ concrete instance of the cross-tier `requires` case
 Selecting neither `dependabot` nor `renovate` reproduces Copier's
 `dependency_updates == none`.
 
-## Reserved extension points
+## Extension points: published and still reserved
 
-Eight points. **None is published by this issue** — `foundation.toml` and every
-component manifest are unchanged. FT-17.02 and FT-17.03 add each one when they
-build the component that needs it, as a backward-compatible addition to the
-extension-point-inventory axis in
-[compatibility-policy.md](compatibility-policy.md).
+### Published by FT-17.02 / ADR 0063
 
-### On Foundation content (five new)
+| Point | Owner | A contribution supplies |
+| --- | --- | --- |
+| `pyproject-project-urls` | Foundation `content/pyproject.toml.jinja` | `[project.urls]` entries |
+| `contributing-project-shape` | Foundation `content/CONTRIBUTING.md.jinja` | host-scoped links |
+| `security-project-shape` | Foundation `content/SECURITY.md.jinja` | the vulnerability-report URL |
+| `ci-jobs` | `github` (own CI content) | a whole workflow job |
+| `ci-steps` | `github` (own CI content) | a step inside the test job |
 
-| Point | Owner file | A contribution supplies | Publisher |
-| --- | --- | --- | --- |
-| `pyproject-project-urls` | `content/pyproject.toml.jinja` | `[project.urls]` entries | FT-17.02 |
-| `contributing-project-shape` | `content/CONTRIBUTING.md.jinja` | host-scoped links | FT-17.02 |
-| `security-project-shape` | `content/SECURITY.md.jinja` | the vulnerability-report URL | FT-17.02 |
-| `pyproject-named-dependency-groups` | `content/pyproject.toml.jinja` | a `name = [ ... ]` group under `[dependency-groups]` | FT-17.03 |
-| `pyproject-dependency-group-includes` | `content/pyproject.toml.jinja` | an `{ include-group = "name" }` line in the `dev` group | FT-17.03 |
-
-The first three reverse
+The first three reversed
 [extension-points.md](extension-points.md#the-published-inventory)'s statement
 that `CONTRIBUTING.md.jinja` and `SECURITY.md.jinja` are sole-owner content
 with no extension point — additive, exactly as ADR 0049 grew the inventory from
-eight points to eleven. The `.editorconfig`, `.gitattributes`,
-`.python-version.jinja` and `LICENSE.jinja` files stay sole-owner.
+eight points to eleven; the Foundation inventory is now fourteen.
+`.editorconfig`, `.gitattributes`, `.python-version.jinja` and `LICENSE.jinja`
+stay sole-owner. Each marker is placed so a render that does not select
+`github` is byte-identical to before (ADR 0063). `ci-jobs` and `ci-steps` are
+the first points a shipped component publishes on its own content; both ship
+**unfilled** — `library` fills `ci-jobs` at FT-17.03.
 
-The last two **reverse ADR 0049's stated limitation** that "a capability still
-cannot declare its own named dependency group". They let `documentation`
-declare a real `docs` group that `uv sync --group docs` resolves and that
-Foundation's `dev` group includes — matching the Copier scaffold, whose `docs`
-group is both separately installable and part of `dev`.
+### Still reserved for FT-17.03
 
-### On component content (three)
+| Point | Owner file | A contribution supplies |
+| --- | --- | --- |
+| `pyproject-named-dependency-groups` | Foundation `content/pyproject.toml.jinja` | a `name = [ ... ]` group under `[dependency-groups]` |
+| `pyproject-dependency-group-includes` | Foundation `content/pyproject.toml.jinja` | an `{ include-group = "name" }` line in the `dev` group |
+| `api-reference` | `documentation` (own content) | an mkdocstrings API page |
 
-| Point | Owner | A contribution supplies | Publisher |
-| --- | --- | --- | --- |
-| `ci-jobs` | `github` | a whole workflow job | FT-17.02 |
-| `ci-steps` | `github` | a step inside a job | FT-17.02 |
-| `api-reference` | `documentation` | an mkdocstrings API page | FT-17.03 |
-
+The two Foundation points **reverse ADR 0049's stated limitation** that "a
+capability still cannot declare its own named dependency group". They let
+`documentation` declare a real `docs` group that `uv sync --group docs`
+resolves and that Foundation's `dev` group includes — matching the Copier
+scaffold, whose `docs` group is both separately installable and part of `dev`.
 `api-reference` is already named by
-[library-archetype.md](library-archetype.md)'s extension-point table as a
-contract for "that (not yet existing) optional component"; this contract fixes
-its owner.
+[library-archetype.md](library-archetype.md)'s extension-point table.
 
 ## Generated tooling versus client execution
 
@@ -391,16 +391,19 @@ FT-11.04's precedent, four synthetic components under
 copy of the real production catalogue with the real Foundation source live.
 They are deliberately not named for the decided catalogue. The tests prove:
 
-- every provider-owned `gap` row in `engine-default-parity.md` (excluding the
-  FT-15.02 provenance rows) appears in the ownership table above with an owner
-  from the decided set — a row gaining no owner fails;
-- every extension point this contract calls *existing* is really among the
-  eleven in the live `foundation.toml`;
-- **tripwire:** the five reserved Foundation points are still absent from
-  `foundation.toml`, so this file fails when FT-17.03 publishes them, forcing
-  the contract to be revisited;
+- every provider-owned row in `engine-default-parity.md` (excluding the
+  FT-15.02 provenance rows), whether still a `gap` or flipped to `shipped` by
+  FT-17.02, appears in the ownership table above with an owner from the decided
+  set — a row gaining no owner fails;
+- every extension point this contract calls *existing* is really in the live
+  `foundation.toml`;
+- **tripwire:** the two still-reserved `[dependency-groups]` Foundation points
+  are still absent from `foundation.toml`, so this file fails when FT-17.03
+  publishes them, forcing the contract to be revisited; FT-17.02 / ADR 0063
+  published the three host-link points, checked live;
 - **FT-ROADMAP-01-EX-03 tripwire:** `discover_components()` still returns
-  exactly three archetypes, two capabilities, and zero platforms;
+  exactly three archetypes and two capabilities — one platform (`github`) since
+  FT-17.02, and no new archetype;
 - the synthetic platform's public descriptor carries no filesystem path, and
   its option schema declares exactly one option;
 - a capability's contribution into the synthetic platform's `ci-steps` resolves

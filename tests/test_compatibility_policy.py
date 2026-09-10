@@ -96,6 +96,7 @@ def test_published_compatibility_state_matches_the_engine() -> None:
     assert components.keys() == {
         "cli",
         "data-science",
+        "github",
         "jupyter",
         "library",
         "scientific-python",
@@ -105,6 +106,7 @@ def test_published_compatibility_state_matches_the_engine() -> None:
     assert components["data-science"].version == "1.0.0"
     assert components["jupyter"].version == "1.0.0"
     assert components["scientific-python"].version == "1.0.0"
+    assert components["github"].version == "1.0.0"
 
 
 def test_component_versions_are_canonical_pep440() -> None:

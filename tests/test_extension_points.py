@@ -157,10 +157,16 @@ def test_published_extension_point_inventory_matches_the_contract() -> None:
         ("pyproject-aggregate-check", "content/pyproject.toml.jinja"),
         ("readme-project-shape", "content/README.md.jinja"),
         ("gitignore-project-shape", "content/.gitignore.jinja"),
+        # Host-scoped link points (FT-17.02 / ADR 0063).
+        ("pyproject-project-urls", "content/pyproject.toml.jinja"),
+        ("contributing-project-shape", "content/CONTRIBUTING.md.jinja"),
+        ("security-project-shape", "content/SECURITY.md.jinja"),
     }
 
-    # No production component publishes an extension point of its own; all five
-    # contribute only into Foundation's reviewed inventory.
+    # The five archetype/capability components publish no extension point of
+    # their own; they contribute only into Foundation's reviewed inventory. The
+    # `github` platform (FT-17.02) is the one component that publishes its own
+    # points (`ci-jobs` / `ci-steps`) -- it is checked in tests/test_github_platform.py.
     for component_id, expected in _EXPECTED_CONTRIBUTIONS.items():
         manifest = load_component_manifest(
             _COMPONENTS / component_id / "component.toml"
@@ -176,8 +182,9 @@ def test_published_extension_point_inventory_matches_the_contract() -> None:
 
 
 def test_foundation_files_without_extension_points_stay_create_only() -> None:
-    """The six Foundation files the contract names as non-extensible really
-    publish no point -- stated, not merely absent by omission."""
+    """The four Foundation files the contract names as non-extensible really
+    publish no point -- stated, not merely absent by omission. FT-17.02 / ADR
+    0063 made CONTRIBUTING.md and SECURITY.md extensible for host links."""
     foundation = load_foundation_source(_FOUNDATION_TOML)
     extensible_content = {point.content for point in foundation.extension_points}
 
@@ -192,9 +199,7 @@ def test_foundation_files_without_extension_points_stay_create_only() -> None:
         "content/.editorconfig",
         "content/.gitattributes",
         "content/.python-version.jinja",
-        "content/CONTRIBUTING.md.jinja",
         "content/LICENSE.jinja",
-        "content/SECURITY.md.jinja",
     ]
 
 

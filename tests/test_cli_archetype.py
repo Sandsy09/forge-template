@@ -48,6 +48,7 @@ def test_discovery_exposes_cli_with_library_and_capabilities() -> None:
     assert [descriptor.id for descriptor in descriptors] == [
         "cli",
         "data-science",
+        "github",
         "jupyter",
         "library",
         "scientific-python",

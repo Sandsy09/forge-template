@@ -117,16 +117,20 @@ No `.create-forge-*` staging sibling survives any of the four.
 Foundation plus every catalogue component's tree (excluding `__pycache__`)
 reproduces ADR 0056's review figures exactly:
 
-| Figure | ADR 0056 (2026-09-04) | Re-measured | Rule |
+| Figure | ADR 0056 (2026-09-04) | FT-14.02 re-measured | Rule |
 | --- | --- | --- | --- |
 | Content files | 60 | 60 | Every file under `foundation/` and each of the five `components/<id>/` trees |
 | Content bytes | 39,182 | 39,182 | Sum of those files' sizes |
 | Duplicate overhead | 892 | 892 | `(owners − 1) × size` per group, summed over the seven duplicate groups |
 
-Both figures are now pinned by
+These figures are pinned by
 `tests/test_composition_architecture_review.py::test_package_content_size_matches_the_recorded_review_baseline`,
-so a future content change that moves either number will fail loudly rather
-than silently drift from the recorded review.
+so a future content change that moves any number fails loudly rather than
+silently drifting. FT-17.02 / ADR 0063 re-baselined the pin to 72 files and
+48,350 bytes (the `github` platform tree plus three byte-neutral Foundation
+marker lines); FT-17.03 moves it again for the eight capabilities. The
+duplicate overhead stays 892 bytes — the `github` platform shares no resource
+with another component.
 
 The built wheel itself is not pinned the same way — zip metadata (timestamps,
 compression) is not byte-reproducible across machines. `uv run poe

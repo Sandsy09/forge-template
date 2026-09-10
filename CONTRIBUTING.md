@@ -196,7 +196,16 @@ manifest protocol `3` (the `[[renames]]` / `[[regeneration]]` records), the
 `EngineInfo.metadata_version`, `PlannedFile.regeneration`, the two
 `invalid`/`unsupported-generation-metadata` error codes, and
 `DEFAULT_GENERATION_METADATA_TARGET` — all additive, with `main` staying on
-`0.4.1` and untagged until FT-17.06 releases `0.5.0`.
+`0.4.1` and untagged until FT-17.06 releases `0.5.0`. FT-17.02 /
+[ADR 0063](docs/adr/0063-implement-the-github-platform.md) then ships the first
+`kind = "platform"` component, `github` `1.0.0` — one required `organisation`
+option; a four-job `poe`-task CI workflow, `CODEOWNERS`, issue and
+pull-request templates; the `ci-jobs` / `ci-steps` points on its own CI
+content; and three new host-link Foundation extension points
+(`pyproject-project-urls`, `contributing-project-shape`,
+`security-project-shape`, inventory 11 → 14, `foundation_version` unchanged).
+`discover_components()` returns six components; no other component's content or
+version moves, and `main` stays `0.4.1`.
 
 ## Branching and pull requests
 

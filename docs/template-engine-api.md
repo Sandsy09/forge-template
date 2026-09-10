@@ -113,13 +113,15 @@ and `data-science` (FT-12.01 /
 [Data Science archetype contract](data-science-archetype.md)), plus the
 optionless `jupyter` and `scientific-python` capabilities (FT-11.02 /
 [ADR 0050](adr/0050-production-jupyter-capability.md) and FT-11.03 / [ADR
-0051](adr/0051-production-scientific-python-capability.md)). Discovery returns
-`cli`, `data-science`, `jupyter`, `library`, and `scientific-python` in
-lexical order. A ProjectSpec selects exactly one archetype and may
-independently select either capability or both; `data-science` requires
-`jupyter`. No platform exists yet.
+0051](adr/0051-production-scientific-python-capability.md)), and, on `main`
+only, the `github` platform (FT-17.02 /
+[ADR 0063](adr/0063-implement-the-github-platform.md), not yet released).
+Discovery on `main` returns `cli`, `data-science`, `github`, `jupyter`,
+`library`, and `scientific-python` in lexical order. A ProjectSpec selects
+exactly one archetype and may independently select any capability and any
+platform; `data-science` requires `jupyter`.
 [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
-publishes this five-component catalogue on
+published the then five-component catalogue on
 [PyPI](https://pypi.org/project/forge-template/0.4.0/). The release preserves
 the public facade and protocol tuples from `0.3.x`; clients must still adopt a
 compatible `0.4.x` package range deliberately.

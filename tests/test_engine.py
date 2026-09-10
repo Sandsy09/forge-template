@@ -110,6 +110,7 @@ def test_installed_catalogue_contains_the_production_components() -> None:
     assert [descriptor.id for descriptor in descriptors] == [
         "cli",
         "data-science",
+        "github",
         "jupyter",
         "library",
         "scientific-python",

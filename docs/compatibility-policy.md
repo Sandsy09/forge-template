@@ -58,17 +58,21 @@ Generation metadata was reserved by FT-15.02 and moved into this table when
 it through `get_engine_info()`.
 
 [FT-15.03](https://github.com/Sandsy09/forge-template/issues/148) /
-[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) reserves
-five additions to the extension-point-inventory axis
-(`pyproject-project-urls`, `contributing-project-shape`,
-`security-project-shape`, `pyproject-named-dependency-groups`,
-`pyproject-dependency-group-includes`) plus `ci-jobs`, `ci-steps` and
-`api-reference` on component content. None is published yet;
-[FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) and
-[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) add each as
-a backward-compatible change carrying the package-version bump this document
-already requires for any observable Foundation change
-([extension-points.md](extension-points.md#stability-and-versioning)).
+[ADR 0060](adr/0060-platform-composition-and-generated-tooling.md) reserved
+five additions to the extension-point-inventory axis plus `ci-jobs`,
+`ci-steps` and `api-reference` on component content.
+[FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) /
+[ADR 0063](adr/0063-implement-the-github-platform.md) published three of them —
+`pyproject-project-urls`, `contributing-project-shape`,
+`security-project-shape` (Foundation inventory 11 → 14) — and `ci-jobs` /
+`ci-steps` on the `github` platform's own content, all backward-compatible.
+[FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) adds the
+remaining two Foundation points (`pyproject-named-dependency-groups`,
+`pyproject-dependency-group-includes`) and `api-reference`. Each carries the
+package-version bump this document already requires for any observable
+Foundation change
+([extension-points.md](extension-points.md#stability-and-versioning)); that bump
+is FT-17.06's `0.5.0`.
 
 ## Classified: the engine-default cutover transition
 
@@ -269,6 +273,7 @@ above does not require a new ADR; a semantic change to those rules does (see
 | `data-science` component | `1.0.0` |
 | `jupyter` component | `1.0.0` |
 | `scientific-python` component | `1.0.0` |
+| `github` component | `1.0.0` (first shipped platform, FT-17.02) |
 | Option-schema protocol | `1`, `2` |
 | Foundation source protocol | `1` (internal; see above) |
 | Organisation-policy protocol | `1` (doc-only; see above) |
