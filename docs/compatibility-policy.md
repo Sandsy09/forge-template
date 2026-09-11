@@ -281,7 +281,7 @@ above does not require a new ADR; a semantic change to those rules does (see
 | `dependabot` component | `1.0.0` (FT-17.03) |
 | `documentation` component | `1.0.0` (FT-17.03) |
 | `dotenv-example` component | `1.0.0` (FT-17.03) |
-| `pre-commit` component | `1.0.0` (FT-17.03) |
+| `pre-commit` component | `1.0.1` (FT-17.05) |
 | `pyright` component | `1.0.0` (FT-17.03) |
 | `renovate` component | `1.0.0` (FT-17.03) |
 | Option-schema protocol | `1`, `2` |

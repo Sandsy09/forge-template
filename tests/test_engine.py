@@ -2,33 +2,46 @@
 
 from __future__ import annotations
 
+import inspect
 import json
 import shutil
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
 import pytest
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 import forge_template.engine as engine_module
 from forge_template import (
     DEFAULT_GENERATION_METADATA_TARGET,
     GENERATION_METADATA_VERSION,
+    AppliedRename,
+    ComponentDescriptor,
     ComponentOwner,
     EngineErrorCode,
+    EngineInfo,
     ForgeEngineError,
     FoundationOwner,
     GenerationMetadata,
+    GenerationPlan,
     PlannedExtension,
+    PlannedFile,
     ProjectSpec,
+    RenderedFile,
+    RenderedProject,
+    UpdatePlan,
+    UpdateTarget,
     discover_components,
     get_engine_info,
     map_legacy_library_answers,
     parse_generation_metadata,
     parse_project_spec,
     plan_generation,
+    plan_update,
     render_project,
     validate_project_spec,
+    validate_rendered_project,
     verify_generation_metadata,
 )
 from forge_template.schema import REPO_ROOT
@@ -777,6 +790,115 @@ def test_verify_generation_metadata_rejects_a_tampered_digest() -> None:
         verify_generation_metadata(parse_generation_metadata(document), project)
     assert caught.value.code is EngineErrorCode.INVALID_GENERATION_METADATA
     assert caught.value.operation == "validate"
+
+
+#: Row E2 (docs/cutover-compatibility-and-acceptance.md#the-acceptance-matrix):
+#: "public engine signatures ... unchanged except the additive names". Every
+#: public callable, its parameters (name, kind, order) exactly. The
+#: `_FROZEN_PUBLIC_API` name-set pin (tests/test_cutover_gates.py) proves
+#: *which* names exist; this proves each one still takes what a `0.4.1`
+#: client compiled against.
+_PUBLIC_CALLABLE_SIGNATURES: dict[str, list[tuple[str, str]]] = {
+    "get_engine_info": [],
+    "discover_components": [],
+    "map_legacy_library_answers": [("answers", "POSITIONAL_OR_KEYWORD")],
+    "parse_project_spec": [("payload", "POSITIONAL_OR_KEYWORD")],
+    "validate_project_spec": [("spec", "POSITIONAL_OR_KEYWORD")],
+    "plan_generation": [("spec", "POSITIONAL_OR_KEYWORD")],
+    "render_project": [("spec", "POSITIONAL_OR_KEYWORD")],
+    "validate_rendered_project": [
+        ("spec", "POSITIONAL_OR_KEYWORD"),
+        ("project", "POSITIONAL_OR_KEYWORD"),
+    ],
+    "parse_generation_metadata": [("payload", "POSITIONAL_OR_KEYWORD")],
+    "verify_generation_metadata": [
+        ("metadata", "POSITIONAL_OR_KEYWORD"),
+        ("project", "POSITIONAL_OR_KEYWORD"),
+    ],
+    "plan_update": [
+        ("recorded", "POSITIONAL_OR_KEYWORD"),
+        ("old", "KEYWORD_ONLY"),
+        ("new", "KEYWORD_ONLY"),
+    ],
+}
+
+#: The public result models' field sets -- every one a client's parsing code
+#: may depend on. Additive-only through the cutover (ADR 0061): a name
+#: disappearing or a field vanishing from this dict is the regression E2
+#: guards against; a model gaining a field is a deliberate, reviewed change to
+#: this dict, not a silent pass.
+_PUBLIC_MODEL_FIELDS: dict[str, set[str]] = {
+    "EngineInfo": {
+        "package_version",
+        "projectspec_protocols",
+        "component_manifest_protocols",
+        "metadata_version",
+    },
+    "ComponentDescriptor": {
+        "id",
+        "name",
+        "description",
+        "kind",
+        "version",
+        "projectspec_protocols",
+        "requires_python",
+        "requires",
+        "conflicts",
+        "options",
+    },
+    "GenerationPlan": {"component_order", "files"},
+    "PlannedFile": {"target", "owner", "extensions", "regeneration"},
+    "RenderedFile": {"target", "content"},
+    "RenderedProject": {"files", "plan", "metadata"},
+    "UpdatePlan": {"targets", "renames", "reproduction"},
+    "UpdateTarget": {"target", "classification", "owner", "regeneration"},
+    "AppliedRename": {"component_id", "from_", "to", "since"},
+}
+
+_PUBLIC_CALLABLES: dict[str, Callable[..., Any]] = {
+    "get_engine_info": get_engine_info,
+    "discover_components": discover_components,
+    "map_legacy_library_answers": map_legacy_library_answers,
+    "parse_project_spec": parse_project_spec,
+    "validate_project_spec": validate_project_spec,
+    "plan_generation": plan_generation,
+    "render_project": render_project,
+    "validate_rendered_project": validate_rendered_project,
+    "parse_generation_metadata": parse_generation_metadata,
+    "verify_generation_metadata": verify_generation_metadata,
+    "plan_update": plan_update,
+}
+
+_PUBLIC_MODELS: dict[str, type[BaseModel]] = {
+    "EngineInfo": EngineInfo,
+    "ComponentDescriptor": ComponentDescriptor,
+    "GenerationPlan": GenerationPlan,
+    "PlannedFile": PlannedFile,
+    "RenderedFile": RenderedFile,
+    "RenderedProject": RenderedProject,
+    "UpdatePlan": UpdatePlan,
+    "UpdateTarget": UpdateTarget,
+    "AppliedRename": AppliedRename,
+}
+
+
+def test_public_callable_signatures_are_pinned() -> None:
+    """Row E2: a parameter renamed, reordered, or changed in kind is exactly
+    the break an additive-only facade must never make."""
+    assert set(_PUBLIC_CALLABLES) == set(_PUBLIC_CALLABLE_SIGNATURES)
+    for name, callable_ in _PUBLIC_CALLABLES.items():
+        signature = inspect.signature(callable_)
+        actual = [(p.name, p.kind.name) for p in signature.parameters.values()]
+        assert actual == _PUBLIC_CALLABLE_SIGNATURES[name], name
+
+
+def test_public_result_model_fields_are_pinned() -> None:
+    """Row E2's other half: every public result model's field set, so a
+    silently renamed or removed field cannot ride an otherwise-additive
+    release."""
+    assert set(_PUBLIC_MODELS) == set(_PUBLIC_MODEL_FIELDS)
+    for name, model in _PUBLIC_MODELS.items():
+        assert set(model.model_fields) == _PUBLIC_MODEL_FIELDS[name], name
 
 
 def test_project_version_and_release_workflow_share_one_source() -> None:

@@ -125,7 +125,7 @@ to its selected component.
 | --- | --- |
 | Security | Foundation keeps only neutral secret ignores and reporting guidance. Jupyter validates and executes discarded temporary copies with safe diagnostics; Scientific Python adds runtime packages only when selected. No component gains override, plugin, policy, provider, or client authority. |
 | Reproducibility | Engine plans and renders are deterministic; create-forge resolves `uv.lock` in staging before atomic finalisation; generated checks run from committed lock state. This remains declared-input repeatability, not a byte-identical-build promise. |
-| Package size | A 2026-09-04 local `uv build --wheel` produced a 72,566-byte wheel; Foundation and the five component trees then contained 39,182 raw bytes across 60 files, including 892 bytes of deliberate duplicate overhead. FT-17.02 / ADR 0063 re-baselined this to 72 files and 48,350 bytes (the `github` platform tree), and FT-17.03 / ADR 0064 to 112 files and 68,378 bytes (the eight tooling capabilities plus the one-line `license-files` Foundation addition). `poe check:wheel` verifies every required resource remains packaged and repository-only tooling remains excluded. |
+| Package size | A 2026-09-04 local `uv build --wheel` produced a 72,566-byte wheel; Foundation and the five component trees then contained 39,182 raw bytes across 60 files, including 892 bytes of deliberate duplicate overhead. FT-17.02 / ADR 0063 re-baselined this to 72 files and 48,350 bytes (the `github` platform tree), FT-17.03 / ADR 0064 to 112 files and 68,378 bytes (the eight tooling capabilities plus the one-line `license-files` Foundation addition), and FT-17.05 / ADR 0066 to 112 files and 68,954 bytes (`pre-commit`'s `check-added-large-files` `uv.lock` exclusion). `poe check:wheel` verifies every required resource remains packaged and repository-only tooling remains excluded, and now also audits the sdist. |
 | Maintenance | Eight bounded direct dependencies are split by owner: four Jupyter development dependencies and four Scientific Python runtime dependencies. Bound changes require owner-specific compatibility review and Python-endpoint evidence. Duplicate files may diverge only through an explicit reviewed component change. |
 
 ## Client boundary
@@ -187,8 +187,8 @@ never PyPI — generates and passes its own checks for all ten valid
 compositions, fails the documented rejections closed with no partial
 destination, and reproduced this review's package-size figures exactly at the
 time (60 files, 39,182 bytes, 892 bytes of duplicate overhead;
-`tests/test_composition_architecture_review.py` now pins the FT-17.03
-re-baseline of 112 files and 68,378 bytes). `create-forge`'s own
+`tests/test_composition_architecture_review.py` now pins the FT-17.05
+re-baseline of 112 files and 68,954 bytes). `create-forge`'s own
 canonical `tests/test_engine_cross_repository.py` passes against the same
 pair. See
 [cross-repository-validation.md](cross-repository-validation.md) for the

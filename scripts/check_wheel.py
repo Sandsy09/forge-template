@@ -1,13 +1,13 @@
-"""Verify the built wheel ships the public engine and excludes repo tooling.
+"""Verify the built wheel and sdist ship the public engine, sanely.
 
 Mirrors `create-forge`'s own `scripts/check_wheel.py` (invariant 5 there):
 building into a fresh temporary directory each run means this can never pass
-by matching a stale `dist/*.whl` left over from an earlier build, and
+by matching a stale `dist/*` left over from an earlier build, and
 `subprocess.run(check=True)` means `uv build` failing can't be swallowed by a
 pipe.
 
-Three things must hold, all added by ADR 0036 ("publish the engine to
-PyPI"):
+Three things must hold for the **wheel**, all added by ADR 0036 ("publish the
+engine to PyPI"):
 
 1. The public engine facade and its content trees (`foundation/content`,
    `components/*/content`) ship in the wheel -- this is what makes
@@ -17,29 +17,48 @@ PyPI"):
    and `template/` paths that do not exist in an installed wheel, and
    `render.py`/`schema.py` import `yaml`, which stays a dev-group-only
    dependency rather than something every engine consumer downloads.
-3. The wheel imports cleanly, and `discover_components()` returns the
-   production catalogue, in an isolated environment resolving only
+3. The wheel imports cleanly, `discover_components()` returns the production
+   catalogue, `get_engine_info()` reports the negotiation facts, and one
+   composition renders end to end, in an isolated environment resolving only
    `[project.dependencies]` -- no dev-group extras. This is the check that
    would have caught #8 (`pyyaml` imported but undeclared): exclusion alone
    proves the modules are absent, not that what remains is self-sufficient.
 
-FT-14.02 (docs/cross-repository-validation.md) added the size ceiling below:
-ADR 0056 measured a 72,566-byte local review wheel; the published `0.4.0`
-wheel is 72,544 bytes. FT-17.02 (the `github` platform) took a local wheel to
-~85 KB, FT-17.03 (the eight tooling capabilities) to ~105 KB, and FT-17.04
-(the reproducible-render `engine.py`/`generation_metadata.py` additions, no
-new content trees) to ~108 KB, still under the 128 KiB ceiling.
-`_MAX_WHEEL_BYTES` is a deliberately loose bound, not a tight pin -- zip
-metadata (timestamps, compression) makes an exact byte count non-reproducible
-across machines, but an unbounded content addition (a new archetype or
-capability outgrowing the reviewed catalogue) should still fail loudly here
-rather than silently ship.
+FT-17.05 (docs/provider-acceptance-validation.md) added the **sdist** audit
+acceptance criterion 3 names alongside the wheel. An sdist is not a wheel with
+a different suffix: by design (no `[tool.hatch.build.targets.sdist]`
+override in `pyproject.toml`) it is the *rebuildable source archive* and
+correctly contains the full repository -- `adr.py`, `render.py`, `tests/`,
+`docs/`, `template/`, all of it, so a client can reproduce the wheel or run
+this repo's own test suite from it. Applying the wheel's `_MUST_NOT_CONTAIN`
+exclusion list to the sdist would therefore always fail, for the right
+reason: that repo tooling is *supposed* to be there. The sdist audit instead
+proves what an sdist actually promises -- it contains everything the wheel
+needs to be rebuilt from (`_MUST_CONTAIN`, prefix-adjusted for
+`<name>-<version>/src/forge_template/...`), it imports the same way once
+built, and it stays under its own (much larger, since it carries the full
+repo) size ceiling.
+
+FT-14.02 (docs/cross-repository-validation.md) added the wheel size ceiling
+below: ADR 0056 measured a 72,566-byte local review wheel; the published
+`0.4.0` wheel is 72,544 bytes. FT-17.02 (the `github` platform) took a local
+wheel to ~85 KB, FT-17.03 (the eight tooling capabilities) to ~105 KB, and
+FT-17.04 (the reproducible-render `engine.py`/`generation_metadata.py`
+additions, no new content trees) to ~108 KB, still under the 128 KiB ceiling.
+FT-17.05 measured the sdist at ~726 KB (it carries the full repo, unlike the
+wheel). Both ceilings are deliberately loose bounds, not tight pins -- archive
+metadata (timestamps, compression) makes an exact byte count
+non-reproducible across machines, but an unbounded content addition (a new
+archetype or capability outgrowing the reviewed catalogue) should still fail
+loudly here rather than silently ship.
 """
 
 from __future__ import annotations
 
+import hashlib
 import subprocess
 import sys
+import tarfile
 import tempfile
 import zipfile
 from pathlib import Path
@@ -111,35 +130,79 @@ _MUST_NOT_CONTAIN = (
 # A generous ceiling around ADR 0056's 72,566-byte review measurement and the
 # published 0.4.0 wheel's 72,544 bytes -- see the module docstring.
 _MAX_WHEEL_BYTES = 131_072  # 128 KiB
+# The sdist carries the full repository by design (see the module docstring),
+# so its ceiling is set around FT-17.05's ~726 KB measurement instead of the
+# wheel's -- a generous bound against the same unbounded-growth failure mode.
+_MAX_SDIST_BYTES = 2_097_152  # 2 MiB
 _SMOKE_IMPORT = (
     "import forge_template; "
+    "info = forge_template.get_engine_info(); "
+    "assert info.package_version and info.projectspec_protocols "
+    "and info.component_manifest_protocols and info.metadata_version; "
     "descriptors = forge_template.discover_components(); "
     "ids = sorted(d.id for d in descriptors); "
     "assert ids == "
     "['changelog', 'cli', 'coverage', 'data-science', 'dependabot', "
     "'documentation', 'dotenv-example', 'github', 'jupyter', 'library', "
     "'pre-commit', 'pyright', 'renovate', 'scientific-python'], ids; "
-    "print('discovered:', ids)"
+    "spec = forge_template.parse_project_spec({"
+    "'protocol_version': 1, "
+    "'project': {'name': 'Smoke', 'package_name': 'smoke', "
+    "'repository_name': 'smoke', 'description': 'd', 'licence': 'mit', "
+    "'authors': [{'name': 'Smoke Test'}]}, "
+    "'python': {'minimum': '3.11', 'development': '3.13'}, "
+    "'components': {'archetype': 'library', 'capabilities': [], 'platforms': []}, "
+    "'component_options': {'library': {'packaging_mode': 'uv-build-static', "
+    "'initial_version': '0.1.0'}}}); "
+    "project = forge_template.render_project(spec); "
+    "assert project.files; "
+    "print('discovered:', ids); "
+    "print('negotiated:', info.package_version, info.metadata_version); "
+    "print('rendered:', len(project.files), 'files')"
 )
 
 
-def _build_wheel(out_dir: Path) -> Path:
-    """Build a wheel into `out_dir` and return its path."""
+def _build_artefacts(out_dir: Path) -> tuple[Path, Path]:
+    """Build a wheel and an sdist into `out_dir`; return (wheel, sdist)."""
     subprocess.run(
-        ["uv", "build", "--wheel", "--out-dir", str(out_dir)],
+        ["uv", "build", "--out-dir", str(out_dir)],
         check=True,
     )
     wheels = sorted(out_dir.glob("*.whl"))
+    sdists = sorted(out_dir.glob("*.tar.gz"))
     if len(wheels) != 1:
         msg = f"expected exactly one wheel in {out_dir}, found {len(wheels)}: {wheels}"
         raise RuntimeError(msg)
-    return wheels[0]
+    if len(sdists) != 1:
+        msg = f"expected exactly one sdist in {out_dir}, found {len(sdists)}: {sdists}"
+        raise RuntimeError(msg)
+    return wheels[0], sdists[0]
 
 
-def _check_contents(wheel: Path) -> list[str]:
-    """Return a list of content-check failures, empty if everything holds."""
+def _wheel_names(wheel: Path) -> list[str]:
     with zipfile.ZipFile(wheel) as archive:
-        names = archive.namelist()
+        return archive.namelist()
+
+
+def _sdist_names(sdist: Path) -> list[str]:
+    """Member names, restated on the wheel's flat `forge_template/...` footing.
+
+    Strips the `<name>-<version>/` archive prefix and the `src/` layout
+    segment so they compare against `_MUST_CONTAIN` the same way the wheel's
+    names do.
+    """
+    with tarfile.open(sdist) as archive:
+        raw = archive.getnames()
+    stripped = []
+    for name in raw:
+        _prefix, _sep, rest = name.partition("/")
+        stripped.append(rest.removeprefix("src/"))
+    return stripped
+
+
+def _check_wheel_contents(wheel: Path) -> list[str]:
+    """Return a list of content-check failures, empty if everything holds."""
+    names = _wheel_names(wheel)
 
     failures = []
     for member in _MUST_CONTAIN:
@@ -155,23 +218,40 @@ def _check_contents(wheel: Path) -> list[str]:
     return failures
 
 
-def _check_size(wheel: Path) -> str | None:
-    """Return an error message if the built wheel exceeds the size ceiling."""
-    size = wheel.stat().st_size
-    if size > _MAX_WHEEL_BYTES:
+def _check_sdist_contents(sdist: Path) -> list[str]:
+    """The sdist's positive obligation only.
+
+    See the module docstring for why `_MUST_NOT_CONTAIN` does not apply to it.
+    """
+    names = _sdist_names(sdist)
+    failures = []
+    for member in _MUST_CONTAIN:
+        if not any(name.startswith(member) for name in names):
+            failures.append(
+                f"missing: {member!r} not found in {sdist.name} -- the sdist "
+                "must carry everything needed to rebuild the wheel"
+            )
+    return failures
+
+
+def _check_size(artefact: Path, *, ceiling: int, doc: str) -> str | None:
+    """Return an error message if `artefact` exceeds `ceiling` bytes."""
+    size = artefact.stat().st_size
+    if size > ceiling:
         return (
-            f"too large: {wheel.name} is {size:,} bytes, over the "
-            f"{_MAX_WHEEL_BYTES:,}-byte ceiling recorded in "
-            "docs/cross-repository-validation.md -- if this growth is "
-            "expected, re-measure and raise _MAX_WHEEL_BYTES deliberately"
+            f"too large: {artefact.name} is {size:,} bytes, over the "
+            f"{ceiling:,}-byte ceiling recorded in {doc} -- if this growth "
+            "is expected, re-measure and raise the ceiling deliberately"
         )
     return None
 
 
-def _check_isolated_import(wheel: Path) -> str | None:
-    """Return an error message if the wheel fails to import/discover in
-    isolation, resolving only its declared runtime dependencies.
-    """  # noqa: D205
+def _check_isolated_import(artefact: Path) -> str | None:
+    """Return an error message if `artefact` fails the isolated smoke test.
+
+    `artefact` is a wheel or an sdist; either must import, discover, negotiate
+    and render in isolation, resolving only its declared runtime dependencies.
+    """
     result = subprocess.run(
         [
             "uv",
@@ -179,7 +259,7 @@ def _check_isolated_import(wheel: Path) -> str | None:
             "--isolated",
             "--no-project",
             "--with",
-            str(wheel),
+            str(artefact),
             "python",
             "-c",
             _SMOKE_IMPORT,
@@ -190,29 +270,53 @@ def _check_isolated_import(wheel: Path) -> str | None:
     )
     if result.returncode != 0:
         return (
-            f"isolated import failed against declared dependencies only:\n"
-            f"{result.stderr}"
+            f"isolated import failed against declared dependencies only "
+            f"({artefact.name}):\n{result.stderr}"
         )
     return None
 
 
+def _identity(artefact: Path) -> str:
+    """One printable evidence line: this artefact's name, size and digest."""
+    digest = hashlib.sha256(artefact.read_bytes()).hexdigest()
+    size = artefact.stat().st_size
+    return f"{artefact.name}  {size:,} bytes  sha256:{digest}"
+
+
 def main() -> int:
-    """Build a wheel and fail loudly if it ships the wrong set of modules."""
+    """Build both artefacts and fail loudly if either is wrong."""
     with tempfile.TemporaryDirectory() as tmp:
-        wheel = _build_wheel(Path(tmp))
-        failures = _check_contents(wheel)
-        if size_failure := _check_size(wheel):
+        wheel, sdist = _build_artefacts(Path(tmp))
+
+        failures = _check_wheel_contents(wheel)
+        if size_failure := _check_size(
+            wheel,
+            ceiling=_MAX_WHEEL_BYTES,
+            doc="docs/cross-repository-validation.md",
+        ):
             failures.append(size_failure)
         if import_failure := _check_isolated_import(wheel):
             failures.append(import_failure)
+
+        failures.extend(_check_sdist_contents(sdist))
+        if sdist_size_failure := _check_size(
+            sdist,
+            ceiling=_MAX_SDIST_BYTES,
+            doc="docs/provider-acceptance-validation.md",
+        ):
+            failures.append(sdist_size_failure)
+        if sdist_import_failure := _check_isolated_import(sdist):
+            failures.append(sdist_import_failure)
 
         if failures:
             print("\n".join(failures), file=sys.stderr)
             return 1
 
-        size = wheel.stat().st_size
+        wheel_identity = _identity(wheel)
+        sdist_identity = _identity(sdist)
 
-    print(f"ok: {wheel.name} ({size:,} bytes) ships the engine facade only")
+    print(f"ok: {wheel_identity}")
+    print(f"ok: {sdist_identity}")
     return 0
 
 

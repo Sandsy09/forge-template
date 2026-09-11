@@ -374,7 +374,7 @@ def test_installed_engine_metadata_matches_the_reviewed_candidate(
         "github": "1.0.0",
         "jupyter": "1.0.0",
         "library": "1.0.1",
-        "pre-commit": "1.0.0",
+        "pre-commit": "1.0.1",
         "pyright": "1.0.0",
         "renovate": "1.0.0",
         "scientific-python": "1.0.0",

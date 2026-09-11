@@ -238,14 +238,15 @@ Every change is a branch (`<type>/<short-slug>`) and a pull request into
 
 ## Validation
 
-Run in this order. All six currently pass.
+Run in this order. All seven currently pass.
 
 ```bash
 uv run poe check             # fast: this repo's own lint/typecheck + schema/ADR/render unit tests
 uv run poe combos            # slow: 4 combos in parallel, render assertions, each combo's own poe check
 ./scripts/verify-ci.sh <org> # pushes poe combos' output to throwaway repos, watches CI
 uv run poe update             # slow: both copier update scenarios (local edits survive; latest tag -> HEAD)
-uv run poe archetype          # slow: real uv build/install/import for all three archetypes + both capabilities (pytest -m archetype -n 4)
+uv run poe archetype          # slow: real uv build/install/import for all three archetypes + both capabilities, plus three full-composition (github + every compatible capability) build/install/check/pre-commit cells (pytest -m archetype -n 4)
+uv run poe sweep              # slow: plans and renders every one of the 2240 valid compositions (pytest -m sweep -n 4)
 uv run poe crossrepo          # slow, sibling-gated: pairs this repo with a local create-forge checkout
 ```
 
@@ -509,8 +510,10 @@ check` at Python 3.11/3.13/3.14, create-forge's own
 `tests/test_engine_cross_repository.py` passes against the pair, and the
 ADR 0056 package-size figures (then 60 files, 39,182 bytes, 892 bytes of
 duplicate overhead; re-baselined by FT-17.02 / ADR 0063 to 72 files and
-48,350 bytes, and by FT-17.03 / ADR 0064 to 112 files and 68,378 bytes) are
-pinned executably alongside a wheel-size ceiling
+48,350 bytes, by FT-17.03 / ADR 0064 to 112 files and 68,378 bytes, and by
+FT-17.05 / ADR 0066 to 112 files and 68,954 bytes — the `pre-commit`
+`check-added-large-files` `uv.lock` exclusion) are pinned executably alongside
+a wheel-size ceiling
 in `scripts/check_wheel.py`. The new `crossrepo` pytest marker
 (`uv run poe crossrepo`) is sibling-gated and deliberately absent from CI.
 FT-14.03's [reviewed-engine-release.md](docs/reviewed-engine-release.md)
@@ -660,6 +663,33 @@ through the cutover. The public facade gains four additive names
 (`plan_update`, `UpdatePlan`, `UpdateTarget`, `AppliedRename`); the degraded
 two-way update stays entirely client-side. No component, Foundation,
 `copier.yml`, or `template/**` change; `main` stays `0.4.1` and untagged.
+
+**FT-17.05 / #154 is complete** —
+[ADR 0066](docs/adr/0066-validate-provider-parity-reproducibility-and-distributions.md)
+executes the seven acceptance-matrix rows FT-17.05 owns
+([provider-acceptance-validation.md](docs/provider-acceptance-validation.md)):
+three full-composition `archetype`-marked build cells (`library` / `cli` /
+`data-science`, each with `github` and every compatible capability) that for
+the first time build, install, and run a generated project's own `poe check`
+— including `coverage`, `typecheck:pyright`, and a real
+`pre-commit run --all-files` — against engine-rendered output; the exhaustive
+2240-composition sweep (`tests/composition_matrix.py`'s
+`valid_compositions()`, derived from the catalogue's own `requires` /
+`conflicts` edges, replacing three hand-written literals that still meant the
+pre-Stage-17 ten) under a new `sweep` marker and CI job; the independent-client
+render proof extended from two compositions to all 2240
+(`tests/no_copy_downstream.py`), with create-forge's `poe crossrepo` lag
+against the unreleased `metadata_version` axis recorded rather than patched
+(owner: CF-18.01 / FT-18.01); and `scripts/check_wheel.py` extended to audit
+the sdist alongside the wheel, print both artefacts' identities, and negotiate
+plus render in its isolated-import smoke test. Building the first
+full-composition cell surfaced a real defect — `pre-commit`'s
+`check-added-large-files` hook rejected a `jupyter` + `scientific-python`
+project's own 636 KB `uv.lock` — fixed in this issue with the standard
+lockfile exclusion; `pre-commit` moves `1.0.0` → `1.0.1`, the one content
+change, re-baselining the content-tree size pin to 112 files, 68,954 bytes.
+No other component, Foundation, `copier.yml`, or `template/**` change; `main`
+stays `0.4.1` and untagged.
 
 FT-08.02 populated the
 production component catalogue under the

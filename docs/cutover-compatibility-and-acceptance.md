@@ -104,7 +104,7 @@ releases `0.5.0`. The "Current" column below is the live engine state.
 | `dependabot` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
 | `documentation` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** — publishes `api-reference` |
 | `dotenv-example` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
-| `pre-commit` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
+| `pre-commit` component | `1.0.1` | `1.0.1` | **New (FT-17.03)**, patched (FT-17.05) — `check-added-large-files` excludes `uv.lock`, the first false positive FT-17.05's full-composition build actually ran the hook against |
 | `pyright` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
 | `renovate` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
 
@@ -380,7 +380,7 @@ is narrow.
 | [FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) | One `github` platform, one required `organisation` option, the two CI points, the three Foundation host-link points, the `requires`/`conflicts` edges (FT-15.03) | The manifest bytes, the content trees, the CI matrix shape, the pinned action SHAs, whether `library`/`cli`/`data-science` move a version |
 | [FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) | The eight-capability set, the two dependency-group points, the `api-reference` point (FT-15.03); the nine `needs a bounded issue` rows resolve here (below) | Each capability's owned files, options, tasks and dependency bounds; whether a `pyproject` tool-config point is published or `[tool.coverage]` / `[tool.pyright]` relocate to standalone files |
 | [FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) | The old/new/working-tree diff model, the classification vocabulary, the unavailable-provider fail-closed rule and the degraded path (FT-15.02) | **Done ([ADR 0065](adr/0065-implement-reproducible-rendering-for-updates.md))** — `plan_update(recorded, old=..., new=...) -> UpdatePlan`, the five-value classifier, `[[renames]]` window-surfacing, and the fail-closed unavailable-provider path (reusing `unsupported-generation-metadata`) |
-| [FT-17.05](https://github.com/Sandsy09/forge-template/issues/154) | The acceptance matrix above; validation-before-render and the no-resource-read rule (here, AC-04) | Executing every row against the candidate and recording commands, platforms, versions and artefact identities |
+| [FT-17.05](https://github.com/Sandsy09/forge-template/issues/154) | The acceptance matrix above; validation-before-render and the no-resource-read rule (here, AC-04) | **Done ([ADR 0066](adr/0066-validate-provider-parity-reproducibility-and-distributions.md))** — every Engine/Generated-project/Independence/Regression row FT-17.05 owns executed, evidenced in [provider-acceptance-validation.md](provider-acceptance-validation.md); one content defect found and fixed (`pre-commit` `1.0.0` → `1.0.1`) |
 | [FT-17.06](https://github.com/Sandsy09/forge-template/issues/155) | `0.5.0` as the line; the immutable-release and `0.4.x`-window rules (here, AC-05) | Running the protected release and dry run, the artefact audit, the client-bound hand-off |
 | [FT-18.01](https://github.com/Sandsy09/forge-template/issues/156) | The integrated matrix rows and the corrected-release rule (here) | Pairing the candidate client with the released provider and executing the provider-owned integrated rows |
 

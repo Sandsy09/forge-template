@@ -23,6 +23,7 @@ from forge_template import (
     plan_generation,
     render_project,
 )
+from tests.composition_matrix import Composition, valid_compositions
 from tests.no_copy_downstream import generate_from_policies
 from tests.organisation_policy_contract import ExplicitSelection
 
@@ -217,6 +218,77 @@ def test_downstream_harness_uses_only_supported_engine_imports_and_policy_data()
     assert "_FOUNDATION_ROOT_OVERRIDE" not in source
     assert "component_manifests" not in source
     assert {path.suffix for path in POLICY_FIXTURES.iterdir()} == {".json"}
+
+
+def _sweep_payload(composition: Composition) -> dict[str, object]:
+    """`generate_from_policies` overwrites `components` with the resolved
+    selection, but the same payload also feeds a *direct* `_direct_generation`
+    call for byte comparison, so `components` here must already be correct."""
+    options: dict[str, dict[str, object]] = {
+        "library": {"packaging_mode": "uv-build-static", "initial_version": "0.1.0"},
+    }
+    if "github" in composition.platforms:
+        options["github"] = {"organisation": "sweep-org"}
+    if "coverage" in composition.capabilities:
+        options["coverage"] = {"fail_under": 80}
+    if "documentation" in composition.capabilities:
+        options["documentation"] = {"site_name": "Sweep Fixture"}
+    return {
+        "protocol_version": 1,
+        "project": {
+            "name": "Independent Client Sweep Fixture",
+            "package_name": "independent_client_sweep_fixture",
+            "repository_name": "independent-client-sweep-fixture",
+            "description": "FT-17.05 independent-client composition sweep fixture.",
+            "licence": "mit",
+            "authors": [{"name": "Test User"}],
+        },
+        "python": {"minimum": "3.11", "development": "3.13"},
+        "components": {
+            "archetype": composition.archetype,
+            "capabilities": list(composition.capabilities),
+            "platforms": list(composition.platforms),
+        },
+        "component_options": {
+            component_id: value
+            for component_id, value in options.items()
+            if component_id == composition.archetype
+            or component_id in composition.capabilities
+            or component_id in composition.platforms
+        },
+    }
+
+
+@pytest.mark.sweep
+@pytest.mark.parametrize("composition", valid_compositions(), ids=lambda c: c.slug)
+def test_downstream_client_renders_every_valid_composition_identically(
+    composition: Composition,
+) -> None:
+    """Row I1
+    (docs/cutover-compatibility-and-acceptance.md#the-acceptance-matrix): an
+    independent client consuming only the public facade renders every valid
+    composition -- not just the ten
+    ``tests/test_composition_architecture_review.py`` checks -- byte-for-byte
+    identical to a direct engine call, with no Forge runtime dependency in the
+    result. Exhaustive over ``tests.composition_matrix.valid_compositions()``
+    (2240 as of FT-17.05); ``sweep``-marked so it rides
+    ``tests/test_composition_sweep.py``'s CI job rather than doubling the
+    fast suite's runtime.
+    """
+    payload = _sweep_payload(composition)
+    _, direct_plan, direct_project = _direct_generation(payload)
+    downstream = generate_from_policies(
+        payload,
+        policy_names=(),
+        explicit=ExplicitSelection(
+            archetype=composition.archetype,
+            capabilities=frozenset(composition.capabilities),
+            platforms=frozenset(composition.platforms),
+        ),
+    )
+    assert downstream.plan == direct_plan
+    assert _files(downstream.project) == _files(direct_project)
+    _assert_no_forge_runtime_dependency(downstream.project)
 
 
 def test_repeated_downstream_generation_is_deterministic() -> None:
