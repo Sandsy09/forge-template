@@ -8,6 +8,9 @@ repos:
     rev: v5.0.0
     hooks:
       - id: check-added-large-files
+        # A lockfile is large by design, not "added by mistake" -- the
+        # standard exclusion for this hook (FT-17.05, ADR 0066).
+        exclude: ^uv\.lock$
       - id: check-merge-conflict
       - id: check-toml
       - id: check-yaml

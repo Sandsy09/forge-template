@@ -144,6 +144,59 @@ jobs:
         run: uv run poe archetype
 
   # ---------------------------------------------------------------------------
+  # Exhaustive composition sweep -- plans and renders every one of the 2240
+  # valid selections the catalogue accepts (tests/composition_matrix.py),
+  # replacing three prior hand-written literals that each still meant the
+  # pre-Stage-17 ten, twice over (once against the direct engine, once
+  # through an independent-client simulation). Pure in-memory engine calls,
+  # no build, no network -- but real cost: 4481 total cases (2 x 2240 + 1
+  # tripwire) measured at ~47 minutes serial-in-one-job at -n 4. Split into
+  # two parallel jobs here so the critical path stays close to the existing
+  # `archetype` job's ~22-minute pole instead of doubling it; `uv run poe
+  # sweep` locally still runs both together as one task. See
+  # docs/provider-acceptance-validation.md (FT-17.05).
+  # ---------------------------------------------------------------------------
+  sweep-composition:
+    name: Composition sweep -- direct engine
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Plan and render every valid composition
+        run: uv run pytest -m sweep tests/test_composition_sweep.py -n 4 --no-cov -v
+
+  sweep-independence:
+    name: Composition sweep -- independent client
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Render every valid composition through a policy-driven client
+        run: uv run pytest -m sweep tests/test_no_copy_inheritance.py -n 4 --no-cov -v
+
+  # ---------------------------------------------------------------------------
   # copier update from the last release to HEAD must not explode, and local
   # edits survive a merge. tests/test_update.py's two scenarios each skip
   # themselves (not fail) when no tag exists yet -- the very first run.
@@ -201,7 +254,17 @@ jobs:
   all-green:
     name: All checks passed
     runs-on: ubuntu-latest
-    needs: [lint, scaffold, windows, archetype, update-compat, wheel]
+    needs:
+      [
+        lint,
+        scaffold,
+        windows,
+        archetype,
+        sweep-composition,
+        sweep-independence,
+        update-compat,
+        wheel,
+      ]
     if: always()
     steps:
       - name: Verify

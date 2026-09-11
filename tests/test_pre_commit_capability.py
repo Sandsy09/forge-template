@@ -52,7 +52,8 @@ def _render(**kwargs: object) -> dict[str, bytes]:
 def test_discovery_exposes_optionless_pre_commit() -> None:
     pre_commit = next(d for d in discover_components() if d.id == "pre-commit")
     assert pre_commit.kind == "capability"
-    assert pre_commit.version == "1.0.0"
+    # 1.0.1 (FT-17.05 / ADR 0066): check-added-large-files excludes uv.lock.
+    assert pre_commit.version == "1.0.1"
     assert pre_commit.options == ()
     assert pre_commit.requires == ()
     assert pre_commit.conflicts == ()
@@ -74,6 +75,18 @@ def test_config_is_valid_yaml_with_the_expected_hooks() -> None:
     assert "https://github.com/astral-sh/ruff-pre-commit" in repos
     assert "https://github.com/compilerla/conventional-pre-commit" in repos
     assert document["default_language_version"]["python"] == "python3.13"
+
+    hook_repo = next(
+        repo
+        for repo in document["repos"]
+        if repo["repo"] == "https://github.com/pre-commit/pre-commit-hooks"
+    )
+    large_files = next(
+        hook for hook in hook_repo["hooks"] if hook["id"] == "check-added-large-files"
+    )
+    # FT-17.05 / ADR 0066: a lockfile is large by design, not "added by
+    # mistake" -- uv.lock must not trip the hook's 500 KB default.
+    assert large_files["exclude"] == r"^uv\.lock$"
 
 
 def test_omitting_pre_commit_leaves_no_trace() -> None:

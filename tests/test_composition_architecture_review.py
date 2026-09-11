@@ -83,8 +83,12 @@ _OWNED_COMPONENTS = (
     "renovate",
     "scientific-python",
 )
+# FT-17.05 / ADR 0066 grew `pre-commit`'s content by 576 bytes (the
+# `check-added-large-files` `exclude: ^uv\.lock$` fix) -- file count and
+# duplicate overhead are unaffected; only the byte total moved,
+# 68,378 -> 68,954.
 _EXPECTED_CONTENT_FILE_COUNT = 112
-_EXPECTED_CONTENT_BYTES = 68_378
+_EXPECTED_CONTENT_BYTES = 68_954
 _EXPECTED_DUPLICATE_OVERHEAD_BYTES = 892
 
 

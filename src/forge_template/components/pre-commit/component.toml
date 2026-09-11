@@ -2,12 +2,19 @@
 # and ADR 0060/0064. Owns the hook configuration and contributes the
 # `pre-commit` development dependency; the client still owns hook installation
 # and execution (FT-ROADMAP-01-EX-01).
+#
+# 1.0.1 (FT-17.05 / ADR 0066): `check-added-large-files` now excludes
+# `uv.lock`. FT-17.05 was the first validation to actually run
+# `pre-commit run --all-files` against an engine-rendered project, and a
+# `jupyter` + `scientific-python` composition's lockfile (636 KB) tripped the
+# hook's 500 KB default -- a real false positive the hook's own upstream docs
+# name lockfiles as the standard exclusion for.
 manifest_version = 2
 id = "pre-commit"
 name = "pre-commit"
 description = "Fast local Git hooks and commit-message enforcement."
 kind = "capability"
-version = "1.0.0"
+version = "1.0.1"
 content_root = "content"
 requires = []
 conflicts = []

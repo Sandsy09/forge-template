@@ -232,6 +232,21 @@ stayed frozen at nine values through the cutover. The public facade gains four
 additive names (`plan_update`, `UpdatePlan`, `UpdateTarget`, `AppliedRename`);
 the degraded two-way update stays entirely client-side. No component,
 Foundation, `copier.yml`, or `template/**` change; `main` stays `0.4.1`.
+FT-17.05 /
+[ADR 0066](docs/adr/0066-validate-provider-parity-reproducibility-and-distributions.md)
+then executes the acceptance matrix Stage 17 fixed: three
+`archetype`-marked full-composition build cells (`github` plus every
+compatible capability, one per archetype) that for the first time run
+`coverage`, `typecheck:pyright`, and `pre-commit run --all-files` against
+engine-rendered output; the exhaustive 2240-composition sweep replacing three
+stale ten-composition literals; the independent-client render proof extended
+to all 2240 compositions, with create-forge's still-unreleased-axis lag
+recorded rather than patched; and a wheel-and-sdist artefact audit in
+`scripts/check_wheel.py`. Building the first full-composition cell found a
+real defect — `pre-commit`'s `check-added-large-files` hook rejected a
+`jupyter` + `scientific-python` project's own `uv.lock` — fixed with the
+standard lockfile exclusion, moving `pre-commit` `1.0.0` → `1.0.1`, the one
+content change. `main` stays `0.4.1`.
 
 ## Branching and pull requests
 
@@ -337,14 +352,20 @@ that a `create-forge` checkout could observe should also run
 `uv run poe crossrepo` (`pytest -m crossrepo`) with a sibling `create-forge`
 checkout present at `../create-forge` (or pass
 `--create-forge-root=<path>`). It pairs both local working trees in one
-isolated install -- never PyPI -- and proves every valid composition
-generates through the real `create-forge new --engine-preview` console
-script, fails the documented rejections closed, and reproduces the recorded
-package-size figures; see
-[cross-repository-validation.md](docs/cross-repository-validation.md). It is
-slow (real `uv lock` resolutions plus generated `poe check` runs with live
-Jupyter kernels) and deliberately absent from CI -- see
+isolated install -- never PyPI -- and proves all ten pre-Stage-17
+compositions generate through the real `create-forge new --engine-preview`
+console script and fail the documented rejections closed; see
+[cross-repository-validation.md](docs/cross-repository-validation.md). The
+package-size figures it once quoted here are actually pinned by
+`tests/test_composition_architecture_review.py` and
+`scripts/check_wheel.py`'s size ceilings, not by `crossrepo` itself. `poe
+crossrepo` is slow (real `uv lock` resolutions plus generated `poe check`
+runs with live Jupyter kernels) and deliberately absent from CI -- see
 [ADR 0057](docs/adr/0057-validate-the-cross-repository-data-science-line.md).
+`uv run poe sweep` (`pytest -m sweep -n 4`, FT-17.05) separately plans and
+renders every one of the 2240 compositions the post-Stage-17 catalogue
+accepts, entirely in-memory and without a sibling checkout -- see
+[provider-acceptance-validation.md](docs/provider-acceptance-validation.md).
 
 ## Proposing a template change
 

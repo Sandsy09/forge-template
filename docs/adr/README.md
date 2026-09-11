@@ -68,6 +68,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0063 — Implement the GitHub platform](0063-implement-the-github-platform.md)
 - [0064 — Implement approved generated-content parity](0064-implement-approved-generated-content-parity.md)
 - [0065 — Implement reproducible rendering for updates](0065-implement-reproducible-rendering-for-updates.md)
+- [0066 — Validate provider parity, reproducibility and distributions](0066-validate-provider-parity-reproducibility-and-distributions.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

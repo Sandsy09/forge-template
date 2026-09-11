@@ -273,8 +273,18 @@ reference to FT-17.03** — no new issue was filed. FT-17.02 / ADR 0063 then
 shipped the `github` platform and flipped its eleven rows to `shipped`, and
 FT-17.03 / ADR 0064 shipped the eight tooling capabilities and flipped the
 remaining fourteen provider-owned rows (five questions, nine files) plus
-`license-files` to `shipped`. Every provider-owned row here is now `shipped`
-bar the FT-15.02 provenance rows FT-17.04 owns.
+`license-files` to `shipped`. FT-17.04 / ADR 0065 then shipped the last two
+FT-15.02 provenance rows in the mechanics table below
+(`_skip_if_exists`, `_answers_file`) as `shipped`. The one row that stays
+`gap` by design, not by omission, is `template/.copier-answers.yml` itself,
+above: the engine never emits a file at that path — `GenerationMetadata` is
+returned as an in-memory document on `RenderedProject.metadata`, and the
+client is the one who persists it, at whatever location it chooses
+(`DEFAULT_GENERATION_METADATA_TARGET`, `.forge/generation.json`, is a
+default, not a requirement). Flipping this row to `shipped` would claim a
+rendered file target that does not exist, and would fail
+`tests/test_parity_inventory.py`'s real-render check below. Every other
+provider-owned row here is `shipped`.
 `tests/test_parity_inventory.py` pins every `shipped` file row against a real
 `library` render, unioned with a `library` + `github` render and a
 `library` + every-capability render.

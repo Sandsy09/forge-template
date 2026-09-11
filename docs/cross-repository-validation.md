@@ -127,10 +127,12 @@ These figures are pinned by
 `tests/test_composition_architecture_review.py::test_package_content_size_matches_the_recorded_review_baseline`,
 so a future content change that moves any number fails loudly rather than
 silently drifting. FT-17.02 / ADR 0063 re-baselined the pin to 72 files and
-48,350 bytes (the `github` platform tree), and FT-17.03 / ADR 0064 to 112
+48,350 bytes (the `github` platform tree), FT-17.03 / ADR 0064 to 112
 files and 68,378 bytes (the eight tooling capabilities plus the one-line
-`license-files` Foundation addition). The duplicate overhead stays 892 bytes —
-none of the new components shares a resource with another.
+`license-files` Foundation addition), and FT-17.05 / ADR 0066 to 112 files
+and 68,954 bytes (`pre-commit`'s `check-added-large-files` `uv.lock`
+exclusion). The duplicate overhead stays 892 bytes — none of the new
+components shares a resource with another.
 
 The built wheel itself is not pinned the same way — zip metadata (timestamps,
 compression) is not byte-reproducible across machines. `uv run poe

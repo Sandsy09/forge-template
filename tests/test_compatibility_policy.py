@@ -27,6 +27,7 @@ from forge_template import (
     discover_components,
     get_engine_info,
     parse_project_spec,
+    plan_generation,
 )
 from forge_template.component_manifest import COMPONENT_MANIFEST_PROTOCOL_VERSIONS
 from forge_template.foundation_source import (
@@ -36,6 +37,7 @@ from forge_template.foundation_source import (
 from forge_template.generation_metadata import GENERATION_METADATA_VERSION
 from forge_template.project_spec import PROJECT_SPEC_PROTOCOL_VERSION
 from forge_template.template_variables import OPTION_SCHEMA_PROTOCOL_VERSIONS
+from tests.test_capability_composition import PATH_LEAK_TOKENS
 
 _ROOT = Path(__file__).parents[1]
 _FOUNDATION_TOML = _ROOT / "src" / "forge_template" / "foundation" / "foundation.toml"
@@ -121,11 +123,13 @@ def test_published_compatibility_state_matches_the_engine() -> None:
         "dependabot",
         "documentation",
         "dotenv-example",
-        "pre-commit",
         "pyright",
         "renovate",
     ):
         assert components[capability].version == "1.0.0"
+    # 1.0.1 (FT-17.05 / ADR 0066): excludes uv.lock from
+    # check-added-large-files -- see src/forge_template/components/pre-commit.
+    assert components["pre-commit"].version == "1.0.1"
 
 
 def test_component_versions_are_canonical_pep440() -> None:
@@ -146,7 +150,12 @@ def test_negotiation_precedes_discovery(
 ) -> None:
     """ "What the engine publishes for negotiation": ``get_engine_info()``
     never needs a component catalogue, so package/protocol compatibility can
-    be checked before any discovery, planning, or destination decision."""
+    be checked before any discovery, planning, or destination decision --
+    row I2 (docs/cutover-compatibility-and-acceptance.md#the-acceptance-matrix):
+    "both callable before a destination exists". No destination directory is
+    ever created or referenced here; only the private catalogue-root seam is
+    pointed at a path that does not exist, standing in for "no destination
+    yet"."""
     missing = tmp_path / "does-not-exist"
     monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", missing)
     monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", missing)
@@ -159,6 +168,41 @@ def test_negotiation_precedes_discovery(
     with pytest.raises(ForgeEngineError) as exc_info:
         discover_components()
     assert exc_info.value.code is EngineErrorCode.COMPONENT_DISCOVERY_FAILED
+
+
+def test_client_selection_reads_no_component_resource() -> None:
+    """Row I2, the rest of it: "selection uses path-free descriptors". Every
+    discovered descriptor is free of any filesystem or package-resource
+    marker (the same list ``test_capability_composition.py`` pins descriptors
+    against), and a selection can be validated -- accepted or rejected -- from
+    those descriptors' ``requires``/``conflicts`` alone, with no destination
+    path ever supplied to `parse_project_spec`/`plan_generation`."""
+    descriptors = discover_components()
+    for descriptor in descriptors:
+        serialised = descriptor.model_dump_json()
+        for leak in PATH_LEAK_TOKENS:
+            assert leak not in serialised
+
+    by_id = {descriptor.id: descriptor for descriptor in descriptors}
+    documentation = by_id["documentation"]
+    assert {reference.id for reference in documentation.requires} == {"library"}
+
+    accepted = parse_project_spec(_minimal_payload("library"))
+    plan_generation(accepted)  # succeeds from descriptors alone, no destination
+
+    # `documentation` requires `library`; selecting it under `cli` fails
+    # closed at `validate`, resolved purely from the selection and the
+    # descriptors above -- no component resource is read to reject it.
+    rejected_payload = _minimal_payload("cli")
+    rejected_payload["components"] = {
+        "archetype": "cli",
+        "capabilities": ["documentation"],
+        "platforms": [],
+    }
+    with pytest.raises(ForgeEngineError) as exc_info:
+        plan_generation(parse_project_spec(rejected_payload))
+    assert exc_info.value.code is EngineErrorCode.INVALID_COMPONENT_SELECTION
+    assert exc_info.value.operation == "validate"
 
 
 def test_unsupported_protocol_fails_closed() -> None:

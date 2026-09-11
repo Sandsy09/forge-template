@@ -188,6 +188,7 @@ markers = [
     "update: exercises `copier update` end-to-end (slow; `poe update`)",
     "archetype: validates real production archetype and capability projects (slow; `poe archetype`)",
     "crossrepo: validates this repo against a sibling create-forge checkout (slow, sibling-gated; `poe crossrepo`)",
+    "sweep: plans and renders every valid composition the catalogue accepts (slow; `poe sweep`)",
 ]
 
 [tool.coverage.run]
@@ -211,13 +212,23 @@ format = "ruff format ."
 "lint:fix" = "ruff check --fix ."
 "format:check" = "ruff format --check ."
 typecheck = "mypy"
-test = "pytest -m 'not (combos or update or archetype or crossrepo)'"
+test = "pytest -m 'not (combos or update or archetype or crossrepo or sweep)'"
 combos = "pytest -m combos -n 4"
 update = "pytest -m update"
 # -n 4: FT-12.03 added a 2x2 Data Science endpoint sweep (both compositions x
 # Python 3.11/3.14), each cell a real lock/build/install/notebook run. Spread
 # them across workers the same way `combos` does -- see ADR 0055.
 archetype = "pytest -m archetype -n 4"
+# FT-17.05: plans and renders every one of the 2240 compositions the
+# catalogue accepts (tests/composition_matrix.py). No build, no install, no
+# network -- pure in-memory engine calls, so it is its own marker rather than
+# joining `archetype`. --no-cov: coverage.py's branch tracing measurably
+# slows CPU-bound in-process calls at this volume (unlike combos/archetype/
+# crossrepo, dominated by subprocess wall time, where the same instrumentation
+# is noise) -- and every line the sweep exercises is already covered by the
+# fast suite `poe check` runs with `--cov` on. -n 4 spreads the run across
+# workers. See docs/provider-acceptance-validation.md.
+sweep = "pytest -m sweep -n 4 --no-cov"
 "verify-ci" = "bash scripts/verify-ci.sh"
 check = ["format:check", "lint", "typecheck", "test"]
 

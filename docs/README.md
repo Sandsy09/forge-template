@@ -152,5 +152,12 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   `metadata_version`), the failure and rollback guarantees, the executable
   acceptance matrix and the cross-repository release gates, pinned by
   `tests/test_cutover_gates.py`.
+- [provider-acceptance-validation.md](provider-acceptance-validation.md) —
+  FT-17.05's execution of the acceptance matrix it owns: real
+  full-composition builds (`github` plus every compatible capability), the
+  exhaustive 2240-composition sweep, the independent-client render proof, and
+  the wheel-and-sdist artefact audit, pinned by
+  `tests/test_full_composition_build.py`, `tests/test_composition_sweep.py`,
+  and `scripts/check_wheel.py`.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

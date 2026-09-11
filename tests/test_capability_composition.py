@@ -73,6 +73,20 @@ _DESCRIPTOR_FIELDS = {
     "conflicts",
     "options",
 }
+#: A component-resource marker that must never appear in a serialised
+#: ``ComponentDescriptor`` -- the path-free-ness FT-ROADMAP-01-AC-04 requires.
+#: Shared with ``tests/test_compatibility_policy.py``'s row-I2 assertion
+#: (FT-17.05) rather than duplicated.
+PATH_LEAK_TOKENS = (
+    "content_root",
+    "options_schema",
+    "extensions/",
+    "content/",
+    "component.toml",
+    "src/forge_template",
+    "\\\\",
+    "//",
+)
 _NEUTRALITY_TOKENS = (
     "jupyter",
     "ipynb",
@@ -404,16 +418,7 @@ def test_production_descriptors_are_immutable_and_path_free() -> None:
     for descriptor in descriptors.values():
         assert set(descriptor.model_dump()) == _DESCRIPTOR_FIELDS
         serialised = descriptor.model_dump_json()
-        for leak in (
-            "content_root",
-            "options_schema",
-            "extensions/",
-            "content/",
-            "component.toml",
-            "src/forge_template",
-            "\\\\",
-            "//",
-        ):
+        for leak in PATH_LEAK_TOKENS:
             assert leak not in serialised
         with pytest.raises(ValidationError):
             descriptor.name = "changed"
