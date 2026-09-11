@@ -260,7 +260,7 @@ rendered bytes.
 
 ## Current compatibility state
 
-Living snapshot, reviewed 2026-09-10. Advancing it in line with the rules
+Living snapshot, reviewed 2026-09-11. Advancing it in line with the rules
 above does not require a new ADR; a semantic change to those rules does (see
 "Ownership and change process").
 

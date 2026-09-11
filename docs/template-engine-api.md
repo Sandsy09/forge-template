@@ -38,6 +38,7 @@ from forge_template import (
     parse_generation_metadata,
     parse_project_spec,
     plan_generation,
+    plan_update,
     render_project,
     validate_project_spec,
     validate_rendered_project,
@@ -50,8 +51,10 @@ the immutable discovery, planning, and rendering result models
 (`ComponentOwner`/`FoundationOwner` included), the generation-metadata models
 (`GenerationMetadata` and its nested `ProviderIdentity` / `MetadataProtocols`
 / `SelectedComponent` / `OutputRecord` / `ReproductionRecord`) plus
-`GENERATION_METADATA_VERSION` and `DEFAULT_GENERATION_METADATA_TARGET`, and the
-structured error types. The wheel includes `py.typed`.
+`GENERATION_METADATA_VERSION` and `DEFAULT_GENERATION_METADATA_TARGET`, the
+reproducible-render update models (`UpdatePlan` and its nested `UpdateTarget`
+/ `AppliedRename`), and the structured error types. The wheel includes
+`py.typed`.
 
 `parse_generation_metadata(payload) -> GenerationMetadata` and
 `verify_generation_metadata(metadata, project) -> None` read back the
@@ -59,6 +62,20 @@ provenance document `render_project` attaches (see "Rendering"). Both fail
 closed with `ForgeEngineError` codes `invalid-generation-metadata` or
 `unsupported-generation-metadata`, `operation` in `{parse, validate}`
 (FT-17.01 / [ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md)).
+
+`plan_update(recorded, *, old, new) -> UpdatePlan`
+(FT-17.04 / [ADR 0065](adr/0065-implement-reproducible-rendering-for-updates.md))
+classifies an engine-native update from a recorded generation-metadata
+document, the client-reproduced old render (bytes keyed by target, obtained by
+provisioning `recorded.provider.version` and rendering there), and a fresh
+`new = render_project(effective_spec)` result. It reads `recorded` more
+leniently than `parse_generation_metadata` — a drifted recorded component
+version is expected update input, not a failure — and fails closed the same
+way: `unsupported-generation-metadata` for an unavailable historical provider
+(an empty `old` against a non-empty recorded `output`),
+`invalid-generation-metadata` for a merge base that does not match the
+recorded digests. It performs no filesystem read or write and spawns no
+process; see [generation-provenance.md](generation-provenance.md#update-inputs).
 
 `map_legacy_library_answers(answers) -> dict[str, JsonValue]` is a pure,
 side-effect-free helper implementing the documented [legacy Copier answer
@@ -365,6 +382,10 @@ the additive names: `metadata_version` on `EngineInfo`, the two
 `parse_generation_metadata` / `verify_generation_metadata`, and the
 `GENERATION_METADATA_VERSION` / `DEFAULT_GENERATION_METADATA_TARGET` constants;
 the component-manifest protocol tuple is now `(1, 2, 3)` and protocol-`1` and
-protocol-`2` manifests are accepted unchanged. The package stays `0.4.1` until
-FT-17.06 releases `0.5.0`. A client written against `0.4.1` keeps working
-against `0.5.0` within a widened range.
+protocol-`2` manifests are accepted unchanged.
+[FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) /
+[ADR 0065](adr/0065-implement-reproducible-rendering-for-updates.md) has since
+landed four more: `plan_update`, `UpdatePlan`, `UpdateTarget`, and
+`AppliedRename`. The package stays `0.4.1` until FT-17.06 releases `0.5.0`. A
+client written against `0.4.1` keeps working against `0.5.0` within a widened
+range.

@@ -24,6 +24,7 @@ from typing import Literal, TypeAlias, overload
 from jinja2 import Environment, StrictUndefined, TemplateError
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.utils import InvalidName, canonicalize_name
+from packaging.version import Version
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, ValidationError
 
 from forge_template.component_manifest import (
@@ -48,11 +49,16 @@ from forge_template.file_conflicts import (
 from forge_template.foundation_source import FoundationPlacement, foundation_placement
 from forge_template.generation_metadata import (
     GENERATION_METADATA_VERSION,
+    AppliedRename,
     GenerationMetadata,
     MetadataProtocols,
     OutputRecord,
     ProviderIdentity,
+    ReproductionRecord,
     SelectedComponent,
+    UpdateClassification,
+    UpdatePlan,
+    UpdateTarget,
 )
 from forge_template.project_spec import PROJECT_SPEC_PROTOCOL_VERSION, ProjectSpec
 from forge_template.template_variables import (
@@ -1341,8 +1347,20 @@ def _negotiate_generation_metadata(document: GenerationMetadata) -> None:
         )
 
 
-def _validate_recorded_selection(document: GenerationMetadata) -> None:
-    """Check the embedded spec parses and every recorded component is real."""
+def _validate_recorded_selection(
+    document: GenerationMetadata, *, require_version_match: bool = True
+) -> ProjectSpec:
+    """Check the embedded spec parses and every recorded component is real.
+
+    ``require_version_match=True`` -- the default, and what
+    ``parse_generation_metadata`` uses unchanged -- additionally requires each
+    recorded component version to equal the installed one: right for the
+    reproduce path, where the recorded release and the running engine must be
+    the same release. ``plan_update`` reads with
+    ``require_version_match=False``: an update is by definition an old
+    document read on a newer engine, so a drifted component version is
+    expected input, not a failure (docs/generation-provenance.md).
+    """
     try:
         spec = parse_project_spec(document.spec)
     except ForgeEngineError as exc:
@@ -1363,7 +1381,7 @@ def _validate_recorded_selection(document: GenerationMetadata) -> None:
                 f"recorded component {component.id!r} is not in the installed "
                 "catalogue.",
             )
-        if catalogue[component.id] != component.version:
+        if require_version_match and catalogue[component.id] != component.version:
             raise _metadata_error(
                 EngineErrorCode.INVALID_GENERATION_METADATA,
                 "validate",
@@ -1384,6 +1402,7 @@ def _validate_recorded_selection(document: GenerationMetadata) -> None:
             ("components",),
             "recorded components do not match the embedded spec's selection.",
         )
+    return spec
 
 
 def parse_generation_metadata(
@@ -1470,3 +1489,190 @@ def verify_generation_metadata(
                 f"recorded digest for {entry.target!r} does not match the "
                 "reproduced content.",
             )
+
+
+def _renames_between(
+    document: GenerationMetadata, new: RenderedProject
+) -> tuple[AppliedRename, ...]:
+    """Surface owner-declared renames whose ``since`` falls in the update window.
+
+    For each component recorded in ``document`` that is still selected in
+    ``new``, keeps the installed manifest's ``[[renames]]`` records where
+    ``recorded < since <= installed`` (docs/generation-provenance.md#
+    owner-declared-rename-records). A component the new selection dropped
+    contributes none -- its content is gone either way.
+    """
+    manifests = {record.manifest.id: record.manifest for record in _load_catalogue()}
+    recorded_versions = {
+        component.id: component.version for component in document.components
+    }
+    still_selected = set(new.plan.component_order)
+
+    applied: list[AppliedRename] = []
+    for component_id, recorded_version in recorded_versions.items():
+        if component_id not in still_selected:
+            continue
+        manifest = manifests.get(component_id)
+        if manifest is None:
+            continue
+        recorded = Version(recorded_version)
+        installed = Version(manifest.version)
+        for record in manifest.renames:
+            since = Version(record.since)
+            if recorded < since <= installed:
+                applied.append(
+                    AppliedRename(
+                        component_id=component_id,
+                        to=record.to,
+                        since=record.since,
+                        **{"from": record.from_},
+                    )
+                )
+    return tuple(
+        sorted(applied, key=lambda rename: (rename.component_id, rename.from_))
+    )
+
+
+def _classify_update(
+    old: Mapping[str, bytes],
+    new: Mapping[str, bytes],
+    renames: tuple[AppliedRename, ...],
+) -> dict[str, UpdateClassification]:
+    """Classify each target across an old/new render pair.
+
+    Every value is one of the five documented classifications
+    (docs/generation-provenance.md#update-inputs). Renames are applied first,
+    so a moved-and-edited file is reported once, under its new target, as
+    ``"renamed"`` -- the old target never also appears as ``"removed"``.
+    Promoted from the ADR 0062 placeholder that lived in
+    ``tests/generation_provenance_contract.py``.
+    """
+    moved = {rename.from_: rename.to for rename in renames}
+    result: dict[str, UpdateClassification] = {}
+    for source, destination in moved.items():
+        if source in old and destination in new:
+            result[destination] = "renamed"
+    for target in old.keys() | new.keys():
+        if target in result or target in moved:
+            continue
+        if target in old and target in new:
+            result[target] = "unchanged" if old[target] == new[target] else "changed"
+        elif target in new:
+            result[target] = "added"
+        else:
+            result[target] = "removed"
+    return result
+
+
+def plan_update(
+    recorded: GenerationMetadataPayload,
+    *,
+    old: Mapping[str, bytes],
+    new: RenderedProject,
+) -> UpdatePlan:
+    """Classify an engine-native update from a recorded document and a render pair.
+
+    ``recorded`` is the generation-metadata document a client persisted for
+    the project being updated. ``old`` is the bytes that document's provider
+    release produced when the client reproduced it -- ``render_project`` on
+    the recorded spec, provisioned on the recorded release, keyed by target --
+    see docs/generation-provenance.md#identity-and-reproduction. ``new`` is a
+    fresh ``render_project(effective_spec)`` result on this release. Neither
+    render is performed here.
+
+    Reads ``recorded`` leniently: the same structural check and protocol
+    negotiation as :func:`parse_generation_metadata`, but a recorded component
+    version that differs from the installed one is expected update input, not
+    a failure -- an update is by definition an old document read on a newer
+    engine.
+
+    Fails closed, before any classification:
+
+    - an empty ``old`` against a non-empty recorded ``output`` reports an
+      unavailable historical provider as ``unsupported-generation-metadata``
+      / ``validate``, naming the ``provider`` axis, the recorded version, and
+      both remedies -- provision that release and reproduce it, or record an
+      explicit degraded two-way update (the client's to make; this engine
+      never performs that comparison);
+    - a mismatched ``old`` target set, or a digest that does not match the
+      recorded one, is ``invalid-generation-metadata`` / ``validate``: the
+      supplied old render did not come from this document.
+
+    Reads no filesystem, spawns no process, and returns data only
+    (FT-ROADMAP-01-EX-01) -- the client applies the result.
+    """
+    if isinstance(recorded, GenerationMetadata):
+        document = recorded
+    elif isinstance(recorded, (str, bytes)):
+        document = _parse_metadata_json(recorded)
+    elif isinstance(recorded, Mapping):
+        document = _parse_metadata_json(json.dumps(dict(recorded)))
+    else:
+        raise _metadata_error(
+            EngineErrorCode.INVALID_GENERATION_METADATA,
+            "parse",
+            (),
+            "a generation-metadata document must be a JSON object.",
+        )
+
+    _negotiate_generation_metadata(document)
+    _validate_recorded_selection(document, require_version_match=False)
+
+    if not old and document.output:
+        raise _metadata_error(
+            EngineErrorCode.UNSUPPORTED_GENERATION_METADATA,
+            "validate",
+            ("provider",),
+            f"recorded provider version {document.provider.version!r} was not "
+            "supplied as reproduced old-render input; provision that exact "
+            "forge-template release and reproduce it, or record an explicit "
+            "degraded two-way update.",
+        )
+
+    recorded_targets = {entry.target for entry in document.output}
+    if recorded_targets != set(old):
+        raise _metadata_error(
+            EngineErrorCode.INVALID_GENERATION_METADATA,
+            "validate",
+            ("output",),
+            "the supplied old render does not match the recorded output target set.",
+        )
+    for entry in document.output:
+        expected = "sha256:" + hashlib.sha256(old[entry.target]).hexdigest()
+        if entry.digest != expected:
+            raise _metadata_error(
+                EngineErrorCode.INVALID_GENERATION_METADATA,
+                "validate",
+                ("output",),
+                f"the supplied old render does not match the recorded digest "
+                f"for {entry.target!r}.",
+            )
+
+    renames = _renames_between(document, new)
+    new_content = {file.target: file.content for file in new.files}
+    classification = _classify_update(old, new_content, renames)
+
+    new_by_target = {item.target: item for item in new.plan.files}
+    recorded_by_target = {entry.target: entry for entry in document.output}
+    targets = tuple(
+        UpdateTarget(
+            target=target,
+            classification=kind,
+            owner=(
+                _owner_token(new_by_target[target].owner)
+                if target in new_by_target
+                else recorded_by_target[target].owner
+            ),
+            regeneration=(
+                new_by_target[target].regeneration
+                if target in new_by_target
+                else recorded_by_target[target].regeneration
+            ),
+        )
+        for target, kind in sorted(classification.items())
+    )
+    return UpdatePlan(
+        targets=targets,
+        renames=renames,
+        reproduction=ReproductionRecord(mode="exact"),
+    )

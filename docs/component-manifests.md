@@ -144,9 +144,13 @@ the owner-declared update contract
 
 - **`[[renames]]`** — `from` and `to` normalised project-relative POSIX
   paths, `since` a canonical PEP 440 component version. An identity move or a
-  duplicate `from` is rejected. The provider surfaces the records whose
-  `since` falls between a project's recorded and installed component versions;
-  the client applies each move before diffing.
+  duplicate `from` is rejected. `plan_update`
+  ([FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) /
+  [ADR 0065](adr/0065-implement-reproducible-rendering-for-updates.md))
+  surfaces the records whose `since` falls strictly between a project's
+  recorded and installed component versions as public `AppliedRename` values;
+  the client applies each move before diffing. No shipped component declares
+  one; the path is exercised by a synthetic fixture catalogue.
 - **`[[regeneration]]`** — `target` a normalised project-relative POSIX path,
   `disposition` `"replace"` (the implicit default) or `"skip-if-exists"` for a
   never-clobber target. A duplicate `target` is rejected. The engine records

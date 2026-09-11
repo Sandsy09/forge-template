@@ -217,6 +217,21 @@ Foundation addition. `[tool.coverage]` / `[tool.pyright]` relocate to standalone
 files; the archetypes stay untouched. `discover_components()` returns fourteen
 components, and every `copier.yml` question now has an engine route; `main`
 stays `0.4.1`.
+FT-17.04 /
+[ADR 0065](docs/adr/0065-implement-reproducible-rendering-for-updates.md) then
+ships the reproducible-render path: one
+`plan_update(recorded, *, old, new) -> UpdatePlan` entry point that reads a
+recorded generation-metadata document leniently (a drifted recorded component
+version is expected update input, not a failure — unlike the strict reproduce
+path `parse_generation_metadata` still enforces unchanged), classifies every
+target `unchanged` / `added` / `removed` / `changed` / `renamed`, surfaces
+owner-declared `[[renames]]` in the recorded/installed version window, and
+fails closed as `unsupported-generation-metadata` on an unavailable historical
+provider — reusing that code rather than adding one, since `EngineErrorCode`
+stayed frozen at nine values through the cutover. The public facade gains four
+additive names (`plan_update`, `UpdatePlan`, `UpdateTarget`, `AppliedRename`);
+the degraded two-way update stays entirely client-side. No component,
+Foundation, `copier.yml`, or `template/**` change; `main` stays `0.4.1`.
 
 ## Branching and pull requests
 

@@ -10,17 +10,28 @@ identities, digests and field set all agree with what the engine actually
 produces, that the two ``EngineErrorCode`` values are shipped and stay in the
 ``parse`` / ``validate`` band, and that the static fixtures still fail with
 the documented code.
+
+Since FT-17.04 / ADR 0065 shipped the real reproducible-render and update
+surface, this module also drives ``plan_update`` directly: the reproduction
+guarantee across all three archetypes, the five-value classification
+vocabulary, ownership/regeneration agreement with the new plan, the
+unavailable-historical-provider and tampered-merge-base fail-closed paths,
+the decision-2 lenient-recorded-version seam, and rename-window surfacing
+against a synthetic fixture catalogue (the shipped catalogue declares no
+``[[renames]]`` record).
 """
 
 from __future__ import annotations
 
 import json
 import re
+import shutil
 from pathlib import Path
 from typing import Any
 
 import pytest
 
+import forge_template.engine as engine_module
 from forge_template import (
     DEFAULT_GENERATION_METADATA_TARGET,
     GENERATION_METADATA_VERSION,
@@ -33,6 +44,7 @@ from forge_template import (
     parse_generation_metadata,
     parse_project_spec,
     plan_generation,
+    plan_update,
     render_project,
     verify_generation_metadata,
 )
@@ -41,8 +53,6 @@ from tests.generation_provenance_contract import (
     OPTIONAL_FIELDS,
     REQUIRED_FIELDS,
     SKIP_IF_EXISTS,
-    RenameRecord,
-    classify_update,
     digest,
     selected_ids,
 )
@@ -51,6 +61,8 @@ ROOT = Path(__file__).parents[1]
 DOC = ROOT / "docs" / "generation-provenance.md"
 COPIER = ROOT / "copier.yml"
 FIXTURES = ROOT / "tests" / "fixtures" / "generation_metadata"
+_PRODUCTION_COMPONENTS = ROOT / "src" / "forge_template" / "components"
+_RENAME_FIXTURE = ROOT / "tests" / "fixtures" / "update_renames" / "renaming-widget"
 
 _RESERVED_CODES = ("invalid-generation-metadata", "unsupported-generation-metadata")
 
@@ -297,8 +309,64 @@ def test_live_negatives_are_rejected() -> None:
         parse_generation_metadata(extra_field)
 
 
-def test_classify_update_uses_only_the_documented_vocabulary() -> None:
-    library = _rendered(_reference_spec())
+def _document(project: Any) -> dict[str, Any]:
+    """The canonical JSON document, as a plain ``dict`` a test can mutate."""
+    metadata = project.metadata
+    assert metadata is not None
+    document: dict[str, Any] = json.loads(metadata.to_json())
+    return document
+
+
+_ARCHETYPE_PAYLOADS: dict[str, dict[str, Any]] = {
+    "library": _REFERENCE_PAYLOAD,
+    "cli": {
+        **_REFERENCE_PAYLOAD,
+        "components": {"archetype": "cli", "capabilities": [], "platforms": []},
+        "component_options": {},
+    },
+    "data-science": {
+        **_REFERENCE_PAYLOAD,
+        "components": {
+            "archetype": "data-science",
+            "capabilities": ["jupyter"],
+            "platforms": [],
+        },
+        "component_options": {},
+    },
+}
+
+
+@pytest.mark.parametrize("archetype", sorted(_ARCHETYPE_PAYLOADS))
+def test_reproduction_is_byte_identical_across_archetypes(archetype: str) -> None:
+    """The reproducibility guarantee, proven same-release for all three
+    archetypes: render -> attach metadata -> re-render from the embedded spec
+    -> byte-identical, and the recorded document verifies against the
+    reproduction. Cross-release provisioning is the client's own step
+    (CF-16.02), proven against a real released artefact at FT-17.05/FT-18.01."""
+    spec = parse_project_spec(_ARCHETYPE_PAYLOADS[archetype])
+    original = render_project(spec)
+    assert original.metadata is not None
+
+    reproduced_spec = parse_project_spec(original.metadata.spec)
+    reproduction = render_project(reproduced_spec)
+
+    original_bytes = {f.target: f.content for f in original.files}
+    reproduced_bytes = {f.target: f.content for f in reproduction.files}
+    assert reproduced_bytes == original_bytes
+    verify_generation_metadata(original.metadata, reproduction)
+
+
+def test_plan_update_classifies_every_documented_value() -> None:
+    """Selecting a capability yields ``added``/``unchanged``; dropping it
+    yields ``removed``; a spec identity change yields ``changed``; a repeated
+    update with no change yields only ``unchanged`` -- the contract's explicit
+    no-op case."""
+    library_spec = _reference_spec()
+    library = render_project(library_spec)
+    assert library.metadata is not None
+    recorded = _document(library)
+    old_bytes = {f.target: f.content for f in library.files}
+
     with_jupyter_payload = {
         **_REFERENCE_PAYLOAD,
         "components": {
@@ -307,20 +375,207 @@ def test_classify_update_uses_only_the_documented_vocabulary() -> None:
             "platforms": [],
         },
     }
-    with_jupyter = _rendered(parse_project_spec(with_jupyter_payload))
+    with_jupyter = render_project(parse_project_spec(with_jupyter_payload))
 
-    classified = classify_update(library, with_jupyter)
-    assert set(classified.values()) <= set(CLASSIFICATIONS)
-    assert "added" in classified.values()
-    assert "unchanged" in classified.values()
+    added_plan = plan_update(recorded, old=old_bytes, new=with_jupyter)
+    added_values = {t.classification for t in added_plan.targets}
+    assert added_values <= set(CLASSIFICATIONS)
+    assert "added" in added_values
+    assert "unchanged" in added_values
 
-    old = {"src/refproj/old_name.py": b"x", "keep.py": b"k"}
-    new = {"src/refproj/new_name.py": b"x", "keep.py": b"k"}
-    record = RenameRecord("src/refproj/old_name.py", "src/refproj/new_name.py", "2.0.0")
-    renamed = classify_update(old, new, [record])
-    assert renamed["src/refproj/new_name.py"] == "renamed"
-    assert renamed["keep.py"] == "unchanged"
-    assert "src/refproj/old_name.py" not in renamed
+    with_jupyter_recorded = _document(with_jupyter)
+    with_jupyter_bytes = {f.target: f.content for f in with_jupyter.files}
+    removed_plan = plan_update(
+        with_jupyter_recorded, old=with_jupyter_bytes, new=library
+    )
+    assert "removed" in {t.classification for t in removed_plan.targets}
+
+    edited_payload = {
+        **_REFERENCE_PAYLOAD,
+        "project": {**_REFERENCE_PAYLOAD["project"], "description": "Edited."},
+    }
+    edited = render_project(parse_project_spec(edited_payload))
+    changed_plan = plan_update(recorded, old=old_bytes, new=edited)
+    assert "changed" in {t.classification for t in changed_plan.targets}
+
+    noop_plan = plan_update(recorded, old=old_bytes, new=library)
+    assert {t.classification for t in noop_plan.targets} == {"unchanged"}
+    assert noop_plan.renames == ()
+    assert noop_plan.reproduction.mode == "exact"
+
+
+def test_plan_update_target_ownership_matches_the_new_plan() -> None:
+    """No ``UpdateTarget`` claims ownership or a disposition the resolved
+    plan does not agree with -- the new plan for a surviving target, the
+    recorded document for a removed one."""
+    library = render_project(_reference_spec())
+    assert library.metadata is not None
+    recorded = _document(library)
+    old_bytes = {f.target: f.content for f in library.files}
+
+    with_jupyter_payload = {
+        **_REFERENCE_PAYLOAD,
+        "components": {
+            "archetype": "library",
+            "capabilities": ["jupyter"],
+            "platforms": [],
+        },
+    }
+    with_jupyter_spec = parse_project_spec(with_jupyter_payload)
+    with_jupyter = render_project(with_jupyter_spec)
+    plan = plan_generation(with_jupyter_spec)
+    expected = {
+        item.target: (
+            "foundation"
+            if item.owner.kind == "foundation"
+            else f"component:{item.owner.id}"
+        )
+        for item in plan.files
+    }
+    expected_regeneration = {item.target: item.regeneration for item in plan.files}
+
+    update = plan_update(recorded, old=old_bytes, new=with_jupyter)
+    for entry in update.targets:
+        if entry.classification == "removed":
+            continue
+        assert entry.owner == expected[entry.target]
+        assert entry.regeneration == expected_regeneration[entry.target]
+
+
+def test_plan_update_fails_closed_on_an_unavailable_historical_provider() -> None:
+    """An empty ``old`` against a non-empty recorded ``output`` reports the
+    ``provider`` axis, the recorded version, and both remedies -- never any
+    absolute path or rendered content."""
+    library = render_project(_reference_spec())
+    assert library.metadata is not None
+    recorded = _document(library)
+
+    with pytest.raises(ForgeEngineError) as caught:
+        plan_update(recorded, old={}, new=library)
+    assert caught.value.code is EngineErrorCode.UNSUPPORTED_GENERATION_METADATA
+    assert caught.value.operation == "validate"
+    detail = caught.value.details[0]
+    assert detail.path == ("provider",)
+    assert recorded["provider"]["version"] in detail.message
+    assert "provision" in detail.message
+    assert "degraded" in detail.message
+    assert "\\" not in detail.message
+    assert "/" not in detail.message
+
+
+def test_plan_update_rejects_a_tampered_merge_base() -> None:
+    """An ``old`` render whose bytes do not match the recorded digest fails
+    ``invalid-generation-metadata`` / ``validate`` -- it did not come from
+    this document."""
+    library = render_project(_reference_spec())
+    assert library.metadata is not None
+    recorded = _document(library)
+    old_bytes = {f.target: f.content for f in library.files}
+
+    tampered = dict(old_bytes)
+    target = next(iter(tampered))
+    tampered[target] = tampered[target] + b"tampered"
+    with pytest.raises(ForgeEngineError) as caught:
+        plan_update(recorded, old=tampered, new=library)
+    assert caught.value.code is EngineErrorCode.INVALID_GENERATION_METADATA
+    assert caught.value.operation == "validate"
+
+    incomplete = dict(old_bytes)
+    del incomplete[next(iter(incomplete))]
+    with pytest.raises(ForgeEngineError) as caught:
+        plan_update(recorded, old=incomplete, new=library)
+    assert caught.value.code is EngineErrorCode.INVALID_GENERATION_METADATA
+
+
+def test_recorded_component_version_drift_is_lenient_only_on_the_update_path() -> None:
+    """The decision-2 seam: ``parse_generation_metadata`` keeps FT-17.01's
+    exact recorded-component-version equality (the reproduce path), but
+    ``plan_update`` treats a drifted version as expected input -- an update is
+    by definition an old document read on a newer engine."""
+    library = render_project(_reference_spec())
+    assert library.metadata is not None
+    recorded = _document(library)
+    old_bytes = {f.target: f.content for f in library.files}
+
+    drifted = json.loads(json.dumps(recorded))
+    for component in drifted["components"]:
+        if component["id"] == "library":
+            component["version"] = "999.0.0"
+
+    with pytest.raises(ForgeEngineError) as caught:
+        parse_generation_metadata(drifted)
+    assert caught.value.code is EngineErrorCode.INVALID_GENERATION_METADATA
+
+    plan = plan_update(drifted, old=old_bytes, new=library)
+    assert {t.classification for t in plan.targets} == {"unchanged"}
+
+
+def test_plan_update_round_trips_a_degraded_reproduction_record() -> None:
+    """A refreshed document a client wrote after an opt-in degraded two-way
+    update carries ``reproduction.mode == "degraded"`` and still parses; a
+    fresh render's document has no ``reproduction`` key at all (exact)."""
+    library = render_project(_reference_spec())
+    assert library.metadata is not None
+    document = _document(library)
+    assert "reproduction" not in document
+
+    degraded = json.loads(json.dumps(document))
+    degraded["reproduction"] = {
+        "mode": "degraded",
+        "reason": "historical provider release unavailable",
+    }
+    parsed = parse_generation_metadata(degraded)
+    assert parsed.reproduction is not None
+    assert parsed.reproduction.mode == "degraded"
+    assert '"mode": "degraded"' in parsed.to_json()
+
+
+@pytest.fixture
+def rename_fixture_catalogue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Overlay the real production catalogue with the synthetic
+    ``renaming-widget`` capability, mirroring
+    ``tests/test_capability_composition.py``'s ``overlaid_catalogue``: only
+    ``_CATALOGUE_ROOT_OVERRIDE`` moves, the real Foundation source stays live.
+    """
+    root = tmp_path / "catalogue"
+    shutil.copytree(_PRODUCTION_COMPONENTS, root)
+    shutil.copytree(_RENAME_FIXTURE, root / "renaming-widget")
+    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", root)
+
+
+def test_plan_update_surfaces_only_in_window_renames(
+    rename_fixture_catalogue: None,
+) -> None:
+    """Only the ``[[renames]]`` record whose ``since`` falls strictly between
+    the recorded and installed component version is surfaced; a record at or
+    below the recorded version, and one above the installed version, are
+    both not."""
+    payload = {
+        **_REFERENCE_PAYLOAD,
+        "components": {
+            "archetype": "library",
+            "capabilities": ["renaming-widget"],
+            "platforms": [],
+        },
+    }
+    spec = parse_project_spec(payload)
+    new = render_project(spec)
+    assert new.metadata is not None
+    recorded = _document(new)
+    for component in recorded["components"]:
+        if component["id"] == "renaming-widget":
+            component["version"] = "1.0.0"
+    old_bytes = {f.target: f.content for f in new.files}
+
+    update = plan_update(recorded, old=old_bytes, new=new)
+    assert [r.model_dump(by_alias=True) for r in update.renames] == [
+        {
+            "component_id": "renaming-widget",
+            "from": "widget/legacy.txt",
+            "to": "widget/renamed.txt",
+            "since": "1.1.0",
+        }
+    ]
 
 
 def test_skip_if_exists_matches_copier() -> None:

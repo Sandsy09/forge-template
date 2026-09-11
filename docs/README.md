@@ -135,8 +135,10 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [generation-provenance.md](generation-provenance.md) — FT-15.02's versioned
   provider contract for the metadata that reproduces or updates a generated
   project: the document shape, the reproducibility guarantee, owner-declared
-  renames and never-clobber targets, and the reserved failure codes, pinned by
-  `tests/test_generation_provenance.py`.
+  renames and never-clobber targets, and the two failure codes. FT-17.01 /
+  ADR 0062 shipped the document and `parse` / `verify` surface; FT-17.04 /
+  ADR 0065 shipped the reproducible-render path (`plan_update`) that consumes
+  it, pinned by `tests/test_generation_provenance.py`.
 - [platform-and-tooling-parity.md](platform-and-tooling-parity.md) — FT-15.03's
   assignment of every optional-tooling and host-integration parity gap to one
   `github` platform or one of eight capabilities; FT-17.02 / ADR 0063 shipped

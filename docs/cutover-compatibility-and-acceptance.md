@@ -157,21 +157,27 @@ Foundation-owned target is always `replace` and never renamed (ADR 0062).
 
 Every name exported from `forge_template` keeps its signature and its result
 fields through the cutover. Nothing is renamed, removed, or narrowed, and no
-deprecation is opened. The cutover *adds* — FT-17.01 / ADR 0062 has landed all
-of these:
+deprecation is opened. The cutover *adds* — FT-17.01 / ADR 0062 and FT-17.04 /
+ADR 0065 have landed all of these:
 
 - `metadata_version` on `EngineInfo`;
 - the two `EngineErrorCode` values FT-15.02 reserved,
   `invalid-generation-metadata` and `unsupported-generation-metadata`, each
-  carrying `operation` only in `{parse, validate}`;
+  carrying `operation` only in `{parse, validate}` — FT-17.04 / ADR 0065
+  additionally uses `unsupported-generation-metadata` to report an
+  unavailable historical provider (a deliberate widening of its documented
+  meaning; no new code was added, as `EngineErrorCode` stayed frozen at nine
+  values through the cutover);
 - the generation-metadata hand-off surface: `GenerationMetadata` (and its
   nested `ProviderIdentity` / `MetadataProtocols` / `SelectedComponent` /
   `OutputRecord` / `ReproductionRecord` models) on `RenderedProject.metadata`,
   the `parse_generation_metadata` and `verify_generation_metadata` functions,
   and the `GENERATION_METADATA_VERSION` and
   `DEFAULT_GENERATION_METADATA_TARGET` constants. `PlannedFile` gains a
-  `regeneration` field. [FT-17.04](https://github.com/Sandsy09/forge-template/issues/153)
-  builds the reproducible-render path that consumes this surface.
+  `regeneration` field.
+- the reproducible-render update surface FT-17.04 / ADR 0065 built on top:
+  `plan_update(recorded, *, old, new) -> UpdatePlan`, and `UpdatePlan`'s
+  nested `UpdateTarget` / `AppliedRename` models.
 
 A client written against `0.4.1` that ignores the new names keeps working
 against `0.5.0` within a widened range. That is the whole content of the
@@ -373,7 +379,7 @@ is narrow.
 | [FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) | The metadata document shape, the reproducibility guarantee, the reserved axis and the two error codes (FT-15.02); manifest protocol `3` as the home for the rename and regeneration-disposition records (here) | **Done ([ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md))** — the two-array manifest-`3` schema, `EngineInfo.metadata_version`, `RenderedProject.metadata`, `parse_generation_metadata` / `verify_generation_metadata`, `DEFAULT_GENERATION_METADATA_TARGET`; Foundation deferred |
 | [FT-17.02](https://github.com/Sandsy09/forge-template/issues/151) | One `github` platform, one required `organisation` option, the two CI points, the three Foundation host-link points, the `requires`/`conflicts` edges (FT-15.03) | The manifest bytes, the content trees, the CI matrix shape, the pinned action SHAs, whether `library`/`cli`/`data-science` move a version |
 | [FT-17.03](https://github.com/Sandsy09/forge-template/issues/152) | The eight-capability set, the two dependency-group points, the `api-reference` point (FT-15.03); the nine `needs a bounded issue` rows resolve here (below) | Each capability's owned files, options, tasks and dependency bounds; whether a `pyproject` tool-config point is published or `[tool.coverage]` / `[tool.pyright]` relocate to standalone files |
-| [FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) | The old/new/working-tree diff model, the classification vocabulary, the unavailable-provider fail-closed rule and the degraded path (FT-15.02) | The reproducible-render implementation and the new-render inputs it hands the client |
+| [FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) | The old/new/working-tree diff model, the classification vocabulary, the unavailable-provider fail-closed rule and the degraded path (FT-15.02) | **Done ([ADR 0065](adr/0065-implement-reproducible-rendering-for-updates.md))** — `plan_update(recorded, old=..., new=...) -> UpdatePlan`, the five-value classifier, `[[renames]]` window-surfacing, and the fail-closed unavailable-provider path (reusing `unsupported-generation-metadata`) |
 | [FT-17.05](https://github.com/Sandsy09/forge-template/issues/154) | The acceptance matrix above; validation-before-render and the no-resource-read rule (here, AC-04) | Executing every row against the candidate and recording commands, platforms, versions and artefact identities |
 | [FT-17.06](https://github.com/Sandsy09/forge-template/issues/155) | `0.5.0` as the line; the immutable-release and `0.4.x`-window rules (here, AC-05) | Running the protected release and dry run, the artefact audit, the client-bound hand-off |
 | [FT-18.01](https://github.com/Sandsy09/forge-template/issues/156) | The integrated matrix rows and the corrected-release rule (here) | Pairing the candidate client with the released provider and executing the provider-owned integrated rows |

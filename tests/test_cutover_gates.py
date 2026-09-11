@@ -84,8 +84,10 @@ _GENERATION_METADATA_ERROR_CODES = {
 _SHIPPED_ERROR_CODES = _ORIGINAL_ERROR_CODES | _GENERATION_METADATA_ERROR_CODES
 
 # The public facade as of 0.4.1, plus the additive generation-metadata names
-# FT-17.01 / ADR 0062 added. The cutover renames and removes nothing; this set
-# fails deliberately when any other name lands so the contract is revisited.
+# FT-17.01 / ADR 0062 added, plus the additive reproducible-render names
+# FT-17.04 / ADR 0065 added (AppliedRename, UpdatePlan, UpdateTarget,
+# plan_update). The cutover renames and removes nothing; this set fails
+# deliberately when any other name lands so the contract is revisited.
 _FROZEN_PUBLIC_API = frozenset(
     {
         "DEFAULT_GENERATION_METADATA_TARGET",
@@ -93,6 +95,7 @@ _FROZEN_PUBLIC_API = frozenset(
         "PROJECT_SPEC_PROTOCOL_VERSION",
         "SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS",
         "SUPPORTED_PROJECTSPEC_PROTOCOLS",
+        "AppliedRename",
         "Author",
         "ComponentDescriptor",
         "ComponentOption",
@@ -119,12 +122,15 @@ _FROZEN_PUBLIC_API = frozenset(
         "ReproductionRecord",
         "SelectedComponent",
         "SelectionProvenance",
+        "UpdatePlan",
+        "UpdateTarget",
         "discover_components",
         "get_engine_info",
         "map_legacy_library_answers",
         "parse_generation_metadata",
         "parse_project_spec",
         "plan_generation",
+        "plan_update",
         "render_project",
         "validate_project_spec",
         "validate_rendered_project",

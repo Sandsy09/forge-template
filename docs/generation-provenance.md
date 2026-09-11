@@ -11,24 +11,30 @@ release that can no longer be obtained.
 
 Its review obligation, **FT-ROADMAP-01-AC-02**, is shared: this document is
 the contract; [FT-17.01](https://github.com/Sandsy09/forge-template/issues/150)
-implements the metadata schema and public hand-off, and
-[FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) implements
+implemented the metadata schema and public hand-off, and
+[FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) implemented
 the reproducible rendering that consumes it.
 [ADR 0059](adr/0059-generation-provenance-and-reproducible-updates.md) records
 the decisions.
 
 This document is the contract; it decided no runtime behaviour itself.
 [FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) /
-[ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md) has since
-implemented every name it reserves — the `GenerationMetadata` model on
+[ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md) implemented
+every name it reserves — the `GenerationMetadata` model on
 `RenderedProject.metadata`, `parse_generation_metadata` /
 `verify_generation_metadata`, the two `EngineErrorCode` values,
 `EngineInfo.metadata_version`, `PlannedFile.regeneration`, manifest protocol
 `3`, and `DEFAULT_GENERATION_METADATA_TARGET` — additively, with no generated
-content or `copier.yml` change and no package version bump. Where this
-document still says "reserved" or "FT-17.01's to finalise", read it as the
-contract that was fixed before the implementation; the implementation is
-recorded in ADR 0062.
+content or `copier.yml` change and no package version bump.
+[FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) /
+[ADR 0065](adr/0065-implement-reproducible-rendering-for-updates.md) has since
+implemented the classifier, rename-surfacing and fail-closed unavailable-
+provider path this document specifies — `plan_update()`, `UpdatePlan`,
+`UpdateTarget`, and `AppliedRename` — additively, with no component,
+Foundation, `copier.yml`, or package-version change. Where this document
+still says "reserved" or "FT-17.04's to finalise", read it as the contract
+that was fixed before the implementation; the implementation is recorded in
+ADR 0065.
 
 ## Why this exists
 
@@ -149,8 +155,16 @@ An engine-native update is a diff of three file sets, all keyed by target:
 | **new** | `render_project(effective spec)` on the current release |
 | **working tree** | the client reads it from disk |
 
-The provider supplies *old* and *new* and the ownership and rename data below.
-The client computes the working-tree comparison and performs the merge —
+The provider supplies *old* and *new* and the ownership and rename data below,
+through `plan_update(recorded, *, old, new) -> UpdatePlan`
+([FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) / ADR 0065):
+`recorded` is the persisted generation-metadata document, `old` is the bytes
+the client obtained by provisioning `recorded.provider.version` and rendering
+there, and `new` is a fresh `render_project(effective_spec)` result on the
+current release. `UpdatePlan.targets` carries each target's classification,
+owner and regeneration disposition; `UpdatePlan.renames` carries the applied
+rename records; `UpdatePlan.reproduction` is `"exact"` on this path. The
+client computes the working-tree comparison and performs the merge —
 [CF-16.02](https://github.com/Sandsy09/create-forge/issues/156) owns that
 dispatch, conflict, dry-run, cancellation and rollback policy.
 
@@ -176,14 +190,16 @@ edits go with the old path and a fresh copy of the new path lands beside them
 The engine's answer is the same shape as Copier's `_migrations`: the owning
 component declares `[[renames]]` records with `from`, `to` and `since`
 (manifest protocol `3`, ADR 0062), where `since` is the canonical PEP 440
-component version that introduced the move. During an update the provider
-surfaces the records whose `since` falls between the recorded component
-versions and the current ones; the client applies each move before diffing, so
-the edit is preserved. The catalogue declares none today. Foundation declares
-no rename records — a Foundation path move waits for a `foundation_version`
-bump (ADR 0062 decision 2). Surfacing which records apply between two versions,
-and the `unchanged / added / removed / changed / renamed` classifier, are
-[FT-17.04](https://github.com/Sandsy09/forge-template/issues/153)'s.
+component version that introduced the move. During an update `plan_update`
+surfaces the records whose `since` falls strictly between the recorded
+component version and the installed one (`recorded < since <= installed`,
+restated as `AppliedRename` values); the client applies each move before
+diffing, so the edit is preserved. A component the new selection dropped
+contributes none. The catalogue declares none today — the `renamed` path is
+exercised by a synthetic fixture catalogue
+(`tests/fixtures/update_renames/renaming-widget/`). Foundation declares no
+rename records — a Foundation path move waits for a `foundation_version` bump
+(ADR 0062 decision 2).
 
 ## Unavailable historical provider
 
@@ -196,12 +212,22 @@ axis (`provider`), it states the detected value (the recorded version), and it
 states the required action (make that release available, or choose the degraded
 path below).
 
+`plan_update` implements this: an empty `old` against a non-empty recorded
+`output` raises `unsupported-generation-metadata` / `validate`, naming the
+`provider` axis, the recorded version, and both remedies — provision that
+release and reproduce it, or record an explicit degraded two-way update
+(ADR 0065 decision 3, a deliberate widening of that code's documented meaning;
+`EngineErrorCode` stayed frozen at nine values through the cutover).
+
 A client **may** offer an explicit, user-chosen **degraded two-way update**:
 skip the old render entirely and compare the new render against the working
 tree. It loses the ability to tell a user's local edit from an old provider
-default, so it is never automatic. When taken, the refreshed metadata document
-must record `"reproduction": { "mode": "degraded", "reason": ... }` so the
-next update knows the merge base was lost.
+default, so it is never automatic, and the provider never performs this
+comparison itself (FT-ROADMAP-01-EX-01). When taken, the refreshed metadata
+document must record `"reproduction": { "mode": "degraded", "reason": ... }`
+so the next update knows the merge base was lost — the client sets this on the
+`GenerationMetadata` it persists (it is frozen, so via `model_copy`);
+`parse_generation_metadata` round-trips it unchanged.
 
 ## Failure taxonomy
 
@@ -302,17 +328,21 @@ protocol `3` — the rename and regeneration-disposition records above are new
 `metadata_version` moving from reserved to a published `1`, every other axis
 unchanged. It also fixes the immutable-release and supported-`0.4.x`-window
 rollback rules and closes the flagged parity rows by reference to FT-17.03.
+FT-17.04 / ADR 0065 has since implemented the reproducible-render path this
+contract specifies; the merge algorithm and the dry-run, cancellation and
+rollback policy stay CF-16.02's.
 
 ## Validation
 
 `tests/test_generation_provenance.py` runs under `uv run poe check` and drives
 the shipped surface (`RenderedProject.metadata`, `to_json()`,
-`parse_generation_metadata`, `verify_generation_metadata`) directly since
-FT-17.01 / ADR 0062. `tests/generation_provenance_contract.py` keeps only what
-a test must *not* read out of the engine — the documented field set, the
-classification vocabulary, and the `copier.yml`-derived `_skip_if_exists` set;
-its former shadow builder and validator are retired. The tests prove, against a
-real `library` render:
+`parse_generation_metadata`, `verify_generation_metadata`, and — since
+FT-17.04 / ADR 0065 — `plan_update`) directly.
+`tests/generation_provenance_contract.py` keeps only what a test must *not*
+read out of the engine — the documented field set, the classification
+vocabulary, and the `copier.yml`-derived `_skip_if_exists` set; its former
+shadow builder, validator, and the `RenameRecord` / `classify_update`
+placeholder are all retired. The tests prove, against real renders:
 
 - the document a render attaches verifies against a fresh render of its own
   embedded spec, and its canonical JSON round-trips through
@@ -328,6 +358,13 @@ real `library` render:
   `{parse, validate}`;
 - `tests/fixtures/generation_metadata/example-library.json` is a fully live
   reference that parses, negotiates and verifies against a real render;
-- classifying two real renders yields only the documented vocabulary, with a
-  synthetic rename record exercising the `renamed` path the catalogue cannot
-  reach yet (FT-17.04 ships the real classifier).
+- the reproducibility guarantee is byte-identical, same-release, for
+  `library`, `cli` and `data-science`;
+- `plan_update` classifies every documented value, including the explicit
+  no-op (a repeated update with no change yields only `unchanged`), agrees
+  with the new plan's ownership and regeneration for every surviving target,
+  fails closed on an unavailable historical provider and on a tampered merge
+  base, reads a recorded component-version drift leniently while
+  `parse_generation_metadata` still rejects it, round-trips a degraded
+  `reproduction` record, and surfaces only the in-window `[[renames]]` record
+  against the synthetic `renaming-widget` fixture catalogue.

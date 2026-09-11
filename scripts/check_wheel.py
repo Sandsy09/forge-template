@@ -26,12 +26,14 @@ PyPI"):
 FT-14.02 (docs/cross-repository-validation.md) added the size ceiling below:
 ADR 0056 measured a 72,566-byte local review wheel; the published `0.4.0`
 wheel is 72,544 bytes. FT-17.02 (the `github` platform) took a local wheel to
-~85 KB and FT-17.03 (the eight tooling capabilities) to ~105 KB, still under
-the 128 KiB ceiling. `_MAX_WHEEL_BYTES` is a deliberately loose bound, not a
-tight pin -- zip metadata (timestamps, compression) makes an exact byte count
-non-reproducible across machines, but an unbounded content addition (a new
-archetype or capability outgrowing the reviewed catalogue) should still fail
-loudly here rather than silently ship.
+~85 KB, FT-17.03 (the eight tooling capabilities) to ~105 KB, and FT-17.04
+(the reproducible-render `engine.py`/`generation_metadata.py` additions, no
+new content trees) to ~108 KB, still under the 128 KiB ceiling.
+`_MAX_WHEEL_BYTES` is a deliberately loose bound, not a tight pin -- zip
+metadata (timestamps, compression) makes an exact byte count non-reproducible
+across machines, but an unbounded content addition (a new archetype or
+capability outgrowing the reviewed catalogue) should still fail loudly here
+rather than silently ship.
 """
 
 from __future__ import annotations
