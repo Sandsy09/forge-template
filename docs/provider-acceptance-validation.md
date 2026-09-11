@@ -114,13 +114,21 @@ every line the sweep exercises is already covered by `poe check`.
 
 Combined with the independent-client sweep below (also 2240, also
 `sweep`-marked, sharing the same marker so a local `uv run poe sweep` runs
-both), the real total is 4481 cases (2 × 2240 + one tripwire), measured at
-**~47 minutes in one `-n 4` job** — a genuine cost, not the ~7-8 minutes this
-issue's plan first estimated (which budgeted for only one sweep). CI splits
-the two sweeps into parallel jobs (`sweep-composition`,
-`sweep-independence`), keeping the critical path close to the existing
-`archetype` job's ~22-minute pole rather than doubling total required CI
-time; the local `poe sweep` task is unchanged and still runs both together.
+both), the real total is 4481 cases (2 × 2240 + one tripwire). Measured
+**locally, on this validator's Windows dev machine: ~47 minutes in one
+`-n 4` job** — a genuine cost, not the ~7-8 minutes this issue's plan first
+estimated (which budgeted for only one sweep). That local figure turned out
+to be a poor proxy for the real cost: **on the actual GitHub Actions
+`ubuntu-latest` runners, split into two parallel jobs
+(`sweep-composition`, `sweep-independence`), the true cost is 4m02s and
+7m23s respectively** — a Linux CI runner with a warm `uv` cache and
+datacenter network resolves this pure in-memory, no-network workload far
+faster than a Windows laptop does. Confirmed identical output (2240/2240
+and 2241/2240 passed) both places. The split was still the right call: it
+keeps the critical path parallel rather than serial, and the true numbers
+now sit comfortably under the existing `archetype` job's own CI cost
+(~1m43s, similarly overestimated from local timing beforehand). The local
+`poe sweep` task is unchanged and still runs both sweeps together.
 
 ## Independence: what `poe crossrepo` shows
 

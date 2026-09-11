@@ -85,12 +85,20 @@ Record the four confirmed calls here.
    check`. Measured, single-process, no coverage: ~1 s per composition.
    Decision 3 adds a second, equally exhaustive sweep under the same marker
    (the independent-client proof), so the real combined total is 4481 cases
-   (2 × 2240 + one tripwire) — measured at ~47 minutes in one `-n 4` job, an
-   underestimate this ADR's first draft made by budgeting for only one sweep.
-   Split into two parallel CI jobs (`sweep-composition`,
-   `sweep-independence`), each still `-n 4`, keeping the critical path near
-   the existing `archetype` job's ~22-minute pole rather than doubling total
-   required CI time; `uv run poe sweep` locally still runs both as one task.
+   (2 × 2240 + one tripwire) — measured, locally, at ~47 minutes in one
+   `-n 4` job, an underestimate this ADR's first draft made by budgeting for
+   only one sweep. Split into two parallel CI jobs (`sweep-composition`,
+   `sweep-independence`), each still `-n 4`, on the reasoning that this would
+   keep the critical path near the existing `archetype` job's local-measured
+   cost. The real GitHub Actions numbers, once observed, were far better than
+   either local figure suggested: 4m02s and 7m23s respectively — a Linux CI
+   runner with a warm `uv` cache and datacenter network resolves this
+   in-memory, no-network workload much faster than the Windows dev machine
+   this ADR's estimates came from (the `archetype` job's own real CI cost was
+   similarly overestimated beforehand, at ~1m43s). The split was still the
+   right call — it keeps the critical path parallel rather than serial — even
+   though the magnitude of the problem it solves turned out smaller than
+   measured locally. `uv run poe sweep` locally still runs both as one task.
    Rejected: a bounded ~100-composition derived sample (narrows the
    contract's literal "every valid composition"); an opt-in marker CI never
    runs (issue #154 itself forbids a local-green-only claim); one combined CI
