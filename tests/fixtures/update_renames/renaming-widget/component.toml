@@ -1,0 +1,37 @@
+# Synthetic capability for FT-17.04 / ADR 0065. NOT a production component --
+# it exists only to exercise the rename-surfacing window (`since` strictly
+# between a recorded and an installed component version) that the shipped
+# catalogue, which declares no `[[renames]]` record, cannot reach. See
+# docs/generation-provenance.md#owner-declared-rename-records.
+#
+# Three records cover the three window cases in one fixture: inside the
+# window (surfaced), at-or-below the recorded version (not surfaced), and
+# above the installed version (not surfaced).
+manifest_version = 3
+id = "renaming-widget"
+name = "Renaming Widget"
+description = "Synthetic capability that owns three windowed rename records."
+kind = "capability"
+version = "2.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[[renames]]
+from = "widget/legacy.txt"
+to = "widget/renamed.txt"
+since = "1.1.0"
+
+[[renames]]
+from = "widget/too-early.txt"
+to = "widget/still-too-early.txt"
+since = "1.0.0"
+
+[[renames]]
+from = "widget/too-late.txt"
+to = "widget/still-too-late.txt"
+since = "3.0.0"
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"

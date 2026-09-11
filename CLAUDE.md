@@ -642,6 +642,25 @@ untouched (`library` / `cli` / `data-science` stay `1.0.1` / `1.0.1` /
 `copier.yml` question now has an engine route. No `copier.yml` or
 `template/**` change; `main` stays `0.4.1` and untagged.
 
+**FT-17.04 / #153 is complete** —
+[ADR 0065](docs/adr/0065-implement-reproducible-rendering-for-updates.md)
+ships the reproducible-render path: one
+`plan_update(recorded, *, old, new) -> UpdatePlan` entry point, mirroring
+`plan_generation` / `render_project`. It reads a recorded generation-metadata
+document leniently (`parse_generation_metadata` keeps FT-17.01's exact
+recorded-component-version equality, right for the reproduce path; an update
+is by definition an old document read on a newer engine), classifies every
+target `unchanged` / `added` / `removed` / `changed` / `renamed` against the
+client-reproduced old render and a fresh new render, surfaces owner-declared
+`[[renames]]` whose `since` falls strictly between a component's recorded and
+installed version, and fails closed as `unsupported-generation-metadata` on
+an unavailable historical provider — a deliberate widening of that code's
+documented meaning, since `EngineErrorCode` stayed frozen at nine values
+through the cutover. The public facade gains four additive names
+(`plan_update`, `UpdatePlan`, `UpdateTarget`, `AppliedRename`); the degraded
+two-way update stays entirely client-side. No component, Foundation,
+`copier.yml`, or `template/**` change; `main` stays `0.4.1` and untagged.
+
 FT-08.02 populated the
 production component catalogue under the
 [Library archetype contract](docs/library-archetype.md) — additive, package-bound

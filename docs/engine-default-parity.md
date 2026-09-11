@@ -173,8 +173,8 @@ component that owns the concern:
 | `_tasks` | `git init` / `add` / `commit`, `uv sync`, lockfile commit, `pre-commit install` | n/a | client | n/a | CF-16.02 | client staging, lock resolution, VCS and hook execution; the engine spawns no process (FT-ROADMAP-01-EX-01) |
 | `_message_after_copy` | Post-generation next-steps text | n/a | client | n/a | CF-16.01 | client UX and error presentation |
 | `_message_after_update` | Post-update next-steps text | n/a | client | n/a | CF-16.02 | client update dispatch and messaging |
-| `_skip_if_exists` | `CHANGELOG.md`, `.env` are never clobbered on regeneration | gap | provider | cutover-blocking | FT-15.02 → FT-17.04 | the engine metadata records which rendered targets are regeneration-safe; the client applies the skip |
-| `_answers_file` | `.copier-answers.yml` name + `copier update` three-way merge | gap | provider | cutover-blocking | FT-15.02 → FT-17.04 | reproducible old/new render from recorded metadata; client owns the on-disk merge |
+| `_skip_if_exists` | `CHANGELOG.md`, `.env` are never clobbered on regeneration | shipped | provider | n/a | FT-15.02 → FT-17.04 / ADR 0065 | `[[regeneration]]` (manifest protocol 3) marks `CHANGELOG.md` `skip-if-exists` (FT-17.03's `changelog`); `plan_update`'s `UpdateTarget.regeneration` carries the disposition to the client; `tests/test_generation_provenance.py` |
+| `_answers_file` | `.copier-answers.yml` name + `copier update` three-way merge | shipped | provider | n/a | FT-15.02 → FT-17.04 / ADR 0065 | `plan_update(recorded, old=..., new=...) -> UpdatePlan` reproduces the old render from recorded metadata and classifies every target; the client owns the on-disk merge; `tests/test_generation_provenance.py` |
 | `_exclude` | Files Copier never renders (`copier.yml`, `*.pyc`, `.git`) | n/a | client | n/a | CF-18.03 | client staging filter; the engine renders only declared component content |
 | `_min_copier_version` | Minimum Copier runtime | excluded | excluded | n/a | engine protocol negotiation (`get_engine_info`) supersedes it | `tests/test_engine.py`; no Copier-runtime floor in the engine path |
 
@@ -208,10 +208,14 @@ before Stage 17 can implement:
   owning its concern's files and contributing through reviewed extension
   points; the two `[dependency-groups]` Foundation points and `api-reference`
   are published. `discover_components()` returns fourteen components.
-- **No engine-native update.** `copier update`'s three-way merge has no
-  engine equivalent. FT-15.02 specifies the reproducible old/new render
-  inputs in [generation-provenance.md](generation-provenance.md); FT-17.04
-  implements the reproducible rendering; the client owns the filesystem merge.
+- **No engine-native update.** *(Closed by FT-17.04 / ADR 0065.)*
+  `copier update`'s three-way merge has no engine equivalent, but the provider
+  now supplies its inputs: `plan_update` reproduces the old render from
+  recorded generation metadata, renders the new side, classifies every target
+  (`unchanged` / `added` / `removed` / `changed` / `renamed`), and surfaces
+  owner-declared `[[renames]]` in the recorded/installed version window. The
+  client still owns the on-disk merge — see
+  [generation-provenance.md](generation-provenance.md#update-inputs).
 
 ## Explicit exclusions
 
