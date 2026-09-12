@@ -81,15 +81,17 @@ is FT-17.06's `0.5.0`.
 [FT-15.04](https://github.com/Sandsy09/forge-template/issues/149) /
 [ADR 0061](adr/0061-provider-compatibility-failure-and-release-gates.md)
 classifies which axes the engine-default cutover moves, against the rules in
-this document. It is a classification, not a transition: nothing below the
-"Current compatibility state" table changes until Stage 17 implements and
-[FT-17.06](https://github.com/Sandsy09/forge-template/issues/155) publishes.
-The classified move is:
+this document. It was a classification, not yet a transition, until Stage 17
+implemented it and
+[FT-17.06](https://github.com/Sandsy09/forge-template/issues/155) published
+`0.5.0`. The classified move was:
 
-- **`forge-template` package** → a new minor line, `0.5.0`. Below `1.0` a
-  supported range is minor-scoped, so `create-forge`'s `>=0.4.1,<0.5` cannot
-  drift into it and must widen deliberately; `1.0.0` is explicitly not
-  promised. FT-17.06 performs this release; `main` stays on `0.4.1` until then.
+- **`forge-template` package** → a new minor line, `0.5.0`, **done** by
+  [FT-17.06](https://github.com/Sandsy09/forge-template/issues/155). Below
+  `1.0` a supported range is minor-scoped, so released `create-forge`'s
+  `>=0.4.1,<0.5` does not drift into it and widens only at
+  [CF-18.01](https://github.com/Sandsy09/create-forge/issues/158); `1.0.0` is
+  explicitly not promised.
 - **Component manifest protocol** → `(1, 2, 3)`, **done** by
   [FT-17.01](https://github.com/Sandsy09/forge-template/issues/150) /
   [ADR 0062](adr/0062-generation-metadata-and-manifest-protocol-3.md). The
@@ -260,13 +262,13 @@ rendered bytes.
 
 ## Current compatibility state
 
-Living snapshot, reviewed 2026-09-11. Advancing it in line with the rules
+Living snapshot, reviewed 2026-09-12. Advancing it in line with the rules
 above does not require a new ADR; a semantic change to those rules does (see
 "Ownership and change process").
 
 | Axis | Current value |
 | --- | --- |
-| `forge-template` package | `0.4.1` |
+| `forge-template` package | `0.5.0` |
 | ProjectSpec protocol | `1` |
 | Component manifest protocol | `1`, `2`, `3` |
 | Generation metadata (`metadata_version`) | `1` |

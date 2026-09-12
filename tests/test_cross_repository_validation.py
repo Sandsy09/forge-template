@@ -339,7 +339,7 @@ def test_installed_engine_metadata_matches_the_reviewed_candidate(
     assert result.returncode == 0, result.stdout + result.stderr
     payload = json.loads(result.stdout)
 
-    assert payload["package_version"] == "0.4.1"
+    assert payload["package_version"] == "0.5.0"
     assert payload["projectspec_protocols"] == [1]
     # [1, 2] through the FT-14.01 handoff; FT-17.01 / ADR 0062 added protocol 3
     # and published metadata_version, both additive.

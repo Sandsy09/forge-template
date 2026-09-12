@@ -3,12 +3,14 @@
 This is the canonical living contract for the supported `forge-template`
 engine facade. [ADR 0029](adr/0029-stable-template-engine-api.md) records the
 decision to expose it. The current compatibility line is package version
-`0.4.x`; its public facade carries the `0.3.x` names unchanged and adds the
-generation-metadata surface additively (FT-17.01 / ADR 0062 — see
-"Compatibility and cutover boundary" below), while the installed catalogue
-adds the Data Science archetype and its two capabilities. ProjectSpec,
-component-manifest and generation-metadata protocol versions remain separate
-from the package version.
+`0.5.x` (FT-17.06); its public facade carries the `0.3.x` names unchanged and
+adds the generation-metadata and reproducible-render surfaces additively
+(FT-17.01 / ADR 0062, FT-17.04 / ADR 0065 — see "Compatibility and current
+cutover boundary" below), while the installed catalogue adds the Data Science
+archetype, its two capabilities, the `github` platform, and the eight
+FT-17.03 tooling capabilities. ProjectSpec, component-manifest and
+generation-metadata protocol versions remain separate from the package
+version.
 
 The facade is side-effect-free. It discovers only reviewed components bundled
 in the installed wheel, validates an effective ProjectSpec, plans composition,
@@ -91,7 +93,7 @@ answer pair.
 Undocumented names in `forge_template.engine`, `component_manifest`,
 `composition`, `file_conflicts`, `foundation_source`, `project_spec`, and
 `template_variables` are implementation details. They may change within the
-`0.4.x` line when the supported top-level behaviour remains compatible.
+`0.5.x` line when the supported top-level behaviour remains compatible.
 
 ## Engine and protocol information
 
@@ -384,8 +386,10 @@ the additive names: `metadata_version` on `EngineInfo`, the two
 the component-manifest protocol tuple is now `(1, 2, 3)` and protocol-`1` and
 protocol-`2` manifests are accepted unchanged.
 [FT-17.04](https://github.com/Sandsy09/forge-template/issues/153) /
-[ADR 0065](adr/0065-implement-reproducible-rendering-for-updates.md) has since
-landed four more: `plan_update`, `UpdatePlan`, `UpdateTarget`, and
-`AppliedRename`. The package stays `0.4.1` until FT-17.06 releases `0.5.0`. A
-client written against `0.4.1` keeps working against `0.5.0` within a widened
-range.
+[ADR 0065](adr/0065-implement-reproducible-rendering-for-updates.md) landed
+four more: `plan_update`, `UpdatePlan`, `UpdateTarget`, and `AppliedRename`.
+[FT-17.06](https://github.com/Sandsy09/forge-template/issues/155) has since
+released `0.5.0`. A client written against `0.4.1` keeps working against
+`0.5.0` within a widened range; released `create-forge` has not yet widened
+its `>=0.4.1,<0.5` bound (that adoption is
+[CF-18.01](https://github.com/Sandsy09/create-forge/issues/158)).

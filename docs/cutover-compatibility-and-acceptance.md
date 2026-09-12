@@ -80,12 +80,13 @@ platform (`1.0.0`) and grown the Foundation inventory 11 → 14; FT-17.03 / ADR
 0064 has since published the eight tooling capabilities (`1.0.0` each), the two
 `[dependency-groups]` Foundation points and `api-reference` (inventory 14 →
 16), all additive, with `library` / `cli` / `data-science` content and
-versions unchanged. The package version stays on the `0.4` line until FT-17.06
-releases `0.5.0`. The "Current" column below is the live engine state.
+versions unchanged. **FT-17.06 has since released `0.5.0`** — the cutover
+line this contract fixed. The "Current" column below is the live engine
+state.
 
 | Axis | Current | Cutover line | Change class |
 | --- | --- | --- | --- |
-| `forge-template` package | `0.4.1` | `0.5.0` | New minor compatibility line — FT-17.06 |
+| `forge-template` package | `0.5.0` | `0.5.0` | **Moved (FT-17.06)** — new minor compatibility line |
 | ProjectSpec protocol | `1` | `1` | Unchanged — every unrouted question became a selection or a component option (FT-15.03), so no request-schema field is added |
 | Component manifest protocol | `1`, `2`, `3` | `1`, `2`, `3` | **Moved (FT-17.01)** — the owner-declared rename and regeneration-disposition records are manifest protocol `3` fields, and the manifest models forbid unknown keys, so they could not ride protocol `2`; protocol-`1` and protocol-`2` manifests are accepted unchanged |
 | Option-schema protocol | `1`, `2` | `1`, `2` | Unchanged — `coverage`'s `fail_under` is an `integer` option with a `default`, already expressible at protocol `2` |
@@ -470,10 +471,10 @@ document itself. It proves:
 Tripwires — each was written to fail deliberately when Stage 17 lands, forcing
 this contract back into step with the implementation, exactly as FT-15.02's
 reserved-code and FT-15.03's reserved-point tripwires did. FT-17.01 / ADR 0062
-has since turned four of them over:
+turned four of them over; FT-17.06 has since turned over the fifth:
 
-- `get_engine_info().package_version` is still on the `0.4` line — **holds**;
-  FT-17.06 releases `0.5.0`;
+- `get_engine_info().package_version` has moved to the `0.5` line —
+  **FT-17.06** released `0.5.0`;
 - `SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS == (1, 2, 3)` — protocol `3` is
   published, and a protocol-`1` or protocol-`2` manifest is still accepted;
 - `set(EngineErrorCode)` is the seven original values plus
