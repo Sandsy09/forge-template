@@ -304,7 +304,16 @@ classifies each axis and the release gate. FT-14.03 then republished that
 same unchanged catalogue as the reviewed
 [`v0.4.1` GitHub Release](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.1)
 and [PyPI distribution](https://pypi.org/project/forge-template/0.4.1/) —
-see [reviewed-engine-release.md](reviewed-engine-release.md);
+see [reviewed-engine-release.md](reviewed-engine-release.md). FT-17.06 then
+published the engine-default cutover line as the reviewed
+[`v0.5.0` GitHub Release](https://github.com/Sandsy09/forge-template/releases/tag/v0.5.0)
+and [PyPI distribution](https://pypi.org/project/forge-template/0.5.0/),
+carrying the nine components Stage 17 shipped (the `github` platform and
+eight tooling capabilities), manifest protocol `3`, published
+`metadata_version`, and the `plan_update` surface, all additive — see
+[cutover-provider-release.md](cutover-provider-release.md). Released
+`create-forge` (`0.3.2`) has not adopted this line and stays on
+`>=0.4.1,<0.5` until [CF-18.01](https://github.com/Sandsy09/create-forge/issues/158).
 [python-support.md](python-support.md) uses the same living snapshot pattern
 for its own state.
 

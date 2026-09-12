@@ -127,4 +127,9 @@ target. CF-14.01 adopted the `0.4.1` line and tightened the engine extra to
 `forge-template>=0.4.1,<0.5`, CF-14.02 and CF-14.03 completed client-side
 end-to-end and regression validation, and CF-14.04 published
 [`create-forge 0.3.0`](https://pypi.org/project/create-forge/0.3.0/), closing
-roadmap v2.
+roadmap v2. `0.4.1` remained the latest release, and `>=0.4.1,<0.5` the
+compatible client bound, through the whole of Stage 17 (FT-17.01–FT-17.05);
+FT-17.06 then published the engine-default cutover line as the reviewed
+[`0.5.0` release](cutover-provider-release.md) — a new, separate immutable
+record, since this document describes only `0.4.1` and is not rewritten by a
+later release.

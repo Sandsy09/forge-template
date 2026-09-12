@@ -50,7 +50,7 @@ for exact pins and engine-extra installation.
 ### Use Copier directly
 
 ```bash
-uvx copier copy gh:Sandsy09/forge-template your-project --trust --vcs-ref v0.4.1
+uvx copier copy gh:Sandsy09/forge-template your-project --trust --vcs-ref v0.5.0
 cd your-project
 uv run poe check
 ```
@@ -59,7 +59,7 @@ Copier asks the template's own questions. `--trust` allows its tasks to
 initialise Git, make local commits, install dependencies, and install hooks.
 Only run template code you trust. Omit `--vcs-ref` to use the latest
 suitable release tag. Through the companion CLI, the equivalent template
-selection is `new --template library --ref v0.4.1`.
+selection is `new --template library --ref v0.5.0`.
 
 ### Pull template updates
 
@@ -67,14 +67,14 @@ From a clean, committed Copier-generated project:
 
 ```bash
 uvx create-forge update --dry-run
-uvx create-forge update --ref v0.4.1
+uvx create-forge update --ref v0.5.0
 uv run poe check
 ```
 
 Keep `.copier-answers.yml` committed. Review the diff, resolve conflicts,
 and rerun checks before committing. A dry run validates the request without
 applying it or producing a file-by-file diff. Direct Copier users can run
-`uvx copier update --trust --vcs-ref v0.4.1` instead.
+`uvx copier update --trust --vcs-ref v0.5.0` instead.
 
 ## Preview: project types and capabilities
 
