@@ -100,10 +100,12 @@ rendering, structured failures, the `map_legacy_library_answers` helper, and
 `GenerationMetadata` on `RenderedProject.metadata` plus
 `parse_generation_metadata` / `verify_generation_metadata` and
 `generation_metadata.py` — from the top-level package, at package version
-`0.4.1`. The `0.4.x` line keeps the `0.3.x` public facade and protocol tuples
+`0.5.0`. The `0.5.x` line keeps the `0.3.x` public facade and protocol tuples
 (the component-manifest tuple is now `(1, 2, 3)`, `metadata_version` is
-published) while adding the Data Science catalogue; ADR 0037's Stage 08 review
-and ADR 0056's Stage 14 confirmation define its Foundation boundary. The
+published) while adding the Data Science catalogue and the nine Stage 17
+components (the `github` platform and eight tooling capabilities); ADR 0037's
+Stage 08 review and ADR 0056's Stage 14 confirmation define its Foundation
+boundary. The
 [Forge-Blueprint compatibility policy](docs/compatibility-policy.md)
 ([ADR 0041](docs/adr/0041-forge-blueprint-compatibility-policy.md)) defines
 every versioned axis above (package, both protocols, component versions,
@@ -311,9 +313,13 @@ closed); all four Copier combos green
 locally and in CI, update merge validated, root and template
 `.gitattributes` both in place, no byte-empty template files remain,
 `task_runner`/`make` removed (it was the one untested, 100%-broken
-conditional — see Deferred). **`v0.4.1` is the latest tagged release: the
-Stage 14-reviewed republication of the five-component Data Science line first
-published at `v0.4.0`, unchanged at the catalogue level.** `v0.3.2` carries
+conditional — see Deferred). **`v0.5.0` is the latest tagged release: the
+FT-17.06-published engine-default cutover line, adding the `github` platform
+and eight tooling capabilities (fourteen components total), manifest
+protocol `3`, and published `metadata_version`, all additive over
+`v0.4.1`'s five-component catalogue.** `v0.4.1` is the Stage 14-reviewed
+republication of the five-component Data Science line first published at
+`v0.4.0`, unchanged at the catalogue level. `v0.3.2` carries
 the reviewed Stage 08 boundary corrections. `v0.3.0` first carried
 the production
 engine catalogue (both `library` and `cli`) alongside the direct-Copier
@@ -592,7 +598,8 @@ complete; `FT-EPIC-15 / #141` and its milestone are closed.**
 create-forge's `CF-EPIC-16 / #152` (Stage 16 client contracts) is closed,
 including `CF-16.03` ([create-forge ADR 0042](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0042-engine-cutover-acceptance-and-support-policy.md)),
 which unblocked `FT-EPIC-17 / #142`. Stage 17 (provider implementation and
-release) is now the active forge-template roadmap. **FT-17.01 / #150 is
+release) is complete and closed (see below); Stage 18 (integrated cutover
+validation) is now the active forge-template roadmap. **FT-17.01 / #150 is
 complete** — [ADR 0062](docs/adr/0062-generation-metadata-and-manifest-protocol-3.md)
 ships manifest protocol `3` (two optional arrays `[[renames]]` and
 `[[regeneration]]`; `COMPONENT_MANIFEST_PROTOCOL_VERSIONS == (1, 2, 3)`,
@@ -690,6 +697,31 @@ lockfile exclusion; `pre-commit` moves `1.0.0` → `1.0.1`, the one content
 change, re-baselining the content-tree size pin to 112 files, 68,954 bytes.
 No other component, Foundation, `copier.yml`, or `template/**` change; `main`
 stays `0.4.1` and untagged.
+
+**FT-17.06 / #155 is complete** — no new decision; it executes ADR 0061's
+already-accepted `0.5.0` line
+([cutover-provider-release.md](docs/cutover-provider-release.md)). The
+protected `release.yml` dry run was inspected first, then dispatched: the tag
+[`v0.5.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.5.0),
+its GitHub Release, and the
+[PyPI package](https://pypi.org/project/forge-template/0.5.0/) all name the
+same commit SHA, and a published-artefact audit off PyPI (never this
+checkout) confirmed both hashes, the full negotiation payload (fourteen
+components, manifest protocols `(1, 2, 3)`, `metadata_version = 1`, the four
+additive `plan_update` names), and a real render/lock/`poe check` from the
+installed package. `template/` and `copier.yml` are byte-identical to
+`v0.4.1`, so the direct-Copier path and `copier update` are unaffected. Released
+`create-forge` (`0.3.2`) keeps its `>=0.4.1,<0.5` bound — this release does not
+assert client cutover has shipped; widening that bound is
+[CF-18.01](https://github.com/Sandsy09/create-forge/issues/158)'s to make. A
+hand-off comment recording the immutable target was posted on create-forge's
+[#158](https://github.com/Sandsy09/create-forge/issues/158) and
+[#153](https://github.com/Sandsy09/create-forge/issues/153); no create-forge
+content changed. **FT-17.01 through FT-17.06 are complete; `FT-EPIC-17 / #142`
+and its "Engine-Default Provider Implementation and Release — Stage 17"
+milestone are closed.** `main` is now tagged and published at `0.5.0`; the
+next open provider work is [FT-18.01 / #156](https://github.com/Sandsy09/forge-template/issues/156)
+(Stage 18, integrated cutover validation).
 
 FT-08.02 populated the
 production component catalogue under the

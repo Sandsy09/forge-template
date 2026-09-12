@@ -159,5 +159,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   the wheel-and-sdist artefact audit, pinned by
   `tests/test_full_composition_build.py`, `tests/test_composition_sweep.py`,
   and `scripts/check_wheel.py`.
+- [cutover-provider-release.md](cutover-provider-release.md) — FT-17.06's
+  record of the published, reviewed `forge-template` `0.5.0` release: the
+  release chain, published artefacts, the audit against the `0.4.1` line, the
+  direct-Copier regression, and the provider hand-off to `create-forge`.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

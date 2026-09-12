@@ -247,6 +247,18 @@ real defect — `pre-commit`'s `check-added-large-files` hook rejected a
 `jupyter` + `scientific-python` project's own `uv.lock` — fixed with the
 standard lockfile exclusion, moving `pre-commit` `1.0.0` → `1.0.1`, the one
 content change. `main` stays `0.4.1`.
+FT-17.06 then runs the release ADR 0061 already accepted — no new decision:
+the protected `release.yml` dry run, then the live run, publishing the tag
+[`v0.5.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.5.0),
+its GitHub Release, and the
+[PyPI package](https://pypi.org/project/forge-template/0.5.0/), all naming one
+commit SHA, plus a published-artefact audit against PyPI
+([cutover-provider-release.md](docs/cutover-provider-release.md)). No engine,
+content, protocol, or component-version change beyond what FT-17.01–FT-17.05
+already merged. **Stage 17 (`FT-EPIC-17` / #142) is complete and closed; `main`
+is now tagged and published at `0.5.0`.** Released `create-forge` keeps its
+`>=0.4.1,<0.5` bound until [CF-18.01](https://github.com/Sandsy09/create-forge/issues/158)
+widens it deliberately.
 
 ## Branching and pull requests
 
