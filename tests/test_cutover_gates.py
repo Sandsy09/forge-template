@@ -14,12 +14,12 @@ gap. These tests:
 * check FT-15.04's parity-row reconciliation actually landed -- no matrix row
   in engine-default-parity.md still carries the ``needs a bounded issue``
   marker, and every provider-owned ``gap`` row now cites a filed issue;
-* and tripwire on each classified target: the package is still ``0.4.x``
-  (FT-17.06 moves it) and ``copier.yml`` still carries no ``_migrations``
-  block, while FT-17.01 / ADR 0062 has moved manifest protocols to
-  ``(1, 2, 3)``, shipped the two generation-metadata error codes, published
-  ``metadata_version`` on ``EngineInfo``, and grown the public facade
-  additively -- the assertions below track the live state.
+* and tripwire on each classified target: ``copier.yml`` still carries no
+  ``_migrations`` block, while FT-17.01 / ADR 0062 has moved manifest
+  protocols to ``(1, 2, 3)``, shipped the two generation-metadata error codes,
+  published ``metadata_version`` on ``EngineInfo``, grown the public facade
+  additively, and FT-17.06 / ADR 0061 has moved the package to the ``0.5``
+  line -- the assertions below track the live state.
 """
 
 from __future__ import annotations
@@ -380,13 +380,16 @@ def test_contract_names_its_exclusions_literally() -> None:
     assert "FT-ROADMAP-01-AC-05" in text
 
 
-# --- axis state: FT-17.01 has moved two of the three, FT-17.06 moves the last
+# --- axis state: all three axes ADR 0061 classified as moving have now moved
 
 
-def test_package_is_still_on_the_0_4_line() -> None:
-    assert get_engine_info().package_version.startswith("0.4."), (
-        "package version moved -- FT-17.06 releases 0.5.0; revisit "
-        "docs/cutover-compatibility-and-acceptance.md and this pin"
+def test_package_has_moved_to_the_0_5_line() -> None:
+    """FT-17.06 / ADR 0061: the cutover release. This tripwire turned over the
+    way FT-17.01's four did -- it asserted ``0.4.x`` until this release."""
+    assert get_engine_info().package_version.startswith("0.5."), (
+        "package version is not on the 0.5 line -- FT-17.06 was expected to "
+        "release 0.5.0; revisit docs/cutover-compatibility-and-acceptance.md "
+        "and this pin"
     )
 
 
