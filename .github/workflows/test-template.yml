@@ -249,6 +249,37 @@ jobs:
         run: uv run poe check:wheel
 
   # ---------------------------------------------------------------------------
+  # FT-18.01: row 338 of the acceptance matrix -- a create-forge still
+  # pinned to forge-template>=0.4.1,<0.5 continues to resolve, install and
+  # generate after 0.5.0 publishes. Hermetic: every fixture resolves from
+  # the public PyPI index by exact pinned version, no sibling checkout, so
+  # -- unlike `crossrepo`/`cutover`'s row-339 half -- ADR 0057's "CI must
+  # not depend on a moving sibling main" does not bind it, and the 90-day
+  # 0.4.x support window (docs/cutover-provider-release.md) deserves a
+  # standing tripwire rather than a manually re-run check. See
+  # docs/adr/0067-validate-the-integrated-engine-default-cutover.md.
+  # ---------------------------------------------------------------------------
+  released-client:
+    name: Released client compatibility
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Released 0.3.2 client still resolves and generates on the 0.4.1 line
+        run: uv run pytest -m cutover tests/test_released_client_compatibility.py -v
+
+  # ---------------------------------------------------------------------------
   # Single required status check for branch protection.
   # ---------------------------------------------------------------------------
   all-green:
@@ -264,6 +295,7 @@ jobs:
         sweep-independence,
         update-compat,
         wheel,
+        released-client,
       ]
     if: always()
     steps:

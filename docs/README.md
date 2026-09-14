@@ -163,5 +163,12 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   record of the published, reviewed `forge-template` `0.5.0` release: the
   release chain, published artefacts, the audit against the `0.4.1` line, the
   direct-Copier regression, and the provider hand-off to `create-forge`.
+- [integrated-cutover-validation.md](integrated-cutover-validation.md) —
+  FT-18.01's proof that the immutable released `forge-template` `0.5.0`
+  artefacts and the candidate `create-forge` `0.4.0` client pass the
+  cross-repository acceptance matrix together, and that a client still
+  pinned to `>=0.4.1,<0.5` is unaffected by the publication, pinned by
+  `tests/test_released_provider_cutover.py` and
+  `tests/test_released_client_compatibility.py`.
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

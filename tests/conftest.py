@@ -1,10 +1,11 @@
 """Shared fixtures for the pytest-based validation suites.
 
-The `combos`, `update`, `archetype`, and `crossrepo` markers select the slow
-suites (each scaffolds a real project -- via Copier, the engine, or a sibling
-create-forge checkout -- and runs its own toolchain against it). The default
-`poe test` deselects all four -- see `[tool.pytest.ini_options] markers` and
-the matching Poe tasks in pyproject.toml.
+The `combos`, `update`, `archetype`, `crossrepo`, `sweep`, and `cutover`
+markers select the slow suites (each scaffolds a real project -- via Copier,
+the engine, a sibling create-forge checkout, or the published PyPI release --
+and runs its own toolchain against it). The default `poe test` deselects all
+of them -- see `[tool.pytest.ini_options] markers` and the matching Poe tasks
+in pyproject.toml.
 """
 
 from __future__ import annotations
@@ -55,10 +56,13 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=None,
         help=(
             "Path to a sibling create-forge checkout for the `crossrepo` "
-            "marker (tests/test_cross_repository_validation.py). Defaults to "
+            "marker (tests/test_cross_repository_validation.py) and the "
+            "`cutover` marker's row-339 module "
+            "(tests/test_released_provider_cutover.py). Defaults to "
             "../create-forge next to this repository. Mirrors create-forge's "
             "own --forge-template-root option. See "
-            "docs/cross-repository-validation.md."
+            "docs/cross-repository-validation.md and "
+            "docs/integrated-cutover-validation.md."
         ),
     )
 
@@ -82,12 +86,15 @@ def update_goldens(pytestconfig: pytest.Config) -> bool:
 
 @pytest.fixture(scope="session")
 def create_forge_root(pytestconfig: pytest.Config) -> Path:
-    """Resolve the sibling create-forge checkout for the `crossrepo` marker.
+    """Resolve the sibling create-forge checkout for the `crossrepo` marker
+    and for `cutover`'s row-339 module (tests/test_released_provider_cutover.py),
+    which builds the candidate client wheel from this same checkout.
 
     `--create-forge-root` overrides the default `../create-forge` sibling
     path. Skips the whole session the moment this fixture is first requested
-    if no such checkout is present -- every `crossrepo`-marked test depends
-    on it, so one skip message covers the module rather than one per test.
+    if no such checkout is present -- every test that depends on it is
+    sibling-gated this way, so one skip message covers the module rather
+    than one per test.
     """
     override = pytestconfig.getoption("--create-forge-root")
     root = Path(override) if override else REPO_ROOT.parent / "create-forge"

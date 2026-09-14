@@ -4,14 +4,23 @@
 working tree with a sibling ``create-forge`` checkout in one isolated virtual
 environment -- both installed from local source, never PyPI -- and proves
 current ``main`` on both sides works together: installed engine metadata
-matches the FT-14.01 handoff table, every one of the ten valid compositions
-generates through the real ``create-forge new --engine-preview`` console
-script, repeated generation is byte-deterministic, the documented rejections
-leave no partial destination, both Data Science compositions pass their own
-generated ``poe check`` at the Python window edges, and create-forge's own
-canonical ``tests/test_engine_cross_repository.py`` passes against the same
-pair. See docs/cross-repository-validation.md and
+matches the FT-14.01 handoff table, ten representative compositions generate
+through the real ``create-forge new`` console script (the exhaustive
+2240-composition case is FT-17.05's sweep, ADR 0066 decision 2), repeated
+generation is byte-deterministic, the documented rejections leave no partial
+destination, both Data Science compositions pass their own generated
+``poe check`` at the Python window edges, and create-forge's own canonical
+``tests/test_engine_cross_repository.py`` passes against the same pair. See
+docs/cross-repository-validation.md and
 docs/adr/0057-validate-the-cross-repository-data-science-line.md.
+
+FT-18.01 repaired this module for the engine-default ``create-forge`` CLI --
+``--engine-preview`` is gone, and the ``new`` path now runs ``git init`` and
+writes ``.forge/generation.json`` (CF-18.01/CF-18.03, ADR 0045). This module
+still proves only the two *working trees* pair; the *released* provider
+paired with the candidate client is a distinct proof in
+``tests/test_released_provider_cutover.py`` and
+docs/integrated-cutover-validation.md.
 
 Sibling-gated: the whole module skips (via the session-scoped
 ``create_forge_root`` fixture in tests/conftest.py) when no ``create-forge``
@@ -200,7 +209,6 @@ def _generate(
         str(env_.create_forge_script),
         "new",
         project_name,
-        "--engine-preview",
         "--archetype",
         archetype,
         "--yes",
@@ -229,9 +237,13 @@ def _assert_project_shape(dest: Path) -> None:
     assert (package / "py.typed").is_file()
     assert (dest / "tests").is_dir()
     assert (dest / "uv.lock").is_file()
-    # The engine path runs no copier.yml _tasks: create-forge adds only the
-    # client-finalised lockfile before the atomic rename (ADR 0021).
-    assert not (dest / ".git").exists()
+    # No copier.yml _tasks run for the engine path, but create-forge's own
+    # post-rename lifecycle does: `git init` + an initial commit (and
+    # conditional pre-commit hook install), plus the committed
+    # `.forge/generation.json` reproduction record (CF-18.01/CF-18.03,
+    # create-forge ADR 0041 / ADR 0045).
+    assert (dest / ".git").is_dir()
+    assert (dest / ".forge" / "generation.json").is_file()
     assert not (dest / ".venv").exists()
     # No `.create-forge-*` staging sibling survived finalisation.
     assert list(dest.parent.glob(".create-forge-*")) == []
@@ -258,7 +270,7 @@ def generated_projects(
         )
         if result.returncode != 0:
             pytest.fail(
-                f"create-forge new --engine-preview --archetype {archetype} "
+                f"create-forge new --archetype {archetype} "
                 f"(capabilities={capabilities}) failed (exit {result.returncode}):\n"
                 f"--- stdout ---\n{result.stdout}\n--- stderr ---\n{result.stderr}"
             )
@@ -427,7 +439,11 @@ def test_repeated_generation_is_byte_identical(
     """Regenerates one Library and one Data Science composition into a fresh
     destination and compares every rendered byte against the fixture's first
     render. `uv.lock` is excluded -- it is a network-resolved client
-    artefact, not a rendered byte the engine controls.
+    artefact, not a rendered byte the engine controls -- as is `.git/`, the
+    lifecycle's own commit-graph bookkeeping (CF-18.03). `.forge/generation.json`
+    stays *in* the comparison: `GenerationMetadata` records no timestamp, no
+    absolute path and no environment value, so it is deterministic like every
+    other rendered byte.
     """
     first = generated_projects[slug]
     archetype, capabilities, _ = next(c for c in _COMPOSITIONS if c[2] == slug)
@@ -446,7 +462,9 @@ def test_repeated_generation_is_byte_identical(
         return {
             path.relative_to(root).as_posix(): path
             for path in root.rglob("*")
-            if path.is_file() and path.name != "uv.lock"
+            if path.is_file()
+            and path.name != "uv.lock"
+            and ".git" not in path.relative_to(root).parts
         }
 
     first_files = _rendered_files(first.dest)
@@ -523,7 +541,6 @@ def test_expected_failures_leave_no_partial_destination(
         str(paired_environment.create_forge_script),
         "new",
         "Crossrepo Rejected",
-        "--engine-preview",
         "--archetype",
         case.archetype,
         "--yes",
