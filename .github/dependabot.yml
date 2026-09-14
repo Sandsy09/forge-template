@@ -49,9 +49,9 @@ updates:
       - dependency-name: "pydantic"
         update-types: ["version-update:semver-major"]
       # Test-only compatibility lines. copier<10 is the direct-Copier path
-      # this repo still supports (CLAUDE.md invariant 4); the notebook stack
-      # is pinned to the range the generated jupyter validator is written
-      # against. A major bump here is a deliberate, reviewed change.
+      # this repo still supports; the notebook stack is pinned to the range
+      # the generated jupyter validator is written against. Major bumps are
+      # deliberate, reviewed changes (docs/dependency-updates.md).
       - dependency-name: "copier"
         update-types: ["version-update:semver-major"]
       - dependency-name: "ipykernel"

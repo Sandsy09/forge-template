@@ -1,799 +1,160 @@
 # CLAUDE.md — forge-template
 
-Guidance for Claude Code working in this repository.
+Guidance for coding agents working in this repository. Contributor workflow,
+test selection, pull requests, and releases live in
+[CONTRIBUTING.md](CONTRIBUTING.md) and are intentionally not repeated here.
 
 ## What this is
 
-A [Copier](https://copier.readthedocs.io/) template and public composition
-engine that scaffold modern Python projects. The source catalogue contains
-independent **library**, **CLI Application**, and **Data Science** archetypes
-plus the optionless **Jupyter** and **Scientific Python** capabilities. The
-five-component catalogue was published at
-[`v0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0) and
-republished unchanged as the reviewed
-[`v0.4.1`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.1)
-(the current release), with the public facade and protocol tuples unchanged
-from `0.3.x`. The direct-Copier compatibility path remains Library-only.
+`forge-template` provides two related generation surfaces:
 
-Copier was chosen over Cookiecutter specifically for `copier update`, which
-three-way merges template changes into projects generated months earlier. Every
-decision here is downstream of preserving that capability. See
-[docs/adr/0002](docs/adr/0002-copier-over-cookiecutter.md) for the full
-rationale and its consequences.
+- A direct [Copier](https://copier.readthedocs.io/) template for an updatable
+  Python library.
+- A public Python composition engine with independent Library, CLI Application,
+  and Data Science archetypes plus optional platform and tooling components.
 
-## Repository relationship
+The companion [`create-forge`](https://github.com/Sandsy09/create-forge)
+repository owns the CLI, interactive prompts, destination staging, filesystem
+writes, Git initialisation, and project updates. The repositories remain
+separate because Copier resolves template releases from this repository's
+PEP 440 Git tags. Do not merge their responsibilities; see
+[ADR 0003](docs/adr/0003-two-repo-split.md).
 
-| Repo | Role |
-| --- | --- |
-| `https://github.com/Sandsy09/forge-template` | This repo. The templates. |
-| `https://github.com/Sandsy09/create-forge` | The CLI that scaffolds from it. |
-
-Separate because Copier resolves template versions from PEP440 git tags here.
-**Do not merge them.** See
-[docs/adr/0003](docs/adr/0003-two-repo-split.md).
-
-## Layout
+## Repository architecture
 
 ```text
 forge-template/
-├── copier.yml              Question schema. MUST be at root.
-├── pyproject.toml          This repo's OWN tooling — NOT part of the scaffold
-├── src/forge_template/     Repository checks plus the public template engine
-├── tests/                  pytest suite: schema, ADRs, combos (slow), update (slow)
-├── docs/adr/               Why past decisions were made (Nygard-format ADRs)
-├── scripts/
-│   └── verify-ci.sh        Push `poe combos` output to throwaway repos, watch CI
-├── .github/workflows/
-│   ├── test-template.yml   This repo's CI
-│   └── release.yml         Manual tag + release
-└── template/               EVERYTHING here becomes the scaffold
+├── copier.yml                 Direct-Copier question schema; must stay at root
+├── template/                  Files rendered by the direct-Copier path
+├── src/forge_template/
+│   ├── engine.py              Supported discovery, planning, and render facade
+│   ├── project_spec.py        Strict generation-request models
+│   ├── component_manifest.py  Component metadata and compatibility validation
+│   ├── composition.py         Deterministic selection and application order
+│   ├── file_conflicts.py      Target collision and extension-point rules
+│   ├── template_variables.py  Option resolution and render namespace
+│   ├── generation_metadata.py Reproduction and update metadata
+│   ├── foundation/            Mandatory generated-project content
+│   └── components/            Archetype, capability, and platform packages
+├── tests/                     Contract, render, build, update, and sweep tests
+├── docs/                      Living contracts, ADRs, and roadmap records
+└── scripts/                   Wheel, label, and generated-CI verification
 ```
 
-Nothing inside `template/` describes the template itself. `copier.yml`,
-`pyproject.toml`, `src/`, `tests/`, scripts, and this repo's own CI stay at
-root and are excluded via `_subdirectory: template`. `src/forge_template` is
-not scaffold code — it holds the checks (`schema.py`, `adr.py`, `render.py`,
-`github_actions.py`) that both `poe check` and
-`tests/test_combos.py`/`test_update.py` call, plus the public engine facade.
-Since [ADR 0036](docs/adr/0036-publish-the-engine-to-pypi.md), those two
-halves diverge at the published wheel: `pip install forge-template` ships
-only the facade and the `foundation`/`components` content trees the checks
-modules do not touch — `[tool.hatch.build.targets.wheel]`'s `exclude` list
-names the four checks modules by path, `scripts/check_wheel.py` (`poe
-check:wheel`) verifies the split holds on every CI run, and this is why
-`pyyaml` (needed only by `schema.py`/`render.py`) stays a dev-group-only
-dependency rather than a runtime one — see
-[forge-template#8](https://github.com/Sandsy09/forge-template/issues/8),
-closed by that decision. Editable installs (`uv sync --all-groups`) are
-unaffected; the exclusion applies only to the built wheel. The strict
-[ProjectSpec protocol](docs/project-spec.md) models live in
-`project_spec.py`,
-[organisation policy protocol](docs/organisation-policy.md) `1` is a
-documentation contract with an executable, test-only reference resolver
-([organisation-policy-fixtures.md](docs/organisation-policy-fixtures.md),
-`tests/organisation_policy_contract.py`, [ADR
-0040](docs/adr/0040-organisation-policy-reference-fixture.md)): still do not
-add policy parsing, resolution, public exports, or `ForgeEngineError` values
-to `src/forge_template` itself — a shipped implementation remains
-unscheduled,
-[component manifest protocol](docs/component-manifests.md) models and loader
-in `component_manifest.py` (manifest protocols `1`, `2`, and `3` — FT-17.01
-added `3`'s `[[renames]]` / `[[regeneration]]` records), the implicit
-[Foundation content source](docs/component-manifests.md#foundation-content-source)
-in `foundation_source.py`,
-[composition order](docs/composition-order.md) tier and within-tier ordering
-in `composition.py`,
-[file conflict and override rules](docs/file-conflicts.md) rendered output
-target ([ADR 0032](docs/adr/0032-render-component-content-paths.md)) and
-collision resolution in `file_conflicts.py`, the
-[safe override and extension points](docs/extension-points.md) contract
-([ADR 0039](docs/adr/0039-deny-policy-file-overrides.md)) denying any
-`override` grant and publishing the extension-point inventory as a versioned
-contract, pinned by `tests/test_extension_points.py`, and the
-[template variable contract](docs/template-variables.md) rendered namespace
-and option-schema vocabulary (protocols `1` and `2`, `format` support) in
-`template_variables.py`. The supported
-[template-engine API](docs/template-engine-api.md) in `engine.py` exposes
-package-bound discovery, strict validation, deterministic planning, in-memory
-rendering, structured failures, the `map_legacy_library_answers` helper, and
-(since FT-17.01 / ADR 0062) the generation-metadata surface —
-`GenerationMetadata` on `RenderedProject.metadata` plus
-`parse_generation_metadata` / `verify_generation_metadata` and
-`generation_metadata.py` — from the top-level package, at package version
-`0.5.0`. The `0.5.x` line keeps the `0.3.x` public facade and protocol tuples
-(the component-manifest tuple is now `(1, 2, 3)`, `metadata_version` is
-published) while adding the Data Science catalogue and the nine Stage 17
-components (the `github` platform and eight tooling capabilities); ADR 0037's
-Stage 08 review and ADR 0056's Stage 14 confirmation define its Foundation
-boundary. The
-[Forge-Blueprint compatibility policy](docs/compatibility-policy.md)
-([ADR 0041](docs/adr/0041-forge-blueprint-compatibility-policy.md)) defines
-every versioned axis above (package, both protocols, component versions,
-option-schema and Foundation source protocols), compatible ranges, a
-90-day-plus-one-release deprecation window, and the facts a conformant
-unsupported-version report must carry, pinned by
-`tests/test_compatibility_policy.py`.
-The [no-copy inheritance proof](docs/no-copy-inheritance.md)
-([ADR 0042](docs/adr/0042-validate-no-copy-downstream-inheritance.md)) closes
-forge-template Stage 09: `tests/no_copy_downstream.py` consumes only the
-top-level public facade, real-catalogue equivalence is byte-for-byte, and the
-private fixture catalogue separately demonstrates additive selected-component
-extensions. Never present that private override as a plugin or client
-distribution mechanism.
-Its
-[generated-project validation](docs/generated-project-validation.md) checks
-plan/output agreement, universal `pyproject.toml` metadata, and completed
-Forge extension rendering before a result is returned. **The source catalogue
-now holds three independent reference archetypes plus the Jupyter and
-Scientific Python capabilities**:
-FT-08.02
-populated it with `library`
-([contract](docs/library-archetype.md)/[ADR 0033](docs/adr/0033-migrate-library-production-catalogue.md)),
-FT-08.04 added `cli`
-([contract](docs/cli-application-archetype.md)/[ADR 0035](docs/adr/0035-implement-cli-application-archetype.md)),
-and FT-12.01 added `data-science`
-([contract](docs/data-science-archetype.md)/[ADR 0053](docs/adr/0053-production-data-science-archetype.md)),
-with FT-12.02 completing its notebook and working-tree shape
-([ADR 0054](docs/adr/0054-data-science-notebook-and-artefact-layout.md)) and
-FT-12.03 validating both compositions end to end
-([contract](docs/data-science-validation.md)/[ADR 0055](docs/adr/0055-validate-data-science-generated-projects.md)),
-all alongside the implicit Foundation source at `src/forge_template/foundation/`;
-FT-11.02 adds the optionless `jupyter` capability without a notebook or
-runtime dependency; FT-11.03 adds the independently optional
-`scientific-python` runtime stack and component-owned import test. `data-science`
-declares `requires = [{ id = "jupyter", version = ">=1,<2" }]` — the archetype,
-not the capability, owns that edge — and is rejected before rendering when
-`jupyter` is not also selected. `uv run poe
-archetype` (since FT-12.03 `pytest -m archetype -n 4`) proves real
-wheels/sdists for
-Library across all three packaging modes and for CLI's fixed packaging mode,
-plus a real installed console script and `python -m` invocation; it also
-proves both archetypes' locked aggregate checks with Jupyter selected, and a
-real Data Science wheel/install/`__version__`/`py.typed` plus its own locked
-`poe check` — which since FT-12.02 runs `notebook:check`
-over the real starter notebook and a live kernel, and since FT-12.03 sweeps
-both `data-science` compositions (with and without `scientific-python`) across
-Python 3.11 and 3.14.
-`discover_components()` now returns fourteen components —
-`("changelog", "cli", "coverage", "data-science", "dependabot", "documentation",
-"dotenv-example", "github", "jupyter", "library", "pre-commit", "pyright",
-"renovate", "scientific-python")` — three archetypes, ten capabilities, and the
-`github` platform (FT-17.02 / ADR 0063 shipped `github`; FT-17.03 / ADR 0064
-shipped the eight tooling capabilities). No
-archetype inherits from or reads
-resources from another; a ProjectSpec selects exactly one. These
-contracts are not
-yet consumed by the direct-Copier path; see
-[#5](https://github.com/Sandsy09/forge-template/issues/5), done,
-[#32](https://github.com/Sandsy09/forge-template/issues/32),
-[#33](https://github.com/Sandsy09/forge-template/issues/33),
-[#34](https://github.com/Sandsy09/forge-template/issues/34),
-[#35](https://github.com/Sandsy09/forge-template/issues/35),
-[#36](https://github.com/Sandsy09/forge-template/issues/36),
-[#37](https://github.com/Sandsy09/forge-template/issues/37), and
-[#38](https://github.com/Sandsy09/forge-template/issues/38), all done. The composition,
-file-conflict, template-variable, and rendering contracts are proven to
-compose into one deterministic artefact by
-[composition-fixtures.md](docs/composition-fixtures.md)'s golden fixtures,
-exercised through the public facade with a private fixture-catalogue override.
-Never expose that override or accept arbitrary catalogue roots in the public
-API — the mirrored `_FOUNDATION_ROOT_OVERRIDE` seam carries the identical
-rule. Destination staging and finalisation remain `create-forge`
-responsibilities; keep engine validation in memory.
+`copier.yml`, the root tooling, and `src/` describe this repository; they are
+not copied into a direct-Copier project. `_subdirectory: template` preserves
+that boundary. Conversely, everything under `template/` is generated-project
+source and must not be used to document this repository itself.
 
-## The question schema
+The engine composes package-bound content in memory:
 
-`copier.yml` is the contract. Once projects exist in the wild, changing it is
-expensive.
+1. A strict `ProjectSpec` selects exactly one archetype and any compatible
+   capabilities or platform.
+2. The implicit Foundation source supplies the neutral project baseline.
+3. Component manifests declare owned content, dependencies, conflicts,
+   options, contributions, and update metadata.
+4. Composition applies Foundation, archetype, capabilities, then platform in
+   deterministic order and resolves only declared extension points.
+5. Rendered output is validated before it is returned to a client.
 
-Key mechanics:
+The engine never owns destination staging or finalisation. Keep generation
+planning and validation side-effect free; clients such as `create-forge` own
+filesystem and subprocess effects.
 
-- **`build_backend` and `versioning` are a linked pair.** `versioning` is only
-  asked when Hatchling is chosen; `versioning_resolved` is a hidden computed
-  value that collapses to `static` for `uv_build`. **All templates read
-  `versioning_resolved`, never `versioning`.** This makes the invalid
-  combination unrepresentable rather than merely unselected, which matters
-  because `copier update` replays stored answers. Full rationale:
-  [docs/adr/0004](docs/adr/0004-build-backend-and-versioning.md).
-- **`python_matrix` is computed**, sliced from `python_all` between
-  `python_min_version` and `python_version`. Version additions, default moves,
-  deprecations, and removals follow the
-  [Python support policy](docs/python-support.md); changing `python_all` alone
-  is not a complete support transition.
-- **Computed values use `when: false`** with the value in `default`.
-- **`github_org` has an empty default** deliberately. The CLI supplies it.
+## Implementation rules
+
+The living contracts are indexed in [docs/README.md](docs/README.md). Read the
+contracts governing the area being changed instead of inferring behaviour
+from historical ADRs or roadmap prose.
+
+### Direct-Copier schema and content
+
+`copier.yml` is a compatibility contract for projects that may later run
+`copier update`.
+
+- `build_backend` and `versioning` are linked. `versioning_resolved` is the
+  hidden computed value and is the only versioning value `template/` may read.
+- `python_matrix` is computed from the supported window in `python_all`.
+  Follow [the Python support policy](docs/python-support.md) for every window
+  change.
+- Computed questions use `when: false` and place their value in `default`.
+- `github_org` deliberately defaults to an empty value; the CLI may supply it.
+- Conditional files and directories use conditional Jinja names. A rendered
+  empty name omits the path.
+- Files that need no rendering have no `.jinja` suffix. `py.typed` must remain
+  byte-empty.
+
+The direct-Copier path remains Library-only. Do not make it read engine
+catalogue content or silently give the engine ownership of Copier update
+behaviour.
+
+### Engine and component boundaries
+
+- Each archetype owns its package shape and never copies or reads another
+  archetype's resources.
+- Foundation stays conservative, universal, and runtime-free. Optional or
+  owner-specific behaviour belongs in a component.
+- Components interact through manifest-declared dependencies, conflicts, and
+  extension contributions. Only published extension points may be extended;
+  file overrides are denied.
+- The organisation-policy protocol is a downstream-client contract. Do not
+  add policy parsing, policy resolution, policy-specific exports, or new engine
+  errors for it here.
+- The supported client boundary is the top-level `forge_template` facade
+  described by [the engine API contract](docs/template-engine-api.md). Do not
+  expose arbitrary catalogue roots or test-only Foundation/component override
+  seams.
+- Generation metadata and `plan_update` describe reproducible output changes.
+  The engine plans updates; the client performs merges and protects user files.
+- Component and protocol compatibility changes follow
+  [the compatibility policy](docs/compatibility-policy.md), including its
+  deprecation window and structured unsupported-version reporting.
+
+### Package boundary
+
+The published wheel contains the public facade, Foundation, and component
+resources. It deliberately excludes this repository's check-only modules:
+`adr.py`, `github_actions.py`, `render.py`, and `schema.py`. Keep dependencies
+used only by those modules out of runtime requirements. Built distributions
+must continue to pass `scripts/check_wheel.py`.
 
 ## Invariants — do not break these
 
-Six hard rules, with full rationale, live in
-[docs/invariants.md](docs/invariants.md). Read it before changing anything
-under `template/` or `copier.yml`. The numbering is stable and is cited
-from ADRs and code comments.
+The full rationale and migration consequences live in
+[docs/invariants.md](docs/invariants.md). The stable rules are:
 
-1. [Generated output must be pre-commit clean](docs/invariants.md#1-generated-output-must-be-pre-commit-clean)
-2. [`.copier-answers.yml` must be generated and committed](docs/invariants.md#2-copier-answersyml-must-be-generated-and-committed)
-3. [Moving or deleting files under `template/` breaks updates](docs/invariants.md#3-moving-or-deleting-files-under-template-breaks-updates)
-4. [Jinja and GitHub Actions both use `${{ }}`](docs/invariants.md#4-jinja-and-github-actions-both-use--)
-5. [`.gitattributes` is mandatory, in the template AND at repo root](docs/invariants.md#5-gitattributes-is-mandatory-in-the-template-and-at-repo-root)
-6. [Every template change that should reach users needs a tag](docs/invariants.md#6-every-template-change-that-should-reach-users-needs-a-tag)
+1. [Generated output must be pre-commit clean](docs/invariants.md#1-generated-output-must-be-pre-commit-clean).
+2. [`.copier-answers.yml` must be generated and committed](docs/invariants.md#2-copier-answersyml-must-be-generated-and-committed).
+3. [Moving or deleting files under `template/` breaks updates](docs/invariants.md#3-moving-or-deleting-files-under-template-breaks-updates).
+4. [Jinja and GitHub Actions both use `${{ }}`](docs/invariants.md#4-jinja-and-github-actions-both-use--).
+5. [`.gitattributes` is mandatory at both roots](docs/invariants.md#5-gitattributes-is-mandatory-in-the-template-and-at-repo-root).
+6. [User-facing template changes require a release tag](docs/invariants.md#6-every-template-change-that-should-reach-users-needs-a-tag).
 
-## Conditional filenames
+## Conventions
 
-Optional files use conditional names — when the name renders empty, the file is
-skipped:
-
-```text
-template/{% if use_docs %}mkdocs.yml{% endif %}.jinja
-template/{% if dependency_updates == 'renovate' %}renovate.json{% endif %}.jinja
-```
-
-Works for directories too. Files needing no rendering (`py.typed`,
-`.editorconfig`) carry no `.jinja` suffix — `py.typed` in particular **must
-stay byte-empty**.
-
-## Workflow
-
-Every change is a branch (`<type>/<short-slug>`) and a pull request into
-`main`, squash merged — never commit directly to `main`. See
-[CONTRIBUTING.md](CONTRIBUTING.md) and
-[docs/adr/0009](docs/adr/0009-branch-and-pr-workflow.md).
-
-## Validation
-
-Run in this order. All seven currently pass.
-
-```bash
-uv run poe check             # fast: this repo's own lint/typecheck + schema/ADR/render unit tests
-uv run poe combos            # slow: 4 combos in parallel, render assertions, each combo's own poe check
-./scripts/verify-ci.sh <org> # pushes poe combos' output to throwaway repos, watches CI
-uv run poe update             # slow: both copier update scenarios (local edits survive; latest tag -> HEAD)
-uv run poe archetype          # slow: real uv build/install/import for all three archetypes + both capabilities, plus three full-composition (github + every compatible capability) build/install/check/pre-commit cells (pytest -m archetype -n 4)
-uv run poe sweep              # slow: plans and renders every one of the 2240 valid compositions (pytest -m sweep -n 4)
-uv run poe crossrepo          # slow, sibling-gated: pairs this repo with a local create-forge checkout
-```
-
-`poe crossrepo` (FT-14.02, [docs/cross-repository-validation.md](docs/cross-repository-validation.md))
-skips itself when no `create-forge` checkout is found at `../create-forge` or
-`--create-forge-root`, and is deliberately absent from CI — see
-[ADR 0057](docs/adr/0057-validate-the-cross-repository-data-science-line.md).
-
-`poe check`, `poe combos`, `poe update`, and `poe archetype` are all `pytest`
-under a marker select (`tests/test_combos.py` carries `combos`,
-`tests/test_update.py` carries `update`, and the `test_*_build.py` modules
-plus `tests/test_data_science_endpoints.py` carry `archetype`; `poe check`
-runs everything else). `tests/`, ported from the
-former `scripts/test-combos.sh` and `scripts/test-update.sh` — see
-[#5](https://github.com/Sandsy09/forge-template/issues/5), done — is a single
-definition of every assertion, called from both here and CI's
-`test-template.yml`, closing the duplication that let CI and the local script
-drift (see below). `poe combos` scaffolds from a **non-git snapshot** by
-default (`tests/conftest.py`'s `template_snapshot` fixture) so uncommitted
-edits are picked up, matching what `test-combos.sh` did; pass `--from-git` (a
-`pytest` option registered in `conftest.py`) to scaffold from real git history
-instead, which is what CI does since `_commit` must be recorded.
-`tests/test_update.py` always uses real git history — updates need real tags
-regardless.
-
-Combo 4 (kitchen sink) flips every remaining conditional at once. It has caught
-real bugs the other three missed — including all 11 byte-empty template files
-below, once an eighth assertion (no zero-byte file in rendered output, outside
-a `py.typed`/`tests/__init__.py` allowlist) was added. Keep both.
-
-**Local-green does not mean CI-green — verify actual GitHub Actions runs, not
-just `poe combos` locally.** The `lint` job's shellcheck step, and three
-separate bugs in `scaffold`/`windows`/`update-compat` (git identity missing on
-the runner; a Jinja-leftover regex broader than `test-combos.sh`'s that
-false-positived on the intentionally-raw git-cliff Tera block; scaffolding
-from a relative `.` path, which made `_src_path` resolve wrong once `copier
-update` ran from inside the scaffolded project) — all of this sat broken on
-`main` since at least 2026-08-16, invisible because `needs: lint` meant one
-early failure hid everything downstream. `test-combos.sh` never caught any of
-it because it ran entirely locally, on a machine that already has a git
-identity configured and doesn't reproduce the CI runner's environment. Fixed
-2026-08-21; `gh run view <run-id>` on the actual push is the only way to know
-CI is real, not just that the local suite exited 0. The git-identity class of
-bug specifically is now closed for good rather than just fixed once:
-`tests/conftest.py`'s `_git_identity` autouse fixture supplies one whenever
-the environment (local or CI) doesn't already have one, so CI's workflow no
-longer needs its own `git config --global` steps.
-
-The shellcheck failure specifically was possible because shellcheck existed
-**only** in CI, with no local config to catch it first. Closed by adding a
-root `.pre-commit-config.yaml` (which the `lint` job now runs directly via
-`uv run pre-commit run --all-files`, replacing the hand-rolled apt-get +
-shellcheck steps) — see backlog item 1, done.
+- Python 3.11+, strict mypy, and Ruff formatting/linting.
+- `from __future__ import annotations` in Python modules.
+- Pydantic contract models are strict and reject unknown input.
+- Public results and errors remain deterministic and structured.
+- External GitHub Actions use full reviewed commit SHAs with version comments.
+- Architectural decisions are immutable Nygard-format records in
+  [docs/adr/](docs/adr/); living behaviour belongs in `docs/*.md` contracts.
+- Historical and planned work belongs in the appropriate
+  [roadmap directory](docs/), not in this file.
 
 ## Current state
 
-Working: Library, CLI Application, and Data Science archetypes plus the
-package-bound Jupyter and Scientific Python capabilities on `main`, with the
-two-capability composition layer validated end to end (FT-11.04 / ADR 0052 —
-Stage 11 closed) and the Data Science line published (FT-12.04 — Stage 12
-closed); all four Copier combos green
-locally and in CI, update merge validated, root and template
-`.gitattributes` both in place, no byte-empty template files remain,
-`task_runner`/`make` removed (it was the one untested, 100%-broken
-conditional — see Deferred). **`v0.5.0` is the latest tagged release: the
-FT-17.06-published engine-default cutover line, adding the `github` platform
-and eight tooling capabilities (fourteen components total), manifest
-protocol `3`, and published `metadata_version`, all additive over
-`v0.4.1`'s five-component catalogue.** `v0.4.1` is the Stage 14-reviewed
-republication of the five-component Data Science line first published at
-`v0.4.0`, unchanged at the catalogue level. `v0.3.2` carries
-the reviewed Stage 08 boundary corrections. `v0.3.0` first carried
-the production
-engine catalogue (both `library` and `cli`) alongside the direct-Copier
-template. Root repo hygiene is done:
-root
-`pyproject.toml`, `.pre-commit-config.yaml`, and real content for `LICENSE`,
-`README.md`, `CONTRIBUTING.md`, `SECURITY.md` all exist; `src/forge_template`
-holds checks for `copier.yml` itself (layout, computed-value defaults, the
-`versioning`/`versioning_resolved` indirection), exercised by `tests/` and run
-via `uv run poe check`, which the `lint` CI job now calls directly.
-`docs/adr/` holds contiguous ADRs through 0057 recording the rationale behind
-decisions already made, checked for internal consistency by
-`src/forge_template/adr.py`. `scripts/test-combos.sh`/`test-update.sh` are
-gone: ported to `tests/test_combos.py`/`test_update.py`, backed by
-`src/forge_template/render.py` and run in parallel via `pytest-xdist` (`poe
-combos -n 4`) — see [#5](https://github.com/Sandsy09/forge-template/issues/5),
-done. `copier.yml` also gained two schema checks issue #5 asked for:
-`check_question_usage` (every question is referenced under `template/**` and
-vice versa) and `check_conditional_filenames` (every `{% if %}name{% endif %}`
-path renders to a valid filename or empty, never something in between).
+`forge-template 0.5.0` is the current published engine line. Its catalogue has
+fourteen components: three archetypes (`library`, `cli`, `data-science`), ten
+capabilities (`changelog`, `coverage`, `documentation`, `dotenv-example`,
+`dependabot`, `jupyter`, `pre-commit`, `pyright`, `renovate`, and
+`scientific-python`), and the `github` platform. Data Science requires Jupyter;
+Documentation requires Library; Dependabot requires GitHub and conflicts with
+Renovate.
 
-## Roadmap work
-
-The completed
-[Foundation roadmap](docs/roadmap-v1/github-issues/forge-template/ISSUE-INDEX.md)
-is the historical source for Stages 00–09. The
-[Data Science epic index](docs/roadmap-v2/github-issues/forge-template/ISSUE-INDEX.md)
-covered Stages 10–14 under
-[ADR 0044](docs/adr/0044-plan-data-science-as-the-third-archetype.md): a
-package-backed, notebook-oriented third archetype, reusable optional
-capabilities, and create-forge delivery behind `--engine-preview`. All of the
-forge-template side is complete; `create-forge 0.3.0` closed the client side.
-GitHub issue bodies and native relationships are authoritative.
-FT-10.01's [Data Science contract](docs/data-science-archetype.md) fixed the
-optionless package, test, starter-notebook, ignored working-tree, and
-ownership shape before implementation; FT-12.01/FT-12.02 then shipped it into
-the production catalogue.
-FT-10.02's [initial capability contracts](docs/data-science-capabilities.md)
-define reusable optionless `jupyter` development tooling and an independently
-optional `scientific-python` runtime stack. Data Science explicitly requires
-Jupyter. FT-11.02 ships Jupyter in the source catalogue; FT-11.03
-ships Scientific Python.
-FT-10.03's [notebook, data, and model safeguards](docs/notebook-data-and-model-safeguards.md)
-([ADR 0047](docs/adr/0047-notebook-data-and-model-safeguards.md)) fix the
-fail-closed `notebook:check` validation order, the 300-second per-cell
-nbclient timeout on a discarded temporary copy, ten deterministic failure
-identifiers, output- and secret-free diagnostics, and the reading that
-"guidance markers remain tracked" means the root README prose and
-root-anchored `.gitignore` entries only — no `.gitkeep` or per-tree README,
-so ADR 0045 stands. `notebook:check` is a generated-project task, not an
-engine check, and adds no `ForgeEngineError` code.
-FT-10.04's
-[compatibility and acceptance contract](docs/data-science-compatibility-and-acceptance.md)
-([ADR 0048](docs/adr/0048-data-science-compatibility-and-acceptance.md))
-closes Stage 10: the Data Science rollout moves only the package version
-(`0.3.2` → `0.4.0`, reviewed `0.4.1`) and the discovered-component set (three
-new components at `1.0.0`), leaving every protocol and the public engine
-facade unchanged; acceptance is an executable matrix whose rows each name one
-non-interactive command and one FT- or CF-repository owner; dependency
-resolution is swept at Python 3.11 and 3.14; and four release gates bind to
-create-forge's existing coordination order. No version was bumped by the
-decision itself — FT-12.04 has performed the `0.4.0` release and FT-14.03
-retains the later `0.4.1` release. **Stage 10 is complete.**
-
-Stage 11 (`FT-EPIC-11 / #97`) delivers the reusable capability layer.
-FT-11.01's
-[capability-tooling extension points](docs/extension-points.md#capability-tooling-extends-the-same-foundation-content)
-([ADR 0049](docs/adr/0049-foundation-capability-tooling-extension-points.md))
-grow the published Foundation inventory from eight points to eleven —
-`pyproject-development-dependencies`, `pyproject-task-definitions`, and
-`pyproject-aggregate-check` on `content/pyproject.toml.jinja` — so a selected
-*capability*, not only an archetype, can attach a dev dependency, a Poe task,
-and an aggregate-`check` entry. Additive: `foundation_version` stays `1`, no
-engine module or public signature changes, `library`/`cli` stay at `1.0.1`,
-and their generated output is byte-for-byte unchanged except the aggregate
-`check` array is now multi-line (a recorded, semantics-preserving reformat so
-a marker line fits inside it). Any selected owner may contribute; multiple
-contributions compose in composition order, never last-write-wins; an
-unfilled point emits zero bytes. A capability's `.gitignore` and README
-guidance route through the existing `gitignore-project-shape` /
-`readme-project-shape` points — no new point for either. Pinned by
-`tests/test_extension_points.py` (inventory) and
-`tests/test_capability_extension_points.py` (behaviour). **FT-11.01 is
-complete.** FT-11.02 / #106 then ships `jupyter` `1.0.0`: a package-bound,
-optionless capability with no requirements, conflicts, runtime dependencies,
-or notebook content. It contributes four development dependencies,
-`notebook` and `notebook:check`, the aggregate-check entry, README safety
-guidance, and `.ipynb_checkpoints/`; its literal
-`scripts/check_notebooks.py` validates every notebook structurally before
-executing byte-identical temporary copies with nbclient. Diagnostics expose
-only relative paths, optional zero-based cell indexes, fixed safe messages,
-and ten stable codes. [ADR 0050](docs/adr/0050-production-jupyter-capability.md)
-records the choices. FT-11.03 / #107 then ships `scientific-python` `1.0.0`,
-its four bounded runtime dependencies, generated import test, and guidance
-under [ADR 0051](docs/adr/0051-production-scientific-python-capability.md).
-FT-11.04 / #108's
-[capability composition validation](docs/capability-composition-validation.md)
-([ADR 0052](docs/adr/0052-validate-production-capability-composition.md))
-closes Stage 11: `tests/test_capability_composition.py` proves both
-capabilities compose across `library` and `cli`, every documented invalid
-selection fails closed as a structured `ForgeEngineError` before rendering
-(`operation` is `parse` or `validate`, never `render`), descriptors stay
-path-free, Foundation and every capability-free render name no capability or
-domain tool, and no composition depends on a Forge package. Three test-only
-synthetic capabilities under `tests/fixtures/capability_composition/`
-(`requires-jupyter`, `conflicts-jupyter`, `optioned-tooling`) exercise the
-`requires`/`conflicts`/options paths the production catalogue cannot reach;
-`requires-jupyter` rehearses the exact `jupyter >=1,<2` edge FT-12.01's
-`data-science` archetype declares. `scripts/check_wheel.py` now also
-requires every component's `component.toml` and `extensions/` tree, plus
-`foundation.toml` and `library/options.schema.json`. No manifest, content,
-engine module, public signature, `EngineErrorCode`, or version changes.
-**FT-11.01 through FT-11.04 are complete; `FT-EPIC-11 / #97` and its milestone
-are closed.**
-
-Stage 12 (`FT-EPIC-12 / #98`, milestone *Data Science Archetype — Stage 12*)
-adds the third archetype and publishes `0.4.0`. FT-12.01 / #109's
-[Data Science archetype](docs/data-science-archetype.md)
-([ADR 0053](docs/adr/0053-production-data-science-archetype.md)) ships
-`data-science` `1.0.0`: an independent, package-backed archetype declaring
-`requires = [{ id = "jupyter", version = ">=1,<2" }]`, owning
-`src/<package>/__init__.py` (byte-identical to `library`'s), `py.typed`,
-`tests/__init__.py`, and `tests/test_smoke.py`, and contributing through the
-four archetype-neutral pyproject points (`build-system`, `archetype-metadata`,
-`build-configuration`, `classifiers`) exactly as `cli` does — fixed
-`uv-build-static`, generated version `0.1.0`, and the three scientific
-classifiers. Selecting it without `jupyter` is rejected as
-`INVALID_COMPONENT_SELECTION` / `validate` from both `plan_generation` and
-`render_project`, never `render`. `tests/test_data_science_archetype.py`
-(fast) and `tests/test_data_science_build.py` (`archetype`-marked, real
-build/install) cover it. No engine module, public signature, `EngineErrorCode`,
-protocol integer, Foundation file, existing component, or package version
-changes; `library`/`cli` stay `1.0.1`, both capabilities stay `1.0.0`, the
-package stays `0.3.2` and untagged. FT-12.02 / #110's
-[notebook and artefact layout](docs/notebook-data-and-model-safeguards.md)
-([ADR 0054](docs/adr/0054-data-science-notebook-and-artefact-layout.md)) then
-completes the archetype's generated shape within the same `1.0.0` component:
-an output-free, stdlib-and-package-only
-`content/notebooks/getting-started.ipynb.jinja`, a `gitignore-project-shape`
-contribution carrying the five root-anchored working-tree entries
-(`/data/raw/` … `/artifacts/`, ahead of `jupyter`'s `.ipynb_checkpoints/`),
-and a `readme-project-shape` contribution documenting the package/test/notebook
-structure and the ignored `data/`, `models/`, and `artifacts/` trees — no
-`.gitkeep` or per-tree placeholder. It also corrects one
-[compatibility-and-acceptance](docs/data-science-compatibility-and-acceptance.md)
-row whose evidence named a generated-project pre-commit run the engine path
-does not produce. `tests/test_data_science_notebook.py` (fast: nbformat
-cleanliness, real `ruff check`/`format --check` over the rendered project,
-stdlib-only imports, no-payload, ignored-tree discovery) is added;
-`tests/test_data_science_build.py`'s generated `poe check` now runs
-`notebook:check` over a real notebook and kernel. `scripts/check_wheel.py`
-needs no change. `library`/`cli` render byte-for-byte unchanged. FT-12.03's
-[generated-project validation](docs/data-science-validation.md)
-([ADR 0055](docs/adr/0055-validate-data-science-generated-projects.md)) then
-proves the matrix: `tests/test_data_science_composition.py` (fast:
-determinism under repetition/reorder/catalogue-layout/`PYTHONHASHSEED`, the
-archetype rejections, Forge-freedom, `ruff format` clean at every floor incl.
-`py314`, and a `{target: sha256}` regression pin on `library`/`cli` in
-`tests/fixtures/archetype_regression/digests.json`, regenerated with
-`--update-goldens`) and `tests/test_data_science_endpoints.py`
-(`archetype`-marked: both compositions × Python 3.11/3.14 through lock, sync,
-build, isolated install, and the generated `poe check` incl. a live-kernel
-`notebook:check`; ignored-tree artefact exclusion; Forge-free install).
-`poe archetype` now runs `pytest -m archetype -n 4`. Building the sweep forced
-two content corrections in already-merged capability content —
-`scientific-python`'s `tests/test_scientific_python.py` gains
-`# type: ignore[import-untyped]` on `pandas`/`sklearn` (generated `mypy
---strict`), and `jupyter`'s `scripts/check_notebooks.py` splits one
-`except (OSError, UnicodeError)` into two clauses (ruff at `target-version =
-py314` rewrites it to pre-3.14 syntax); both components stay `1.0.0`. FT-12.04
-prepared the package in [PR #128](https://github.com/Sandsy09/forge-template/pull/128),
-then published and verified
-[`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
-on [PyPI](https://pypi.org/project/forge-template/0.4.0/), with the public API
-and protocols unchanged. **FT-12.01 through FT-12.04 are complete;
-`FT-EPIC-12 / #98` and its milestone are closed.**
-
-Create-forge Stage 13 is complete. Its current `main` branch constructs and
-consumes ProjectSpec behind `new --engine-preview` with the compatible
-`forge-template>=0.4,<0.5` range. FT-14.01 / #113's
-[three-archetype composition review](docs/composition-architecture-review.md)
-([ADR 0056](docs/adr/0056-three-archetype-composition-boundary-review.md))
-finds no production boundary defect, records all deliberate duplication and
-all eleven Foundation extension points, and deterministically exercises all
-ten valid compositions. FT-14.02 / #114's
-[cross-repository validation](docs/cross-repository-validation.md)
-([ADR 0057](docs/adr/0057-validate-the-cross-repository-data-science-line.md))
-then pairs current forge-template and create-forge `main` in one local,
-non-PyPI install: installed engine metadata matches the FT-14.01 handoff
-table, all ten valid compositions generate through the real `create-forge
-new --engine-preview` console script with deterministic rendering and
-failure cleanup, both Data Science compositions pass their generated `poe
-check` at Python 3.11/3.13/3.14, create-forge's own
-`tests/test_engine_cross_repository.py` passes against the pair, and the
-ADR 0056 package-size figures (then 60 files, 39,182 bytes, 892 bytes of
-duplicate overhead; re-baselined by FT-17.02 / ADR 0063 to 72 files and
-48,350 bytes, by FT-17.03 / ADR 0064 to 112 files and 68,378 bytes, and by
-FT-17.05 / ADR 0066 to 112 files and 68,954 bytes — the `pre-commit`
-`check-added-large-files` `uv.lock` exclusion) are pinned executably alongside
-a wheel-size ceiling
-in `scripts/check_wheel.py`. The new `crossrepo` pytest marker
-(`uv run poe crossrepo`) is sibling-gated and deliberately absent from CI.
-FT-14.03's [reviewed-engine-release.md](docs/reviewed-engine-release.md)
-closes Stage 14: [`forge-template 0.4.1`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.1)
-is tagged, released, and published on
-[PyPI](https://pypi.org/project/forge-template/0.4.1/) at commit
-`9f7ed8187d931c10016d76bb271de72ddb89a4c0`, and its published-artefact audit
-confirms the `0.4.1` wheel's Foundation and component trees are
-byte-identical to `0.4.0`'s -- the catalogue is unchanged; only the version
-republished. **FT-14.01, FT-14.02, and FT-14.03 are complete; `FT-EPIC-14`
-(forge-template#99) and its milestone are closed.**
-
-The [Engine-Default Cutover roadmap](docs/roadmap-v3/README.md) (Stages 15–18,
-`FT-EPIC-15`/#141 through `FT-EPIC-18`/#143, plus create-forge's `CF-EPIC-16`
-and `CF-EPIC-18`) plans making the engine the default generator; the
-[Streamlit roadmap](docs/roadmap-v4/README.md) (Stages 19–21) follows it. Both
-packs are filed, mirrored byte-for-byte into the sibling create-forge repo,
-and pinned by `scripts/check_roadmaps.py` / `tests/test_roadmap_packs.py`:
-that checker hash-pins every issue body to its filed GitHub body, requires an
-unticked acceptance checklist, and requires `status:blocked` to match the
-recorded blockers, so **completion bookkeeping happens on GitHub only — never
-edit `docs/roadmap-v3/**` or `docs/roadmap-v4/**` to reflect progress**
-(doing so breaks `poe check` and forces a matching create-forge PR). Stage 15
-is a contract-only stage: no runtime, generated-content, protocol, version or
-release change. FT-15.01 / #146 is complete — its
-[engine-default parity inventory](docs/engine-default-parity.md)
-([ADR 0058](docs/adr/0058-inventory-default-copier-parity.md), pinned by
-`tests/test_parity_inventory.py` which derives its expected rows from
-`copier.yml` and `template/**`) assigns every default-Copier question, file
-and mechanic to provider, client or a maintainer-approved exclusion, tiers
-each gap `cutover-blocking` or `deferred`, and flags rows with no filed
-implementation child `needs a bounded issue` for FT-15.04 to reconcile.
-FT-15.02 / #147 is complete — its
-[generation provenance contract](docs/generation-provenance.md)
-([ADR 0059](docs/adr/0059-generation-provenance-and-reproducible-updates.md),
-pinned by `tests/test_generation_provenance.py`) fixes the versioned metadata
-that reproduces or updates a generated project: a typed provenance document
-(effective spec, `{ id, version }` per component, target→owner→digest→
-regeneration map), a reproducibility guarantee the client provisions the
-recorded release against, owner-declared rename records, an opt-in degraded
-two-way update, a reserved ninth compatibility axis (`metadata_version`), and
-two reserved `EngineErrorCode` values (`invalid-generation-metadata`,
-`unsupported-generation-metadata`) that FT-17.01 will add — the test fails
-deliberately when they land.
-FT-15.03 / #148 is complete — its
-[platform composition and generated-tooling parity](docs/platform-and-tooling-parity.md)
-([ADR 0060](docs/adr/0060-platform-composition-and-generated-tooling.md), pinned
-by `tests/test_platform_composition.py`) assigns every provider-owned parity gap
-to one `github` platform (one required `organisation` option, everything else
-derived; publishes `ci-jobs` and `ci-steps`) or one of eight capabilities
-(`coverage`, `pre-commit`, `pyright`, `changelog`, `documentation`,
-`dotenv-example`, and a `dependabot`/`renovate` pair with a `requires`/
-`conflicts` edge), reserves five new Foundation extension points plus
-`api-reference` on `documentation`, records `type_checking`'s mypy-less answer
-and Copier's free-text `codeowners_team` as narrowings, and confirms no new
-archetype (FT-ROADMAP-01-EX-03). Decision 7 reverses ADR 0049's limit that a
-capability cannot declare its own named dependency group. FT-17.02 / ADR 0063
-and FT-17.03 / ADR 0064 have since shipped every one of those eight points.
-FT-15.04 / #149 is complete — its
-[cutover compatibility, failure and acceptance contract](docs/cutover-compatibility-and-acceptance.md)
-([ADR 0061](docs/adr/0061-provider-compatibility-failure-and-release-gates.md),
-pinned by `tests/test_cutover_gates.py`) classifies the three axes the
-engine-default cutover moves (`forge-template` → `0.5.0`; component-manifest
-protocol → `(1, 2, 3)` because the FT-15.02 rename records are new
-`extra="forbid"` manifest fields; generation metadata → published
-`metadata_version = 1`), holds every other axis and the public facade fixed
-bar three additive names, keeps the direct-Copier `template/` path retained
-and un-deprecated, sets the immutable-release + supported-`0.4.x`-window
-rollback rule, fixes the executable acceptance matrix (every provider child
-FT-17.01 through FT-18.01 owns a row), and closes the nine
-`needs a bounded issue` parity rows by reference to FT-17.03 (no new issue;
-the frozen roadmap-v3 mirror stays byte-identical). No runtime, content,
-protocol, version or release change. **FT-15.01 through FT-15.04 are
-complete; `FT-EPIC-15 / #141` and its milestone are closed.**
-
-create-forge's `CF-EPIC-16 / #152` (Stage 16 client contracts) is closed,
-including `CF-16.03` ([create-forge ADR 0042](https://github.com/Sandsy09/create-forge/blob/main/docs/adr/0042-engine-cutover-acceptance-and-support-policy.md)),
-which unblocked `FT-EPIC-17 / #142`. Stage 17 (provider implementation and
-release) is complete and closed (see below); Stage 18 (integrated cutover
-validation) is now the active forge-template roadmap. **FT-17.01 / #150 is
-complete** — [ADR 0062](docs/adr/0062-generation-metadata-and-manifest-protocol-3.md)
-ships manifest protocol `3` (two optional arrays `[[renames]]` and
-`[[regeneration]]`; `COMPONENT_MANIFEST_PROTOCOL_VERSIONS == (1, 2, 3)`,
-protocol-`1`/`2` manifests unchanged; every shipped component stayed
-`manifest_version = 2` until FT-17.03's `changelog` became the first at `3`),
-the generation-metadata surface
-(`GenerationMetadata` on `RenderedProject.metadata`,
-`generation_metadata.py`, `parse_generation_metadata` /
-`verify_generation_metadata`, `EngineInfo.metadata_version == 1` as the ninth
-compatibility axis, `PlannedFile.regeneration`, the two `EngineErrorCode`
-values, `DEFAULT_GENERATION_METADATA_TARGET == ".forge/generation.json"`
-adopted from create-forge ADR 0041), the retired
-`tests/generation_provenance_contract.py` shadow, and the turned-over
-tripwires in `tests/test_cutover_gates.py` /
-`tests/test_generation_provenance.py`. Foundation is deferred —
-`foundation_version` stays `1`. No content, `copier.yml`, or package-version
-change; `main` stays `0.4.1` and untagged (FT-17.06 releases `0.5.0`).
-`FT-17.04 / #153` was unblocked by FT-17.01.
-
-**FT-17.02 / #151 is complete** —
-[ADR 0063](docs/adr/0063-implement-the-github-platform.md) ships the first
-`kind = "platform"` component, `github` `1.0.0`: one required `organisation`
-option, a four-job CI workflow (`lint` / `typecheck` / `test` / `build`, all
-running the generated `poe` tasks) plus `.github/CODEOWNERS`, the three
-`.github/ISSUE_TEMPLATE/` forms and `.github/pull_request_template.md`, and the
-`ci-jobs` / `ci-steps` extension points on its own CI content (published,
-unfilled). Foundation gains three host-link points —
-`pyproject-project-urls`, `contributing-project-shape`,
-`security-project-shape` (inventory 11 → 14; `foundation_version` stays `1`;
-byte-neutral for a render that does not select `github`). The eleven
-`github`-owned rows in `docs/engine-default-parity.md` flip to `shipped`. No
-`library` / `cli` / `data-science` content or version change, no `copier.yml`
-or `template/**` change; `main` stays `0.4.1` and untagged.
-
-**FT-17.03 / #152 is complete** —
-[ADR 0064](docs/adr/0064-implement-approved-generated-content-parity.md) ships
-the eight tooling capabilities — `coverage`, `pre-commit`, `pyright`,
-`changelog` (first shipped `manifest_version = 3`, for its `CHANGELOG.md`
-`skip-if-exists` record), `documentation` (`requires` `library`; publishes
-`api-reference`; `site_name` option), `dotenv-example`, `dependabot` (`requires`
-`github`, `conflicts` `renovate`) and `renovate` — plus the two
-`[dependency-groups]` Foundation extension points (inventory 14 → 16, byte
-neutral) and `license-files = ["LICENSE"]` on the Foundation `pyproject.toml`
-contribution (the one deliberate output change; regression digests
-regenerated). `[tool.coverage]` / `[tool.pyright]` relocate to standalone
-`.coveragerc` / `pyrightconfig.json`; `documentation` and `pyright` fill
-`github`'s `ci-jobs`, `coverage` fills `ci-steps`; the archetypes are
-untouched (`library` / `cli` / `data-science` stay `1.0.1` / `1.0.1` /
-`1.0.0`). `discover_components()` returns fourteen components; every
-`copier.yml` question now has an engine route. No `copier.yml` or
-`template/**` change; `main` stays `0.4.1` and untagged.
-
-**FT-17.04 / #153 is complete** —
-[ADR 0065](docs/adr/0065-implement-reproducible-rendering-for-updates.md)
-ships the reproducible-render path: one
-`plan_update(recorded, *, old, new) -> UpdatePlan` entry point, mirroring
-`plan_generation` / `render_project`. It reads a recorded generation-metadata
-document leniently (`parse_generation_metadata` keeps FT-17.01's exact
-recorded-component-version equality, right for the reproduce path; an update
-is by definition an old document read on a newer engine), classifies every
-target `unchanged` / `added` / `removed` / `changed` / `renamed` against the
-client-reproduced old render and a fresh new render, surfaces owner-declared
-`[[renames]]` whose `since` falls strictly between a component's recorded and
-installed version, and fails closed as `unsupported-generation-metadata` on
-an unavailable historical provider — a deliberate widening of that code's
-documented meaning, since `EngineErrorCode` stayed frozen at nine values
-through the cutover. The public facade gains four additive names
-(`plan_update`, `UpdatePlan`, `UpdateTarget`, `AppliedRename`); the degraded
-two-way update stays entirely client-side. No component, Foundation,
-`copier.yml`, or `template/**` change; `main` stays `0.4.1` and untagged.
-
-**FT-17.05 / #154 is complete** —
-[ADR 0066](docs/adr/0066-validate-provider-parity-reproducibility-and-distributions.md)
-executes the seven acceptance-matrix rows FT-17.05 owns
-([provider-acceptance-validation.md](docs/provider-acceptance-validation.md)):
-three full-composition `archetype`-marked build cells (`library` / `cli` /
-`data-science`, each with `github` and every compatible capability) that for
-the first time build, install, and run a generated project's own `poe check`
-— including `coverage`, `typecheck:pyright`, and a real
-`pre-commit run --all-files` — against engine-rendered output; the exhaustive
-2240-composition sweep (`tests/composition_matrix.py`'s
-`valid_compositions()`, derived from the catalogue's own `requires` /
-`conflicts` edges, replacing three hand-written literals that still meant the
-pre-Stage-17 ten) under a new `sweep` marker and CI job; the independent-client
-render proof extended from two compositions to all 2240
-(`tests/no_copy_downstream.py`), with create-forge's `poe crossrepo` lag
-against the unreleased `metadata_version` axis recorded rather than patched
-(owner: CF-18.01 / FT-18.01); and `scripts/check_wheel.py` extended to audit
-the sdist alongside the wheel, print both artefacts' identities, and negotiate
-plus render in its isolated-import smoke test. Building the first
-full-composition cell surfaced a real defect — `pre-commit`'s
-`check-added-large-files` hook rejected a `jupyter` + `scientific-python`
-project's own 636 KB `uv.lock` — fixed in this issue with the standard
-lockfile exclusion; `pre-commit` moves `1.0.0` → `1.0.1`, the one content
-change, re-baselining the content-tree size pin to 112 files, 68,954 bytes.
-No other component, Foundation, `copier.yml`, or `template/**` change; `main`
-stays `0.4.1` and untagged.
-
-**FT-17.06 / #155 is complete** — no new decision; it executes ADR 0061's
-already-accepted `0.5.0` line
-([cutover-provider-release.md](docs/cutover-provider-release.md)). The
-protected `release.yml` dry run was inspected first, then dispatched: the tag
-[`v0.5.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.5.0),
-its GitHub Release, and the
-[PyPI package](https://pypi.org/project/forge-template/0.5.0/) all name the
-same commit SHA, and a published-artefact audit off PyPI (never this
-checkout) confirmed both hashes, the full negotiation payload (fourteen
-components, manifest protocols `(1, 2, 3)`, `metadata_version = 1`, the four
-additive `plan_update` names), and a real render/lock/`poe check` from the
-installed package. `template/` and `copier.yml` are byte-identical to
-`v0.4.1`, so the direct-Copier path and `copier update` are unaffected. Released
-`create-forge` (`0.3.2`) keeps its `>=0.4.1,<0.5` bound — this release does not
-assert client cutover has shipped; widening that bound is
-[CF-18.01](https://github.com/Sandsy09/create-forge/issues/158)'s to make. A
-hand-off comment recording the immutable target was posted on create-forge's
-[#158](https://github.com/Sandsy09/create-forge/issues/158) and
-[#153](https://github.com/Sandsy09/create-forge/issues/153); no create-forge
-content changed. **FT-17.01 through FT-17.06 are complete; `FT-EPIC-17 / #142`
-and its "Engine-Default Provider Implementation and Release — Stage 17"
-milestone are closed.** `main` is now tagged and published at `0.5.0`; the
-next open provider work is [FT-18.01 / #156](https://github.com/Sandsy09/forge-template/issues/156)
-(Stage 18, integrated cutover validation).
-
-FT-08.02 populated the
-production component catalogue under the
-[Library archetype contract](docs/library-archetype.md) — additive, package-bound
-content that leaves `template/` untouched. FT-08.04 (repurposed
-[#4](https://github.com/Sandsy09/forge-template/issues/4)) added `cli` beside
-it under the
-[CLI Application contract](docs/cli-application-archetype.md), the second,
-optionless package-bound shape, equally additive and equally untouched by
-`template/` or `copier.yml`. FT-08.05's
-[composition architecture review](docs/composition-architecture-review.md)
-keeps deliberate archetype-owned duplication while removing layout,
-classifier, coverage, and pre-commit leakage from Foundation; coordinated
-client lock finalisation shipped in `create-forge 0.2.1`, completing Stage 08.
-Stage 14 extends that review across Data Science, Jupyter, and Scientific
-Python without changing production content or public contracts.
-A future cutover that actually
-retires `template/` in favour of this catalogue is the `_migrations` moment:
-plan it before moving template paths and keep Library paths stable where
-possible.
-
-[#6](https://github.com/Sandsy09/forge-template/issues/6), done — a
-`markdownlint-cli2` hook now covers root `*.md` and `docs/**` in
-`.pre-commit-config.yaml`, ruleset in `.markdownlint-cli2.jsonc`
-(`docs/adr/` is exempt from line-length only, since records are immutable).
-
-[#137](https://github.com/Sandsy09/forge-template/issues/137), done —
-`.github/dependabot.yml` gained a bounded weekly `uv` entry for this repo's
-own `pyproject.toml`/`uv.lock` alongside the existing `github-actions` one.
-It ignores semver-major bumps for the engine-runtime (`jinja2`, `packaging`,
-`pydantic`) and test-only (`copier`, `ipykernel`, `nbclient`, `nbformat`)
-compatibility lines; `tests/test_dependency_updates.py` derives that gated
-set from `pyproject.toml` so a bound added without a matching ignore rule
-fails `poe check`. Policy: [docs/dependency-updates.md](docs/dependency-updates.md).
-It covers this repository only, never generated-project dependencies.
-
-Also open, not yet scheduled:
-[#1](https://github.com/Sandsy09/forge-template/issues/1) (reintroduce `make`,
-see Deferred below).
-
-## Known limitation, documented not fixed
-
-Local edits at the **very end** of a templated file can be lost on update: both
-sides append at EOF, there is no trailing context for the patch to anchor to,
-and the incoming side wins. Mid-file edits merge correctly.
-
-Mitigation is template design — keep a stable section (License, etc.) at the
-end of long templated files so user additions land above it. Noted in the
-generated `CONTRIBUTING.md`.
-
-## Deferred, with reasons
-
-Full rationale for each of these lives in `docs/adr/`; this section stays as a
-quick-reference summary rather than restating it.
-
-- **python-semantic-release** — heavy, fights git-cliff over changelog
-  ownership, and a stray `feat!:` can trigger an unintended major. See
-  [docs/adr/0005](docs/adr/0005-git-cliff-for-changelogs.md).
-- **Zensical instead of MkDocs** — MkDocs 2.0 removes the plugin system and
-  breaks mkdocstrings; Material is in maintenance mode. Zensical is the
-  successor but sits at 0.0.x with preliminary mkdocstrings support. Both
-  Renovate and Dependabot configs pin below the breaking versions. Revisit when
-  Zensical reaches 1.0 with mkdocstrings parity. See
-  [docs/adr/0007](docs/adr/0007-mkdocs-pinned-below-2.md).
-- **`make` as a `task_runner` choice** — removed entirely (see Current state).
-  It was the widest-blast-radius conditional, `make` is absent on Windows by
-  default (the author's own dev platform, so it could never be dogfooded), and
-  nothing in the validation suite ever actually invoked `make` — combo 4 set
-  `task_runner=make` and then ran `uv run poe typecheck` directly. The result
-  shipped as a byte-empty `Makefile` with an unrunnable `make check` in
-  `_message_after_copy`. Reintroduce only as a fully CI-tested option (a real
-  Makefile mirroring every Poe task, plus a workflow job that runs `make check`
-  on Linux) — tracked as [#1](https://github.com/Sandsy09/forge-template/issues/1),
-  not scheduled yet. See
-  [docs/adr/0008](docs/adr/0008-remove-make-task-runner.md).
+The public engine supports component-manifest protocols 1–3, generation
+metadata, deterministic full-catalogue rendering, and reproducible update
+planning. The direct-Copier compatibility path remains available and
+Library-only. Current contracts are in [docs/README.md](docs/README.md), past
+decisions in [docs/adr/](docs/adr/), and completed or proposed feature lines in
+the roadmap directories.

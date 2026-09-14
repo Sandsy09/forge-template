@@ -137,8 +137,7 @@ required option. ``extension`` is the canonical case that runs against tier
 order: a capability (``coverage``) contributing to a platform
 (``github``)'s extension point, applied in an earlier tier than its target.
 ``full`` selects every reference component at once, the kitchen-sink
-pattern that has already caught real bugs the narrower scenarios missed
-(see CLAUDE.md).
+pattern that exercises interactions the narrower scenarios do not reach.
 """
 
 

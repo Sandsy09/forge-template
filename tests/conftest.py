@@ -107,10 +107,9 @@ def create_forge_root(pytestconfig: pytest.Config) -> Path:
 def _git_identity() -> None:
     """Ensure git has *some* identity before any `_tasks` commit runs.
 
-    Missing git identity on the CI runner was one of three bugs that sat
-    undetected on `main` for days (CLAUDE.md, "Validation") because the local
-    suite never reproduced it -- the author's own machine already has an
-    identity configured.
+    Missing git identity on the CI runner previously went undetected because
+    the local suite never reproduced it -- the author's own machine already
+    has an identity configured.
 
     `GIT_AUTHOR_NAME`/etc env vars were tried first here and did not work:
     Copier's `_tasks` execution goes through `plumbum`, which snapshots

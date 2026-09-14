@@ -29,7 +29,6 @@ _POLICY_DOC = _ROOT / "docs" / "dependency-updates.md"
 _LINKING_DOCS = (
     _ROOT / "docs" / "README.md",
     _ROOT / "CONTRIBUTING.md",
-    _ROOT / "CLAUDE.md",
 )
 
 _UPPER_BOUND_OPERATORS = ("<", "<=", "~=", "==", "===")
