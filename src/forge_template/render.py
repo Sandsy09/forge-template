@@ -251,7 +251,7 @@ def check_tree_clean(root: Path) -> list[str]:
     Ported from `scripts/test-combos.sh`, which ran this check after `cd -`
     back to the *template* repo rather than the scaffolded project -- so it
     was reporting the operator's own uncommitted work, not anything about the
-    render. See CLAUDE.md's documented false-positive. This checks `root`.
+    render. This implementation checks `root`, the rendered project itself.
     """  # noqa: D205
     result = subprocess.run(
         ["git", "status", "--porcelain", "--untracked-files=all"],

@@ -56,7 +56,7 @@ jobs:
   # tests/test_combos.py is the single definition of every assertion here --
   # see tests/conftest.py's --from-git option and _git_identity fixture (no
   # manual `git config` step needed; the fixture supplies one when the runner
-  # has none, closing the bug class documented in CLAUDE.md's "Validation").
+  # has none).
   # ---------------------------------------------------------------------------
   scaffold:
     name: ${{ matrix.name }}
