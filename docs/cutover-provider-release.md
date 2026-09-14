@@ -175,7 +175,8 @@ No label or content in that repository was changed.
   — out of scope for this issue by its own stated exclusions.
 - **The integrated cross-repository cutover.** Pairing the released provider
   with the candidate client and running the full acceptance matrix together is
-  [FT-18.01 / #156](https://github.com/Sandsy09/forge-template/issues/156).
+  [FT-18.01 / #156](https://github.com/Sandsy09/forge-template/issues/156) —
+  done; see [integrated-cutover-validation.md](integrated-cutover-validation.md).
 - **A default-path switch.** `create-forge new --engine-preview` remains a
   hidden preview; the direct-Copier Library path is unchanged and
   un-deprecated.
@@ -211,8 +212,12 @@ The 20th, `test_create_forge_cross_repository_contract_passes_against_the_local_
 is the pre-existing `metadata_version`-missing lag FT-17.05 already recorded
 in [provider-acceptance-validation.md](provider-acceptance-validation.md) — a
 raw `EngineInfo(...)` construction in create-forge's own test file, unrelated
-to the version bound. Both lags are owned by CF-18.01 / FT-18.01. No
-create-forge change was made.
+to the version bound. Both lags were owned by CF-18.01 / FT-18.01; CF-18.01
+shipped the version-bound widening and the `EngineInfo(...)` fix, and FT-18.01
+repaired this repository's own `poe crossrepo` for the resulting CLI and
+project-lifecycle changes (`--engine-preview` removed, `git init` added) —
+see [integrated-cutover-validation.md](integrated-cutover-validation.md). No
+create-forge change was made by this document's own issue, FT-17.06.
 
 ## Downstream adoption
 

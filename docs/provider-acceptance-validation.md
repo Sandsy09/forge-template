@@ -160,6 +160,10 @@ places `create-forge`'s `metadata_version`-aware adoption at **CF-18.01,
 strictly after** the `0.5.0` release this repository has not yet performed.
 Editing the sibling checkout is out of scope here and would pre-empt
 CF-18.01's own reviewed adoption step. **Owner: CF-18.01 / FT-18.01.**
+**Closed:** CF-18.01 widened the engine bound and fixed `EngineInfo(...)`;
+FT-18.01 repaired this repository's own `poe crossrepo` for the resulting
+CLI and lifecycle changes — see
+[integrated-cutover-validation.md](integrated-cutover-validation.md).
 
 ## Artefact identities
 

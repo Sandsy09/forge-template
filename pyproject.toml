@@ -189,6 +189,7 @@ markers = [
     "archetype: validates real production archetype and capability projects (slow; `poe archetype`)",
     "crossrepo: validates this repo against a sibling create-forge checkout (slow, sibling-gated; `poe crossrepo`)",
     "sweep: plans and renders every valid composition the catalogue accepts (slow; `poe sweep`)",
+    "cutover: validates the released 0.5.0 provider against the candidate client and the 0.4.1-pinned released client (slow; `poe cutover`)",
 ]
 
 [tool.coverage.run]
@@ -212,7 +213,7 @@ format = "ruff format ."
 "lint:fix" = "ruff check --fix ."
 "format:check" = "ruff format --check ."
 typecheck = "mypy"
-test = "pytest -m 'not (combos or update or archetype or crossrepo or sweep)'"
+test = "pytest -m 'not (combos or update or archetype or crossrepo or sweep or cutover)'"
 combos = "pytest -m combos -n 4"
 update = "pytest -m update"
 # -n 4: FT-12.03 added a 2x2 Data Science endpoint sweep (both compositions x
@@ -240,6 +241,19 @@ check = ["format:check", "lint", "typecheck", "test"]
 # depend on a moving sibling `main`. Slow -- real uv lock resolutions plus
 # generated `poe check` runs with live Jupyter kernels.
 crossrepo = "pytest -m crossrepo"
+
+# FT-18.01: pairs the immutable *released* forge-template 0.5.0 (downloaded
+# from PyPI and digest-verified against docs/cutover-provider-release.md,
+# never this working tree) with the candidate create-forge client -- row 339
+# of the acceptance matrix -- and proves a client still pinned to
+# forge-template>=0.4.1,<0.5 is unaffected by the 0.5.0 publication -- row
+# 338. The candidate client is unpublished (built from the sibling working
+# tree), so like `crossrepo` this whole task is sibling-gated and stays out
+# of CI; only its row-338 half (tests/test_released_client_compatibility.py,
+# hermetic -- PyPI artefacts only) runs as the separate `released-client` CI
+# job. See docs/integrated-cutover-validation.md and
+# docs/adr/0067-validate-the-integrated-engine-default-cutover.md.
+cutover = "pytest -m cutover"
 
 # Verifies the built wheel ships the public engine facade and content trees
 # but excludes this repo's own CI tooling (adr.py, render.py, schema.py,
