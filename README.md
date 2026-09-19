@@ -127,10 +127,10 @@ Archetype](docs/roadmap-v4/README.md) roadmaps describe future work; their
 issues are open, and no release is scheduled. Streamlit waited for the cutover
 contracts, not the completed cutover release. Its project shape and
 [compatibility line](docs/streamlit-compatibility-and-acceptance.md) are
-[accepted contracts](docs/streamlit-archetype.md), and the archetype's package,
-launcher and smoke test are being implemented on `main`, unreleased until a
-later `forge-template` release publishes them. Follow [open
-work](https://github.com/Sandsy09/forge-template/issues) and
+[accepted contracts](docs/streamlit-archetype.md), and the archetype itself is
+implemented on `main` -- package, launcher, smoke test, `run` task and
+safeguards -- unreleased until a later `forge-template` release publishes it.
+Follow [open work](https://github.com/Sandsy09/forge-template/issues) and
 [releases](https://github.com/Sandsy09/forge-template/releases), or suggest a
 useful project type or capability.
 

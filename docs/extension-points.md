@@ -109,8 +109,13 @@ FT-20.01's `streamlit` archetype uses five of the same pyproject points
 `pyproject-build-configuration`, `pyproject-runtime-dependencies`,
 `pyproject-classifiers`) and `pyproject-development-dependencies` for a
 development-only NumPy cap; [ADR 0070](adr/0070-streamlit-archetype-implementation.md)
-records that use, and FT-20.02 adds the `run` task, ignore and README
-contributions.
+records that use. FT-20.02 then adds a `pyproject-task-definitions` contribution
+(the `run` task, and nothing in `pyproject-aggregate-check`, which must
+terminate), a `gitignore-project-shape` contribution (the root-anchored
+`/.streamlit/secrets.toml`, composed ahead of `jupyter`'s `.ipynb_checkpoints/`)
+and a `readme-project-shape` contribution (usage, structure and secret
+guidance); [ADR 0071](adr/0071-streamlit-tasks-safeguards-and-composition.md)
+records that use. Nine contributions in all, and no new point.
 
 Foundation owns four further files with **no** extension point at all:
 `.editorconfig`, `.gitattributes`, `.python-version.jinja`, and

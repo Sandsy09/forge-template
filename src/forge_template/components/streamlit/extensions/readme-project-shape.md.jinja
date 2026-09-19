@@ -1,0 +1,25 @@
+## Usage
+
+Start the app from the project root:
+
+```bash
+uv run poe run
+```
+
+This is `streamlit run app.py`. Streamlit serves the app locally and prints its
+address. `poe check` never starts the server: the tests drive the app in process.
+
+## Project structure
+
+```text
+app.py                            Launcher run by `streamlit run`
+src/{{ project.package_name }}/   Package source, including the app
+tests/                            Test suite
+.streamlit/config.toml            Streamlit configuration
+```
+
+Add a `pages/` directory next to `app.py` to give the app more views; Streamlit
+lists each file in it in the sidebar.
+
+`.streamlit/secrets.toml` is Streamlit's own secret file. Git ignores it, so never
+commit it or copy its contents into a tracked file.

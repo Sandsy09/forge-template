@@ -22,9 +22,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   archetype.
 - [streamlit-archetype.md](streamlit-archetype.md) — the accepted project
   shape, entry point, packaging, dependency, configuration, task, test and
-  exclusion contract for the Streamlit archetype (FT-19.01, ADR 0068), whose
-  package, launcher, smoke test and six contributions FT-20.01 has implemented
-  (ADR 0070) and FT-20.02 completes, pinned by
+  exclusion contract for the Streamlit archetype (FT-19.01, ADR 0068), which
+  FT-20.01 implemented (ADR 0070) and FT-20.02 completed (ADR 0071), pinned by
   `tests/test_streamlit_contract.py`. It is unreleased until FT-20.04.
 - [streamlit-compatibility-and-acceptance.md](streamlit-compatibility-and-acceptance.md)
   — FT-19.02's classification of the versioned axes the Streamlit line moves

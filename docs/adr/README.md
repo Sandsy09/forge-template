@@ -73,6 +73,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0068 — Define the Streamlit project shape and ownership](0068-streamlit-project-shape.md)
 - [0069 — Define Streamlit composition, compatibility and acceptance](0069-streamlit-composition-compatibility-and-acceptance.md)
 - [0070 — Implement the independent Streamlit archetype](0070-streamlit-archetype-implementation.md)
+- [0071 — Complete the Streamlit archetype: run task, safeguards and composition](0071-streamlit-tasks-safeguards-and-composition.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

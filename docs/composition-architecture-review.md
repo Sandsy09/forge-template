@@ -33,7 +33,7 @@ state.
 | `library` | Package-backed Library shape; three packaging modes and the only production component option schema. No requirements or conflicts. |
 | `cli` | Fixed uv-build package, Typer runtime, console/module entry points, command tests, and usage guidance. No options, requirements, or conflicts. |
 | `data-science` | Fixed uv-build package, smoke test, starter notebook, scientific classifiers, and local data/model/artefact conventions. Requires `jupyter>=1,<2`; no options or conflicts. |
-| `streamlit` | Fixed uv-build package, root launcher, in-process `AppTest` smoke test, the Streamlit runtime dependency and a development-only NumPy cap (FT-20.01 / ADR 0070). No options, requirements, or conflicts. |
+| `streamlit` | Fixed uv-build package, root launcher, in-process `AppTest` smoke test, the Streamlit runtime dependency, a development-only NumPy cap, the `run` task outside `check`, `.streamlit/config.toml`, a secrets ignore rule and usage guidance (FT-20.01 / ADR 0070 and FT-20.02 / ADR 0071). No options, requirements, or conflicts. |
 | `jupyter` | Reusable development-only notebook dependencies, authoring and validation tasks, safe validator, checkpoint ignore rule, and guidance. No options, requirements, or conflicts. |
 | `scientific-python` | Reusable optional scientific runtime dependencies, import test, and guidance. No options, requirements, or conflicts. |
 | Foundation | Neutral identity, licence, root handoff documents, repository hygiene, development environment, quality commands, and extension targets. It is not selectable. |
@@ -45,8 +45,9 @@ ten valid compositions plan and render deterministically. Data Science without
 Jupyter, an incorrectly typed or duplicate selection, an unknown component,
 an invalid option, or an unsatisfied requirement fails through the existing
 structured engine errors before rendering. The `streamlit` archetype, added by
-FT-20.01 after this review, accepts the same four capability selections as
-Library and CLI apart from Documentation, which requires Library.
+FT-20.01 after this review and completed by FT-20.02, accepts the same four
+capability selections as Library and CLI apart from Documentation, which
+requires Library.
 
 ## Deliberate duplication
 
@@ -128,7 +129,7 @@ to its selected component.
 | --- | --- |
 | Security | Foundation keeps only neutral secret ignores and reporting guidance. Jupyter validates and executes discarded temporary copies with safe diagnostics; Scientific Python adds runtime packages only when selected. No component gains override, plugin, policy, provider, or client authority. |
 | Reproducibility | Engine plans and renders are deterministic; create-forge resolves `uv.lock` in staging before atomic finalisation; generated checks run from committed lock state. This remains declared-input repeatability, not a byte-identical-build promise. |
-| Package size | A 2026-09-04 local `uv build --wheel` produced a 72,566-byte wheel; Foundation and the five component trees then contained 39,182 raw bytes across 60 files, including 892 bytes of deliberate duplicate overhead. FT-17.02 / ADR 0063 re-baselined this to 72 files and 48,350 bytes (the `github` platform tree), FT-17.03 / ADR 0064 to 112 files and 68,378 bytes (the eight tooling capabilities plus the one-line `license-files` Foundation addition), FT-17.05 / ADR 0066 to 112 files and 68,954 bytes (`pre-commit`'s `check-added-large-files` `uv.lock` exclusion), and FT-20.01 / ADR 0070 to 125 files and 72,784 bytes (the `streamlit` archetype, whose six byte-identical copies take the duplicate overhead to 1,338 bytes). `poe check:wheel` verifies every required resource remains packaged and repository-only tooling remains excluded, and now also audits the sdist. |
+| Package size | A 2026-09-04 local `uv build --wheel` produced a 72,566-byte wheel; Foundation and the five component trees then contained 39,182 raw bytes across 60 files, including 892 bytes of deliberate duplicate overhead. FT-17.02 / ADR 0063 re-baselined this to 72 files and 48,350 bytes (the `github` platform tree), FT-17.03 / ADR 0064 to 112 files and 68,378 bytes (the eight tooling capabilities plus the one-line `license-files` Foundation addition), FT-17.05 / ADR 0066 to 112 files and 68,954 bytes (`pre-commit`'s `check-added-large-files` `uv.lock` exclusion), FT-20.01 / ADR 0070 to 125 files and 72,784 bytes (the `streamlit` archetype, whose six byte-identical copies take the duplicate overhead to 1,338 bytes), and FT-20.02 / ADR 0071 to 129 files and 74,226 bytes (the archetype's `.streamlit/config.toml` and three contribution bodies, with the duplicate overhead unchanged). `poe check:wheel` verifies every required resource remains packaged and repository-only tooling remains excluded, and now also audits the sdist. |
 | Maintenance | Eight bounded direct dependencies are split by owner: four Jupyter development dependencies and four Scientific Python runtime dependencies. Bound changes require owner-specific compatibility review and Python-endpoint evidence. Duplicate files may diverge only through an explicit reviewed component change. |
 
 ## Client boundary
@@ -191,7 +192,8 @@ documented rejections closed with no partial destination, and reproduced this
 review's package-size figures exactly at the time (60 files, 39,182 bytes, 892
 bytes of duplicate overhead; `tests/test_composition_architecture_review.py` now
 pins the FT-17.05 re-baseline of 112 files and 68,954 bytes, since moved to 125
-files and 72,784 bytes by FT-20.01). `create-forge`'s own canonical
+files and 72,784 bytes by FT-20.01 and to 129 files and 74,226 bytes by
+FT-20.02). `create-forge`'s own canonical
 `tests/test_engine_cross_repository.py` passes against the same pair. See
 [cross-repository-validation.md](cross-repository-validation.md) for the exact
 commands, revisions, and outcomes. The candidate above is unchanged.

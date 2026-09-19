@@ -12,8 +12,9 @@ written against and about how much of it exists. These tests:
 * check the contract names its three review obligations verbatim and that every
   document ADR 0068 reconciled still points at it; and
 * check the live manifest contributes exactly the points the contract marks
-  used, less the ones FT-20.02 still owes, and that Foundation, the direct-Copier
-  template and every sibling component stay free of Streamlit.
+  used -- the whole table, now that FT-20.02 / ADR 0071 has landed the last three
+  -- and that Foundation, the direct-Copier template and every sibling component
+  stay free of Streamlit.
 """
 
 from __future__ import annotations
@@ -53,14 +54,8 @@ _MUST_NOT_USE = {"pyproject-aggregate-check", "pyproject-entry-points"}
 _MUST_USE = {
     "pyproject-task-definitions",
     "gitignore-project-shape",
-    "pyproject-development-dependencies",
-}
-# Points the contract marks used that FT-20.02 (#160) has yet to contribute.
-# This set empties there, which tightens the equality below to the whole table.
-_DEFERRED_TO_FT_20_02 = {
-    "pyproject-task-definitions",
-    "gitignore-project-shape",
     "readme-project-shape",
+    "pyproject-development-dependencies",
 }
 
 _ROW = re.compile(r"^\| `(?P<point>[a-z-]+)` \| (?P<used>yes|no) \|", re.MULTILINE)
@@ -141,9 +136,7 @@ def test_the_live_manifest_contributes_the_points_the_contract_marks_used() -> N
     contributed = {item.extension_point for item in manifest.contributions}
     used = {point for point, is_used in _extension_requirements().items() if is_used}
 
-    assert not contributed & _DEFERRED_TO_FT_20_02, "a deferred point has landed"
-    assert used >= _DEFERRED_TO_FT_20_02, "a deferred point is not marked used"
-    assert contributed | _DEFERRED_TO_FT_20_02 == used
+    assert contributed == used
     assert not contributed & {
         point for point, is_used in _extension_requirements().items() if not is_used
     }

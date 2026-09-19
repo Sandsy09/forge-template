@@ -1,9 +1,11 @@
 """Fast render-level tests for the production Streamlit archetype.
 
-FT-20.01 / ADR 0070. Real ``uv lock``/build/install/``AppTest`` runs across the
-accepted selections and Python endpoints belong to FT-20.03; the deferred
-contributions (``run``, ``.streamlit/config.toml``, the secrets ignore rule and
-the README section) belong to FT-20.02. See docs/streamlit-archetype.md and
+FT-20.01 / ADR 0070, completed by FT-20.02 / ADR 0071 (``run``,
+``.streamlit/config.toml``, the secrets ignore rule and the README section).
+The capability compositions live in ``tests/test_streamlit_composition.py`` and
+the real ``uv lock`` runs in ``tests/test_streamlit_resolution.py``; build,
+install and ``AppTest`` runs across the selections and Python endpoints belong
+to FT-20.03. See docs/streamlit-archetype.md and
 docs/streamlit-compatibility-and-acceptance.md.
 """
 
@@ -34,8 +36,8 @@ _COMPONENTS = Path(__file__).parents[1] / "src" / "forge_template" / "components
 _STREAMLIT = _COMPONENTS / "streamlit"
 _SIBLINGS = ("library", "cli", "data-science")
 
-# The contributions FT-20.01 ships; FT-20.02 adds `pyproject-task-definitions`,
-# `gitignore-project-shape` and `readme-project-shape`.
+# The pyproject.toml contributions: FT-20.01's six and FT-20.02's `run` task.
+# The other two FT-20.02 contributions land in README.md and .gitignore.
 _PYPROJECT_POINTS = {
     "pyproject-build-system",
     "pyproject-archetype-metadata",
@@ -43,7 +45,9 @@ _PYPROJECT_POINTS = {
     "pyproject-runtime-dependencies",
     "pyproject-classifiers",
     "pyproject-development-dependencies",
+    "pyproject-task-definitions",
 }
+_ALL_POINTS = _PYPROJECT_POINTS | {"gitignore-project-shape", "readme-project-shape"}
 
 
 def _payload(
@@ -145,8 +149,22 @@ def test_plan_identifies_foundation_and_streamlit_owners() -> None:
         "src/demo_app/py.typed",
         "tests/__init__.py",
         "tests/test_app.py",
+        ".streamlit/config.toml",
     ):
         assert by_target[owned_target].owner == ComponentOwner(id="streamlit")
+
+    # The README guidance and the secrets ignore rule reach the mixed root files
+    # through Foundation's published project-shape points.
+    for mixed_target, point in (
+        ("README.md", "readme-project-shape"),
+        (".gitignore", "gitignore-project-shape"),
+    ):
+        assert by_target[mixed_target].owner == FoundationOwner()
+        assert {
+            extension.extension_point
+            for extension in by_target[mixed_target].extensions
+            if extension.component_id == "streamlit"
+        } == {point}
 
     by_point = {
         extension.extension_point: extension
@@ -159,7 +177,7 @@ def test_plan_identifies_foundation_and_streamlit_owners() -> None:
     } == _PYPROJECT_POINTS
 
 
-def test_composed_file_set_is_the_package_launcher_and_tests() -> None:
+def test_composed_file_set_is_the_package_launcher_tests_and_config() -> None:
     targets = set(_rendered())
 
     assert targets == {
@@ -178,6 +196,7 @@ def test_composed_file_set_is_the_package_launcher_and_tests() -> None:
         "src/demo_app/py.typed",
         "tests/__init__.py",
         "tests/test_app.py",
+        ".streamlit/config.toml",
     }
     # Tracked placeholders and multipage scaffolding are excluded by contract.
     assert not any(target.startswith("pages/") for target in targets)
@@ -347,9 +366,7 @@ def test_the_manifest_publishes_no_extension_point_and_targets_foundation() -> N
     assert "regeneration" not in manifest
     assert "renames" not in manifest
     assert manifest["manifest_version"] == 2
-    assert {
-        c["extension_point"] for c in manifest["contributions"]
-    } == _PYPROJECT_POINTS
+    assert {c["extension_point"] for c in manifest["contributions"]} == _ALL_POINTS
     assert all(c["target"] == {"kind": "foundation"} for c in manifest["contributions"])
 
 
