@@ -375,7 +375,9 @@ Reserved for other owners:
   `documentation` or the `dependabot` / `renovate` pair — can be closed by
   reference or still need filed issues
   ([FT-15.04](https://github.com/Sandsy09/forge-template/issues/149));
-- the Streamlit archetype and its layout ([roadmap-v4](roadmap-v4/README.md)).
+- the Streamlit archetype and its layout ([roadmap-v4](roadmap-v4/README.md));
+  FT-19.01 accepted the shape in [streamlit-archetype.md](streamlit-archetype.md)
+  ([ADR 0068](adr/0068-streamlit-project-shape.md)).
 
 FT-15.04 settled its two items:
 [cutover-compatibility-and-acceptance.md](cutover-compatibility-and-acceptance.md)

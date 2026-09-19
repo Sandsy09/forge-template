@@ -414,7 +414,8 @@ recognising the existing child that fits.
 - No new shared Forge runtime dependency for generated projects — every
   capability contribution is development-time only.
 - No Streamlit archetype; that is [roadmap-v4](roadmap-v4/README.md) Stages
-  19–21 and begins only after these cutover contracts are accepted.
+  19–21 and begins only after these cutover contracts are accepted. Its first
+  accepted contract is [streamlit-archetype.md](streamlit-archetype.md).
 - No metadata filename, merge algorithm, or deprecation date is preselected —
   each is either decided above with its rationale or explicitly left to its
   owner below.
@@ -441,7 +442,10 @@ Reserved for other owners:
 - whether a future release promotes the engine to `1.0.0`, and retiring
   `template/` in favour of the catalogue;
 - the Streamlit archetype and its layout —
-  [roadmap-v4](roadmap-v4/README.md).
+  [roadmap-v4](roadmap-v4/README.md); FT-19.01 accepted the shape in
+  [streamlit-archetype.md](streamlit-archetype.md) ([ADR
+  0068](adr/0068-streamlit-project-shape.md)), and the compatibility line is
+  FT-19.02's.
 
 ## Validation
 
