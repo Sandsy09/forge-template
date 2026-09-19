@@ -44,8 +44,10 @@ below: ADR 0056 measured a 72,566-byte local review wheel; the published
 `0.4.0` wheel is 72,544 bytes. FT-17.02 (the `github` platform) took a local
 wheel to ~85 KB, FT-17.03 (the eight tooling capabilities) to ~105 KB, and
 FT-17.04 (the reproducible-render `engine.py`/`generation_metadata.py`
-additions, no new content trees) to ~108 KB, and FT-20.01 (the `streamlit` archetype)
-to 113,503 bytes (sdist 792,271), still under the 128 KiB ceiling.
+additions, no new content trees) to ~108 KB, FT-20.01 (the `streamlit` archetype)
+to 113,503 bytes (sdist 792,271), and FT-20.02 (its `run` task, configuration,
+ignore rule and README section) to 115,215 bytes (sdist ~795 KB), still under
+the 128 KiB ceiling.
 FT-17.05 measured the sdist at ~726 KB (it carries the full repo, unlike the
 wheel). Both ceilings are deliberately loose bounds, not tight pins -- archive
 metadata (timestamps, compression) makes an exact byte count
@@ -123,6 +125,9 @@ _MUST_CONTAIN = (
     "forge_template/components/scientific-python/extensions/",
     "forge_template/components/streamlit/component.toml",
     "forge_template/components/streamlit/content/",
+    # A dot-directory, named explicitly so a packaging rule that skipped hidden
+    # paths could not silently drop the archetype's one configuration file.
+    "forge_template/components/streamlit/content/.streamlit/config.toml",
     "forge_template/components/streamlit/extensions/",
 )
 _MUST_NOT_CONTAIN = (

@@ -24,8 +24,10 @@ results, shared with
 This is a decision contract. It bumps no version and publishes no package.
 FT-19.02 changed no code, generated content or protocol integer; FT-20.01
 ([ADR 0070](adr/0070-streamlit-archetype-implementation.md)) then added the
-`streamlit` component, so `discover_components()` returns fifteen components on
-the unreleased line that follows the published
+`streamlit` component and FT-20.02
+([ADR 0071](adr/0071-streamlit-tasks-safeguards-and-composition.md)) completed
+it, so `discover_components()` returns fifteen components on the unreleased line
+that follows the published
 [`forge-template` `0.5.0`](cutover-provider-release.md), and the package version
 is still `0.5.0` until FT-20.04 publishes `0.6.0`.
 `tests/test_streamlit_gates.py` reads this contract's tables against the live
@@ -437,7 +439,7 @@ archetype contract. What genuinely remains open is narrow.
 | Issue | Fixed by the Stage 19 contract set | Still owned by the issue |
 | --- | --- | --- |
 | [FT-20.01 / #159](https://github.com/Sandsy09/forge-template/issues/159) | `streamlit`, archetype, `1.0.0`, protocol `2`, no options, `requires` or `conflicts`; the seven owned paths; the eight Foundation contributions | **Done** ([ADR 0070](adr/0070-streamlit-archetype-implementation.md)): the manifest, six of the seven owned paths, six contributions (the five packaging ones and the development-only NumPy cap), the path-free descriptor, and discovery, ownership and malformed-selection tests. `.streamlit/config.toml` and the other three contributions moved to FT-20.02 |
-| [FT-20.02 / #160](https://github.com/Sandsy09/forge-template/issues/160) | `streamlit>=1.63,<2`; the `run` task outside `check`; the configuration and secret safeguards; the four valid selections and the rejections; the deterministic-validation requirements; the exclusions | The `run` task, `.streamlit/config.toml`, the secrets ignore rule and README content, deterministic composition tests, and required/conflicting-selection protection |
+| [FT-20.02 / #160](https://github.com/Sandsy09/forge-template/issues/160) | `streamlit>=1.63,<2`; the `run` task outside `check`; the configuration and secret safeguards; the four valid selections and the rejections; the deterministic-validation requirements; the exclusions | **Done** ([ADR 0071](adr/0071-streamlit-tasks-safeguards-and-composition.md)): the `run` task outside `check`, `.streamlit/config.toml`, the secrets ignore rule and the README section (the archetype's last three contributions and last path), deterministic composition tests for the four selections, ordering and the rejections, and the resolution-only endpoint check of the Python row |
 | [FT-20.03 / #161](https://github.com/Sandsy09/forge-template/issues/161) | Endpoints 3.11 and 3.14; lock restoration; the 10 s and 600 s bounds; the artefact expectations; the 2880-composition sweep; the regression protections | The executable harness, the wheel and sdist audits, Forge-free installs and the sweep updates |
 | [FT-20.04 / #162](https://github.com/Sandsy09/forge-template/issues/162) | The `0.6.0` line; the provider gate and rollback rule; no claim of client support or cutover | The version-bump pull request, release runs, published-artefact audit and hand-off |
 

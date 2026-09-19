@@ -95,9 +95,12 @@ _OWNED_COMPONENTS = (
 # duplicate overhead are unaffected; only the byte total moved,
 # 68,378 -> 68,954. FT-20.01 / ADR 0070 added the `streamlit` archetype: 13
 # files, 72,784 bytes in total, and its six byte-identical copies of `library`
-# and `cli` resources grow the duplicate overhead 892 -> 1,338.
-_EXPECTED_CONTENT_FILE_COUNT = 125
-_EXPECTED_CONTENT_BYTES = 72_784
+# and `cli` resources grow the duplicate overhead 892 -> 1,338. FT-20.02 / ADR
+# 0071 completed the archetype with four more files (`.streamlit/config.toml` and
+# three contribution bodies) and three manifest entries: 129 files, 74,226
+# bytes, measured from LF -- duplicate overhead unchanged, since none is a copy.
+_EXPECTED_CONTENT_FILE_COUNT = 129
+_EXPECTED_CONTENT_BYTES = 74_226
 _EXPECTED_DUPLICATE_OVERHEAD_BYTES = 1_338
 
 
@@ -179,13 +182,14 @@ def test_independent_archetypes_keep_coincidentally_shared_files_owned() -> None
 
 def test_package_content_size_matches_the_recorded_review_baseline() -> None:
     """Pins the catalogue's content size: Foundation plus every catalogue
-    component's tree total 125 files and 72,784 raw bytes, of which 1,338 bytes
+    component's tree total 129 files and 74,226 raw bytes, of which 1,338 bytes
     are the seven duplicate groups' overhead
     (docs/composition-architecture-review.md, "Operational consequences").
     ADR 0056's 2026-09-04 measurement (60 files, 39,182 bytes) stands as the
     pre-cutover record; FT-17.02 / ADR 0063 re-baselined it for the `github`
     platform, FT-17.03 / ADR 0064 for the eight tooling capabilities, and
-    FT-20.01 / ADR 0070 for the `streamlit` archetype.
+    FT-20.01 / ADR 0070 for the `streamlit` archetype and FT-20.02 / ADR 0071
+    for its completion.
     Content only -- `__pycache__` is excluded, matching how the review byte
     count was taken. A deliberate content change should move this pin and the
     prose figures together, per FT-14.02's cross-repository record.

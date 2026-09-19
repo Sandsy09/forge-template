@@ -1,9 +1,10 @@
 # The production Streamlit archetype. See docs/streamlit-archetype.md,
-# docs/streamlit-compatibility-and-acceptance.md and ADR 0068/0069/0070.
-# FT-20.01 ships the package, launcher, smoke test and six contributions: the
+# docs/streamlit-compatibility-and-acceptance.md and ADR 0068/0069/0070/0071.
+# FT-20.01 shipped the package, launcher, smoke test and six contributions: the
 # five packaging ones plus a dev-only `numpy<2.5` cap (ADR 0070). FT-20.02 adds
 # the `run` task, `.streamlit/config.toml`, the secrets ignore rule and the
-# README section.
+# README section (ADR 0071). Nothing is contributed to
+# `pyproject-aggregate-check`: `check` must terminate.
 manifest_version = 2
 id = "streamlit"
 name = "Streamlit"
@@ -46,4 +47,19 @@ target.kind = "foundation"
 [[contributions]]
 extension_point = "pyproject-development-dependencies"
 content = "extensions/development-dependencies.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-task-definitions"
+content = "extensions/task-definitions.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "gitignore-project-shape"
+content = "extensions/gitignore-project-shape.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "readme-project-shape"
+content = "extensions/readme-project-shape.md.jinja"
 target.kind = "foundation"

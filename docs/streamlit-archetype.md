@@ -12,19 +12,22 @@ authentication, database or FastAPI service surface) and
 **FT-ROADMAP-02-EX-04** (no arbitrary Streamlit plugin ecosystem), the last two
 shared with [FT-20.02](https://github.com/Sandsy09/forge-template/issues/160).
 
-The archetype is implemented in stages.
+The archetype is implemented in two steps, both inside component `1.0.0`.
 [FT-20.01](https://github.com/Sandsy09/forge-template/issues/159) ([ADR
 0070](adr/0070-streamlit-archetype-implementation.md)) added the `streamlit`
 component to the catalogue, so `discover_components()` returns fifteen
 components, four of them archetypes, on the still-unreleased line that follows
 the published [`forge-template` `0.5.0`](cutover-provider-release.md): the
 package, launcher, in-process smoke test and six of the Foundation
-contributions below. The three remaining contributions and
-`.streamlit/config.toml` are
-[FT-20.02's](https://github.com/Sandsy09/forge-template/issues/160), and
-`tests/test_streamlit_contract.py` pins the live manifest against the table
-below so the two cannot drift. Nothing here changes a Copier template, question
-or generated Library output, and the direct-Copier path stays Library-only.
+contributions below.
+[FT-20.02](https://github.com/Sandsy09/forge-template/issues/160) ([ADR
+0071](adr/0071-streamlit-tasks-safeguards-and-composition.md)) completed it
+with the `run` task, `.streamlit/config.toml`, the secrets ignore rule and the
+README section, so the archetype now owns all seven paths and contributes all
+nine points below. `tests/test_streamlit_contract.py` pins the live manifest
+against the table below so the two cannot drift. Nothing here changes a Copier
+template, question or generated Library output, and the direct-Copier path
+stays Library-only.
 
 ## Archetype identity and fixed choices
 
@@ -351,9 +354,11 @@ requirements, committed-lock restoration, the time-bounded non-serving smoke,
 the component version and the target provider compatibility line, in the
 [compatibility and acceptance
 contract](streamlit-compatibility-and-acceptance.md).
-[FT-20.01](https://github.com/Sandsy09/forge-template/issues/159) has
-implemented the package, launcher, smoke test and six contributions;
-[FT-20.02](https://github.com/Sandsy09/forge-template/issues/160) through
-[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) complete,
-validate and publish the rest. Neither Stage 19 decision nor FT-20.01 bumps a
+[FT-20.01](https://github.com/Sandsy09/forge-template/issues/159) implemented
+the package, launcher, smoke test and six contributions, and
+[FT-20.02](https://github.com/Sandsy09/forge-template/issues/160) the tasks,
+safeguards and capability composition.
+[FT-20.03](https://github.com/Sandsy09/forge-template/issues/161) and
+[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) validate and
+publish the result. None of the Stage 19 decisions, FT-20.01 or FT-20.02 bumps a
 version or releases.
