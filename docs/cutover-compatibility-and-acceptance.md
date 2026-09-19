@@ -444,8 +444,10 @@ Reserved for other owners:
 - the Streamlit archetype and its layout —
   [roadmap-v4](roadmap-v4/README.md); FT-19.01 accepted the shape in
   [streamlit-archetype.md](streamlit-archetype.md) ([ADR
-  0068](adr/0068-streamlit-project-shape.md)), and the compatibility line is
-  FT-19.02's.
+  0068](adr/0068-streamlit-project-shape.md)), and FT-19.02 accepted the
+  compatibility line in
+  [streamlit-compatibility-and-acceptance.md](streamlit-compatibility-and-acceptance.md)
+  ([ADR 0069](adr/0069-streamlit-composition-compatibility-and-acceptance.md)).
 
 ## Validation
 

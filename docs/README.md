@@ -23,8 +23,13 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [streamlit-archetype.md](streamlit-archetype.md) — the accepted project
   shape, entry point, packaging, dependency, configuration, task, test and
   exclusion contract for the future Streamlit archetype (FT-19.01, ADR 0068),
-  pinned by `tests/test_streamlit_contract.py`. Nothing ships yet; the
-  capability matrix and compatibility line belong to FT-19.02.
+  pinned by `tests/test_streamlit_contract.py`. Nothing ships yet.
+- [streamlit-compatibility-and-acceptance.md](streamlit-compatibility-and-acceptance.md)
+  — FT-19.02's classification of the versioned axes the Streamlit line moves
+  (`forge-template` `0.6.0`, component `1.0.0`), the four valid capability
+  selections, the Python and dependency evidence, the bounded non-serving
+  smoke, the executable acceptance matrix and the provider-first release
+  gates, pinned by `tests/test_streamlit_gates.py`.
 - [data-science-capabilities.md](data-science-capabilities.md) — the accepted
   optionless Jupyter tooling and optional Scientific Python dependency
   contracts, including both production capability implementations on `main`.

@@ -114,6 +114,30 @@ supported for this document's deprecation window past the cutover so a client
 can pin back. Full detail and the acceptance matrix live in
 [cutover-compatibility-and-acceptance.md](cutover-compatibility-and-acceptance.md).
 
+## Classified: the Streamlit transition
+
+[FT-19.02](https://github.com/Sandsy09/forge-template/issues/158) /
+[ADR 0069](adr/0069-streamlit-composition-compatibility-and-acceptance.md)
+classifies which axes the Streamlit archetype moves, against the rules in this
+document. It is a classification, not yet a transition: nothing ships until
+Stage 20 implements it and
+[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) publishes the
+release. The classified move is:
+
+- **`forge-template` package** → a new minor line, `0.6.0`. Below `1.0` a
+  supported range is minor-scoped, so published `create-forge` `0.4.0`'s
+  `>=0.5,<0.6` does not drift into it and widens only at
+  [CF-21.01](https://github.com/Sandsy09/create-forge/issues/165); `1.0.0` is
+  explicitly not promised.
+- **Discovered components** → fifteen, with `streamlit` entering at component
+  version `1.0.0` on manifest protocol `2`.
+- **Every other axis, and the whole public facade** → unchanged. That is a
+  requirement on Stage 20, not a prediction.
+
+The "Current compatibility state" table below advances only when the release
+ships. Full detail and the acceptance matrix live in
+[streamlit-compatibility-and-acceptance.md](streamlit-compatibility-and-acceptance.md).
+
 ## Generation metadata (`metadata_version`)
 
 [FT-15.02](https://github.com/Sandsy09/forge-template/issues/147)'s
@@ -262,7 +286,7 @@ rendered bytes.
 
 ## Current compatibility state
 
-Living snapshot, reviewed 2026-09-12. Advancing it in line with the rules
+Living snapshot, reviewed 2026-09-19. Advancing it in line with the rules
 above does not require a new ADR; a semantic change to those rules does (see
 "Ownership and change process").
 
@@ -290,8 +314,9 @@ above does not require a new ADR; a semantic change to those rules does (see
 | Foundation source protocol | `1` (internal; see above) |
 | Organisation-policy protocol | `1` (doc-only; see above) |
 
-Released `create-forge` declares the compatible
-`forge-template>=0.4.1,<0.5` engine range
+Published `create-forge` `0.4.0` declares the compatible
+`forge-template>=0.5,<0.6` engine range and makes the engine its default `new`
+path
 ([template-engine-api.md](template-engine-api.md#compatibility-and-current-cutover-boundary)).
 
 The Data Science line advanced the package to `0.4.0`, first available as the
@@ -311,9 +336,11 @@ and [PyPI distribution](https://pypi.org/project/forge-template/0.5.0/),
 carrying the nine components Stage 17 shipped (the `github` platform and
 eight tooling capabilities), manifest protocol `3`, published
 `metadata_version`, and the `plan_update` surface, all additive — see
-[cutover-provider-release.md](cutover-provider-release.md). Released
-`create-forge` (`0.3.2`) has not adopted this line and stays on
-`>=0.4.1,<0.5` until [CF-18.01](https://github.com/Sandsy09/create-forge/issues/158).
+[cutover-provider-release.md](cutover-provider-release.md).
+`create-forge` `0.4.0` adopted this line at
+[CF-18.01](https://github.com/Sandsy09/create-forge/issues/158) and declares
+`>=0.5,<0.6`; a client still pinned to `>=0.4.1,<0.5` keeps the `0.4.x` line,
+which stays installable.
 [python-support.md](python-support.md) uses the same living snapshot pattern
 for its own state.
 

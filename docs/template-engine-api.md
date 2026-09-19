@@ -390,6 +390,6 @@ protocol-`2` manifests are accepted unchanged.
 four more: `plan_update`, `UpdatePlan`, `UpdateTarget`, and `AppliedRename`.
 [FT-17.06](https://github.com/Sandsy09/forge-template/issues/155) has since
 released `0.5.0`. A client written against `0.4.1` keeps working against
-`0.5.0` within a widened range; released `create-forge` has not yet widened
-its `>=0.4.1,<0.5` bound (that adoption is
+`0.5.0` within a widened range; `create-forge` `0.4.0` has widened its bound to
+`>=0.5,<0.6` (that adoption was
 [CF-18.01](https://github.com/Sandsy09/create-forge/issues/158)).

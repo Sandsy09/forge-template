@@ -50,9 +50,10 @@ creating a packaging matrix. Because the component declares no option schema, a
 valid Streamlit ProjectSpec uses `components.archetype = "streamlit"` and adds
 no `streamlit` entry to `component_options`. The component version, the
 engine-package line that first ships it, the supported Python window and the
-capability matrix are FT-19.02's decisions and are deliberately not fixed here;
-the generated project's own `0.1.0` starting version is a separate axis from
-all of them.
+capability matrix were FT-19.02's decisions and are fixed in the
+[compatibility and acceptance contract](streamlit-compatibility-and-acceptance.md)
+(component `1.0.0`, package line `0.6.0`, floor `>=3.11`); the generated
+project's own `0.1.0` starting version is a separate axis from all of them.
 
 The archetype uses PEP 517 and PEP 621 metadata and must build a wheel and a
 source distribution. It contributes these classifiers; no Streamlit-specific
@@ -120,6 +121,14 @@ Streamlit uses one fixed packaging mode:
 - wheel and source-distribution output; and
 - inline typing through `src/<package_name>/py.typed`.
 
+Both artefacts contain only the module tree `src/<package_name>/`. The root
+`app.py` launcher and `.streamlit/config.toml` are source-tree files, not
+distribution content: the application runs from a checkout with
+`streamlit run app.py`, and the wheel carries the typed package. This is
+deliberate and consistent with the no-deployment boundary; the
+[compatibility and acceptance contract](streamlit-compatibility-and-acceptance.md#package-build-and-install-requirements)
+records the evidence and the acceptance requirements.
+
 It declares exactly one direct runtime dependency:
 
 ```toml
@@ -139,8 +148,10 @@ days earlier; the floor is the previous settled minor line:
 
 The lower release accepts Forge's Python 3.11 floor. `streamlit.testing.v1` and
 a `py.typed` marker ship inside the same distribution, so neither the test
-surface nor strict type checking adds a dependency. Whether the full supported
-Python window resolves is an executable check FT-19.02 owns.
+surface nor strict type checking adds a dependency. That the whole supported
+Python window resolves was verified by FT-19.02 (see the
+[dependency evidence](streamlit-compatibility-and-acceptance.md#python-and-dependency-evidence));
+the executable endpoint check is FT-20.03's.
 
 The declared bound is a normative compatibility line. Lock movement within it
 is routine reviewed maintenance; changing either bound needs an upstream
@@ -210,8 +221,10 @@ The test must therefore build the launcher path from its own location, as
 the app contract and meaningful content rather than snapshotting framework
 output.
 
-The wall-clock bound on this smoke, and the acceptance matrix that runs it
-across selections and Python versions, are FT-19.02's.
+The wall-clock bounds on this smoke — 10 seconds per run and 600 seconds for the
+whole project check — and the acceptance matrix that runs it across selections
+and Python versions are fixed in the
+[compatibility and acceptance contract](streamlit-compatibility-and-acceptance.md#time-bounded-non-serving-smoke).
 
 ## Foundation extension requirements
 
@@ -261,9 +274,9 @@ Streamlit may reuse Foundation extension points and public template variables.
 It may not read or contribute through Library, CLI Application or Data Science
 resources, select any of them, or introduce inheritance between archetypes. The
 two capabilities are optional here, unlike the `requires` edge Data Science
-declares on Jupyter; the four selections and their compatibility are
-FT-19.02's decision, and the archetype's manifest declares no `requires` or
-`conflicts` for them.
+declares on Jupyter; the four selections and their compatibility are fixed in the
+[compatibility and acceptance contract](streamlit-compatibility-and-acceptance.md#valid-and-invalid-selections),
+and the archetype's manifest declares no `requires` or `conflicts` for them.
 
 Foundation remains provider-, framework-, organisation- and domain-neutral.
 Streamlit, its testing harness and its configuration never become universal
@@ -305,12 +318,14 @@ finalisation.
 
 ## Deferred decisions
 
-[FT-19.02](https://github.com/Sandsy09/forge-template/issues/158) owns the
-capability matrix (no capability, Jupyter only, Scientific Python only and
+[FT-19.02](https://github.com/Sandsy09/forge-template/issues/158) has since
+accepted ([ADR 0069](adr/0069-streamlit-composition-compatibility-and-acceptance.md))
+the capability matrix (no capability, Jupyter only, Scientific Python only and
 both), the supported Python and dependency window, package build and install
-requirements, committed-lock restoration, the time-bounded non-serving smoke
-strategy, the component version and the target provider compatibility line.
+requirements, committed-lock restoration, the time-bounded non-serving smoke,
+the component version and the target provider compatibility line, in the
+[compatibility and acceptance contract](streamlit-compatibility-and-acceptance.md).
 [FT-20.01](https://github.com/Sandsy09/forge-template/issues/159) through
 [FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) implement,
-validate and publish what these two contracts fix. Nothing in this decision
-bumps a version or releases.
+validate and publish what the two contracts fix. Neither decision bumps a
+version or releases.

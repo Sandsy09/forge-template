@@ -83,6 +83,15 @@ makes an executable Python 3.11 and 3.14 endpoint sweep a required Stage 11
 and Stage 12 acceptance check, and requires a superseding ADR rather than a
 silent bound change if a dependency set fails to resolve at either endpoint.
 
+The Streamlit dependency line follows the same floor and endpoints. The
+[compatibility and acceptance contract](streamlit-compatibility-and-acceptance.md#python-and-dependency-evidence)
+records the reviewed resolution of `streamlit>=1.63,<2` alone and combined with
+the Jupyter and Scientific Python lines, makes Python 3.11 and 3.14 its
+executable endpoints, and likewise requires a superseding ADR rather than a
+silent bound change. Streamlit `1.63.0` lists CPython 3.10 to 3.14, so admitting
+a newer CPython also needs the Streamlit line to resolve on it under the gate
+below.
+
 ## Admitting a new CPython release
 
 A CPython release enters the active window only after its final release and a

@@ -126,8 +126,9 @@ The Foundation and Data Science roadmaps are complete. The filed
 [Streamlit Archetype](docs/roadmap-v4/README.md) roadmaps describe future work;
 their issues are open, and no release is scheduled. Streamlit waits
 for the cutover contracts, not necessarily the completed cutover release, and
-its project shape is now an [accepted contract](docs/streamlit-archetype.md)
-with no implementation yet. Follow
+its project shape and [compatibility line](docs/streamlit-compatibility-and-acceptance.md)
+are now [accepted contracts](docs/streamlit-archetype.md) with no implementation
+yet. Follow
 [open work](https://github.com/Sandsy09/forge-template/issues) and
 [releases](https://github.com/Sandsy09/forge-template/releases), or suggest
 a useful project type or capability.
