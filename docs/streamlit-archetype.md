@@ -24,8 +24,13 @@ contributions below.
 0071](adr/0071-streamlit-tasks-safeguards-and-composition.md)) completed it
 with the `run` task, `.streamlit/config.toml`, the secrets ignore rule and the
 README section, so the archetype now owns all seven paths and contributes all
-nine points below. `tests/test_streamlit_contract.py` pins the live manifest
-against the table below so the two cannot drift. Nothing here changes a Copier
+nine points below.
+[FT-20.03](https://github.com/Sandsy09/forge-template/issues/161) ([ADR
+0072](adr/0072-validate-streamlit-generated-projects.md)) then proved it as a
+generated project and as a distribution, recorded in
+[streamlit-validation.md](streamlit-validation.md).
+`tests/test_streamlit_contract.py` pins the live manifest against the table
+below so the two cannot drift. Nothing here changes a Copier
 template, question or generated Library output, and the direct-Copier path
 stays Library-only.
 
@@ -165,7 +170,8 @@ a `py.typed` marker ship inside the same distribution, so neither the test
 surface nor strict type checking adds a *runtime* dependency. That the whole
 supported Python window resolves was verified by FT-19.02 (see the
 [dependency evidence](streamlit-compatibility-and-acceptance.md#python-and-dependency-evidence));
-the executable endpoint check is FT-20.03's.
+the executable endpoint check is FT-20.03's
+([streamlit-validation.md](streamlit-validation.md)).
 
 Type checking does need one development-only constraint, which FT-19.02's
 resolution evidence did not exercise and FT-20.01's first end-to-end run found.
@@ -357,8 +363,9 @@ contract](streamlit-compatibility-and-acceptance.md).
 [FT-20.01](https://github.com/Sandsy09/forge-template/issues/159) implemented
 the package, launcher, smoke test and six contributions, and
 [FT-20.02](https://github.com/Sandsy09/forge-template/issues/160) the tasks,
-safeguards and capability composition.
-[FT-20.03](https://github.com/Sandsy09/forge-template/issues/161) and
-[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) validate and
-publish the result. None of the Stage 19 decisions, FT-20.01 or FT-20.02 bumps a
-version or releases.
+safeguards and capability composition, and
+[FT-20.03](https://github.com/Sandsy09/forge-template/issues/161) validated the
+result.
+[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) publishes it.
+None of the Stage 19 decisions or FT-20.01 to FT-20.03 bumps a version or
+releases.

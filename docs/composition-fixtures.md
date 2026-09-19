@@ -106,11 +106,12 @@ alongside the existing `--from-git` option.
 The same option also regenerates
 `tests/fixtures/archetype_regression/digests.json` — the per-target SHA-256
 map `tests/test_data_science_composition.py` pins `library` and `cli` output
-against across every capability selection (FT-12.03, ADR 0055). Unlike the
-goldens above, that fixture is generated from the **production** catalogue,
-not `tests/fixtures/component_manifests/`, so any deliberate change to
-`library`, `cli`, `jupyter`, `scientific-python`, or Foundation output must
-regenerate it:
+against across every capability selection (FT-12.03, ADR 0055), extended by
+FT-20.03 (ADR 0072) to `data-science` and `streamlit`. Unlike the goldens
+above, that fixture is generated from the **production** catalogue, not
+`tests/fixtures/component_manifests/`, so any deliberate change to `library`,
+`cli`, `data-science`, `streamlit`, `jupyter`, `scientific-python`, or
+Foundation output must regenerate it:
 
 ```bash
 uv run pytest tests/test_data_science_composition.py --update-goldens

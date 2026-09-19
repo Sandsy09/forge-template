@@ -8,9 +8,9 @@ hardcodes ``"platforms": []`` and uses only ``jupyter`` / ``scientific-python``
 executed against engine-rendered output at all, and invariant 1 (generated
 output is pre-commit clean) had never been checked on the engine path.
 
-Three cells, one per archetype that existed at FT-17.05 (FT-20.03 / #161 adds
-the ``streamlit`` cell; FT-20.01 ships no build evidence), each with ``github``
-and every capability it can carry (``renovate`` is excluded -- it conflicts with
+Four cells, one per archetype -- the three that existed at FT-17.05 and, since
+FT-20.03 / ADR 0072, ``streamlit`` -- each with ``github`` and every capability
+it can carry (``renovate`` is excluded -- it conflicts with
 the ``dependabot`` cell here uses; ``documentation`` is ``library``-only, since
 it ``requires`` ``library``). Each cell: lock, sync, build (wheel + sdist),
 isolated install, the generated project's own locked ``poe check``, then a real
@@ -55,7 +55,7 @@ _LIBRARY_CAPABILITIES = (
     "scientific-python",
 )
 #: `documentation` requires `library` (docs/platform-and-tooling-parity.md);
-#: every other capability composes with `cli` and `data-science` unchanged.
+#: every other capability composes with `cli`, `data-science` and `streamlit` unchanged.
 _NON_LIBRARY_CAPABILITIES = tuple(
     capability for capability in _LIBRARY_CAPABILITIES if capability != "documentation"
 )
@@ -68,6 +68,12 @@ _CELLS = [
         "full_comp_data_science",
         _NON_LIBRARY_CAPABILITIES,
         id="data-science",
+    ),
+    pytest.param(
+        "streamlit",
+        "full_comp_streamlit",
+        _NON_LIBRARY_CAPABILITIES,
+        id="streamlit",
     ),
 ]
 

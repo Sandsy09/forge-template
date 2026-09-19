@@ -120,8 +120,9 @@ jobs:
         run: uv run pytest -m combos -k c1-uvbuild-static --from-git -v
 
   # ---------------------------------------------------------------------------
-  # Real generated-project proof for production Library/CLI archetypes and
-  # capability compositions -- tests/*_build.py.
+  # Real generated-project proof for every production archetype (Library, CLI,
+  # Data Science, Streamlit) and capability composition -- tests/*_build.py,
+  # tests/test_*_endpoints.py and tests/test_full_composition_build.py.
   # ---------------------------------------------------------------------------
   archetype:
     name: Archetype builds

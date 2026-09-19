@@ -94,7 +94,9 @@ and already, by `tests/test_jupyter_capability_build.py` and
 `tests/fixtures/archetype_regression/digests.json` records a SHA-256 for every
 `library` and `cli` target across all four capability selections (none,
 `jupyter`, `scientific-python`, both). `tests/test_data_science_composition.py`
-asserts current output against it. Regenerate with
+asserts current output against it. FT-20.03
+([streamlit-validation.md](streamlit-validation.md)) later extended the same
+fixture to `data-science` and `streamlit`. Regenerate with
 `uv run pytest tests/test_data_science_composition.py --update-goldens` and
 review the diff — the same workflow as the composition-contract goldens
 ([composition-fixtures.md](composition-fixtures.md)). The existing
