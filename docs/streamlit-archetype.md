@@ -167,8 +167,11 @@ the archetype's `gitignore-project-shape` contribution as the root-anchored
 `*.toml` or `app` pattern, so this rule shadows no tracked file, satisfying the
 [ignore-shadowing audit](secret-handling.md#secret-bearing-files-stay-out-of-version-control).
 
-**No `.streamlit/secrets.toml.example` is generated.** Foundation's
-`.env` / `.env.example` remains the single documented secret channel, so the
+**No `.streamlit/secrets.toml.example` is generated.** The `.env` file remains
+the single documented secret channel. Foundation ignores the `.env` family and
+negates `!.env.example`; the tracked, placeholder-only `.env.example` file itself
+is owned by the optional `dotenv-example` capability, so a project that does not
+select it has no example file at all. Either way the
 [placeholder-only rule](secret-handling.md#the-tracked-example-carries-placeholders-only)
 has one enforced target and no second example to keep in step. The archetype
 adds no dotenv loader; runtime configuration follows the owner-local
@@ -241,12 +244,13 @@ mixed root file.
 
 | Concern | Owner |
 | --- | --- |
-| Neutral project identity, licence, prerequisites, lock and quality guarantees, root guidance, repository hygiene and the `.env` / `.env.example` secret channel | Foundation |
+| Neutral project identity, licence, prerequisites, lock and quality guarantees, root guidance, repository hygiene and the `.env` ignore rules with the `!.env.example` negation | Foundation |
 | Root `pyproject.toml`, `README.md` and `.gitignore` source files | Foundation, accepting only reviewed component contributions |
 | Package, test and root launcher paths, packaging and version metadata, classifiers, the Streamlit runtime dependency and the starter page | Streamlit archetype |
 | `.streamlit/config.toml` and the `/.streamlit/secrets.toml` ignore entry | Streamlit archetype, the latter through `gitignore-project-shape` |
 | The `run` task | Streamlit archetype, through `pyproject-task-definitions` |
 | Project-shape and run guidance within the root README | Streamlit archetype, through `readme-project-shape` |
+| The tracked, placeholder-only `.env.example` file | optional `dotenv-example` capability |
 | Notebook authoring and tooling | optional [`jupyter`](data-science-capabilities.md#jupyter-capability) capability |
 | Optional scientific runtime dependencies | optional [`scientific-python`](data-science-capabilities.md#scientific-python-capability) capability |
 | CI, repository-provider, delivery and deployment integrations | Selected platform components |
@@ -283,6 +287,11 @@ The archetype excludes, for this contract and for its implementation:
 
 Platforms own deployment and delivery. No remote registry or plugin execution is
 introduced, and generated code depends on no Forge runtime package.
+
+These exclusions govern the generated project's own surface and code. They do
+not forbid Streamlit's dependency tree, which already includes a web-server
+stack (`starlette` and `uvicorn`) as transitive dependencies of the pinned
+`streamlit` line; the archetype neither imports nor exposes them.
 
 ## Client boundary
 

@@ -108,6 +108,15 @@ def test_reconciled_documents_point_at_the_contract(document: Path) -> None:
     assert "streamlit-archetype.md" in document.read_text(encoding="utf-8")
 
 
+def test_env_example_is_owned_by_the_dotenv_example_capability() -> None:
+    """The contract must not attribute the tracked ``.env.example`` to Foundation."""
+    foundation_content = _ROOT / "src" / "forge_template" / "foundation" / "content"
+    assert not (foundation_content / ".env.example").exists()
+    components = {c.id: c.kind for c in discover_components()}
+    assert components.get("dotenv-example") == "capability"
+    assert "dotenv-example" in _CONTRACT.read_text(encoding="utf-8")
+
+
 def test_streamlit_is_not_yet_in_the_catalogue() -> None:
     """Tripwire: fails when FT-20.01 adds the component (contract-only stage)."""
     components = {c.id: c.kind for c in discover_components()}

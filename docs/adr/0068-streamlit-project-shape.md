@@ -69,8 +69,10 @@ Publish the shape as the living contract
 
 5. **Configuration tracks `.streamlit/config.toml` with
    `gatherUsageStats = false` and ignores `.streamlit/secrets.toml`; no secrets
-   example is generated.** Foundation's `.env` / `.env.example` stays the single
-   secret channel. Rejected: a tracked `secrets.toml.example` (a second channel
+   example is generated.** The `.env` file stays the single secret channel:
+   Foundation ignores the `.env` family and negates `!.env.example`, and the
+   optional `dotenv-example` capability owns the tracked `.env.example` file.
+   Rejected: a tracked `secrets.toml.example` (a second channel
    to document, validate and keep in step, needing its own ignore negation);
    tracking no configuration (leaves Streamlit's telemetry at its upstream
    default and gives the archetype no deterministic configuration surface).
