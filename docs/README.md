@@ -52,6 +52,13 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   endpoints, the documented rejections, the `library`/`cli` byte-level
   regression pin, and the published `0.4.0` artefact audit (FT-12.03–12.04,
   ADR 0055).
+- [streamlit-validation.md](streamlit-validation.md) — what the `streamlit`
+  archetype and its four capability selections are proven to do as generated
+  projects and distributions: restoration from a committed lock, both
+  window-edge Python endpoints, the bounded non-serving smoke and its listen
+  guard, module-only artefacts, Forge-free installs, the byte-level regression
+  pin across all four archetypes and the source-tree-derived wheel audit
+  (FT-20.03, ADR 0072).
 - [roadmap-v2/](roadmap-v2/) — the Stage 10–14 two-repository roadmap for a
   package-backed Data Science archetype and reusable optional capabilities.
 - [roadmap-v1/](roadmap-v1/) — the completed historical Foundation roadmap

@@ -143,6 +143,11 @@ _MAX_WHEEL_BYTES = 131_072  # 128 KiB
 # so its ceiling is set around FT-17.05's ~726 KB measurement instead of the
 # wheel's -- a generous bound against the same unbounded-growth failure mode.
 _MAX_SDIST_BYTES = 2_097_152  # 2 MiB
+# The engine's resource trees. `_MUST_CONTAIN` above is a hand-kept list, which
+# is exactly how a new component's hidden or nested file can go unlisted; every
+# file actually on disk under these trees must ship (FT-20.03, AC-07).
+_SOURCE_ROOT = Path(__file__).resolve().parents[1] / "src"
+_RESOURCE_TREES = ("forge_template/foundation", "forge_template/components")
 _SMOKE_IMPORT = (
     "import forge_template; "
     "info = forge_template.get_engine_info(); "
@@ -166,6 +171,23 @@ _SMOKE_IMPORT = (
     "'initial_version': '0.1.0'}}}); "
     "project = forge_template.render_project(spec); "
     "assert project.files; "
+    # FT-20.03 / AC-07: an installed artefact must *render* the newest
+    # archetype, not merely contain its files -- the launcher, its hidden
+    # configuration directory, and the contributions that land in mixed files.
+    "streamlit = forge_template.render_project(forge_template.parse_project_spec({"
+    "'protocol_version': 1, "
+    "'project': {'name': 'Smoke', 'package_name': 'smoke', "
+    "'repository_name': 'smoke', 'description': 'd', 'licence': 'mit', "
+    "'authors': [{'name': 'Smoke Test'}]}, "
+    "'python': {'minimum': '3.11', 'development': '3.13'}, "
+    "'components': {'archetype': 'streamlit', 'capabilities': [], "
+    "'platforms': []}, 'component_options': {}})); "
+    "rendered = {f.target: f.content.decode() for f in streamlit.files}; "
+    "assert {'app.py', '.streamlit/config.toml', 'tests/test_app.py'} "
+    "<= set(rendered), sorted(rendered); "
+    "assert 'streamlit run app.py' in rendered['pyproject.toml']; "
+    "assert '/.streamlit/secrets.toml' in rendered['.gitignore']; "
+    "assert 'gatherUsageStats = false' in rendered['.streamlit/config.toml']; "
     "print('discovered:', ids); "
     "print('negotiated:', info.package_version, info.metadata_version); "
     "print('rendered:', len(project.files), 'files')"
@@ -210,6 +232,29 @@ def _sdist_names(sdist: Path) -> list[str]:
     return stripped
 
 
+def _source_resources() -> list[str]:
+    """Every engine resource on disk, as a wheel-relative `forge_template/...` path.
+
+    Bytecode caches are build debris, not resources.
+    """
+    return sorted(
+        path.relative_to(_SOURCE_ROOT).as_posix()
+        for tree in _RESOURCE_TREES
+        for path in (_SOURCE_ROOT / tree).rglob("*")
+        if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc"
+    )
+
+
+def _missing_resources(names: list[str], artefact: Path) -> list[str]:
+    """One failure per on-disk engine resource absent from `names`."""
+    shipped = set(names)
+    return [
+        f"missing: engine resource {resource!r} is on disk but not in {artefact.name}"
+        for resource in _source_resources()
+        if resource not in shipped
+    ]
+
+
 def _check_wheel_contents(wheel: Path) -> list[str]:
     """Return a list of content-check failures, empty if everything holds."""
     names = _wheel_names(wheel)
@@ -218,6 +263,7 @@ def _check_wheel_contents(wheel: Path) -> list[str]:
     for member in _MUST_CONTAIN:
         if not any(name.startswith(member) for name in names):
             failures.append(f"missing: {member!r} not found in {wheel.name}")
+    failures.extend(_missing_resources(names, wheel))
     for member in _MUST_NOT_CONTAIN:
         if any(name == member for name in names):
             failures.append(
@@ -241,6 +287,7 @@ def _check_sdist_contents(sdist: Path) -> list[str]:
                 f"missing: {member!r} not found in {sdist.name} -- the sdist "
                 "must carry everything needed to rebuild the wheel"
             )
+    failures.extend(_missing_resources(names, sdist))
     return failures
 
 

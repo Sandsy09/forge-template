@@ -12,8 +12,11 @@ build, install and the generated ``poe check`` belong to FT-20.03.
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
+import subprocess
+import sys
 import tomllib
 from pathlib import Path
 from typing import Any
@@ -231,6 +234,68 @@ def test_render_is_invariant_to_catalogue_filesystem_layout(
     monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", None)
 
     assert _render_map(_payload(capabilities=capabilities)) == installed
+
+
+@pytest.mark.parametrize("floor", ["3.11", "3.14"])
+@pytest.mark.parametrize("capabilities", _FOUR_SELECTIONS)
+def test_rendered_python_content_is_ruff_clean_at_every_floor(
+    capabilities: tuple[str, ...], floor: str, tmp_path: Path
+) -> None:
+    """Invariant 1 for every accepted selection, whatever supported floor the
+    owner picks. 3.14 flips ``target-version`` to ``py314``, which changes how
+    ruff formats ``except`` groups (PEP 758); generated content must stay clean
+    at that target too. FT-20.03 / ADR 0072."""
+    payload = _payload(capabilities=capabilities)
+    payload["python"] = {"minimum": floor, "development": floor}
+    for target, content in _render_map(payload).items():
+        path = tmp_path / target
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+
+    for arguments in (["format", "--check", "."], ["check", "."]):
+        result = subprocess.run(
+            [sys.executable, "-m", "ruff", *arguments],
+            cwd=tmp_path,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_render_is_invariant_to_pythonhashseed() -> None:
+    """docs/composition-order.md names PYTHONHASHSEED explicitly. A single
+    pytest process has one fixed seed, so vary it across subprocesses that each
+    render the richest selection and hash the file map. FT-20.03 / ADR 0072."""
+    script = (
+        "import hashlib, json;"
+        "from forge_template import parse_project_spec, render_project;"
+        "spec = parse_project_spec({"
+        "'protocol_version': 1,"
+        "'project': {'name': 'Demo App', 'package_name': 'demo_app',"
+        " 'repository_name': 'demo-app', 'description': 'x', 'licence': 'mit',"
+        " 'authors': [{'name': 'Test User'}]},"
+        "'python': {'minimum': '3.11', 'development': '3.13'},"
+        "'components': {'archetype': 'streamlit',"
+        " 'capabilities': ['jupyter', 'scientific-python'], 'platforms': []},"
+        "'component_options': {}});"
+        "files = {i.target: i.content.hex() for i in render_project(spec).files};"
+        "print(hashlib.sha256("
+        "json.dumps(files, sort_keys=True).encode()).hexdigest())"
+    )
+    hashes = set()
+    for seed in ("0", "1", "42", "12345"):
+        result = subprocess.run(
+            [sys.executable, "-c", script],
+            cwd=_COMPONENTS.parents[2],
+            env={**os.environ, "PYTHONHASHSEED": seed},
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        hashes.add(result.stdout.strip())
+
+    assert len(hashes) == 1, hashes
 
 
 # --- Rejections fail closed before rendering --------------------------------

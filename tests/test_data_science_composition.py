@@ -5,7 +5,9 @@ FT-12.03 / ADR 0055. The slow build/install/notebook checks live in the
 carries the fast proofs -- deterministic planning and rendering across both
 valid compositions, the documented rejections with an archetype in play, no
 Forge dependency in any generated project, and a byte-level regression pin on
-``library`` and ``cli`` output. See docs/data-science-validation.md.
+every recorded archetype's output -- ``library`` and ``cli`` since FT-12.03,
+``data-science`` and ``streamlit`` since FT-20.03. See
+docs/data-science-validation.md and docs/streamlit-validation.md.
 """
 
 from __future__ import annotations
@@ -47,6 +49,14 @@ _REGRESSION_SELECTIONS: list[tuple[str, ...]] = [
     ("scientific-python",),
     ("jupyter", "scientific-python"),
 ]
+# Every archetype whose output is byte-pinned, with the selections it accepts:
+# `data-science` requires `jupyter`, so its two are the valid ones.
+_REGRESSION_ARCHETYPES: dict[str, list[tuple[str, ...]]] = {
+    "library": _REGRESSION_SELECTIONS,
+    "cli": _REGRESSION_SELECTIONS,
+    "data-science": [("jupyter",), ("jupyter", "scientific-python")],
+    "streamlit": _REGRESSION_SELECTIONS,
+}
 
 
 def _payload(
@@ -319,17 +329,18 @@ def test_no_valid_composition_declares_a_forge_dependency(
 # --- Library and CLI output is byte-pinned across capability selections ----
 
 
-def test_library_and_cli_output_matches_recorded_digests(update_goldens: bool) -> None:
-    """FT-12.03 regression pin: every ``library`` and ``cli`` target, across
-    all four capability selections, hashes to a recorded value. Regenerate
-    with ``--update-goldens`` and review the diff -- see
-    docs/composition-fixtures.md."""
+def test_recorded_archetype_output_matches_digests(update_goldens: bool) -> None:
+    """Regression pin: every target of every recorded archetype, across each
+    capability selection it accepts, hashes to a recorded value. FT-12.03
+    recorded ``library`` and ``cli``; FT-20.03 added ``data-science`` and
+    ``streamlit``. Regenerate with ``--update-goldens`` and review the diff --
+    see docs/composition-fixtures.md."""
     actual = {
         f"{archetype}:{'+'.join(capabilities) or 'none'}": _digest_map(
             _render_map(_payload(archetype=archetype, capabilities=capabilities))
         )
-        for archetype in ("library", "cli")
-        for capabilities in _REGRESSION_SELECTIONS
+        for archetype, selections in _REGRESSION_ARCHETYPES.items()
+        for capabilities in selections
     }
 
     if update_goldens:

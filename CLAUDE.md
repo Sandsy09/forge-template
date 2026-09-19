@@ -152,11 +152,12 @@ capabilities (`changelog`, `coverage`, `documentation`, `dotenv-example`,
 Documentation requires Library; Dependabot requires GitHub and conflicts with
 Renovate.
 
-`main` is ahead of that release: FT-20.01 and FT-20.02 have added a fifteenth
-component, the `streamlit` archetype, which is unreleased and unpublished until
-a later `forge-template` release. It has no `requires` or `conflicts`, its owned
-content is fixed by [docs/streamlit-archetype.md](docs/streamlit-archetype.md),
-and its line and acceptance matrix by
+`main` is ahead of that release: FT-20.01 to FT-20.03 have added and validated a
+fifteenth component, the `streamlit` archetype, which is unreleased and
+unpublished until a later `forge-template` release. It has no `requires` or
+`conflicts`, its owned content is fixed by
+[docs/streamlit-archetype.md](docs/streamlit-archetype.md), its line and
+acceptance matrix by
 [docs/streamlit-compatibility-and-acceptance.md](docs/streamlit-compatibility-and-acceptance.md).
 
 The public engine supports component-manifest protocols 1–3, generation
