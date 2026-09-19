@@ -251,7 +251,8 @@ Reserved for the later Stage 15 children and their ADRs:
 - whether `type_checking` becomes a capability or an accepted mypy-only
   narrowing (FT-15.03);
 - the MkDocs / Streamlit / documentation layout (FT-15.03, and the Streamlit
-  roadmap);
+  roadmap; the Streamlit shape was accepted by FT-19.01 in
+  [streamlit-archetype.md](streamlit-archetype.md));
 - which protocol or package compatibility lines move, and the
   migration/rollback expectations (FT-15.04);
 - the bounded issues the `needs a bounded issue` rows require, and how they

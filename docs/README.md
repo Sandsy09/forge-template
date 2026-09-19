@@ -20,6 +20,11 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [data-science-archetype.md](data-science-archetype.md) — the published
   package-plus-notebooks shape and ownership boundary for the third production
   archetype.
+- [streamlit-archetype.md](streamlit-archetype.md) — the accepted project
+  shape, entry point, packaging, dependency, configuration, task, test and
+  exclusion contract for the future Streamlit archetype (FT-19.01, ADR 0068),
+  pinned by `tests/test_streamlit_contract.py`. Nothing ships yet; the
+  capability matrix and compatibility line belong to FT-19.02.
 - [data-science-capabilities.md](data-science-capabilities.md) — the accepted
   optionless Jupyter tooling and optional Scientific Python dependency
   contracts, including both production capability implementations on `main`.
