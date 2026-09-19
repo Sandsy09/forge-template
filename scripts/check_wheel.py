@@ -45,7 +45,7 @@ below: ADR 0056 measured a 72,566-byte local review wheel; the published
 wheel to ~85 KB, FT-17.03 (the eight tooling capabilities) to ~105 KB, and
 FT-17.04 (the reproducible-render `engine.py`/`generation_metadata.py`
 additions, no new content trees) to ~108 KB, and FT-20.01 (the `streamlit` archetype)
-to 113,474 bytes (sdist 785,574), still under the 128 KiB ceiling.
+to 113,503 bytes (sdist 792,271), still under the 128 KiB ceiling.
 FT-17.05 measured the sdist at ~726 KB (it carries the full repo, unlike the
 wheel). Both ceilings are deliberately loose bounds, not tight pins -- archive
 metadata (timestamps, compression) makes an exact byte count

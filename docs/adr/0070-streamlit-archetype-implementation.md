@@ -101,8 +101,8 @@ the generated type check.
    to four archetypes the way earlier tripwires were, and every catalogue
    enumeration gains `streamlit`.
 7. **Re-measure, never guess.** The architecture-review pin becomes 125 files,
-   72,854 bytes and 1,338 duplicate-overhead bytes (from 112, 68,954 and 892). The
-   built wheel is 113,474 bytes and the sdist 785,574, both inside their ceilings,
+   72,784 bytes and 1,338 duplicate-overhead bytes (from 112, 68,954 and 892). The
+   built wheel is 113,503 bytes and the sdist 792,271, both inside their ceilings,
    which do not move.
 8. **Leave the build evidence to FT-20.03.** The full-composition cell, the
    archetype regression digests, the endpoint sweep and the formal committed-lock
