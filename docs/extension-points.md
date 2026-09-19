@@ -65,8 +65,9 @@ addition, the `github` platform (FT-17.02 / ADR 0063) publishes `ci-jobs` and
 `ci-steps` on its *own* `content/.github/workflows/ci.yml.jinja`, and the
 `documentation` capability (FT-17.03 / ADR 0064) publishes `api-reference` on
 its own `content/docs/reference.md.jinja` — the first shipped components to
-publish a point on content they own. The three archetypes — `library`, `cli`,
-`data-science` — and the remaining capabilities publish none of their own and
+publish a point on content they own. The four archetypes — `library`, `cli`,
+`data-science` and `streamlit` (FT-20.01 / ADR 0070) — and the remaining
+capabilities publish none of their own and
 contribute only into Foundation's points, through manifest protocol `2`'s
 `target.kind = "foundation"` (or `target.kind = "component"` for a
 contribution into `github`'s CI points)
@@ -103,6 +104,13 @@ structure and the working-directory guidance) and its `gitignore-project-shape`
 contribution (the five root-anchored `data/`, `models/`, and `artifacts/`
 entries, composed ahead of `jupyter`'s `.ipynb_checkpoints/`); [ADR
 0054](adr/0054-data-science-notebook-and-artefact-layout.md) records that use.
+FT-20.01's `streamlit` archetype uses five of the same pyproject points
+(`pyproject-build-system`, `pyproject-archetype-metadata`,
+`pyproject-build-configuration`, `pyproject-runtime-dependencies`,
+`pyproject-classifiers`) and `pyproject-development-dependencies` for a
+development-only NumPy cap; [ADR 0070](adr/0070-streamlit-archetype-implementation.md)
+records that use, and FT-20.02 adds the `run` task, ignore and README
+contributions.
 
 Foundation owns four further files with **no** extension point at all:
 `.editorconfig`, `.gitattributes`, `.python-version.jinja`, and

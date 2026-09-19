@@ -102,7 +102,9 @@ the installed catalogue accepts from `discover_components()`'s own path-free
 Post-FT-17.03 the count is **2240** (3 archetypes × subsets of 10
 capabilities × `github` on/off, minus the four `requires`/`conflicts` edges),
 up from the pre-Stage-17 ten every prior enumeration in this repository still
-meant.
+meant. FT-20.01 later added the `streamlit` archetype, which is `cli`-shaped
+(no `requires`, no `conflicts`), so the same derivation now yields **2880**
+(+640); every figure in this section is FT-17.05's measurement at 2240.
 
 `tests/test_composition_sweep.py` (`sweep`-marked, `-n 4 --no-cov`) plans and
 renders all 2240 — proving row R1's byte-identity claim and the composition

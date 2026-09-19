@@ -1,0 +1,49 @@
+# The production Streamlit archetype. See docs/streamlit-archetype.md,
+# docs/streamlit-compatibility-and-acceptance.md and ADR 0068/0069/0070.
+# FT-20.01 ships the package, launcher, smoke test and six contributions: the
+# five packaging ones plus a dev-only `numpy<2.5` cap (ADR 0070). FT-20.02 adds
+# the `run` task, `.streamlit/config.toml`, the secrets ignore rule and the
+# README section.
+manifest_version = 2
+id = "streamlit"
+name = "Streamlit"
+description = "An interactive, package-backed Streamlit application."
+kind = "archetype"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+extension_point = "pyproject-build-system"
+content = "extensions/build-system.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-archetype-metadata"
+content = "extensions/archetype-metadata.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-build-configuration"
+content = "extensions/build-configuration.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-runtime-dependencies"
+content = "extensions/runtime-dependencies.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-classifiers"
+content = "extensions/classifiers.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-development-dependencies"
+content = "extensions/development-dependencies.toml.jinja"
+target.kind = "foundation"

@@ -1,0 +1,15 @@
+"""The Streamlit application."""
+
+from __future__ import annotations
+
+import streamlit as st
+
+TITLE = "{{ project.name | replace('\\', '\\\\') | replace('"', '\\"') | replace('\n', '\\n') | replace('\r', '\\r') }}"
+
+
+def main() -> None:
+    """Render the starter page."""
+    st.title(TITLE)
+    st.write("A starter Streamlit application.")
+    name = st.text_input("Your name", value="World")
+    st.write(f"Hello, {name}!")

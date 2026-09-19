@@ -374,6 +374,7 @@ def test_installed_engine_metadata_matches_the_reviewed_candidate(
         "pyright",
         "renovate",
         "scientific-python",
+        "streamlit",
     ]
     assert payload["component_versions"] == {
         "changelog": "1.0.0",
@@ -390,6 +391,7 @@ def test_installed_engine_metadata_matches_the_reviewed_candidate(
         "pyright": "1.0.0",
         "renovate": "1.0.0",
         "scientific-python": "1.0.0",
+        "streamlit": "1.0.0",
     }
     assert payload["data_science_requires"] == [["jupyter", "<2,>=1"]]
 

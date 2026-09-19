@@ -119,8 +119,8 @@ can pin back. Full detail and the acceptance matrix live in
 [FT-19.02](https://github.com/Sandsy09/forge-template/issues/158) /
 [ADR 0069](adr/0069-streamlit-composition-compatibility-and-acceptance.md)
 classifies which axes the Streamlit archetype moves, against the rules in this
-document. It is a classification, not yet a transition: nothing ships until
-Stage 20 implements it and
+document. It is a classification, not yet a release: FT-20.01 has added the
+`streamlit` component to the catalogue (unreleased), but nothing ships until
 [FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) publishes the
 release. The classified move is:
 
@@ -134,8 +134,9 @@ release. The classified move is:
 - **Every other axis, and the whole public facade** → unchanged. That is a
   requirement on Stage 20, not a prediction.
 
-The "Current compatibility state" table below advances only when the release
-ships. Full detail and the acceptance matrix live in
+The "Current compatibility state" table below lists the `streamlit` component
+now but advances the package version only when the release ships. Full detail
+and the acceptance matrix live in
 [streamlit-compatibility-and-acceptance.md](streamlit-compatibility-and-acceptance.md).
 
 ## Generation metadata (`metadata_version`)
@@ -301,6 +302,7 @@ above does not require a new ADR; a semantic change to those rules does (see
 | `data-science` component | `1.0.0` |
 | `jupyter` component | `1.0.0` |
 | `scientific-python` component | `1.0.0` |
+| `streamlit` component | `1.0.0` (FT-20.01, unreleased until FT-20.04 publishes `0.6.0`) |
 | `github` component | `1.0.0` (first shipped platform, FT-17.02) |
 | `changelog` component | `1.0.0` (first shipped `manifest_version = 3`, FT-17.03) |
 | `coverage` component | `1.0.0` (FT-17.03) |

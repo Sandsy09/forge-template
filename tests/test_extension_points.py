@@ -64,6 +64,17 @@ _EXPECTED_CONTRIBUTIONS = {
         "readme-project-shape",
         "gitignore-project-shape",
     },
+    # FT-20.01 ships six of the archetype's contributions; FT-20.02 adds
+    # `pyproject-task-definitions`, `gitignore-project-shape` and
+    # `readme-project-shape`, growing this to nine.
+    "streamlit": {
+        "pyproject-build-system",
+        "pyproject-archetype-metadata",
+        "pyproject-build-configuration",
+        "pyproject-runtime-dependencies",
+        "pyproject-classifiers",
+        "pyproject-development-dependencies",
+    },
     "jupyter": {
         "pyproject-development-dependencies",
         "pyproject-task-definitions",
@@ -92,6 +103,7 @@ _COMPONENT_SELECTIONS = {
     "library": ("library", ()),
     "cli": ("cli", ()),
     "data-science": ("data-science", ("jupyter",)),
+    "streamlit": ("streamlit", ()),
     "jupyter": ("library", ("jupyter",)),
     "scientific-python": ("library", ("scientific-python",)),
     "changelog": ("library", ("changelog",)),

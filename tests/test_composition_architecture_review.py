@@ -35,18 +35,24 @@ _VALID_COMPOSITIONS = (
 
 _DUPLICATE_RESOURCE_GROUPS = (
     (
-        ("library", "cli", "data-science"),
+        ("library", "cli", "data-science", "streamlit"),
         "content/src/{{project.package_name}}/__init__.py.jinja",
     ),
     (
-        ("library", "cli", "data-science"),
+        ("library", "cli", "data-science", "streamlit"),
         "content/src/{{project.package_name}}/py.typed",
     ),
-    (("library", "cli", "data-science"), "content/tests/__init__.py"),
+    (("library", "cli", "data-science", "streamlit"), "content/tests/__init__.py"),
     (("library", "data-science"), "content/tests/test_smoke.py.jinja"),
-    (("cli", "data-science"), "extensions/archetype-metadata.toml.jinja"),
-    (("cli", "data-science"), "extensions/build-configuration.toml.jinja"),
-    (("cli", "data-science"), "extensions/build-system.toml.jinja"),
+    (
+        ("cli", "data-science", "streamlit"),
+        "extensions/archetype-metadata.toml.jinja",
+    ),
+    (
+        ("cli", "data-science", "streamlit"),
+        "extensions/build-configuration.toml.jinja",
+    ),
+    (("cli", "data-science", "streamlit"), "extensions/build-system.toml.jinja"),
 )
 
 _DUPLICATE_CONTENT_TARGETS = {
@@ -82,14 +88,17 @@ _OWNED_COMPONENTS = (
     "pyright",
     "renovate",
     "scientific-python",
+    "streamlit",
 )
 # FT-17.05 / ADR 0066 grew `pre-commit`'s content by 576 bytes (the
 # `check-added-large-files` `exclude: ^uv\.lock$` fix) -- file count and
 # duplicate overhead are unaffected; only the byte total moved,
-# 68,378 -> 68,954.
-_EXPECTED_CONTENT_FILE_COUNT = 112
-_EXPECTED_CONTENT_BYTES = 68_954
-_EXPECTED_DUPLICATE_OVERHEAD_BYTES = 892
+# 68,378 -> 68,954. FT-20.01 / ADR 0070 added the `streamlit` archetype: 13
+# files, 72,854 bytes in total, and its six byte-identical copies of `library`
+# and `cli` resources grow the duplicate overhead 892 -> 1,338.
+_EXPECTED_CONTENT_FILE_COUNT = 125
+_EXPECTED_CONTENT_BYTES = 72_854
+_EXPECTED_DUPLICATE_OVERHEAD_BYTES = 1_338
 
 
 def _payload(
@@ -156,7 +165,7 @@ def test_independent_archetypes_keep_coincidentally_shared_files_owned() -> None
                 )
                 assert contribution.target.model_dump() == {"kind": "foundation"}
 
-    for archetype in ("library", "cli", "data-science"):
+    for archetype in ("library", "cli", "data-science", "streamlit"):
         descriptor = next(d for d in discover_components() if d.id == archetype)
         assert descriptor.conflicts == ()
 
@@ -170,12 +179,13 @@ def test_independent_archetypes_keep_coincidentally_shared_files_owned() -> None
 
 def test_package_content_size_matches_the_recorded_review_baseline() -> None:
     """Pins the catalogue's content size: Foundation plus every catalogue
-    component's tree total 112 files and 68,378 raw bytes, of which 892 bytes
+    component's tree total 125 files and 72,854 raw bytes, of which 1,338 bytes
     are the seven duplicate groups' overhead
     (docs/composition-architecture-review.md, "Operational consequences").
     ADR 0056's 2026-09-04 measurement (60 files, 39,182 bytes) stands as the
     pre-cutover record; FT-17.02 / ADR 0063 re-baselined it for the `github`
-    platform, and FT-17.03 / ADR 0064 for the eight tooling capabilities.
+    platform, FT-17.03 / ADR 0064 for the eight tooling capabilities, and
+    FT-20.01 / ADR 0070 for the `streamlit` archetype.
     Content only -- `__pycache__` is excluded, matching how the review byte
     count was taken. A deliberate content change should move this pin and the
     prose figures together, per FT-14.02's cross-repository record.

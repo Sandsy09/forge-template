@@ -92,8 +92,9 @@ def test_discovery_exposes_path_free_immutable_scientific_descriptor() -> None:
         "pyright",
         "renovate",
         "scientific-python",
+        "streamlit",
     ]
-    scientific = descriptors[-1]
+    scientific = next(d for d in descriptors if d.id == "scientific-python")
     assert scientific.name == "Scientific Python"
     assert scientific.description == (
         "A core numerical, tabular, plotting, and machine-learning stack."

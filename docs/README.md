@@ -22,8 +22,10 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   archetype.
 - [streamlit-archetype.md](streamlit-archetype.md) — the accepted project
   shape, entry point, packaging, dependency, configuration, task, test and
-  exclusion contract for the future Streamlit archetype (FT-19.01, ADR 0068),
-  pinned by `tests/test_streamlit_contract.py`. Nothing ships yet.
+  exclusion contract for the Streamlit archetype (FT-19.01, ADR 0068), whose
+  package, launcher, smoke test and six contributions FT-20.01 has implemented
+  (ADR 0070) and FT-20.02 completes, pinned by
+  `tests/test_streamlit_contract.py`. It is unreleased until FT-20.04.
 - [streamlit-compatibility-and-acceptance.md](streamlit-compatibility-and-acceptance.md)
   — FT-19.02's classification of the versioned axes the Streamlit line moves
   (`forge-template` `0.6.0`, component `1.0.0`), the four valid capability
@@ -165,7 +167,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [provider-acceptance-validation.md](provider-acceptance-validation.md) —
   FT-17.05's execution of the acceptance matrix it owns: real
   full-composition builds (`github` plus every compatible capability), the
-  exhaustive 2240-composition sweep, the independent-client render proof, and
+  exhaustive composition sweep (2240 when measured; 2880 since the Streamlit
+  archetype), the independent-client render proof, and
   the wheel-and-sdist artefact audit, pinned by
   `tests/test_full_composition_build.py`, `tests/test_composition_sweep.py`,
   and `scripts/check_wheel.py`.

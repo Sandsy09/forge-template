@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 #: The count this module currently derives. A tripwire, not a target: it
 #: changes only when the catalogue itself changes, and any such change is a
 #: real one worth noticing in review, not a value to update reflexively.
-EXPECTED_COMPOSITION_COUNT = 2240
+EXPECTED_COMPOSITION_COUNT = 2880
 
 
 @dataclass(frozen=True, order=True)

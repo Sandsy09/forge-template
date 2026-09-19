@@ -72,6 +72,7 @@ def test_discovery_exposes_data_science_between_cli_and_jupyter() -> None:
         "pyright",
         "renovate",
         "scientific-python",
+        "streamlit",
     ]
 
     data_science = next(

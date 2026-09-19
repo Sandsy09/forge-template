@@ -121,17 +121,18 @@ not a standalone scaffolding command.
 
 ## What's next
 
-The Foundation and Data Science roadmaps are complete. The filed
-[Engine-Default Cutover](docs/roadmap-v3/README.md) and
-[Streamlit Archetype](docs/roadmap-v4/README.md) roadmaps describe future work;
-their issues are open, and no release is scheduled. Streamlit waits
-for the cutover contracts, not necessarily the completed cutover release, and
-its project shape and [compatibility line](docs/streamlit-compatibility-and-acceptance.md)
-are now [accepted contracts](docs/streamlit-archetype.md) with no implementation
-yet. Follow
-[open work](https://github.com/Sandsy09/forge-template/issues) and
-[releases](https://github.com/Sandsy09/forge-template/releases), or suggest
-a useful project type or capability.
+The Foundation and Data Science roadmaps are complete. The filed [Engine-Default
+Cutover](docs/roadmap-v3/README.md) and [Streamlit
+Archetype](docs/roadmap-v4/README.md) roadmaps describe future work; their
+issues are open, and no release is scheduled. Streamlit waited for the cutover
+contracts, not the completed cutover release. Its project shape and
+[compatibility line](docs/streamlit-compatibility-and-acceptance.md) are
+[accepted contracts](docs/streamlit-archetype.md), and the archetype's package,
+launcher and smoke test are being implemented on `main`, unreleased until a
+later `forge-template` release publishes them. Follow [open
+work](https://github.com/Sandsy09/forge-template/issues) and
+[releases](https://github.com/Sandsy09/forge-template/releases), or suggest a
+useful project type or capability.
 
 ## Feedback and contributing
 

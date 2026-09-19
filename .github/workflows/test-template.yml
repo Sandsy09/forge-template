@@ -144,13 +144,14 @@ jobs:
         run: uv run poe archetype
 
   # ---------------------------------------------------------------------------
-  # Exhaustive composition sweep -- plans and renders every one of the 2240
+  # Exhaustive composition sweep -- plans and renders every one of the 2880
   # valid selections the catalogue accepts (tests/composition_matrix.py),
   # replacing three prior hand-written literals that each still meant the
   # pre-Stage-17 ten, twice over (once against the direct engine, once
   # through an independent-client simulation). Pure in-memory engine calls,
-  # no build, no network -- but real cost: 4481 total cases (2 x 2240 + 1
-  # tripwire) measured at ~47 minutes serial-in-one-job at -n 4. Split into
+  # no build, no network -- but real cost: 5761 total cases (2 x 2880 + 1
+  # tripwire); FT-17.05 measured the then-4481 (2 x 2240 + 1) at ~47 minutes
+  # serial-in-one-job at -n 4. Split into
   # two parallel jobs here so the critical path stays close to the existing
   # `archetype` job's ~22-minute pole instead of doubling it; `uv run poe
   # sweep` locally still runs both together as one task. See

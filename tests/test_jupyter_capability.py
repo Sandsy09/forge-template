@@ -74,6 +74,7 @@ def test_discovery_exposes_path_free_immutable_jupyter_descriptor() -> None:
         "pyright",
         "renovate",
         "scientific-python",
+        "streamlit",
     ]
     jupyter = descriptors[8]
     assert jupyter.name == "Jupyter"

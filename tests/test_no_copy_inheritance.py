@@ -271,7 +271,7 @@ def test_downstream_client_renders_every_valid_composition_identically(
     ``tests/test_composition_architecture_review.py`` checks -- byte-for-byte
     identical to a direct engine call, with no Forge runtime dependency in the
     result. Exhaustive over ``tests.composition_matrix.valid_compositions()``
-    (2240 as of FT-17.05); ``sweep``-marked so it rides
+    (2880 as of FT-20.01); ``sweep``-marked so it rides
     ``tests/test_composition_sweep.py``'s CI job rather than doubling the
     fast suite's runtime.
     """

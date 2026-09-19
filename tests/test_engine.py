@@ -135,6 +135,7 @@ def test_installed_catalogue_contains_the_production_components() -> None:
         "pyright",
         "renovate",
         "scientific-python",
+        "streamlit",
     ]
     library = next(d for d in descriptors if d.id == "library")
     assert library.kind == "archetype"

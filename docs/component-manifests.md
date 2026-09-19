@@ -23,8 +23,9 @@ first production capabilities, `jupyter` and `scientific-python`, FT-12.01
 added the third archetype, `data-science`, and FT-17.02/[ADR 0063](adr/0063-implement-the-github-platform.md)
 added the first `kind = "platform"` component, `github`. Discovery from current
 source returns
-`("cli", "data-science", "github", "jupyter", "library", "scientific-python")`.
-The three archetypes are independent and compose over the same implicit
+fifteen components in lexical order, including the unreleased `streamlit`
+archetype (FT-20.01).
+The archetypes are independent and compose over the same implicit
 Foundation source; a ProjectSpec selects exactly one, plus any capabilities and
 platforms. The released Copier path
 remains the monolithic `template/` tree and is unaffected. The current

@@ -1,8 +1,8 @@
-"""Executable tripwire for docs/streamlit-archetype.md (FT-19.01 / ADR 0068).
+"""Executable pin for docs/streamlit-archetype.md (FT-19.01 / ADR 0068).
 
-The contract fixes the Streamlit archetype's shape ahead of any implementation.
-It is only useful if it stays honest about what does not exist yet and about
-the engine it is written against. These tests:
+The contract fixes the Streamlit archetype's shape; FT-20.01 / ADR 0070 began
+implementing it. It is only useful if it stays honest about the engine it is
+written against and about how much of it exists. These tests:
 
 * check the Foundation extension points the contract names -- used and
   deliberately unused -- against the live Foundation source, deriving them from
@@ -11,10 +11,9 @@ the engine it is written against. These tests:
   started a server would hang every generated project's quality gate;
 * check the contract names its three review obligations verbatim and that every
   document ADR 0068 reconciled still points at it; and
-* tripwire on the catalogue: ``streamlit`` is not yet a component and no
-  Foundation, component or ``template/`` content mentions it, so these tests
-  fail deliberately the moment FT-20.01 lands and the contract and the
-  implementation must be brought back into step.
+* check the live manifest contributes exactly the points the contract marks
+  used, less the ones FT-20.02 still owes, and that Foundation, the direct-Copier
+  template and every sibling component stay free of Streamlit.
 """
 
 from __future__ import annotations
@@ -25,12 +24,14 @@ from pathlib import Path
 import pytest
 
 from forge_template import discover_components
+from forge_template.component_manifest import load_component_manifest
 from forge_template.foundation_source import load_foundation_source
 
 _ROOT = Path(__file__).parents[1]
 _DOCS = _ROOT / "docs"
 _CONTRACT = _DOCS / "streamlit-archetype.md"
 _FOUNDATION_TOML = _ROOT / "src" / "forge_template" / "foundation" / "foundation.toml"
+_COMPONENTS = _ROOT / "src" / "forge_template" / "components"
 
 _OBLIGATIONS = (
     "FT-ROADMAP-02-AC-01",
@@ -49,7 +50,18 @@ _RECONCILED = (
 
 # Claims the contract makes normatively and this pin must not let it drop.
 _MUST_NOT_USE = {"pyproject-aggregate-check", "pyproject-entry-points"}
-_MUST_USE = {"pyproject-task-definitions", "gitignore-project-shape"}
+_MUST_USE = {
+    "pyproject-task-definitions",
+    "gitignore-project-shape",
+    "pyproject-development-dependencies",
+}
+# Points the contract marks used that FT-20.02 (#160) has yet to contribute.
+# This set empties there, which tightens the equality below to the whole table.
+_DEFERRED_TO_FT_20_02 = {
+    "pyproject-task-definitions",
+    "gitignore-project-shape",
+    "readme-project-shape",
+}
 
 _ROW = re.compile(r"^\| `(?P<point>[a-z-]+)` \| (?P<used>yes|no) \|", re.MULTILINE)
 
@@ -117,18 +129,36 @@ def test_env_example_is_owned_by_the_dotenv_example_capability() -> None:
     assert "dotenv-example" in _CONTRACT.read_text(encoding="utf-8")
 
 
-def test_streamlit_is_not_yet_in_the_catalogue() -> None:
-    """Tripwire: fails when FT-20.01 adds the component (contract-only stage)."""
+def test_streamlit_is_the_fourth_archetype_in_the_catalogue() -> None:
     components = {c.id: c.kind for c in discover_components()}
-    assert "streamlit" not in components
+    assert components.get("streamlit") == "archetype"
     archetypes = {cid for cid, kind in components.items() if kind == "archetype"}
-    assert archetypes == {"library", "cli", "data-science"}
+    assert archetypes == {"library", "cli", "data-science", "streamlit"}
 
 
-def test_no_generated_content_mentions_streamlit_yet() -> None:
-    """Tripwire: FT-19.01 changes no generated content (its exclusion list)."""
+def test_the_live_manifest_contributes_the_points_the_contract_marks_used() -> None:
+    manifest = load_component_manifest(_COMPONENTS / "streamlit" / "component.toml")
+    contributed = {item.extension_point for item in manifest.contributions}
+    used = {point for point, is_used in _extension_requirements().items() if is_used}
+
+    assert not contributed & _DEFERRED_TO_FT_20_02, "a deferred point has landed"
+    assert used >= _DEFERRED_TO_FT_20_02, "a deferred point is not marked used"
+    assert contributed | _DEFERRED_TO_FT_20_02 == used
+    assert not contributed & {
+        point for point, is_used in _extension_requirements().items() if not is_used
+    }
+
+
+def test_foundation_the_template_and_sibling_components_stay_streamlit_free() -> None:
+    """Foundation stays framework-neutral, the direct-Copier path stays
+    Library-only, and no archetype reads or names another's framework."""
     source = _ROOT / "src" / "forge_template"
-    roots = (source / "components", source / "foundation", _ROOT / "template")
+    roots = [source / "foundation", _ROOT / "template"]
+    roots += [
+        path
+        for path in sorted((source / "components").iterdir())
+        if (path / "component.toml").is_file() and path.name != "streamlit"
+    ]
     for root in roots:
         assert _content_files(root), f"{root} holds no files; the scan is vacuous"
     offenders = [
@@ -138,4 +168,4 @@ def test_no_generated_content_mentions_streamlit_yet() -> None:
         if "streamlit" in path.read_text(encoding="utf-8", errors="ignore").lower()
         or "streamlit" in path.name.lower()
     ]
-    assert not offenders, f"generated content already mentions Streamlit: {offenders}"
+    assert not offenders, f"content outside the archetype names Streamlit: {offenders}"

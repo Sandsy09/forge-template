@@ -12,15 +12,19 @@ authentication, database or FastAPI service surface) and
 **FT-ROADMAP-02-EX-04** (no arbitrary Streamlit plugin ecosystem), the last two
 shared with [FT-20.02](https://github.com/Sandsy09/forge-template/issues/160).
 
-This is a decision contract, not a shipped archetype. Nothing here exists in
-the catalogue: `discover_components()` still returns the fourteen components of
-the released [`forge-template` `0.5.0`](cutover-provider-release.md) line, of
-which `library`, `cli` and `data-science` are the archetypes.
-[FT-20.01](https://github.com/Sandsy09/forge-template/issues/159) implements
-what is fixed here, and `tests/test_streamlit_contract.py` fails the moment
-`streamlit` enters the catalogue so this contract cannot silently drift from
-it. The decision changes no Copier template, question or generated output, and
-the direct-Copier path stays Library-only.
+The archetype is implemented in stages.
+[FT-20.01](https://github.com/Sandsy09/forge-template/issues/159) ([ADR
+0070](adr/0070-streamlit-archetype-implementation.md)) added the `streamlit`
+component to the catalogue, so `discover_components()` returns fifteen
+components, four of them archetypes, on the still-unreleased line that follows
+the published [`forge-template` `0.5.0`](cutover-provider-release.md): the
+package, launcher, in-process smoke test and six of the Foundation
+contributions below. The three remaining contributions and
+`.streamlit/config.toml` are
+[FT-20.02's](https://github.com/Sandsy09/forge-template/issues/160), and
+`tests/test_streamlit_contract.py` pins the live manifest against the table
+below so the two cannot drift. Nothing here changes a Copier template, question
+or generated Library output, and the direct-Copier path stays Library-only.
 
 ## Archetype identity and fixed choices
 
@@ -39,6 +43,7 @@ Application and Data Science. Its identity and fixed project choices are:
 | Runtime entry point | root `app.py`, run by `streamlit run app.py` |
 | Console script | none |
 | Intrinsic runtime dependencies | exactly one: `streamlit>=1.63,<2` |
+| Development-only constraint | `numpy<2.5`, in the generated `dev` group only |
 
 The component ID names the domain, as `library`, `cli` and `data-science` do.
 It is the same string as the `streamlit` distribution it depends on; the two
@@ -105,11 +110,17 @@ The package root does not re-export `main`. There is no console script and no
 unfilled.
 
 The starter application is a single page: a title, a short introduction and one
-interactive widget, using only Streamlit, the generated package and the
-standard library. Streamlit's `pages/` multipage convention is available to the
-project owner and is documented in the generated README, but the archetype
-tracks no `pages/` tree or placeholder — the same no-placeholder stance the
-Data Science working trees take.
+interactive widget — a text input that greets the name entered, `Hello, World!`
+by default, as the CLI archetype's `hello` command does — using only Streamlit,
+the generated package and the standard library. The title is the project name
+held in a module-level `TITLE` constant, escaped for a Python string literal.
+Free text reaches no other literal: the generated docstrings carry no project
+name. A name containing a double quote is valid Python but may be re-quoted by
+`ruff format`, which a project owner corrects with `poe format`. Streamlit's
+`pages/` multipage convention is available to the project owner and is
+documented in the generated README, but the archetype tracks no `pages/` tree or
+placeholder — the same no-placeholder stance the Data Science working trees
+take.
 
 ## Packaging and dependency contract
 
@@ -148,10 +159,22 @@ days earlier; the floor is the previous settled minor line:
 
 The lower release accepts Forge's Python 3.11 floor. `streamlit.testing.v1` and
 a `py.typed` marker ship inside the same distribution, so neither the test
-surface nor strict type checking adds a dependency. That the whole supported
-Python window resolves was verified by FT-19.02 (see the
+surface nor strict type checking adds a *runtime* dependency. That the whole
+supported Python window resolves was verified by FT-19.02 (see the
 [dependency evidence](streamlit-compatibility-and-acceptance.md#python-and-dependency-evidence));
 the executable endpoint check is FT-20.03's.
+
+Type checking does need one development-only constraint, which FT-19.02's
+resolution evidence did not exercise and FT-20.01's first end-to-end run found.
+Streamlit requires only `numpy<3`, so on Python 3.12 and later the lock selects
+NumPy 2.5, whose type stubs use PEP 695 `type` statements. Foundation's `mypy`
+targets the project's Python floor (3.11) and cannot parse that syntax, so a
+default project failed its own `poe check`. The archetype therefore contributes
+`"numpy<2.5"` through `pyproject-development-dependencies`, which lands in the
+`dev` dependency group and never in the wheel metadata, mirroring the
+`numpy>=2.4,<2.5` ceiling `scientific-python` already carries. The cap is
+reviewed when Forge's Python floor moves past 3.11 or the type-check target
+otherwise changes ([ADR 0070](adr/0070-streamlit-archetype-implementation.md)).
 
 The declared bound is a normative compatibility line. Lock movement within it
 is routine reviewed maintenance; changing either bound needs an upstream
@@ -219,7 +242,9 @@ file*, so from `tests/` the string `"app.py"` would look for `tests/app.py`.
 The test must therefore build the launcher path from its own location, as
 `Path(__file__).parents[1] / "app.py"`. As with the CLI archetype, tests assert
 the app contract and meaningful content rather than snapshotting framework
-output.
+output: the title equals the package's `TITLE`, the default page greets the
+world, and entering a name greets that name. The smoke constructs its `AppTest`
+with a 10-second `default_timeout`.
 
 The wall-clock bounds on this smoke — 10 seconds per run and 600 seconds for the
 whole project check — and the acceptance matrix that runs it across selections
@@ -244,7 +269,7 @@ point is required and the published inventory in
 | `gitignore-project-shape` | yes | `/.streamlit/secrets.toml` |
 | `pyproject-entry-points` | no | there is no console script |
 | `pyproject-aggregate-check` | no | `check` must terminate |
-| `pyproject-development-dependencies` | no | `AppTest` ships in `streamlit` |
+| `pyproject-development-dependencies` | yes | the development-only `numpy<2.5` cap; `AppTest` itself ships in `streamlit` |
 
 Empty points render away without changing other archetypes' output, and
 unsupported or competing contributions continue to fail under the existing
@@ -318,14 +343,17 @@ finalisation.
 
 ## Deferred decisions
 
-[FT-19.02](https://github.com/Sandsy09/forge-template/issues/158) has since
-accepted ([ADR 0069](adr/0069-streamlit-composition-compatibility-and-acceptance.md))
-the capability matrix (no capability, Jupyter only, Scientific Python only and
+[FT-19.02](https://github.com/Sandsy09/forge-template/issues/158) accepted ([ADR
+0069](adr/0069-streamlit-composition-compatibility-and-acceptance.md)) the
+capability matrix (no capability, Jupyter only, Scientific Python only and
 both), the supported Python and dependency window, package build and install
 requirements, committed-lock restoration, the time-bounded non-serving smoke,
 the component version and the target provider compatibility line, in the
-[compatibility and acceptance contract](streamlit-compatibility-and-acceptance.md).
-[FT-20.01](https://github.com/Sandsy09/forge-template/issues/159) through
-[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) implement,
-validate and publish what the two contracts fix. Neither decision bumps a
+[compatibility and acceptance
+contract](streamlit-compatibility-and-acceptance.md).
+[FT-20.01](https://github.com/Sandsy09/forge-template/issues/159) has
+implemented the package, launcher, smoke test and six contributions;
+[FT-20.02](https://github.com/Sandsy09/forge-template/issues/160) through
+[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) complete,
+validate and publish the rest. Neither Stage 19 decision nor FT-20.01 bumps a
 version or releases.
