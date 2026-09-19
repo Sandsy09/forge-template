@@ -64,6 +64,7 @@ def test_discovery_exposes_library_with_cli_and_capabilities() -> None:
         "pyright",
         "renovate",
         "scientific-python",
+        "streamlit",
     ]
 
     library = next(d for d in descriptors if d.id == "library")

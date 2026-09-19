@@ -413,6 +413,7 @@ def test_production_descriptors_are_immutable_and_path_free() -> None:
         "pyright",
         "renovate",
         "scientific-python",
+        "streamlit",
     }
 
     for descriptor in descriptors.values():
@@ -525,4 +526,5 @@ def test_every_manifest_declared_resource_is_reachable_as_a_package_resource() -
         "pyright",
         "renovate",
         "scientific-python",
+        "streamlit",
     }

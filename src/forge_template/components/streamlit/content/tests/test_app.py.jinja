@@ -1,0 +1,37 @@
+"""Tests for the {{ project.package_name }} Streamlit application."""
+
+from pathlib import Path
+
+from streamlit.testing.v1 import AppTest
+
+from {{ project.package_name }}.app import TITLE
+
+# A relative path given to ``AppTest.from_file`` resolves against this file, so
+# the launcher is located from ``__file__`` instead.
+_LAUNCHER = Path(__file__).parents[1] / "app.py"
+
+
+def _app() -> AppTest:
+    return AppTest.from_file(str(_LAUNCHER), default_timeout=10)
+
+
+def test_the_starter_page_renders_its_title_without_an_exception() -> None:
+    app = _app().run()
+
+    assert not app.exception
+    assert app.title[0].value == TITLE
+
+
+def test_the_page_greets_the_world_by_default() -> None:
+    app = _app().run()
+
+    assert app.markdown[-1].value == "Hello, World!"
+
+
+def test_the_page_greets_the_name_entered() -> None:
+    app = _app().run()
+
+    app.text_input[0].set_value("Ada").run()
+
+    assert not app.exception
+    assert app.markdown[-1].value == "Hello, Ada!"

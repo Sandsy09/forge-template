@@ -2,23 +2,23 @@
 (FT-19.02 / ADR 0069).
 
 The contract fixes the provider line, the four capability selections, the
-bounds and the acceptance matrix ahead of any implementation. It is only useful
-if it stays derivable from the engine and honest about what does not exist yet.
-These tests:
+bounds and the acceptance matrix. It is only useful if it stays derivable from
+the engine. FT-20.01 landed the component, so these tests:
 
 * read every number from the contract's own constants table -- never a second
-  copy -- and check the "Current" axis cells against the live engine;
+  copy -- and check its axis table against the live engine: the unchanged axes
+  and the package still on the decision baseline, and the component axes at the
+  "Streamlit line" value now that ``streamlit`` is discovered;
 * prove the four selections, the ``documentation`` rejection and the 2880
-  composition count against the engine's own selection rule, using a synthetic
-  no-edge ``streamlit`` descriptor, so the matrix is evidenced before any
-  Streamlit component exists;
+  composition count against the live catalogue and the engine's own selection
+  rule;
 * check the acceptance matrix names only filed issues and that each Stage 20
   provider child owns at least one row;
 * check the contract's "no cutover implementation dependency" finding still
   holds in the filing manifest; and
-* tripwire on the line: the package is still on ``0.5`` and the sweep still
-  counts 2240, so these tests fail deliberately the moment Stage 20 moves
-  either and the contract and the implementation must be brought back into step.
+* tripwire on the line: the package is still on ``0.5`` until FT-20.04
+  publishes ``0.6.0``, so this fails deliberately at that bump and the contract
+  and the implementation must be brought back into step.
 """
 
 from __future__ import annotations
@@ -31,7 +31,6 @@ from typing import Any
 from forge_template import (
     SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS,
     SUPPORTED_PROJECTSPEC_PROTOCOLS,
-    ComponentDescriptor,
     discover_components,
     get_engine_info,
 )
@@ -153,24 +152,6 @@ def _v4_blocked_by() -> dict[str, list[str]]:
     return {entry["id"]: entry["blocked_by"] for entry in manifest["issues"]}
 
 
-def _synthetic_streamlit() -> ComponentDescriptor:
-    """A no-edge archetype shaped as ADR 0069 decides -- ``requires``,
-    ``conflicts`` and options all empty -- standing in for the component
-    FT-20.01 will ship."""
-    return ComponentDescriptor(
-        id="streamlit",
-        name="Streamlit",
-        description="A synthetic descriptor used only by this pin.",
-        kind="archetype",
-        version=_constants()["COMPONENT_VERSION"],
-        projectspec_protocols=(1,),
-        requires_python=">=3.11",
-        requires=(),
-        conflicts=(),
-        options=(),
-    )
-
-
 # --- constants and axes ----------------------------------------------------
 
 
@@ -194,10 +175,14 @@ def test_the_prose_repeats_the_constants_it_defines() -> None:
     assert f"`{constants['PROVIDER_LINE']}`" in text
 
 
-def test_current_axis_cells_match_the_live_engine() -> None:
+def test_axis_cells_match_the_live_engine_as_the_line_lands() -> None:
+    """The table records the 19 September 2026 decision baseline (before ->
+    after). The unchanged axes and the package still equal live; the component
+    axes' "Streamlit line" value is now live, because FT-20.01 landed it."""
     axes = _axes()
     info = get_engine_info()
 
+    # Moves at FT-20.04, which publishes `0.6.0`.
     assert axes["`forge-template` package"][0] == info.package_version
     assert axes["ProjectSpec protocol"][0] == _join(SUPPORTED_PROJECTSPEC_PROTOCOLS)
     assert axes["Component manifest protocol"][0] == _join(
@@ -210,7 +195,8 @@ def test_current_axis_cells_match_the_live_engine() -> None:
     assert axes["Foundation extension points"][0] == str(
         len(foundation.extension_points)
     )
-    assert axes["Discovered components"][0] == str(len(discover_components()))
+    assert axes["Discovered components"][1] == str(len(discover_components()))
+    assert int(axes["Discovered components"][0]) + 1 == len(discover_components())
 
 
 def test_the_streamlit_line_moves_exactly_the_two_axes_it_claims() -> None:
@@ -252,8 +238,7 @@ def test_python_endpoints_sit_inside_the_active_window() -> None:
 
 
 def test_the_four_selections_are_valid_and_documentation_is_not() -> None:
-    catalogue = (*discover_components(), _synthetic_streamlit())
-    accepted = set(valid_compositions(catalogue))
+    accepted = set(valid_compositions())
     for capabilities in _FOUR_SELECTIONS:
         assert Composition("streamlit", capabilities, ()) in accepted, capabilities
     streamlit = [c for c in accepted if c.archetype == "streamlit"]
@@ -264,19 +249,15 @@ def test_the_four_selections_are_valid_and_documentation_is_not() -> None:
 def test_the_sweep_count_matches_the_contract_arithmetic() -> None:
     constants = _constants()
     live = valid_compositions()
-    assert len(live) == EXPECTED_COMPOSITION_COUNT, "the catalogue has moved"
-
-    with_streamlit = valid_compositions(
-        (*discover_components(), _synthetic_streamlit())
-    )
     per_archetype = {
         archetype: sum(1 for c in live if c.archetype == archetype)
         for archetype in {c.archetype for c in live}
     }
-    streamlit_count = sum(1 for c in with_streamlit if c.archetype == "streamlit")
+    streamlit_count = per_archetype["streamlit"]
 
     assert streamlit_count == per_archetype["cli"], "streamlit is cli-shaped"
-    assert len(with_streamlit) == int(constants["COMPOSITION_COUNT_WITH_STREAMLIT"])
+    assert len(live) == int(constants["COMPOSITION_COUNT_WITH_STREAMLIT"])
+    assert len(live) == EXPECTED_COMPOSITION_COUNT
     assert str(streamlit_count) in _text()
 
 
@@ -307,6 +288,9 @@ def test_no_cutover_implementation_dependency_was_added() -> None:
     assert not any("CF-18" in blockers for blockers in edges.values())
 
 
-def test_streamlit_is_not_yet_in_the_catalogue() -> None:
-    """Tripwire: fails when FT-20.01 adds the component (contract-only stage)."""
-    assert "streamlit" not in {c.id for c in discover_components()}
+def test_the_discovered_component_carries_the_contracts_identity() -> None:
+    streamlit = next(c for c in discover_components() if c.id == "streamlit")
+
+    assert streamlit.kind == "archetype"
+    assert streamlit.version == _constants()["COMPONENT_VERSION"]
+    assert (streamlit.requires, streamlit.conflicts, streamlit.options) == ((), (), ())

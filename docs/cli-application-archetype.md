@@ -61,7 +61,7 @@ commands. Mixed files do not transfer ownership: Foundation owns
 sections through declared extension points.
 
 CLI Application does not inherit from, select, require, or read resources
-from Library or Data Science. The three archetypes are independent, layered
+from Library or Data Science. The archetypes are independent, layered
 over the same implicit Foundation source; a ProjectSpec selects exactly one.
 
 ## Production component contract

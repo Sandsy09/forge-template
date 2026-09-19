@@ -4,10 +4,11 @@ Every prior "every valid composition" enumeration in this repo is a
 hand-written literal frozen at the pre-Stage-17 ten
 (``tests/test_composition_architecture_review.py``,
 ``tests/test_cross_repository_validation.py``,
-``tests/test_capability_composition.py``). Post-FT-17.03 the real count is
+``tests/test_capability_composition.py``). The real count is
 :data:`tests.composition_matrix.EXPECTED_COMPOSITION_COUNT` compositions --
-three archetypes, any accepted subset of ten capabilities, ``github`` on or
-off. This module plans and renders every one of them, proving row I1's
+four archetypes (three until FT-20.01 added ``streamlit``), any accepted subset
+of ten capabilities, ``github`` on or off. This module plans and renders every
+one of them, proving row I1's
 "renders every valid composition" and row R1's regression claim generalise
 past the ten compositions those earlier suites cover.
 

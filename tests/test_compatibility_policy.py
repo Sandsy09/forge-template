@@ -110,12 +110,15 @@ def test_published_compatibility_state_matches_the_engine() -> None:
         "pyright",
         "renovate",
         "scientific-python",
+        "streamlit",
     }
     assert components["library"].version == "1.0.1"
     assert components["cli"].version == "1.0.1"
     assert components["data-science"].version == "1.0.0"
     assert components["jupyter"].version == "1.0.0"
     assert components["scientific-python"].version == "1.0.0"
+    # FT-20.01 / ADR 0070: unreleased -- the package stays 0.5.0 until FT-20.04.
+    assert components["streamlit"].version == "1.0.0"
     assert components["github"].version == "1.0.0"
     for capability in (
         "changelog",

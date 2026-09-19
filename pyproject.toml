@@ -220,8 +220,9 @@ update = "pytest -m update"
 # Python 3.11/3.14), each cell a real lock/build/install/notebook run. Spread
 # them across workers the same way `combos` does -- see ADR 0055.
 archetype = "pytest -m archetype -n 4"
-# FT-17.05: plans and renders every one of the 2240 compositions the
-# catalogue accepts (tests/composition_matrix.py). No build, no install, no
+# FT-17.05: plans and renders every one of the 2880 compositions (2240 until
+# FT-20.01 added the `streamlit` archetype) the catalogue accepts
+# (tests/composition_matrix.py). No build, no install, no
 # network -- pure in-memory engine calls, so it is its own marker rather than
 # joining `archetype`. --no-cov: coverage.py's branch tracing measurably
 # slows CPU-bound in-process calls at this volume (unlike combos/archetype/

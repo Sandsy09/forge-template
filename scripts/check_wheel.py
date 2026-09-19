@@ -44,7 +44,8 @@ below: ADR 0056 measured a 72,566-byte local review wheel; the published
 `0.4.0` wheel is 72,544 bytes. FT-17.02 (the `github` platform) took a local
 wheel to ~85 KB, FT-17.03 (the eight tooling capabilities) to ~105 KB, and
 FT-17.04 (the reproducible-render `engine.py`/`generation_metadata.py`
-additions, no new content trees) to ~108 KB, still under the 128 KiB ceiling.
+additions, no new content trees) to ~108 KB, and FT-20.01 (the `streamlit` archetype)
+to 113,503 bytes (sdist 792,271), still under the 128 KiB ceiling.
 FT-17.05 measured the sdist at ~726 KB (it carries the full repo, unlike the
 wheel). Both ceilings are deliberately loose bounds, not tight pins -- archive
 metadata (timestamps, compression) makes an exact byte count
@@ -120,6 +121,9 @@ _MUST_CONTAIN = (
     "forge_template/components/scientific-python/component.toml",
     "forge_template/components/scientific-python/content/",
     "forge_template/components/scientific-python/extensions/",
+    "forge_template/components/streamlit/component.toml",
+    "forge_template/components/streamlit/content/",
+    "forge_template/components/streamlit/extensions/",
 )
 _MUST_NOT_CONTAIN = (
     "forge_template/adr.py",
@@ -144,7 +148,8 @@ _SMOKE_IMPORT = (
     "assert ids == "
     "['changelog', 'cli', 'coverage', 'data-science', 'dependabot', "
     "'documentation', 'dotenv-example', 'github', 'jupyter', 'library', "
-    "'pre-commit', 'pyright', 'renovate', 'scientific-python'], ids; "
+    "'pre-commit', 'pyright', 'renovate', 'scientific-python', 'streamlit'], "
+    "ids; "
     "spec = forge_template.parse_project_spec({"
     "'protocol_version': 1, "
     "'project': {'name': 'Smoke', 'package_name': 'smoke', "

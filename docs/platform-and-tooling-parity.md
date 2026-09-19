@@ -410,9 +410,11 @@ They are deliberately not named for the decided catalogue. The tests prove:
   the three host-link points by FT-17.02 / ADR 0063 and the two
   `[dependency-groups]` points by FT-17.03 / ADR 0064 — and this file fails if
   any is walked back;
-- **FT-ROADMAP-01-EX-03 tripwire:** `discover_components()` still returns
-  exactly three archetypes — `cli`, `data-science`, `library` — plus ten
-  capabilities and one platform (`github`), and no new archetype;
+- **FT-ROADMAP-01-EX-03 tripwire, turned over by FT-20.01:** the v3 line added
+  no archetype, and `discover_components()` returned exactly three. The v4
+  Streamlit line has since added a fourth, so it now returns exactly four
+  archetypes — `cli`, `data-science`, `library`, `streamlit` — plus ten
+  capabilities and one platform (`github`), and no archetype beyond those;
 - the synthetic platform's public descriptor carries no filesystem path, and
   its option schema declares exactly one option;
 - a capability's contribution into the synthetic platform's `ci-steps` resolves

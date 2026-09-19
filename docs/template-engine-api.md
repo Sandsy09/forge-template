@@ -135,8 +135,10 @@ optionless `jupyter` and `scientific-python` capabilities (FT-11.02 /
 0051](adr/0051-production-scientific-python-capability.md)), and, on `main`
 only, the `github` platform (FT-17.02 /
 [ADR 0063](adr/0063-implement-the-github-platform.md), not yet released).
-Discovery on `main` returns `cli`, `data-science`, `github`, `jupyter`,
-`library`, and `scientific-python` in lexical order. A ProjectSpec selects
+Discovery on `main` returns fifteen components in lexical order: the
+fourteen of the published `0.5.0` catalogue plus the unreleased `streamlit`
+archetype (FT-20.01 / [ADR 0070](adr/0070-streamlit-archetype-implementation.md)),
+which sorts last. A ProjectSpec selects
 exactly one archetype and may independently select any capability and any
 platform; `data-science` requires `jupyter`.
 [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)

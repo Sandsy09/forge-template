@@ -21,13 +21,15 @@ results, shared with
 [FT-20.03](https://github.com/Sandsy09/forge-template/issues/161)) and
 **FT-ROADMAP-02-EX-03** (no engine-default cutover, owned solely here).
 
-This is a decision contract, not a shipped archetype. It bumps no version,
-publishes no package and changes no code, generated content or protocol integer.
-Nothing here exists in the catalogue: `discover_components()` still returns the
-fourteen components of the released
-[`forge-template` `0.5.0`](cutover-provider-release.md) line, and
-`tests/test_streamlit_gates.py` fails the moment the line or catalogue moves so
-this contract cannot silently drift from the engine.
+This is a decision contract. It bumps no version and publishes no package.
+FT-19.02 changed no code, generated content or protocol integer; FT-20.01
+([ADR 0070](adr/0070-streamlit-archetype-implementation.md)) then added the
+`streamlit` component, so `discover_components()` returns fifteen components on
+the unreleased line that follows the published
+[`forge-template` `0.5.0`](cutover-provider-release.md), and the package version
+is still `0.5.0` until FT-20.04 publishes `0.6.0`.
+`tests/test_streamlit_gates.py` reads this contract's tables against the live
+engine so the two cannot drift apart.
 
 ## Normative constants
 
@@ -67,10 +69,14 @@ requirement on Stage 20, not a prediction.
 | `streamlit` component | — | `1.0.0` | New |
 | The fourteen existing components | current versions | current versions | Unchanged |
 
-The living [current compatibility state](compatibility-policy.md#current-compatibility-state)
-table advances to `0.6.0` only when FT-20.04 publishes the release. The table
-above preserves the `0.5.0` decision baseline so the classified transition stays
-explicit.
+The "Current" column is the 19 September 2026 decision baseline, kept so the
+classified transition stays explicit. FT-20.01 has since landed the two
+catalogue axes, so the live catalogue matches the "Streamlit line" column for
+discovered components and the `streamlit` component; the package axis still
+matches "Current" until FT-20.04 publishes `0.6.0`. The living
+[current compatibility state](compatibility-policy.md#current-compatibility-state)
+table advances the package to `0.6.0` only at that release, and already lists
+the `streamlit` component.
 
 ## The public engine API does not change
 
@@ -208,6 +214,20 @@ with `uv` 0.12.5:
 | Universal resolve, floor 3.11 (what `uv lock` performs) | all four | resolves; `streamlit 1.64.0`, `pandas 3.0.6`, `pyarrow 25.0.1`, `numpy 2.4.6` (Python 3.11) and `2.5.3` (3.12 and later) without the capability |
 | Wheels only (`--only-binary :all:`) at 3.11, 3.12, 3.13 and 3.14 | `streamlit` alone; all three components combined | resolves at every interpreter |
 | Floor resolution (`--resolution lowest-direct`) at 3.11 and 3.14 | all three components combined | resolves `streamlit 1.63.0` |
+| Generated project's own `poe check` (FT-20.01, 19 September 2026), Python 3.11, 3.13 and 3.14 | `streamlit` alone | passes with the development-only `numpy<2.5` cap in the `dev` group; **fails at `mypy` without it** (see below) |
+
+**Correction found by FT-20.01.** Resolution alone was not sufficient evidence.
+Running the generated project's own `poe check` showed that Streamlit's
+`numpy<3` lets the lock select NumPy 2.5 on Python 3.12 and later, whose type
+stubs use Python 3.12 syntax that Foundation's `mypy` — which targets the 3.11
+floor — cannot parse, so a default project (floor 3.11, development 3.13) failed
+its type check. Streamlit-alone resolution never exercised that. The archetype
+contributes a development-only `numpy<2.5` (see the
+[archetype contract](streamlit-archetype.md#packaging-and-dependency-contract)
+and [ADR 0070](adr/0070-streamlit-archetype-implementation.md)); it never
+enters the wheel metadata, and the two capability selections that include
+`scientific-python` already carry the same ceiling. FT-20.03's executable
+endpoint check exists to catch exactly this class of failure.
 
 The declared line `streamlit>=1.63,<2` therefore stands unchanged from the
 archetype contract. Streamlit `1.63.0` lists Python 3.10 to 3.14 in its
@@ -277,7 +297,10 @@ process is left listening after a run, and the aggregate `check` never contains
 the `run` task. The bounds are set from a measurement, not a guess: a prototype
 of the exact layout ran two `AppTest` cases, including importing Streamlit, in
 about 3 seconds of wall time, against a Streamlit default of 3 seconds per run
-that is tight on a cold CI runner.
+that is tight on a cold CI runner. FT-20.01's shipped starter measured the three
+`AppTest` cases at about 4 to 5 seconds in total and the whole generated
+`poe check` at about 55 seconds at Python 3.11, 3.13 and 3.14 on a local Windows
+machine, well inside both bounds.
 
 ## The acceptance matrix
 
@@ -413,8 +436,8 @@ archetype contract. What genuinely remains open is narrow.
 
 | Issue | Fixed by the Stage 19 contract set | Still owned by the issue |
 | --- | --- | --- |
-| [FT-20.01 / #159](https://github.com/Sandsy09/forge-template/issues/159) | `streamlit`, archetype, `1.0.0`, protocol `2`, no options, `requires` or `conflicts`; the seven owned paths; the eight Foundation contributions | The manifest, owned content, path-free descriptor, and discovery, ownership and malformed-selection tests |
-| [FT-20.02 / #160](https://github.com/Sandsy09/forge-template/issues/160) | `streamlit>=1.63,<2`; the `run` task outside `check`; the configuration and secret safeguards; the four valid selections and the rejections; the deterministic-validation requirements; the exclusions | The task, configuration, ignore and README content, deterministic composition tests, and required/conflicting-selection protection |
+| [FT-20.01 / #159](https://github.com/Sandsy09/forge-template/issues/159) | `streamlit`, archetype, `1.0.0`, protocol `2`, no options, `requires` or `conflicts`; the seven owned paths; the eight Foundation contributions | **Done** ([ADR 0070](adr/0070-streamlit-archetype-implementation.md)): the manifest, six of the seven owned paths, six contributions (the five packaging ones and the development-only NumPy cap), the path-free descriptor, and discovery, ownership and malformed-selection tests. `.streamlit/config.toml` and the other three contributions moved to FT-20.02 |
+| [FT-20.02 / #160](https://github.com/Sandsy09/forge-template/issues/160) | `streamlit>=1.63,<2`; the `run` task outside `check`; the configuration and secret safeguards; the four valid selections and the rejections; the deterministic-validation requirements; the exclusions | The `run` task, `.streamlit/config.toml`, the secrets ignore rule and README content, deterministic composition tests, and required/conflicting-selection protection |
 | [FT-20.03 / #161](https://github.com/Sandsy09/forge-template/issues/161) | Endpoints 3.11 and 3.14; lock restoration; the 10 s and 600 s bounds; the artefact expectations; the 2880-composition sweep; the regression protections | The executable harness, the wheel and sdist audits, Forge-free installs and the sweep updates |
 | [FT-20.04 / #162](https://github.com/Sandsy09/forge-template/issues/162) | The `0.6.0` line; the provider gate and rollback rule; no claim of client support or cutover | The version-bump pull request, release runs, published-artefact audit and hand-off |
 
@@ -422,15 +445,20 @@ archetype contract. What genuinely remains open is narrow.
 
 These existing checks fail deliberately when Stage 20 moves a line or the
 catalogue, and each must be updated in the change that moves it, not worked
-around:
+around. FT-20.01 moved the catalogue ones; the package-line ones wait for
+FT-20.04:
 
-- `tests/composition_matrix.py`'s `EXPECTED_COMPOSITION_COUNT` (2240 to 2880);
-- `tests/test_cutover_gates.py`, which asserts a `0.5.` package version and
-  classifies every discovered component;
-- `scripts/check_wheel.py`'s explicit list of shipped component paths;
-- the component rows of the compatibility-policy current-state table; and
-- `tests/test_streamlit_contract.py` and `tests/test_streamlit_gates.py`, whose
-  catalogue tripwires are meant to fire when `streamlit` first appears.
+- **Moved by FT-20.01:** `tests/composition_matrix.py`'s
+  `EXPECTED_COMPOSITION_COUNT` (2240 to 2880); the `streamlit` row of
+  `tests/test_cutover_gates.py`'s component classification;
+  `scripts/check_wheel.py`'s explicit list of shipped component paths; the
+  component rows of the compatibility-policy current-state table; the
+  architecture-review size pin; and the catalogue tripwires in
+  `tests/test_streamlit_contract.py` and `tests/test_streamlit_gates.py`, which
+  now assert the shipped state.
+- **Still to move at FT-20.04:** `tests/test_cutover_gates.py`'s `0.5.`
+  package-version assertion, the package row of the compatibility-policy table,
+  and `tests/test_streamlit_gates.py`'s package-line tripwire.
 
 No cutover implementation dependency is added. Everything Streamlit needs —
 manifest protocol `2`, the published extension points and the metadata

@@ -108,6 +108,7 @@ state.
 | `pre-commit` component | `1.0.1` | `1.0.1` | **New (FT-17.03)**, patched (FT-17.05) — `check-added-large-files` excludes `uv.lock`, the first false positive FT-17.05's full-composition build actually ran the hook against |
 | `pyright` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
 | `renovate` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
+| `streamlit` component | `1.0.0` | — | **Outside the cutover** — added by the Streamlit line (FT-20.01), after the cutover line shipped; see [the Streamlit compatibility contract](streamlit-compatibility-and-acceptance.md) |
 
 The rule that bounds the conditional component rows: an existing component
 moves its version only if the cutover changes its owned content or one of its
