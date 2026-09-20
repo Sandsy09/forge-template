@@ -119,23 +119,24 @@ can pin back. Full detail and the acceptance matrix live in
 [FT-19.02](https://github.com/Sandsy09/forge-template/issues/158) /
 [ADR 0069](adr/0069-streamlit-composition-compatibility-and-acceptance.md)
 classifies which axes the Streamlit archetype moves, against the rules in this
-document. It is a classification, not yet a release: FT-20.01 has added the
-`streamlit` component to the catalogue (unreleased), but nothing ships until
-[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) publishes the
-release. The classified move is:
+document. It was a classification, not yet a release, until Stage 20
+implemented it and
+[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) published
+`0.6.0`. The classified move was:
 
-- **`forge-template` package** → a new minor line, `0.6.0`. Below `1.0` a
-  supported range is minor-scoped, so published `create-forge` `0.4.0`'s
-  `>=0.5,<0.6` does not drift into it and widens only at
+- **`forge-template` package** → a new minor line, `0.6.0`, **done** by
+  FT-20.04. Below `1.0` a supported range is minor-scoped, so published
+  `create-forge` `0.4.0`'s `>=0.5,<0.6` does not drift into it and widens only at
   [CF-21.01](https://github.com/Sandsy09/create-forge/issues/165); `1.0.0` is
   explicitly not promised.
 - **Discovered components** → fifteen, with `streamlit` entering at component
-  version `1.0.0` on manifest protocol `2`.
+  version `1.0.0` on manifest protocol `2`, **done** by
+  [FT-20.01](https://github.com/Sandsy09/forge-template/issues/159) to
+  [FT-20.03](https://github.com/Sandsy09/forge-template/issues/161).
 - **Every other axis, and the whole public facade** → unchanged. That is a
   requirement on Stage 20, not a prediction.
 
-The "Current compatibility state" table below lists the `streamlit` component
-now but advances the package version only when the release ships. Full detail
+The "Current compatibility state" table below lists both moves. Full detail
 and the acceptance matrix live in
 [streamlit-compatibility-and-acceptance.md](streamlit-compatibility-and-acceptance.md).
 
@@ -287,13 +288,13 @@ rendered bytes.
 
 ## Current compatibility state
 
-Living snapshot, reviewed 2026-09-19. Advancing it in line with the rules
+Living snapshot, reviewed 2026-09-20. Advancing it in line with the rules
 above does not require a new ADR; a semantic change to those rules does (see
 "Ownership and change process").
 
 | Axis | Current value |
 | --- | --- |
-| `forge-template` package | `0.5.0` |
+| `forge-template` package | `0.6.0` |
 | ProjectSpec protocol | `1` |
 | Component manifest protocol | `1`, `2`, `3` |
 | Generation metadata (`metadata_version`) | `1` |
@@ -302,7 +303,7 @@ above does not require a new ADR; a semantic change to those rules does (see
 | `data-science` component | `1.0.0` |
 | `jupyter` component | `1.0.0` |
 | `scientific-python` component | `1.0.0` |
-| `streamlit` component | `1.0.0` (FT-20.01, unreleased until FT-20.04 publishes `0.6.0`) |
+| `streamlit` component | `1.0.0` (FT-20.01, first shipped in `0.6.0`, FT-20.04) |
 | `github` component | `1.0.0` (first shipped platform, FT-17.02) |
 | `changelog` component | `1.0.0` (first shipped `manifest_version = 3`, FT-17.03) |
 | `coverage` component | `1.0.0` (FT-17.03) |

@@ -81,12 +81,13 @@ platform (`1.0.0`) and grown the Foundation inventory 11 → 14; FT-17.03 / ADR
 `[dependency-groups]` Foundation points and `api-reference` (inventory 14 →
 16), all additive, with `library` / `cli` / `data-science` content and
 versions unchanged. **FT-17.06 has since released `0.5.0`** — the cutover
-line this contract fixed. The "Current" column below is the live engine
-state.
+line this contract fixed — and FT-20.04 has moved the package on to `0.6.0`
+for the Streamlit archetype, additively. The "Current" column below is the
+live engine state.
 
 | Axis | Current | Cutover line | Change class |
 | --- | --- | --- | --- |
-| `forge-template` package | `0.5.0` | `0.5.0` | **Moved (FT-17.06)** — new minor compatibility line |
+| `forge-template` package | `0.6.0` | `0.5.0` | **Moved (FT-17.06)** — new minor compatibility line; advanced to `0.6.0` by FT-20.04, which changes no other axis |
 | ProjectSpec protocol | `1` | `1` | Unchanged — every unrouted question became a selection or a component option (FT-15.03), so no request-schema field is added |
 | Component manifest protocol | `1`, `2`, `3` | `1`, `2`, `3` | **Moved (FT-17.01)** — the owner-declared rename and regeneration-disposition records are manifest protocol `3` fields, and the manifest models forbid unknown keys, so they could not ride protocol `2`; protocol-`1` and protocol-`2` manifests are accepted unchanged |
 | Option-schema protocol | `1`, `2` | `1`, `2` | Unchanged — `coverage`'s `fail_under` is an `integer` option with a `default`, already expressible at protocol `2` |

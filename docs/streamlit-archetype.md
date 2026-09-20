@@ -16,8 +16,9 @@ The archetype is implemented in two steps, both inside component `1.0.0`.
 [FT-20.01](https://github.com/Sandsy09/forge-template/issues/159) ([ADR
 0070](adr/0070-streamlit-archetype-implementation.md)) added the `streamlit`
 component to the catalogue, so `discover_components()` returns fifteen
-components, four of them archetypes, on the still-unreleased line that follows
-the published [`forge-template` `0.5.0`](cutover-provider-release.md): the
+components, four of them archetypes, on the line that follows the published
+[`forge-template` `0.5.0`](cutover-provider-release.md) and that FT-20.04 ships
+as `0.6.0`: the
 package, launcher, in-process smoke test and six of the Foundation
 contributions below.
 [FT-20.02](https://github.com/Sandsy09/forge-template/issues/160) ([ADR
@@ -366,6 +367,6 @@ the package, launcher, smoke test and six contributions, and
 safeguards and capability composition, and
 [FT-20.03](https://github.com/Sandsy09/forge-template/issues/161) validated the
 result.
-[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) publishes it.
-None of the Stage 19 decisions or FT-20.01 to FT-20.03 bumps a version or
-releases.
+[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) publishes it
+in `forge-template` `0.6.0`. None of the Stage 19 decisions or FT-20.01 to
+FT-20.03 bumps a version or releases.

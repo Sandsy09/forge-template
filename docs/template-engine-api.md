@@ -3,7 +3,7 @@
 This is the canonical living contract for the supported `forge-template`
 engine facade. [ADR 0029](adr/0029-stable-template-engine-api.md) records the
 decision to expose it. The current compatibility line is package version
-`0.5.x` (FT-17.06); its public facade carries the `0.3.x` names unchanged and
+`0.6.x` (FT-20.04); its public facade carries the `0.3.x` names unchanged and
 adds the generation-metadata and reproducible-render surfaces additively
 (FT-17.01 / ADR 0062, FT-17.04 / ADR 0065 — see "Compatibility and current
 cutover boundary" below), while the installed catalogue adds the Data Science
@@ -93,7 +93,7 @@ answer pair.
 Undocumented names in `forge_template.engine`, `component_manifest`,
 `composition`, `file_conflicts`, `foundation_source`, `project_spec`, and
 `template_variables` are implementation details. They may change within the
-`0.5.x` line when the supported top-level behaviour remains compatible.
+`0.6.x` line when the supported top-level behaviour remains compatible.
 
 ## Engine and protocol information
 
@@ -134,11 +134,11 @@ optionless `jupyter` and `scientific-python` capabilities (FT-11.02 /
 [ADR 0050](adr/0050-production-jupyter-capability.md) and FT-11.03 / [ADR
 0051](adr/0051-production-scientific-python-capability.md)), and, on `main`
 only, the `github` platform (FT-17.02 /
-[ADR 0063](adr/0063-implement-the-github-platform.md), not yet released).
-Discovery on `main` returns fifteen components in lexical order: the
-fourteen of the published `0.5.0` catalogue plus the unreleased `streamlit`
-archetype (FT-20.01 / [ADR 0070](adr/0070-streamlit-archetype-implementation.md)),
-which sorts last. A ProjectSpec selects
+[ADR 0063](adr/0063-implement-the-github-platform.md), released in `0.5.0`).
+Discovery returns fifteen components in lexical order: the fourteen of the
+published `0.5.0` catalogue plus the `streamlit` archetype (FT-20.01 /
+[ADR 0070](adr/0070-streamlit-archetype-implementation.md), first shipped in
+`0.6.0`), which sorts last. A ProjectSpec selects
 exactly one archetype and may independently select any capability and any
 platform; `data-science` requires `jupyter`.
 [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
@@ -395,3 +395,10 @@ released `0.5.0`. A client written against `0.4.1` keeps working against
 `0.5.0` within a widened range; `create-forge` `0.4.0` has widened its bound to
 `>=0.5,<0.6` (that adoption was
 [CF-18.01](https://github.com/Sandsy09/create-forge/issues/158)).
+[FT-20.04](https://github.com/Sandsy09/forge-template/issues/162) then moved the
+package to `0.6.0` for the `streamlit` archetype, additively: the facade,
+protocol tuples and `EngineErrorCode` values are unchanged, so a client
+written against `0.5.0` keeps working against `0.6.0` within a widened range
+and `create-forge` `0.4.0`'s `>=0.5,<0.6` does not drift into it. Client
+adoption is
+[CF-21.01](https://github.com/Sandsy09/create-forge/issues/165).

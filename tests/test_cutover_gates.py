@@ -18,8 +18,8 @@ gap. These tests:
   ``_migrations`` block, while FT-17.01 / ADR 0062 has moved manifest
   protocols to ``(1, 2, 3)``, shipped the two generation-metadata error codes,
   published ``metadata_version`` on ``EngineInfo``, grown the public facade
-  additively, and FT-17.06 / ADR 0061 has moved the package to the ``0.5``
-  line -- the assertions below track the live state.
+  additively, FT-17.06 / ADR 0061 moved the package to the ``0.5`` line and
+  FT-20.04 to the ``0.6`` line -- the assertions below track the live state.
 """
 
 from __future__ import annotations
@@ -383,12 +383,14 @@ def test_contract_names_its_exclusions_literally() -> None:
 # --- axis state: all three axes ADR 0061 classified as moving have now moved
 
 
-def test_package_has_moved_to_the_0_5_line() -> None:
-    """FT-17.06 / ADR 0061: the cutover release. This tripwire turned over the
-    way FT-17.01's four did -- it asserted ``0.4.x`` until this release."""
-    assert get_engine_info().package_version.startswith("0.5."), (
-        "package version is not on the 0.5 line -- FT-17.06 was expected to "
-        "release 0.5.0; revisit docs/cutover-compatibility-and-acceptance.md "
+def test_package_has_moved_to_the_0_6_line() -> None:
+    """FT-17.06 / ADR 0061 moved the package to ``0.5.0``, the cutover release;
+    FT-20.04 / ADR 0069 then moved it to ``0.6.0``, the Streamlit line. This
+    tripwire turned over the way it did at ``0.5.0`` -- it asserted ``0.5.x``
+    until that release."""
+    assert get_engine_info().package_version.startswith("0.6."), (
+        "package version is not on the 0.6 line -- FT-20.04 was expected to "
+        "release 0.6.0; revisit docs/streamlit-compatibility-and-acceptance.md "
         "and this pin"
     )
 

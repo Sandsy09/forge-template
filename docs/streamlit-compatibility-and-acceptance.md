@@ -28,10 +28,10 @@ FT-19.02 changed no code, generated content or protocol integer; FT-20.01
 ([ADR 0071](adr/0071-streamlit-tasks-safeguards-and-composition.md)) completed
 it, and FT-20.03 ([ADR 0072](adr/0072-validate-streamlit-generated-projects.md))
 proved it (see [streamlit-validation.md](streamlit-validation.md)), so
-`discover_components()` returns fifteen components on the unreleased line that
-follows the published
+`discover_components()` returns fifteen components. FT-20.04 carries them in
+`forge-template` `0.6.0`, the line that follows the published
 [`forge-template` `0.5.0`](cutover-provider-release.md), and the package version
-is still `0.5.0` until FT-20.04 publishes `0.6.0`.
+is `0.6.0`.
 `tests/test_streamlit_gates.py` reads this contract's tables against the live
 engine so the two cannot drift apart.
 
@@ -75,12 +75,11 @@ requirement on Stage 20, not a prediction.
 
 The "Current" column is the 19 September 2026 decision baseline, kept so the
 classified transition stays explicit. FT-20.01 has since landed the two
-catalogue axes, so the live catalogue matches the "Streamlit line" column for
-discovered components and the `streamlit` component; the package axis still
-matches "Current" until FT-20.04 publishes `0.6.0`. The living
+catalogue axes and FT-20.04 the package axis, so the live engine matches the
+"Streamlit line" column for the package, discovered components and the
+`streamlit` component. The living
 [current compatibility state](compatibility-policy.md#current-compatibility-state)
-table advances the package to `0.6.0` only at that release, and already lists
-the `streamlit` component.
+table lists all three.
 
 ## The public engine API does not change
 
