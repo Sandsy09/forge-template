@@ -80,7 +80,7 @@ def test_published_compatibility_state_matches_the_engine() -> None:
     info = get_engine_info()
     pyproject = tomllib.loads(_PYPROJECT_TOML.read_text(encoding="utf-8"))
 
-    assert info.package_version == pyproject["project"]["version"] == "0.5.0"
+    assert info.package_version == pyproject["project"]["version"] == "0.6.0"
     assert info.projectspec_protocols == (PROJECT_SPEC_PROTOCOL_VERSION,) == (1,)
     assert (
         info.component_manifest_protocols
@@ -117,7 +117,7 @@ def test_published_compatibility_state_matches_the_engine() -> None:
     assert components["data-science"].version == "1.0.0"
     assert components["jupyter"].version == "1.0.0"
     assert components["scientific-python"].version == "1.0.0"
-    # FT-20.01 / ADR 0070: unreleased -- the package stays 0.5.0 until FT-20.04.
+    # FT-20.01 / ADR 0070: added on `main`; FT-20.04 published it in 0.6.0.
     assert components["streamlit"].version == "1.0.0"
     assert components["github"].version == "1.0.0"
     for capability in (
