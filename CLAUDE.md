@@ -144,21 +144,23 @@ The full rationale and migration consequences live in
 
 ## Current state
 
-`forge-template 0.5.0` is the current published engine line. Its catalogue has
-fourteen components: three archetypes (`library`, `cli`, `data-science`), ten
-capabilities (`changelog`, `coverage`, `documentation`, `dotenv-example`,
-`dependabot`, `jupyter`, `pre-commit`, `pyright`, `renovate`, and
-`scientific-python`), and the `github` platform. Data Science requires Jupyter;
-Documentation requires Library; Dependabot requires GitHub and conflicts with
-Renovate.
+`forge-template 0.6.0` is the current published engine line. Its catalogue has
+fifteen components: four archetypes (`library`, `cli`, `data-science`,
+`streamlit`), ten capabilities (`changelog`, `coverage`, `documentation`,
+`dotenv-example`, `dependabot`, `jupyter`, `pre-commit`, `pyright`, `renovate`,
+and `scientific-python`), and the `github` platform. Data Science requires
+Jupyter; Documentation requires Library; Dependabot requires GitHub and
+conflicts with Renovate.
 
-`main` is ahead of that release: FT-20.01 to FT-20.03 have added and validated a
-fifteenth component, the `streamlit` archetype, which is unreleased and
-unpublished until a later `forge-template` release. It has no `requires` or
-`conflicts`, its owned content is fixed by
-[docs/streamlit-archetype.md](docs/streamlit-archetype.md), its line and
-acceptance matrix by
-[docs/streamlit-compatibility-and-acceptance.md](docs/streamlit-compatibility-and-acceptance.md).
+The `streamlit` archetype (component `1.0.0`, FT-20.01 to FT-20.04) is the only
+addition over `0.5.0`. It has no `requires` or `conflicts`, its owned content is
+fixed by [docs/streamlit-archetype.md](docs/streamlit-archetype.md), its line
+and acceptance matrix by
+[docs/streamlit-compatibility-and-acceptance.md](docs/streamlit-compatibility-and-acceptance.md),
+and the published release is recorded in
+[docs/streamlit-provider-release.md](docs/streamlit-provider-release.md). That
+release adds no client Streamlit support and makes no engine-default switch;
+`create-forge` adopts the line separately.
 
 The public engine supports component-manifest protocols 1–3, generation
 metadata, deterministic full-catalogue rendering, and reproducible update
