@@ -29,7 +29,8 @@ FT-19.02 changed no code, generated content or protocol integer; FT-20.01
 it, and FT-20.03 ([ADR 0072](adr/0072-validate-streamlit-generated-projects.md))
 proved it (see [streamlit-validation.md](streamlit-validation.md)), so
 `discover_components()` returns fifteen components. FT-20.04 carries them in
-`forge-template` `0.6.0`, the line that follows the published
+`forge-template` `0.6.0` ([release record](streamlit-provider-release.md)), the
+line that follows the published
 [`forge-template` `0.5.0`](cutover-provider-release.md), and the package version
 is `0.6.0`.
 `tests/test_streamlit_gates.py` reads this contract's tables against the live
@@ -442,14 +443,14 @@ archetype contract. What genuinely remains open is narrow.
 | [FT-20.01 / #159](https://github.com/Sandsy09/forge-template/issues/159) | `streamlit`, archetype, `1.0.0`, protocol `2`, no options, `requires` or `conflicts`; the seven owned paths; the eight Foundation contributions | **Done** ([ADR 0070](adr/0070-streamlit-archetype-implementation.md)): the manifest, six of the seven owned paths, six contributions (the five packaging ones and the development-only NumPy cap), the path-free descriptor, and discovery, ownership and malformed-selection tests. `.streamlit/config.toml` and the other three contributions moved to FT-20.02 |
 | [FT-20.02 / #160](https://github.com/Sandsy09/forge-template/issues/160) | `streamlit>=1.63,<2`; the `run` task outside `check`; the configuration and secret safeguards; the four valid selections and the rejections; the deterministic-validation requirements; the exclusions | **Done** ([ADR 0071](adr/0071-streamlit-tasks-safeguards-and-composition.md)): the `run` task outside `check`, `.streamlit/config.toml`, the secrets ignore rule and the README section (the archetype's last three contributions and last path), deterministic composition tests for the four selections, ordering and the rejections, and the resolution-only endpoint check of the Python row |
 | [FT-20.03 / #161](https://github.com/Sandsy09/forge-template/issues/161) | Endpoints 3.11 and 3.14; lock restoration; the 10 s and 600 s bounds; the artefact expectations; the 2880-composition sweep; the regression protections | **Done** ([ADR 0072](adr/0072-validate-streamlit-generated-projects.md)): the executable endpoint harness with clean-copy lock restoration, the bounds and the listen guard, the module-only artefact audit, Forge-free installs, the full-composition cell, the regression digests for all four archetypes, and the source-tree-derived wheel and sdist audit. The 2880-composition sweep needed no update: the catalogue count moved at FT-20.01 |
-| [FT-20.04 / #162](https://github.com/Sandsy09/forge-template/issues/162) | The `0.6.0` line; the provider gate and rollback rule; no claim of client support or cutover | The version-bump pull request, release runs, published-artefact audit and hand-off |
+| [FT-20.04 / #162](https://github.com/Sandsy09/forge-template/issues/162) | The `0.6.0` line; the provider gate and rollback rule; no claim of client support or cutover | **Done** (no new decision executed; [streamlit-provider-release.md](streamlit-provider-release.md) records the version-bump pull request, the protected release and dry run, the tag, Release and PyPI artefact audit, the direct-Copier regression, and the client-bound hand-off) |
 
 ### Known tripwires Stage 20 must expect
 
 These existing checks fail deliberately when Stage 20 moves a line or the
 catalogue, and each must be updated in the change that moves it, not worked
-around. FT-20.01 moved the catalogue ones; the package-line ones wait for
-FT-20.04:
+around. FT-20.01 moved the catalogue ones and FT-20.04 the package-line
+ones:
 
 - **Moved by FT-20.01:** `tests/composition_matrix.py`'s
   `EXPECTED_COMPOSITION_COUNT` (2240 to 2880); the `streamlit` row of
@@ -463,9 +464,11 @@ FT-20.04:
   `data-science` and `streamlit` as well as `library` and `cli`, the
   full-composition build gained its `streamlit` cell, and `scripts/check_wheel.py`
   derives its resource audit from the source tree.
-- **Still to move at FT-20.04:** `tests/test_cutover_gates.py`'s `0.5.`
-  package-version assertion, the package row of the compatibility-policy table,
-  and `tests/test_streamlit_gates.py`'s package-line tripwire.
+- **Moved by FT-20.04:** `tests/test_cutover_gates.py`'s package-version
+  assertion (now `0.6.`), the package row of the compatibility-policy table and
+  the cutover contract's "Current" package cell (both now `0.6.0`), and
+  `tests/test_streamlit_gates.py`'s package-line tripwire, which now asserts the
+  live package equals `PROVIDER_LINE` and fails again at the next bump.
 
 No cutover implementation dependency is added. Everything Streamlit needs —
 manifest protocol `2`, the published extension points and the metadata
@@ -487,7 +490,8 @@ This contract does not decide or implement:
 
 - the `create-forge` UX, its adoption mechanics or its next version number —
   owned by `create-forge` Stage 21;
-- the `forge-template` release that carries the line — performed by FT-20.04;
+- the `forge-template` release that carries the line — performed by FT-20.04
+  and recorded in [streamlit-provider-release.md](streamlit-provider-release.md);
 - admitting a new CPython release or moving the Python floor — owned by
   [python-support.md](python-support.md);
 - `pages/` multipage scaffolding or any Streamlit capability beyond the archetype;

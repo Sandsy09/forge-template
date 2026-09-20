@@ -125,8 +125,9 @@ implemented it and
 `0.6.0`. The classified move was:
 
 - **`forge-template` package** → a new minor line, `0.6.0`, **done** by
-  FT-20.04. Below `1.0` a supported range is minor-scoped, so published
-  `create-forge` `0.4.0`'s `>=0.5,<0.6` does not drift into it and widens only at
+  FT-20.04 ([release record](streamlit-provider-release.md)). Below `1.0` a
+  supported range is minor-scoped, so published `create-forge` `0.4.0`'s
+  `>=0.5,<0.6` does not drift into it and widens only at
   [CF-21.01](https://github.com/Sandsy09/create-forge/issues/165); `1.0.0` is
   explicitly not promised.
 - **Discovered components** → fifteen, with `streamlit` entering at component

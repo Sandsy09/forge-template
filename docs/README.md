@@ -59,6 +59,10 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   guard, module-only artefacts, Forge-free installs, the byte-level regression
   pin across all four archetypes and the source-tree-derived wheel audit
   (FT-20.03, ADR 0072).
+- [streamlit-provider-release.md](streamlit-provider-release.md) — FT-20.04's
+  record of the published, reviewed `forge-template` `0.6.0` release: the
+  release chain, published artefacts, the audit against the `0.5.0` line, the
+  direct-Copier regression, and the provider hand-off to `create-forge`.
 - [roadmap-v2/](roadmap-v2/) — the Stage 10–14 two-repository roadmap for a
   package-backed Data Science archetype and reusable optional capabilities.
 - [roadmap-v1/](roadmap-v1/) — the completed historical Foundation roadmap

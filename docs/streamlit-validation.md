@@ -162,8 +162,9 @@ The pull request records the protected CI run against the exact commit.
 
 ## Downstream and later work
 
-- **FT-20.04** publishes `forge-template` `0.6.0` and gates on every Engine,
+- **FT-20.04** published `forge-template` `0.6.0` after every Engine,
   Generated-project, Python-endpoint and Regression row of the acceptance
-  matrix. It also moves the package-line tripwires this issue leaves alone.
+  matrix passed, and moved the package-line tripwires this issue left alone; see
+  [streamlit-provider-release.md](streamlit-provider-release.md).
 - **create-forge Stage 21** adopts the `0.6` line and validates Streamlit
   through the installed console; the client checks are not this repository's.
