@@ -277,3 +277,60 @@ def test_latest_tag_to_head(tmp_path: Path) -> None:
     check = run_cmd(["uv", "run", "poe", "check"], proj)
     assert check.returncode == 0, check.stdout + check.stderr
     assert check_action_pins(proj / ".github" / "workflows") == []
+
+
+def test_update_with_nothing_to_apply_succeeds(tmp_path: Path) -> None:
+    """forge-template#204: Copier re-runs `_tasks` on `update`, and the
+    scaffold commit had no guard for that operation -- an update whose
+    regenerated tree is identical to what is committed failed with `git
+    commit ... "nothing to commit, working tree clean"`. Reproduced by
+    scaffolding from `HEAD` and updating to that same `HEAD` with nothing
+    else changed in between, the idle-update case CF-23.02's
+    `docs/release-0-5-0-validation.md` observed against a real
+    `--legacy` project.
+    """
+    proj = tmp_path / "project"
+    run_copy(
+        src_path=str(REPO_ROOT),
+        dst_path=proj,
+        vcs_ref="HEAD",
+        data={"project_name": "Update Test", "github_org": "test-org"},
+        defaults=True,
+        unsafe=True,
+        quiet=True,
+    )
+    before = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=proj,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+
+    run_update(
+        dst_path=proj,
+        vcs_ref="HEAD",
+        defaults=True,
+        overwrite=True,
+        unsafe=True,
+        quiet=True,
+        conflict="inline",
+    )
+
+    after = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=proj,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+    assert after == before, "update committed something despite nothing changing"
+
+    status = subprocess.run(
+        ["git", "status", "--porcelain"],
+        cwd=proj,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert status.stdout == "", f"update left the project tree dirty:\n{status.stdout}"

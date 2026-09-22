@@ -228,13 +228,44 @@ changelog_tool:
 # Requires --trust. The CLI wrapper always passes it; direct `copier copy`
 # users are prompted.
 
+# Repository bootstrap, both commits, and hook installation belong to
+# generation only -- `_copier_operation` is `"copy"` on `new`, `"update"` on
+# `copier update`. An update is Copier's own merge, which the user reviews
+# and commits themselves; re-running `git init`/`git add -A`/`git commit`
+# against an already-initialised repository whose regenerated tree is
+# unchanged made the scaffold commit fail with "nothing to commit" on every
+# idle update (forge-template#204).
+#
+# `git init` and `git add -A` cannot simply stay unconditional either: an
+# `update` renders through Copier's own internal diff machinery, which
+# copies old and new template states into ephemeral temp directories and
+# runs `_tasks` there too, expecting *this template's own* `git init` task
+# to make them a git repository before anything downstream needs one --
+# Copier only `git init`s them itself *after* `_tasks` finishes. With the
+# git tasks made copy-only, `uv run pre-commit install --install-hooks`
+# failed inside those temp directories ("git failed. Is it installed, and
+# are you in a Git repository directory?"), because installing a hook needs
+# `.git` to exist. Hook installation is also a one-time bootstrap: the
+# stub scripts it plants read `.pre-commit-config.yaml` fresh at each real
+# commit, so a config change an update brings in takes effect without
+# reinstalling anything.
+#
+# `uv sync` is the one task that both needs no git repository and is worth
+# repeating: an update that moves a dependency floor should still leave the
+# project's environment correct. Any resulting `uv.lock` change is left
+# uncommitted for the user to review alongside the rest of the merge.
 _tasks:
-  - "git init --initial-branch=main"
-  - "git add -A"
-  - 'git commit --no-verify -m "feat: initial scaffold from template"'
+  - command: "git init --initial-branch=main"
+    when: "{{ _copier_operation == 'copy' }}"
+  - command: "git add -A"
+    when: "{{ _copier_operation == 'copy' }}"
+  - command: 'git commit --no-verify -m "feat: initial scaffold from template"'
+    when: "{{ _copier_operation == 'copy' }}"
   - "uv sync --all-groups"
-  - 'git add uv.lock && git commit --no-verify -m "chore: add lockfile" --allow-empty'
-  - "uv run pre-commit install --install-hooks"
+  - command: 'git add uv.lock && git commit --no-verify -m "chore: add lockfile" --allow-empty'
+    when: "{{ _copier_operation == 'copy' }}"
+  - command: "uv run pre-commit install --install-hooks"
+    when: "{{ _copier_operation == 'copy' }}"
 
 _message_after_copy: |
 

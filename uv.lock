@@ -509,7 +509,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "copier", specifier = ">=9.4,<10" },
+    { name = "copier", specifier = ">=9.6,<10" },
     { name = "ipykernel", specifier = ">=7.3,<8" },
     { name = "mypy", specifier = ">=1.14" },
     { name = "nbclient", specifier = ">=0.11,<1" },
@@ -528,7 +528,7 @@ lint = [
     { name = "ruff", specifier = ">=0.14" },
 ]
 test = [
-    { name = "copier", specifier = ">=9.4,<10" },
+    { name = "copier", specifier = ">=9.6,<10" },
     { name = "ipykernel", specifier = ">=7.3,<8" },
     { name = "nbclient", specifier = ">=0.11,<1" },
     { name = "nbformat", specifier = ">=5.11,<6" },
