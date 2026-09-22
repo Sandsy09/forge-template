@@ -75,6 +75,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0070 — Implement the independent Streamlit archetype](0070-streamlit-archetype-implementation.md)
 - [0071 — Complete the Streamlit archetype: run task, safeguards and composition](0071-streamlit-tasks-safeguards-and-composition.md)
 - [0072 — Validate Streamlit generated projects and distributions](0072-validate-streamlit-generated-projects.md)
+- [0073 — Scaffold tasks run only on copy](0073-scaffold-tasks-run-only-on-copy.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

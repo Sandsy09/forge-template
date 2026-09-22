@@ -59,8 +59,9 @@ test = [
     "nbformat>=5.11,<6",
     # Needed in-process by tests/test_combos.py and tests/test_update.py,
     # which call copier.run_copy / copier.run_update directly rather than
-    # shelling out to `uvx copier`.
-    "copier>=9.4,<10",
+    # shelling out to `uvx copier`. Raised to 9.6 for `_copier_operation`
+    # (ADR 0073), which copier.yml's `_tasks` now depend on.
+    "copier>=9.6,<10",
 ]
 typecheck = [
     "mypy>=1.14",
