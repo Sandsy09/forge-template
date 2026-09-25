@@ -18,7 +18,7 @@ import yaml
 from jinja2 import Environment
 from jinja2 import meta as jinja_meta
 
-from forge_template.github_actions import check_action_pins
+from forge_template.github_actions import check_action_pins, check_runner_labels
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -262,6 +262,7 @@ def check_all(cfg: dict[str, Any] | None = None) -> list[str]:
         *check_conditional_filenames(cfg),
         *check_action_pins(REPO_ROOT / ".github" / "workflows"),
         *check_action_pins(REPO_ROOT / "template" / ".github" / "workflows"),
+        *check_runner_labels(REPO_ROOT / ".github" / "workflows"),
     ]
 
 

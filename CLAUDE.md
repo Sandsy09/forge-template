@@ -137,6 +137,9 @@ The full rationale and migration consequences live in
 - Pydantic contract models are strict and reject unknown input.
 - Public results and errors remain deterministic and structured.
 - External GitHub Actions use full reviewed commit SHAs with version comments.
+- This repository's workflows name explicit runner images, never
+  `ubuntu-latest`; generated workflows are unchanged by that rule
+  ([runner baseline](docs/ci-runner-baseline.md)).
 - Architectural decisions are immutable Nygard-format records in
   [docs/adr/](docs/adr/); living behaviour belongs in `docs/*.md` contracts.
 - Historical and planned work belongs in the appropriate

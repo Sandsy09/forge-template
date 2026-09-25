@@ -193,5 +193,10 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   pinned to `>=0.4.1,<0.5` is unaffected by the publication, pinned by
   `tests/test_released_provider_cutover.py` and
   `tests/test_released_client_compatibility.py`.
+- [ci-runner-baseline.md](ci-runner-baseline.md) — FT-24.01's contract for
+  the GitHub-hosted runner images this repository's workflows run on: the
+  pinned `ubuntu-24.04` baseline, the non-blocking `ubuntu-26.04` canary,
+  ownership, promotion and rollback criteria, and the generated-workflow
+  exclusion, pinned by `tests/test_runner_baseline.py` (ADR 0074).
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

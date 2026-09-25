@@ -39,6 +39,10 @@ their content is already bound to the calling repository commit. Forge does
 not currently permit `docker://` actions: adopting one first requires a
 separate digest-pinning and maintainable update path.
 
+Runner images follow the same intent: this repository's workflows name an
+explicit image instead of the moving `ubuntu-latest` alias, per
+[the runner baseline contract](ci-runner-baseline.md).
+
 ## Reviewing an update
 
 Every action update requires a pull request and human review, including patch
