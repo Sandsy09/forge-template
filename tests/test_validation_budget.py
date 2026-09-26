@@ -339,16 +339,129 @@ def test_the_escalation_rule_classifies_representative_paths(
     assert is_sensitive(path) is sensitive
 
 
-def test_nothing_in_ci_changes_in_ft_26_01() -> None:
-    """FT-26.01 approves budgets and a design; every protected check stays
-    until FT-26.02's replacement coverage is approved. The required aggregate
-    still needs the sweeps unconditionally."""
-    jobs = _workflow("test-template.yml")["jobs"]
-    assert jobs["linux"]["uses"] == "./.github/workflows/linux-checks.yml"
-    assert "if" not in jobs["linux"], "the Linux call must not be conditional yet"
+_ALWAYS_ON = (
+    "lint",
+    "scaffold",
+    "archetype",
+    "update-compat",
+    "wheel",
+    "released-client",
+)
+_SWEEP_JOBS = {"sweep-composition": "direct", "sweep-independence": "independent"}
+
+
+def _on(document: dict[Any, Any]) -> dict[Any, Any]:
+    """A workflow's triggers; PyYAML parses a bare `on` key as True."""
+    triggers = document.get("on", document.get(True))
+    assert isinstance(triggers, dict)
+    return triggers
+
+
+def _steps(job: dict[Any, Any]) -> str:
+    return "\n".join(str(step.get("run", "")) for step in job["steps"])
+
+
+def test_the_sweeps_are_conditional_only_on_the_sweeps_input() -> None:
+    """FT-26.02 implements the escalation: the two sweeps are the only jobs
+    that can be skipped, and only through `inputs.sweeps`."""
     linux = _workflow("linux-checks.yml")["jobs"]
-    for sweep in ("sweep-composition", "sweep-independence"):
-        assert "if" not in linux[sweep], f"{sweep} must still run on every pull request"
+    for sweep in _SWEEP_JOBS:
+        assert linux[sweep]["if"] == "${{ inputs.sweeps }}", sweep
+    for job in _ALWAYS_ON:
+        assert "if" not in linux[job], f"{job} must run on every change"
+
+
+def test_the_sweeps_input_defaults_to_running_them() -> None:
+    """A caller that forgets the input still runs the exhaustive tier."""
+    triggers = _workflow("linux-checks.yml")
+    calls = _on(triggers)["workflow_call"]
+    assert calls["inputs"]["sweeps"] == {
+        "description": calls["inputs"]["sweeps"]["description"],
+        "type": "boolean",
+        "default": True,
+    }
+
+
+def test_only_the_classifier_can_skip_the_sweeps_on_a_pull_request() -> None:
+    jobs = _workflow("test-template.yml")["jobs"]
+    assert "classify" in jobs["linux"]["needs"]
+    # Only the literal 'false' skips: an empty or failed classification runs them.
+    assert (
+        jobs["linux"]["with"]["sweeps"]
+        == "${{ needs.classify.outputs.sweeps != 'false' }}"
+    )
+    assert _workflow("runner-canary.yml")["jobs"]["canary"]["with"]["sweeps"] is True
+
+
+def test_the_classifier_diffs_the_pull_request_against_its_base() -> None:
+    job = _workflow("test-template.yml")["jobs"]["classify"]
+    checkout = job["steps"][0]
+    assert checkout["with"]["fetch-depth"] == 0
+    step = job["steps"][1]
+    assert step["env"]["BASE"] == "${{ github.event.pull_request.base.sha }}"
+    assert step["env"]["HEAD"] == "${{ github.event.pull_request.head.sha }}"
+    assert "scripts/classify_changes.py" in step["run"]
+    assert job["outputs"]["sweeps"] == "${{ steps.classify.outputs.sweeps }}"
+
+
+def test_the_events_that_must_always_run_the_sweeps_all_trigger_ci() -> None:
+    triggers = _workflow("test-template.yml")
+    on = _on(triggers)
+    assert {"push", "pull_request", "workflow_dispatch", "schedule"} <= set(on)
+    assert on["push"]["branches"] == ["main"]
+
+
+def test_the_required_gate_needs_the_classification_and_the_budget_report() -> None:
+    gate = _workflow("test-template.yml")["jobs"]["all-green"]
+    assert {"classify", "linux", "windows", "audit", "budget"} <= set(gate["needs"])
+    assert gate["if"] == "always()"
+    script = _steps(gate)
+    for job in ("classify", "linux", "budget"):
+        assert f"needs.{job}.result" in script, job
+
+
+def test_the_budget_report_is_told_whether_the_sweeps_were_required() -> None:
+    job = _workflow("test-template.yml")["jobs"]["budget"]
+    assert {"classify", "linux", "windows", "audit"} <= set(job["needs"])
+    assert job["if"] == "${{ !cancelled() }}"
+    assert job["permissions"] == {"contents": "read", "actions": "read"}
+    assert job["env"]["SWEEPS_REQUIRED"] == (
+        "${{ needs.classify.outputs.sweeps != 'false' }}"
+    )
+    assert "scripts/validation_report.py budget" in _steps(job)
+    assert '--run-id "${{ github.run_id }}"' in _steps(job)
+
+
+def test_each_sweep_proves_its_coverage_and_publishes_the_evidence() -> None:
+    linux = _workflow("linux-checks.yml")["jobs"]
+    for job_id, kind in _SWEEP_JOBS.items():
+        job = linux[job_id]
+        script = _steps(job)
+        assert f'--junitxml="$RUNNER_TEMP/{kind}.xml"' in script, job_id
+        assert f"verify-sweep --kind {kind} --junit" in script, job_id
+        verify = next(step for step in job["steps"] if step.get("id") == "verify")
+        assert verify["if"] == "${{ !cancelled() }}"
+        assert set(job["outputs"]) == {"cpu", "executed"}
+    triggers = _workflow("linux-checks.yml")
+    outputs = _on(triggers)["workflow_call"]["outputs"]
+    assert set(outputs) == {
+        "cpu_direct",
+        "cpu_independent",
+        "executed_direct",
+        "executed_independent",
+    }
+
+
+def test_the_release_cannot_bypass_the_exhaustive_tier() -> None:
+    document = _workflow("release.yml")
+    jobs = document["jobs"]
+    needs = jobs["release"]["needs"]
+    assert {"audit", "exhaustive-evidence"} <= set(needs)
+    evidence = jobs["exhaustive-evidence"]
+    assert evidence["permissions"] == {"contents": "read", "actions": "read"}
+    assert "release-evidence --sha" in _steps(evidence)
+    triggers = _on(document)
+    assert set(triggers["workflow_dispatch"]["inputs"]) == {"dry_run"}
 
 
 # ---------------------------------------------------------------------------

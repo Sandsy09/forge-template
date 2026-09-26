@@ -1,0 +1,158 @@
+{
+ "jobs": [
+  {
+   "name": "Lint template",
+   "status": "completed",
+   "conclusion": "failure",
+   "startedAt": "2026-09-19T17:33:37Z",
+   "completedAt": "2026-09-19T17:35:47Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-19T17:33:38Z",
+     "completedAt": "2026-09-19T17:33:39Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-19T17:33:39Z",
+     "completedAt": "2026-09-19T17:33:40Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-19T17:33:40Z",
+     "completedAt": "2026-09-19T17:33:41Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-19T17:33:41Z",
+     "completedAt": "2026-09-19T17:33:44Z"
+    },
+    {
+     "name": "Pre-commit",
+     "conclusion": "success",
+     "startedAt": "2026-09-19T17:33:44Z",
+     "completedAt": "2026-09-19T17:34:07Z"
+    },
+    {
+     "name": "Schema and unit tests",
+     "conclusion": "failure",
+     "startedAt": "2026-09-19T17:34:07Z",
+     "completedAt": "2026-09-19T17:35:45Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "skipped",
+     "startedAt": "2026-09-19T17:35:45Z",
+     "completedAt": "2026-09-19T17:35:45Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-19T17:35:45Z",
+     "completedAt": "2026-09-19T17:35:45Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-19T17:35:45Z",
+     "completedAt": "2026-09-19T17:35:45Z"
+    }
+   ]
+  },
+  {
+   "name": "All checks passed",
+   "status": "completed",
+   "conclusion": "failure",
+   "startedAt": "2026-09-19T17:35:50Z",
+   "completedAt": "2026-09-19T17:35:54Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-19T17:35:51Z",
+     "completedAt": "2026-09-19T17:35:51Z"
+    },
+    {
+     "name": "Verify",
+     "conclusion": "failure",
+     "startedAt": "2026-09-19T17:35:51Z",
+     "completedAt": "2026-09-19T17:35:51Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-19T17:35:51Z",
+     "completedAt": "2026-09-19T17:35:51Z"
+    }
+   ]
+  },
+  {
+   "name": "copier update compatibility",
+   "status": "completed",
+   "conclusion": "skipped",
+   "startedAt": "2026-09-19T17:35:48Z",
+   "completedAt": "2026-09-19T17:35:47Z",
+   "steps": []
+  },
+  {
+   "name": "Archetype builds",
+   "status": "completed",
+   "conclusion": "skipped",
+   "startedAt": "2026-09-19T17:35:48Z",
+   "completedAt": "2026-09-19T17:35:47Z",
+   "steps": []
+  },
+  {
+   "name": "matrix.name",
+   "status": "completed",
+   "conclusion": "skipped",
+   "startedAt": "2026-09-19T17:35:48Z",
+   "completedAt": "2026-09-19T17:35:47Z",
+   "steps": []
+  },
+  {
+   "name": "Wheel contents",
+   "status": "completed",
+   "conclusion": "skipped",
+   "startedAt": "2026-09-19T17:35:48Z",
+   "completedAt": "2026-09-19T17:35:48Z",
+   "steps": []
+  },
+  {
+   "name": "Composition sweep -- independent client",
+   "status": "completed",
+   "conclusion": "skipped",
+   "startedAt": "2026-09-19T17:35:48Z",
+   "completedAt": "2026-09-19T17:35:47Z",
+   "steps": []
+  },
+  {
+   "name": "Composition sweep -- direct engine",
+   "status": "completed",
+   "conclusion": "skipped",
+   "startedAt": "2026-09-19T17:35:48Z",
+   "completedAt": "2026-09-19T17:35:47Z",
+   "steps": []
+  },
+  {
+   "name": "Windows smoke",
+   "status": "completed",
+   "conclusion": "skipped",
+   "startedAt": "2026-09-19T17:35:48Z",
+   "completedAt": "2026-09-19T17:35:47Z",
+   "steps": []
+  },
+  {
+   "name": "Released client compatibility",
+   "status": "completed",
+   "conclusion": "skipped",
+   "startedAt": "2026-09-19T17:35:48Z",
+   "completedAt": "2026-09-19T17:35:48Z",
+   "steps": []
+  }
+ ]
+}

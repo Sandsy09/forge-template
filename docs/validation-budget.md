@@ -193,25 +193,109 @@ released-client check (T1) and the sibling-gated pairing (T4).
 **Full accepted-composition coverage stays mandatory before a release.** T2
 and T3 are never sampled, shortened or dropped for a release.
 
-## Escalation design
+## Escalation
 
-This is the design FT-26.02 implements. **Nothing in CI changes under
-FT-26.01**: every current protected check stays in place until FT-26.02's
-replacement coverage is separately approved, and a test pins that the sweeps
-are still unconditional.
+Implemented by FT-26.02 ([ADR 0077](adr/0077-implement-validation-tiers-and-thresholds.md)).
+Only the two sweeps (T2 and T3) can be skipped, and only on a pull request that
+changes no composition-sensitive path. Every other check runs on every change,
+and nothing else was weakened.
 
-- A pull request runs T2 and T3 only when it changes a **composition-sensitive
-  path**: anything under `src/forge_template/` except the four check-only
-  modules the wheel excludes (`adr.py`, `github_actions.py`, `render.py`,
-  `schema.py`), `tests/composition_matrix.py`, the two sweep test modules,
-  `tests/no_copy_downstream.py`, `tests/conftest.py`, `pyproject.toml`,
-  `uv.lock` and `.github/workflows/**`.
-- T2 and T3 **always** run on `main`, on the weekly schedule, on manual
-  dispatch and as a **release gate**: the release requires a green full run on
-  the release commit (today `release.yml` relies on protected CI implicitly).
-- T0 and T1 run on every pull request, always.
-- Classification uses `git diff --name-only` in a job, with no new third-party
-  action, and a skipped job counts as passing in `All checks passed`.
+- **What is sensitive.** Anything under `src/forge_template/` except the four
+  check-only modules the wheel excludes (`adr.py`, `github_actions.py`,
+  `render.py`, `schema.py`), `tests/composition_matrix.py`, the two sweep test
+  modules, `tests/no_copy_downstream.py`, `tests/conftest.py`, `pyproject.toml`,
+  `uv.lock` and `.github/workflows/**`. The list is the `[escalation]` table of
+  the budgets file.
+- **Who decides.** The `classify` job runs `scripts/classify_changes.py`, which
+  diffs the pull request against its base. `push`, `schedule` and
+  `workflow_dispatch` **always** require the sweeps. The decision **fails
+  closed**: an unreadable budgets file, a git failure, an empty diff, a missing
+  base or an unrecognised event all require them, with the reason printed. The
+  Linux call skips them only when the output is the literal `false`, so an empty
+  or failed classification still runs them, and the `sweeps` input of
+  `linux-checks.yml` defaults to true.
+- **The canary** always runs the full set; it is non-blocking and off the
+  critical path.
+- **Forcing a full run.** Dispatch `Test template` on the branch
+  (`gh workflow run test-template.yml --ref <branch>`): a dispatch always
+  requires the sweeps.
+
+### Evidence of zero silent omissions
+
+Each sweep writes JUnit XML, and `scripts/validation_report.py verify-sweep`
+compares the compositions that **executed** with the compositions the catalogue
+says are valid, by name, not by count. The job fails on any composition missing,
+unexpected, duplicated, skipped or failed, or on any other test in the file not
+passing, and prints `expected N compositions, executed N, passed N` with the
+runner CPU. A sweep that ran 2,879 of 2,880 fails and names the one it lost.
+
+### The report and the gate
+
+The `budget` job (`Validation budget`) reads this run's jobs and the previous two
+successful runs on `main` from the Actions API and writes the matrix-size and
+timing report to the job summary: each job's tier, wall time, baseline, warn and
+fail limits and verdict, the run's critical path against 16 / 20 minutes, and
+for each sweep whether it was required, its result, and executed against
+expected compositions with its CPU.
+
+- **Thresholds.** The approved noise rule applies per job and to the critical
+  path: `WARN` when 2 of the last 3 runs are above `warn`; `FAIL` when the run
+  is above `fail` and the median of the last 3 is above `warn`; `OUTLIER` (not a
+  failure) when one run is above `fail` but the median is not, which is the
+  signature of slower runner hardware. A `FAIL` fails the job and so
+  `All checks passed`.
+- **Attribution.** A warning or failure names the job, its tier, how many times
+  its baseline p90 the run was, which step dominated, the runner CPU, and the
+  last three timings, so a slow-CPU run is recognised at a glance.
+- **A skipped sweep is never acceptable when it was required.** A called
+  workflow whose inner jobs are skipped still reports `success`, so `budget`
+  fails if the classification required the sweeps and a sweep job was skipped or
+  missing, or its executed count is not the valid count. `All checks passed`
+  needs `classify`, `linux`, `windows`, `audit` and `budget`.
+
+### Infrastructure failures versus test failures
+
+A failed job is classified from the step that failed. **Infrastructure:** the
+job was cancelled, ran with no failing step (a lost runner), or failed in a
+setup step (`Set up job`, checkout, `Install uv`, `Install dependencies`); the
+report says to rerun the failed job (`gh run rerun --failed`). **Test:** any
+other step failed; the report says to fix the change, not to rerun. The
+aggregate gate is never reported as a cause. This is a step-level rule: a
+network error inside a test step cannot be told from a test failure.
+
+### Release gate
+
+`release.yml` has a read-only `Exhaustive tier evidence` job that the release
+`needs`. It finds the `push` run of `Test template` for the release commit and
+requires it to have succeeded with **both** sweep jobs `success`, not skipped,
+cancelled or missing, so a release cannot proceed without the exhaustive tier
+and the independent-client evidence on its own commit. It fails closed: no run,
+a run still going, a red run or a skipped sweep all refuse the release with the
+reason. There is no bypass input, and a dry run needs it too. A newer run for
+the commit decides, so a rerun that goes red is not hidden by an older green
+one. It trusts the recorded run for that commit, which `main` pushes always
+produce with the sweeps.
+
+### Running it yourself
+
+```bash
+# Reproduce the timings (needs gh and network):
+uv run poe ci:timings -- --since <commit or date>
+
+# Classify a change the way CI does:
+uv run poe ci:classify -- --event pull_request --base main --head HEAD
+
+# Prove a sweep's coverage locally:
+uv run pytest -m sweep tests/test_composition_sweep.py -n 4 --no-cov \
+    --junitxml=direct.xml
+uv run poe ci:report -- verify-sweep --kind direct --junit direct.xml
+
+# Check a release commit (needs gh and network):
+uv run poe ci:report -- release-evidence --sha <sha>
+```
+
+Read a run's report in the job summary of `Validation budget`, and rerun an
+infrastructure failure with `gh run rerun <id> --failed`.
 
 ## Growth guard
 

@@ -196,8 +196,11 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [validation-budget.md](validation-budget.md) — FT-26.01's measured cost of
   composition validation, the approved per-job and critical-path limits and
   their noise treatment, the tiers and guarantee map, and the path-sensitive
-  escalation design FT-26.02 implements, pinned by
-  `tests/test_validation_budget.py` (ADR 0076).
+  escalation FT-26.02 implemented (fail-closed classification, expected-versus-
+  executed sweep evidence, the timing report and gate, infrastructure-versus-
+  test failure attribution and the release evidence gate), pinned by
+  `tests/test_validation_budget.py`, `tests/test_classify_changes.py` and
+  `tests/test_validation_report.py` (ADRs 0076 and 0077).
 - [dependency-audit.md](dependency-audit.md) — FT-24.02's contract for auditing
   this repository's locked runtime and full dependency graphs for known
   vulnerabilities with `uv audit`: scope and coverage, outcomes, enforcement

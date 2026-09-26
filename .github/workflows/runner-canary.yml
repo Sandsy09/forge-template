@@ -32,3 +32,4 @@ jobs:
     uses: ./.github/workflows/linux-checks.yml
     with:
       runner: ubuntu-26.04
+      sweeps: true  # the canary always runs the full set (ADR 0077)

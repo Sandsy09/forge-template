@@ -56,7 +56,7 @@ def test_protected_ubuntu_jobs_run_on_the_contract_baseline() -> None:
 
     ci = _workflow("test-template.yml")["jobs"]
     assert ci["linux"]["uses"] == _REUSABLE
-    assert ci["linux"]["with"] == {"runner": baseline}
+    assert ci["linux"]["with"]["runner"] == baseline
     assert ci["all-green"]["runs-on"] == baseline
 
     release = _workflow("release.yml")["jobs"]
@@ -88,7 +88,10 @@ def test_canary_runs_the_same_checks_on_the_contract_canary_label() -> None:
     jobs = _workflow("runner-canary.yml")["jobs"]
     assert list(jobs) == ["canary"]
     assert jobs["canary"]["uses"] == _REUSABLE
-    assert jobs["canary"]["with"] == {"runner": _contract_label("Canary")}
+    assert jobs["canary"]["with"] == {
+        "runner": _contract_label("Canary"),
+        "sweeps": True,  # the canary always runs the full set (ADR 0077)
+    }
 
 
 def test_canary_uses_the_same_triggers_as_protected_ci() -> None:
@@ -116,7 +119,13 @@ def test_canary_cannot_gate_a_merge() -> None:
 def test_the_required_aggregate_gates_linux_windows_and_the_audit() -> None:
     jobs = _workflow("test-template.yml")["jobs"]
     assert jobs["all-green"]["name"] == _REQUIRED_CHECK
-    assert set(jobs["all-green"]["needs"]) == {"linux", "windows", "audit"}
+    assert set(jobs["all-green"]["needs"]) == {
+        "classify",
+        "linux",
+        "windows",
+        "audit",
+        "budget",
+    }
     assert jobs["all-green"]["if"] == "always()"
     # The Linux result is checked explicitly: a skipped call would otherwise
     # slip past the failure/cancelled grep.
