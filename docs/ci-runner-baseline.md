@@ -109,9 +109,19 @@ If GitHub announces a deprecation or brownout schedule for the baseline
 image, promotion moves ahead of it regardless of the four-run window. Tracked
 in [#206](https://github.com/Sandsy09/forge-template/issues/206).
 
-Open canary-attributed issue at the time of writing:
-[#209](https://github.com/Sandsy09/forge-template/issues/209) (`Archetype
-builds` fails on 26.04). Promotion waits for it.
+## Known image difference: `/tmp` on 26.04
+
+`ubuntu-26.04` mounts `/tmp` as a RAM-backed tmpfs (about 7.8G, `usrquota`,
+roughly 6.3G usable per user); `ubuntu-24.04` keeps it on the root disk. It
+is a Ubuntu 26.04 default that GitHub's announcements do not mention
+([runner-images #14777](https://github.com/actions/runner-images/issues/14777),
+open, with an image-side fix under discussion). The `archetype` job's temp
+venvs fill that quota, so its first step exports `TMPDIR` from `RUNNER_TEMP`
+on the workspace disk, the same filesystem as the uv cache;
+`tests/test_runner_baseline.py` pins the step. Jobs that write little to
+`/tmp` (the combos and `copier update`: 131M to 392M) need nothing. Do not
+mask `tmp.mount` in a job to hide this: the canary exists to show it. If
+GitHub changes the image default, revisit the step, not the baseline.
 
 ## Rollback
 
@@ -163,17 +173,30 @@ with the fast suite, all four direct-Copier combinations (real Git
 initialisation and commits), `copier update` compatibility, wheel and sdist
 contents, the released-client check, and both exhaustive composition sweeps.
 
-**Finding: `Archetype builds` fails on 26.04.** It passes 57 of 57 on 24.04 and
-fails 27 of 57 on 26.04, all with `OSError: [Errno 122] Disk quota exceeded`
-while writing under `/tmp/pytest-of-runner` (mostly installing scipy and mypy
-into fresh venvs), plus uv's `Failed to hardlink files` warning from its cache
-into `/tmp`. Neither appears on 24.04, so `/tmp` sits on a different, more
-limited filesystem on the new image. Why is not yet established; a size-limited
-tmpfs is a hypothesis, not a finding. No generated content differs between the
-two runs. This is exactly what the canary exists to surface, and it did not
-block the merge. It is tracked as
-[#209](https://github.com/Sandsy09/forge-template/issues/209), is
-canary-attributed under Ownership above, and therefore blocks promotion.
+**Finding: `Archetype builds` failed on 26.04** (first canary run 36200255549,
+and on `main` 36232875535). It passed 57 of 57 on 24.04 and failed 27 of 57 on
+26.04, all with `OSError: [Errno 122] Disk quota exceeded` under
+`/tmp/pytest-of-runner` (mostly installing scipy and mypy into fresh venvs),
+plus uv's `Failed to hardlink files` warning from its cache into `/tmp`. No
+generated content differs between the two runs. It did not block the merge of
+the pull request that introduced the canary, and was tracked as
+[#209](https://github.com/Sandsy09/forge-template/issues/209).
+
+**Diagnosis**, from a temporary diagnostic step in pull request
+[#210](https://github.com/Sandsy09/forge-template/pull/210) (head `644e799`;
+runs [36233745972](https://github.com/Sandsy09/forge-template/actions/runs/36233745972)
+and [36233745968](https://github.com/Sandsy09/forge-template/actions/runs/36233745968)):
+
+| Image | `/tmp` | Size | `archetype` job `/tmp` used at the end |
+| --- | --- | --- | --- |
+| `ubuntu-24.04` | `/dev/root` ext4 | 145G, ~82G free | 3.7G (57 pass) |
+| `ubuntu-26.04` | `tmpfs`, `usrquota` | 7.9G | 6.3G, 80% of the tmpfs, the quota (27 fail) |
+
+The 24.04 figure is the end-of-session total, not the peak, so these numbers
+show that 26.04 reaches the quota, not by how much the job overruns it. The
+hardlink warning fits the same cause (cache and `/tmp` on different
+filesystems) but the split was not measured. The other project-building jobs
+used 131M to 392M on 26.04.
 
 **Guard evidence:** planting `ubuntu-latest` in `release.yml`, and in the
 `linux` caller's `runner` input, each failed two tests

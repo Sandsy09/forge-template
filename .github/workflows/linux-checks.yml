@@ -97,15 +97,6 @@ jobs:
       - name: Scaffold and verify -- ${{ matrix.combo }}
         run: uv run pytest -m combos -k ${{ matrix.combo }} --from-git -v
 
-      # TEMPORARY (#209): prove the 26.04 /tmp tmpfs diagnosis with our own
-      # numbers. Removed before merge.
-      - name: Temp-space diagnostics
-        if: always()
-        run: |
-          df -hT /tmp "$RUNNER_TEMP"
-          findmnt -no FSTYPE,SIZE,OPTIONS /tmp || true
-          du -sh /tmp/pytest-of-* /tmp/copier-combos 2>/dev/null || true
-
   # ---------------------------------------------------------------------------
   # Real generated-project proof for every production archetype (Library, CLI,
   # Data Science, Streamlit) and capability composition -- tests/*_build.py,
@@ -116,6 +107,14 @@ jobs:
     runs-on: ${{ inputs.runner }}
     needs: lint
     steps:
+      # ubuntu-26.04 mounts /tmp as a ~7.8G RAM tmpfs with a per-user quota
+      # (actions/runner-images#14777); ubuntu-24.04 keeps it on the root disk.
+      # This job's temp venvs (scipy, mypy, notebooks) fill that quota, so
+      # keep test temp data on the workspace disk -- also the filesystem of
+      # the uv cache, so hardlinks work. See docs/ci-runner-baseline.md.
+      - name: Keep temp data on the workspace disk
+        run: echo "TMPDIR=$RUNNER_TEMP" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install uv
@@ -130,15 +129,6 @@ jobs:
 
       - name: Build every production archetype
         run: uv run poe archetype
-
-      # TEMPORARY (#209): prove the 26.04 /tmp tmpfs diagnosis with our own
-      # numbers. Removed before merge.
-      - name: Temp-space diagnostics
-        if: always()
-        run: |
-          df -hT /tmp "$RUNNER_TEMP"
-          findmnt -no FSTYPE,SIZE,OPTIONS /tmp || true
-          du -sh /tmp/pytest-of-* /tmp/copier-combos 2>/dev/null || true
 
   # ---------------------------------------------------------------------------
   # Exhaustive composition sweep -- plans and renders every one of the 2880
@@ -220,15 +210,6 @@ jobs:
 
       - name: copier update scenarios
         run: uv run pytest -m update -v
-
-      # TEMPORARY (#209): prove the 26.04 /tmp tmpfs diagnosis with our own
-      # numbers. Removed before merge.
-      - name: Temp-space diagnostics
-        if: always()
-        run: |
-          df -hT /tmp "$RUNNER_TEMP"
-          findmnt -no FSTYPE,SIZE,OPTIONS /tmp || true
-          du -sh /tmp/pytest-of-* /tmp/copier-combos 2>/dev/null || true
 
   # ---------------------------------------------------------------------------
   # Verifies the built wheel ships the public engine facade and content
