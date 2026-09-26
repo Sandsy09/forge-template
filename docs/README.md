@@ -193,6 +193,11 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   pinned to `>=0.4.1,<0.5` is unaffected by the publication, pinned by
   `tests/test_released_provider_cutover.py` and
   `tests/test_released_client_compatibility.py`.
+- [dependency-audit.md](dependency-audit.md) — FT-24.02's contract for auditing
+  this repository's locked runtime and full dependency graphs for known
+  vulnerabilities with `uv audit`: scope and coverage, outcomes, enforcement
+  per surface, reviewed expiring exceptions, remediation and lower-bound
+  review, pinned by `tests/test_dependency_audit.py` (ADR 0075).
 - [ci-runner-baseline.md](ci-runner-baseline.md) — FT-24.01's contract for
   the GitHub-hosted runner images this repository's workflows run on: the
   pinned `ubuntu-24.04` baseline, the non-blocking `ubuntu-26.04` canary,

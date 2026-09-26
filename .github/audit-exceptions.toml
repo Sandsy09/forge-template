@@ -1,0 +1,21 @@
+# Reviewed exceptions to the dependency-vulnerability audit
+# (scripts/audit_dependencies.py; docs/dependency-audit.md; ADR 0075).
+#
+# An exception is the exception, not the mechanism: prefer fixing the
+# dependency (`uv lock --upgrade-package <name>`). Add one only when a finding
+# is not exploitable here or has no fixed version yet, and review it like code.
+#
+# Every entry is scoped to ONE package and ONE advisory, and must have every
+# key below; unknown keys, wildcards, an `expires` before `added`, an `added` in
+# the future, and a lifetime over 90 days are all rejected (the audit then
+# fails closed). `expires` is the last day the exception applies; afterwards
+# the finding fails the audit again and the expiry is named. An entry that
+# matches no current finding is reported as stale and should be removed.
+#
+# [[exception]]
+# id = "GHSA-xxxx-xxxx-xxxx"      # one advisory ID or alias (CVE-..., PYSEC-...)
+# package = "example-package"     # one literal package name
+# rationale = "Why this is not exploitable here, or why no fix is possible yet."
+# owner = "github-handle"         # who re-reviews it before it expires
+# added = 2026-09-26
+# expires = 2026-12-25            # at most 90 days after `added`

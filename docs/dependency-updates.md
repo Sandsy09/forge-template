@@ -91,6 +91,15 @@ A major-version pull request for a gated dependency should not exist; if one
 appears, the ignore rule is missing or misspelled and the fix is the config,
 not a merge.
 
+## Relationship to vulnerability auditing
+
+Updates arrive through this policy; whether the locked result contains a known
+vulnerability is a separate question answered by [the dependency
+audit](dependency-audit.md), which runs on every pull request, weekly and
+before a release. A lock-only upgrade that fixes a finding does not by itself
+raise a published floor in `[project.dependencies]`; see that document's
+lower-bound review.
+
 ## Relationship to Action pinning
 
 The `github-actions` entry in the same file stays governed by

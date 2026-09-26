@@ -263,6 +263,14 @@ cutover = "pytest -m cutover"
 # any release, same as create-forge's identically-named task.
 "check:wheel" = "python scripts/check_wheel.py"
 
+# FT-24.02: audits the locked runtime and full dependency graphs for known
+# vulnerabilities with `uv audit` (preview), applying the reviewed, expiring
+# exceptions in .github/audit-exceptions.toml. Needs network access to OSV, so
+# it is deliberately outside `poe check`; CI runs it as the `audit` job. Pass
+# flags after `--`, e.g. `uv run poe audit -- --on-outage warn`. See
+# docs/dependency-audit.md and ADR 0075.
+audit = "python scripts/audit_dependencies.py"
+
 # Reconciles this repo's GitHub labels against .github/labels.toml, shared
 # with create-forge. Idempotent: `gh label create --force` creates or
 # updates. Pass extra args after `--`, e.g.

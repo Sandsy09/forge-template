@@ -137,6 +137,8 @@ The full rationale and migration consequences live in
 - Pydantic contract models are strict and reject unknown input.
 - Public results and errors remain deterministic and structured.
 - External GitHub Actions use full reviewed commit SHAs with version comments.
+- Locked dependencies are audited with `uv audit` (`uv run poe audit`); exceptions
+  are reviewed, scoped and expiring ([audit contract](docs/dependency-audit.md)).
 - This repository's workflows name explicit runner images, never
   `ubuntu-latest`; generated workflows are unchanged by that rule
   ([runner baseline](docs/ci-runner-baseline.md)).

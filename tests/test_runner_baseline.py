@@ -113,10 +113,10 @@ def test_canary_cannot_gate_a_merge() -> None:
             assert "canary" not in needs, f"{path.name}:{name} depends on the canary"
 
 
-def test_the_required_aggregate_gates_the_pinned_call_and_windows() -> None:
+def test_the_required_aggregate_gates_linux_windows_and_the_audit() -> None:
     jobs = _workflow("test-template.yml")["jobs"]
     assert jobs["all-green"]["name"] == _REQUIRED_CHECK
-    assert set(jobs["all-green"]["needs"]) == {"linux", "windows"}
+    assert set(jobs["all-green"]["needs"]) == {"linux", "windows", "audit"}
     assert jobs["all-green"]["if"] == "always()"
     # The Linux result is checked explicitly: a skipped call would otherwise
     # slip past the failure/cancelled grep.
