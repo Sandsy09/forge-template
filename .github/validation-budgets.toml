@@ -99,10 +99,13 @@ summary = "pairing with a sibling create-forge checkout; deliberately outside CI
 # caller, the non-blocking canary and the release path.
 [structural]
 jobs = [
+    "test-template.yml:classify",
     "test-template.yml:linux",
+    "test-template.yml:budget",
     "test-template.yml:all-green",
     "runner-canary.yml:canary",
     "release.yml:audit",
+    "release.yml:exhaustive-evidence",
     "release.yml:release",
     "release.yml:publish",
 ]
@@ -207,10 +210,12 @@ warn_minutes = 1.5
 fail_minutes = 2.0
 provisional = true
 
-# --- Escalation (implemented by FT-26.02; nothing in CI changes in FT-26.01) ----
-# A pull request runs T2 and T3 only when it changes one of these paths. T2 and T3
-# ALWAYS run on `main`, on the weekly schedule and as a release gate. Every
-# protected check stays in place until FT-26.02's replacement coverage is approved.
+# --- Escalation (approved in FT-26.01, implemented by FT-26.02, ADR 0077) -----
+# A pull request runs T2 and T3 only when it changes one of these paths
+# (scripts/classify_changes.py reads this table, fail-closed). T2 and T3 ALWAYS
+# run on `main`, on the weekly schedule, on manual dispatch and as a release gate
+# (scripts/validation_report.py release-evidence). Every other protected check
+# runs on every pull request.
 
 [escalation]
 sensitive_paths = [

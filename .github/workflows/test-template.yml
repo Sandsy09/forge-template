@@ -21,6 +21,32 @@ env:
 
 jobs:
   # ---------------------------------------------------------------------------
+  # Decides whether the exhaustive composition sweeps (tiers T2 and T3 of
+  # docs/validation-budget.md) are required. push, schedule and
+  # workflow_dispatch always require them; a pull request requires them only
+  # when it changes a composition-sensitive path. Fail-closed: anything the
+  # script cannot prove insensitive requires the sweeps (ADR 0077).
+  # ---------------------------------------------------------------------------
+  classify:
+    name: Classify change
+    runs-on: ubuntu-24.04
+    outputs:
+      sweeps: ${{ steps.classify.outputs.sweeps }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The pull request's base must be reachable to diff against it.
+          fetch-depth: 0
+
+      - name: Decide whether the exhaustive sweeps are required
+        id: classify
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: python3 scripts/classify_changes.py --event "$EVENT" --base "$BASE" --head "$HEAD"
+
+  # ---------------------------------------------------------------------------
   # The Linux checks -- lint and the fast suite, the four direct-Copier
   # combinations, archetype builds, both composition sweeps, copier update,
   # wheel contents and the released-client check -- live in linux-checks.yml
@@ -32,9 +58,13 @@ jobs:
   # ---------------------------------------------------------------------------
   linux:
     name: Linux (ubuntu-24.04)
+    needs: classify
     uses: ./.github/workflows/linux-checks.yml
     with:
       runner: ubuntu-24.04
+      # Only the literal 'false' skips the sweeps; an empty or failed
+      # classification (fail-closed) still runs them.
+      sweeps: ${{ needs.classify.outputs.sweeps != 'false' }}
 
   # ---------------------------------------------------------------------------
   # Windows smoke test — path separators, line endings, missing Unix tools.
@@ -89,20 +119,64 @@ jobs:
         run: uv run --no-project python scripts/audit_dependencies.py --on-outage "$ON_OUTAGE"
 
   # ---------------------------------------------------------------------------
-  # Single required status check for branch protection. It gates the pinned
-  # Linux call, Windows and the dependency audit; the canary is a separate
-  # workflow and never a `needs` of this job.
+  # The matrix-size and timing report (docs/validation-budget.md, ADR 0077):
+  # this run's job times against the approved budgets and recent runs on
+  # `main`, the expected-versus-executed evidence of each sweep, and the
+  # attribution of any failure (infrastructure vs test). It fails when a
+  # required sweep did not run, on a regression at the approved threshold, and
+  # on any failed job, so a skipped exhaustive tier can never pass silently.
+  # ---------------------------------------------------------------------------
+  budget:
+    name: Validation budget
+    runs-on: ubuntu-24.04
+    needs: [classify, linux, windows, audit]
+    if: ${{ !cancelled() }}
+    permissions:
+      contents: read
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      SWEEPS_REQUIRED: ${{ needs.classify.outputs.sweeps != 'false' }}
+      CPU_DIRECT: ${{ needs.linux.outputs.cpu_direct }}
+      CPU_INDEPENDENT: ${{ needs.linux.outputs.cpu_independent }}
+      EXECUTED_DIRECT: ${{ needs.linux.outputs.executed_direct }}
+      EXECUTED_INDEPENDENT: ${{ needs.linux.outputs.executed_independent }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Report timings, thresholds and sweep evidence
+        run: |
+          python3 scripts/validation_report.py budget \
+            --run-id "${{ github.run_id }}" \
+            --sweeps-required "$SWEEPS_REQUIRED" \
+            --cpu "direct=$CPU_DIRECT" --cpu "independent=$CPU_INDEPENDENT" \
+            --executed "direct=$EXECUTED_DIRECT" \
+            --executed "independent=$EXECUTED_INDEPENDENT"
+
+  # ---------------------------------------------------------------------------
+  # Single required status check for branch protection. It gates the change
+  # classification, the pinned Linux call, Windows, the dependency audit and the
+  # validation budget report; the canary is a separate workflow and never a
+  # `needs` of this job. A skipped sweep inside the Linux call leaves that call
+  # `success`, so the budget report is what proves a required sweep ran.
   # ---------------------------------------------------------------------------
   all-green:
     name: All checks passed
     runs-on: ubuntu-24.04
-    needs: [linux, windows, audit]
+    needs: [classify, linux, windows, audit, budget]
     if: always()
     steps:
       - name: Verify
         run: |
+          if [ "${{ needs.classify.result }}" != "success" ]; then
+            echo "::error::The change classification did not run"; exit 1
+          fi
           if [ "${{ needs.linux.result }}" != "success" ]; then
             echo "::error::The Linux checks did not pass"; exit 1
+          fi
+          if [ "${{ needs.budget.result }}" != "success" ]; then
+            echo "::error::The validation budget report did not pass"; exit 1
           fi
           if echo "${{ join(needs.*.result, ',') }}" | grep -qE 'failure|cancelled'; then
             echo "::error::One or more jobs failed"; exit 1

@@ -139,7 +139,9 @@ The full rationale and migration consequences live in
 - External GitHub Actions use full reviewed commit SHAs with version comments.
 - CI cost is budgeted ([validation budget](docs/validation-budget.md)): a
   catalogue change that pushes a sweep past its limit needs a tiering decision,
-  not a raised limit; full composition coverage stays mandatory before release.
+  not a raised limit. The sweeps may be skipped only on a pull request that
+  touches no composition-sensitive path (decided fail-closed); full composition
+  coverage stays mandatory on `main`, weekly and before every release.
 - Locked dependencies are audited with `uv audit` (`uv run poe audit`); exceptions
   are reviewed, scoped and expiring ([audit contract](docs/dependency-audit.md)).
 - This repository's workflows name explicit runner images, never

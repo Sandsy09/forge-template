@@ -279,6 +279,13 @@ audit = "python scripts/audit_dependencies.py"
 # 0076.
 "ci:timings" = "python scripts/ci_timings.py"
 
+# FT-26.02: decides whether a change requires the exhaustive composition sweeps
+# (fail-closed) and produces the evidence, timing and release-gate reports. See
+# docs/validation-budget.md and ADR 0077. `ci:report` needs `gh` for the budget
+# and release-evidence subcommands.
+"ci:classify" = "python scripts/classify_changes.py"
+"ci:report" = "python scripts/validation_report.py"
+
 # Reconciles this repo's GitHub labels against .github/labels.toml, shared
 # with create-forge. Idempotent: `gh label create --force` creates or
 # updates. Pass extra args after `--`, e.g.

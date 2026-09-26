@@ -43,9 +43,33 @@ jobs:
       - name: Audit locked dependencies
         run: uv run --no-project python scripts/audit_dependencies.py --on-outage fail
 
+  # ---------------------------------------------------------------------------
+  # The release requires the exhaustive tier and the independent-client evidence
+  # on its own commit (docs/validation-budget.md, ADR 0077): the `push` run of
+  # `Test template` for this exact SHA must have succeeded with BOTH composition
+  # sweep jobs `success`, not skipped, cancelled or missing. `main` pushes always
+  # run the sweeps, so a normal release has this evidence. Fail-closed, and there
+  # is no input to bypass it: wait for or rerun main's CI, then rerun the
+  # release. It runs for a dry run too. Read-only.
+  # ---------------------------------------------------------------------------
+  exhaustive-evidence:
+    name: Exhaustive tier evidence
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Require both sweeps green on the release commit
+        run: python3 scripts/validation_report.py release-evidence --sha "${{ github.sha }}"
+
   release:
     runs-on: ubuntu-24.04
-    needs: audit
+    needs: [audit, exhaustive-evidence]
     steps:
       - name: Refuse to release from anything but main
         if: github.ref != 'refs/heads/main'

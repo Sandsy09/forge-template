@@ -1,0 +1,158 @@
+{
+ "jobs": [
+  {
+   "name": "Lint template",
+   "status": "completed",
+   "conclusion": "cancelled",
+   "startedAt": "2026-09-22T14:05:46Z",
+   "completedAt": "2026-09-22T14:07:15Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-22T14:05:46Z",
+     "completedAt": "2026-09-22T14:05:48Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-22T14:05:48Z",
+     "completedAt": "2026-09-22T14:05:49Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-22T14:05:49Z",
+     "completedAt": "2026-09-22T14:05:51Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-22T14:05:51Z",
+     "completedAt": "2026-09-22T14:05:53Z"
+    },
+    {
+     "name": "Pre-commit",
+     "conclusion": "success",
+     "startedAt": "2026-09-22T14:05:53Z",
+     "completedAt": "2026-09-22T14:06:11Z"
+    },
+    {
+     "name": "Schema and unit tests",
+     "conclusion": "cancelled",
+     "startedAt": "2026-09-22T14:06:11Z",
+     "completedAt": "2026-09-22T14:07:14Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "skipped",
+     "startedAt": "2026-09-22T14:07:14Z",
+     "completedAt": "2026-09-22T14:07:14Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-22T14:07:14Z",
+     "completedAt": "2026-09-22T14:07:14Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-22T14:07:14Z",
+     "completedAt": "2026-09-22T14:07:14Z"
+    }
+   ]
+  },
+  {
+   "name": "All checks passed",
+   "status": "completed",
+   "conclusion": "failure",
+   "startedAt": "2026-09-22T14:07:19Z",
+   "completedAt": "2026-09-22T14:07:22Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-22T14:07:20Z",
+     "completedAt": "2026-09-22T14:07:20Z"
+    },
+    {
+     "name": "Verify",
+     "conclusion": "failure",
+     "startedAt": "2026-09-22T14:07:20Z",
+     "completedAt": "2026-09-22T14:07:20Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-22T14:07:20Z",
+     "completedAt": "2026-09-22T14:07:20Z"
+    }
+   ]
+  },
+  {
+   "name": "Released client compatibility",
+   "status": "completed",
+   "conclusion": "cancelled",
+   "startedAt": "2026-09-22T14:07:16Z",
+   "completedAt": "2026-09-22T14:07:16Z",
+   "steps": []
+  },
+  {
+   "name": "Archetype builds",
+   "status": "completed",
+   "conclusion": "cancelled",
+   "startedAt": "2026-09-22T14:07:16Z",
+   "completedAt": "2026-09-22T14:07:16Z",
+   "steps": []
+  },
+  {
+   "name": "Composition sweep -- direct engine",
+   "status": "completed",
+   "conclusion": "cancelled",
+   "startedAt": "2026-09-22T14:07:16Z",
+   "completedAt": "2026-09-22T14:07:16Z",
+   "steps": []
+  },
+  {
+   "name": "Composition sweep -- independent client",
+   "status": "completed",
+   "conclusion": "cancelled",
+   "startedAt": "2026-09-22T14:07:16Z",
+   "completedAt": "2026-09-22T14:07:16Z",
+   "steps": []
+  },
+  {
+   "name": "Windows smoke",
+   "status": "completed",
+   "conclusion": "cancelled",
+   "startedAt": "2026-09-22T14:07:16Z",
+   "completedAt": "2026-09-22T14:07:16Z",
+   "steps": []
+  },
+  {
+   "name": "Wheel contents",
+   "status": "completed",
+   "conclusion": "cancelled",
+   "startedAt": "2026-09-22T14:07:16Z",
+   "completedAt": "2026-09-22T14:07:16Z",
+   "steps": []
+  },
+  {
+   "name": "matrix.name",
+   "status": "completed",
+   "conclusion": "cancelled",
+   "startedAt": "2026-09-22T14:07:16Z",
+   "completedAt": "2026-09-22T14:07:16Z",
+   "steps": []
+  },
+  {
+   "name": "copier update compatibility",
+   "status": "completed",
+   "conclusion": "cancelled",
+   "startedAt": "2026-09-22T14:07:16Z",
+   "completedAt": "2026-09-22T14:07:16Z",
+   "steps": []
+  }
+ ]
+}

@@ -142,6 +142,16 @@ records the measured baseline, the approved limits and the tiers. Adding a
 capability or platform that pushes a sweep past its limit fails `poe check`
 until the tiering is decided.
 
+The two composition sweeps run on a pull request only when it changes a
+composition-sensitive path, decided fail-closed by the `classify` job; they
+always run on `main`, weekly, on manual dispatch and before a release. Each
+sweep proves every valid composition executed, and the `Validation budget`
+job's summary shows the timings, the thresholds and the evidence. It fails on
+a regression at the approved limits, and it labels a failed job an
+infrastructure failure (rerun it) or a test failure (fix the change). Force a
+full run with `gh workflow run test-template.yml --ref <branch>`. A release
+requires its own commit's run to have both sweeps green.
+
 A local green run does not prove GitHub Actions itself is green; inspect the
 actual run after pushing. Cross-repository validation and generated-project
 live CI verification remain deliberate local checks because they require a

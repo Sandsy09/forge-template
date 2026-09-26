@@ -1,0 +1,727 @@
+{
+ "jobs": [
+  {
+   "name": "Windows smoke",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:21:09Z",
+   "completedAt": "2026-09-26T10:23:09Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:21:10Z",
+     "completedAt": "2026-09-26T10:21:11Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:21:11Z",
+     "completedAt": "2026-09-26T10:21:16Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:21:16Z",
+     "completedAt": "2026-09-26T10:21:22Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:21:22Z",
+     "completedAt": "2026-09-26T10:21:30Z"
+    },
+    {
+     "name": "Scaffold and verify -- c1-uvbuild-static",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:21:30Z",
+     "completedAt": "2026-09-26T10:23:05Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:05Z",
+     "completedAt": "2026-09-26T10:23:05Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:05Z",
+     "completedAt": "2026-09-26T10:23:07Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:07Z",
+     "completedAt": "2026-09-26T10:23:08Z"
+    }
+   ]
+  },
+  {
+   "name": "Linux (ubuntu-24.04) / Lint template",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:21:09Z",
+   "completedAt": "2026-09-26T10:23:16Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:21:10Z",
+     "completedAt": "2026-09-26T10:21:12Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:21:12Z",
+     "completedAt": "2026-09-26T10:21:14Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:21:14Z",
+     "completedAt": "2026-09-26T10:21:18Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:21:18Z",
+     "completedAt": "2026-09-26T10:21:20Z"
+    },
+    {
+     "name": "Pre-commit",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:21:20Z",
+     "completedAt": "2026-09-26T10:21:45Z"
+    },
+    {
+     "name": "Schema and unit tests",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:21:45Z",
+     "completedAt": "2026-09-26T10:23:12Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:12Z",
+     "completedAt": "2026-09-26T10:23:12Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:12Z",
+     "completedAt": "2026-09-26T10:23:12Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:12Z",
+     "completedAt": "2026-09-26T10:23:12Z"
+    }
+   ]
+  },
+  {
+   "name": "Linux (ubuntu-24.04) / copier update compatibility",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:23:18Z",
+   "completedAt": "2026-09-26T10:24:05Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:18Z",
+     "completedAt": "2026-09-26T10:23:19Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:19Z",
+     "completedAt": "2026-09-26T10:23:21Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:21Z",
+     "completedAt": "2026-09-26T10:23:23Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:23Z",
+     "completedAt": "2026-09-26T10:23:26Z"
+    },
+    {
+     "name": "copier update scenarios",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:26Z",
+     "completedAt": "2026-09-26T10:24:03Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:24:03Z",
+     "completedAt": "2026-09-26T10:24:03Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:24:03Z",
+     "completedAt": "2026-09-26T10:24:03Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:24:03Z",
+     "completedAt": "2026-09-26T10:24:03Z"
+    }
+   ]
+  },
+  {
+   "name": "Linux (ubuntu-24.04) / Released client compatibility",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:23:19Z",
+   "completedAt": "2026-09-26T10:23:38Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:20Z",
+     "completedAt": "2026-09-26T10:23:21Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:21Z",
+     "completedAt": "2026-09-26T10:23:23Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:23Z",
+     "completedAt": "2026-09-26T10:23:26Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:26Z",
+     "completedAt": "2026-09-26T10:23:29Z"
+    },
+    {
+     "name": "Released 0.3.2 client still resolves and generates on the 0.4.1 line",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:29Z",
+     "completedAt": "2026-09-26T10:23:35Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:35Z",
+     "completedAt": "2026-09-26T10:23:36Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:36Z",
+     "completedAt": "2026-09-26T10:23:36Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:36Z",
+     "completedAt": "2026-09-26T10:23:36Z"
+    }
+   ]
+  },
+  {
+   "name": "Linux (ubuntu-24.04) / Composition sweep -- independent client",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:23:18Z",
+   "completedAt": "2026-09-26T10:30:57Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:19Z",
+     "completedAt": "2026-09-26T10:23:20Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:20Z",
+     "completedAt": "2026-09-26T10:23:22Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:22Z",
+     "completedAt": "2026-09-26T10:23:25Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:25Z",
+     "completedAt": "2026-09-26T10:23:27Z"
+    },
+    {
+     "name": "Render every valid composition through a policy-driven client",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:27Z",
+     "completedAt": "2026-09-26T10:30:53Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:30:53Z",
+     "completedAt": "2026-09-26T10:30:54Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:30:54Z",
+     "completedAt": "2026-09-26T10:30:54Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:30:54Z",
+     "completedAt": "2026-09-26T10:30:54Z"
+    }
+   ]
+  },
+  {
+   "name": "Linux (ubuntu-24.04) / hatchling + static",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:23:18Z",
+   "completedAt": "2026-09-26T10:23:54Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:19Z",
+     "completedAt": "2026-09-26T10:23:20Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:20Z",
+     "completedAt": "2026-09-26T10:23:21Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:21Z",
+     "completedAt": "2026-09-26T10:23:24Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:24Z",
+     "completedAt": "2026-09-26T10:23:26Z"
+    },
+    {
+     "name": "Scaffold and verify -- c2-hatch-static",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:26Z",
+     "completedAt": "2026-09-26T10:23:51Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:51Z",
+     "completedAt": "2026-09-26T10:23:52Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:52Z",
+     "completedAt": "2026-09-26T10:23:52Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:52Z",
+     "completedAt": "2026-09-26T10:23:52Z"
+    }
+   ]
+  },
+  {
+   "name": "Linux (ubuntu-24.04) / uv_build + static",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:23:18Z",
+   "completedAt": "2026-09-26T10:23:55Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:19Z",
+     "completedAt": "2026-09-26T10:23:20Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:20Z",
+     "completedAt": "2026-09-26T10:23:22Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:22Z",
+     "completedAt": "2026-09-26T10:23:25Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:25Z",
+     "completedAt": "2026-09-26T10:23:27Z"
+    },
+    {
+     "name": "Scaffold and verify -- c1-uvbuild-static",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:27Z",
+     "completedAt": "2026-09-26T10:23:52Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:52Z",
+     "completedAt": "2026-09-26T10:23:52Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:52Z",
+     "completedAt": "2026-09-26T10:23:52Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:52Z",
+     "completedAt": "2026-09-26T10:23:52Z"
+    }
+   ]
+  },
+  {
+   "name": "Linux (ubuntu-24.04) / Composition sweep -- direct engine",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:23:18Z",
+   "completedAt": "2026-09-26T10:25:57Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:19Z",
+     "completedAt": "2026-09-26T10:23:20Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:20Z",
+     "completedAt": "2026-09-26T10:23:21Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:21Z",
+     "completedAt": "2026-09-26T10:23:24Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:24Z",
+     "completedAt": "2026-09-26T10:23:25Z"
+    },
+    {
+     "name": "Plan and render every valid composition",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:25Z",
+     "completedAt": "2026-09-26T10:25:54Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:25:54Z",
+     "completedAt": "2026-09-26T10:25:55Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:25:55Z",
+     "completedAt": "2026-09-26T10:25:55Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:25:55Z",
+     "completedAt": "2026-09-26T10:25:55Z"
+    }
+   ]
+  },
+  {
+   "name": "Linux (ubuntu-24.04) / Archetype builds",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:23:18Z",
+   "completedAt": "2026-09-26T10:27:00Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:19Z",
+     "completedAt": "2026-09-26T10:23:20Z"
+    },
+    {
+     "name": "Keep temp data on the workspace disk",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:20Z",
+     "completedAt": "2026-09-26T10:23:20Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:20Z",
+     "completedAt": "2026-09-26T10:23:22Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:22Z",
+     "completedAt": "2026-09-26T10:23:25Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:25Z",
+     "completedAt": "2026-09-26T10:23:27Z"
+    },
+    {
+     "name": "Build every production archetype",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:27Z",
+     "completedAt": "2026-09-26T10:26:44Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:26:44Z",
+     "completedAt": "2026-09-26T10:26:44Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:26:44Z",
+     "completedAt": "2026-09-26T10:26:44Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:26:44Z",
+     "completedAt": "2026-09-26T10:26:44Z"
+    }
+   ]
+  },
+  {
+   "name": "Linux (ubuntu-24.04) / Wheel contents",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:23:18Z",
+   "completedAt": "2026-09-26T10:23:33Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:19Z",
+     "completedAt": "2026-09-26T10:23:20Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:20Z",
+     "completedAt": "2026-09-26T10:23:21Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:21Z",
+     "completedAt": "2026-09-26T10:23:24Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:24Z",
+     "completedAt": "2026-09-26T10:23:26Z"
+    },
+    {
+     "name": "Check wheel",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:26Z",
+     "completedAt": "2026-09-26T10:23:30Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:30Z",
+     "completedAt": "2026-09-26T10:23:30Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:30Z",
+     "completedAt": "2026-09-26T10:23:31Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:31Z",
+     "completedAt": "2026-09-26T10:23:31Z"
+    }
+   ]
+  },
+  {
+   "name": "Linux (ubuntu-24.04) / kitchen sink (all conditionals on)",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:23:18Z",
+   "completedAt": "2026-09-26T10:24:04Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:18Z",
+     "completedAt": "2026-09-26T10:23:19Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:19Z",
+     "completedAt": "2026-09-26T10:23:20Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:20Z",
+     "completedAt": "2026-09-26T10:23:22Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:22Z",
+     "completedAt": "2026-09-26T10:23:24Z"
+    },
+    {
+     "name": "Scaffold and verify -- c4-kitchen-sink",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:24Z",
+     "completedAt": "2026-09-26T10:24:01Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:24:01Z",
+     "completedAt": "2026-09-26T10:24:01Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:24:01Z",
+     "completedAt": "2026-09-26T10:24:01Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:24:01Z",
+     "completedAt": "2026-09-26T10:24:01Z"
+    }
+   ]
+  },
+  {
+   "name": "Linux (ubuntu-24.04) / hatchling + vcs",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:23:18Z",
+   "completedAt": "2026-09-26T10:23:54Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:19Z",
+     "completedAt": "2026-09-26T10:23:20Z"
+    },
+    {
+     "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:20Z",
+     "completedAt": "2026-09-26T10:23:22Z"
+    },
+    {
+     "name": "Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:22Z",
+     "completedAt": "2026-09-26T10:23:26Z"
+    },
+    {
+     "name": "Install dependencies",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:26Z",
+     "completedAt": "2026-09-26T10:23:28Z"
+    },
+    {
+     "name": "Scaffold and verify -- c3-hatch-vcs",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:28Z",
+     "completedAt": "2026-09-26T10:23:51Z"
+    },
+    {
+     "name": "Post Install uv",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:51Z",
+     "completedAt": "2026-09-26T10:23:51Z"
+    },
+    {
+     "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:51Z",
+     "completedAt": "2026-09-26T10:23:51Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:23:51Z",
+     "completedAt": "2026-09-26T10:23:51Z"
+    }
+   ]
+  },
+  {
+   "name": "All checks passed",
+   "status": "completed",
+   "conclusion": "success",
+   "startedAt": "2026-09-26T10:30:59Z",
+   "completedAt": "2026-09-26T10:31:02Z",
+   "steps": [
+    {
+     "name": "Set up job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:31:00Z",
+     "completedAt": "2026-09-26T10:31:00Z"
+    },
+    {
+     "name": "Verify",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:31:00Z",
+     "completedAt": "2026-09-26T10:31:00Z"
+    },
+    {
+     "name": "Complete job",
+     "conclusion": "success",
+     "startedAt": "2026-09-26T10:31:00Z",
+     "completedAt": "2026-09-26T10:31:00Z"
+    }
+   ]
+  }
+ ]
+}
