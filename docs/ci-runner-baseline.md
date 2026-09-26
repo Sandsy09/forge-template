@@ -109,6 +109,10 @@ If GitHub announces a deprecation or brownout schedule for the baseline
 image, promotion moves ahead of it regardless of the four-run window. Tracked
 in [#206](https://github.com/Sandsy09/forge-template/issues/206).
 
+Open canary-attributed issue at the time of writing:
+[#209](https://github.com/Sandsy09/forge-template/issues/209) (`Archetype
+builds` fails on 26.04). Promotion waits for it.
+
 ## Rollback
 
 Every label is explicit, so rolling back is reverting the promotion pull
@@ -145,4 +149,34 @@ The only required status check is `All checks passed`.
 
 ### Validation of this change
 
-Filled in from the pull request's real runs before merge.
+Pull request [#208](https://github.com/Sandsy09/forge-template/pull/208), head
+commit `c8d5780`. The image each job reports in its "Set up job" log:
+
+| Run | Workflow | Image | Version | Result |
+| --- | --- | --- | --- | --- |
+| [36200255467](https://github.com/Sandsy09/forge-template/actions/runs/36200255467) | `test-template.yml`, baseline | `ubuntu-24.04` | `20260920.314.1` | all 8 Linux jobs and `All checks passed` green |
+| [36200255467](https://github.com/Sandsy09/forge-template/actions/runs/36200255467) | `test-template.yml`, Windows | `windows-2025-vs2026` | `20260922.246.2` | green |
+| [36200255549](https://github.com/Sandsy09/forge-template/actions/runs/36200255549) | `runner-canary.yml` | `ubuntu-26.04` | `20260920.143.1` | 10 of 11 jobs green; `Archetype builds` red |
+
+The canary ran the whole Linux set on 26.04, not a subset. Green there: lint
+with the fast suite, all four direct-Copier combinations (real Git
+initialisation and commits), `copier update` compatibility, wheel and sdist
+contents, the released-client check, and both exhaustive composition sweeps.
+
+**Finding: `Archetype builds` fails on 26.04.** It passes 57 of 57 on 24.04 and
+fails 27 of 57 on 26.04, all with `OSError: [Errno 122] Disk quota exceeded`
+while writing under `/tmp/pytest-of-runner` (mostly installing scipy and mypy
+into fresh venvs), plus uv's `Failed to hardlink files` warning from its cache
+into `/tmp`. Neither appears on 24.04, so `/tmp` sits on a different, more
+limited filesystem on the new image. Why is not yet established; a size-limited
+tmpfs is a hypothesis, not a finding. No generated content differs between the
+two runs. This is exactly what the canary exists to surface, and it did not
+block the merge. It is tracked as
+[#209](https://github.com/Sandsy09/forge-template/issues/209), is
+canary-attributed under Ownership above, and therefore blocks promotion.
+
+**Guard evidence:** planting `ubuntu-latest` in `release.yml`, and in the
+`linux` caller's `runner` input, each failed two tests
+(`test_real_workflows_name_no_moving_ubuntu_alias` and
+`test_protected_ubuntu_jobs_run_on_the_contract_baseline`); restoring the
+labels passed.
