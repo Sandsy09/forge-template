@@ -20,7 +20,7 @@ env:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Refuse to release from anything but main
         if: github.ref != 'refs/heads/main'
@@ -118,7 +118,7 @@ jobs:
   # ---------------------------------------------------------------------------
   publish:
     name: Publish to PyPI
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: release
     if: ${{ !inputs.dry_run }}
     permissions:

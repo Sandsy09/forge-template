@@ -115,15 +115,22 @@ repository is tagged.
 
 ## What CI runs
 
-`.github/workflows/test-template.yml` validates:
+`.github/workflows/test-template.yml` runs the Linux checks from the reusable
+`linux-checks.yml`, pinned to `ubuntu-24.04`, plus a Windows smoke render. The
+Linux checks validate:
 
 - Pre-commit plus the fast repository suite.
-- All four direct-Copier combinations and a Windows smoke render.
+- All four direct-Copier combinations.
 - Installed archetype builds and full composition sweeps.
 - Copier update compatibility.
 - Wheel contents and clean public-package imports.
 
-`All checks passed` aggregates those jobs and is the branch-protection target.
+`All checks passed` aggregates the pinned Linux call and the Windows job and
+is the branch-protection target. `runner-canary.yml` runs the identical Linux
+checks on the next Ubuntu image; it is non-blocking and never part of that
+gate. Workflows name explicit runner images rather than `ubuntu-latest`; see
+[the runner baseline contract](docs/ci-runner-baseline.md) for the canary's
+ownership and promotion criteria.
 A local green run does not prove GitHub Actions itself is green; inspect the
 actual run after pushing. Cross-repository validation and generated-project
 live CI verification remain deliberate local checks because they require a
