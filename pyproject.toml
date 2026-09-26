@@ -271,6 +271,14 @@ cutover = "pytest -m cutover"
 # docs/dependency-audit.md and ADR 0075.
 audit = "python scripts/audit_dependencies.py"
 
+# FT-26.01: reproduces the validation-budget baseline (per-job wall time, the
+# run wall, and how many historical runs cross the approved limits) from real
+# GitHub Actions runs through `gh`. Needs network and an authenticated `gh`, so
+# it is outside `poe check`. Pass flags after `--`, e.g. `uv run poe ci:timings
+# -- --since 2026-09-19T23:00 --steps`. See docs/validation-budget.md and ADR
+# 0076.
+"ci:timings" = "python scripts/ci_timings.py"
+
 # Reconciles this repo's GitHub labels against .github/labels.toml, shared
 # with create-forge. Idempotent: `gh label create --force` creates or
 # updates. Pass extra args after `--`, e.g.

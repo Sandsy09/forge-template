@@ -1,0 +1,124 @@
+{
+  "jobs": [
+    {
+      "name": "Lint template",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:36:45Z",
+      "completedAt": "2026-09-22T14:39:17Z"
+    },
+    {
+      "name": "Composition sweep -- direct engine",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:39:23Z",
+      "completedAt": "2026-09-22T14:44:32Z",
+      "steps": [
+        {
+          "name": "Install dependencies",
+          "conclusion": "success",
+          "startedAt": "2026-09-22T14:39:28Z",
+          "completedAt": "2026-09-22T14:39:31Z"
+        },
+        {
+          "name": "Plan and render every valid composition",
+          "conclusion": "success",
+          "startedAt": "2026-09-22T14:39:31Z",
+          "completedAt": "2026-09-22T14:44:30Z"
+        }
+      ]
+    },
+    {
+      "name": "Wheel contents",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:39:23Z",
+      "completedAt": "2026-09-22T14:39:38Z"
+    },
+    {
+      "name": "Composition sweep -- independent client",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:39:22Z",
+      "completedAt": "2026-09-22T14:49:57Z",
+      "steps": [
+        {
+          "name": "Install dependencies",
+          "conclusion": "success",
+          "startedAt": "2026-09-22T14:39:29Z",
+          "completedAt": "2026-09-22T14:39:31Z"
+        },
+        {
+          "name": "Render every valid composition through a policy-driven client",
+          "conclusion": "success",
+          "startedAt": "2026-09-22T14:39:31Z",
+          "completedAt": "2026-09-22T14:49:54Z"
+        }
+      ]
+    },
+    {
+      "name": "Released client compatibility",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:39:23Z",
+      "completedAt": "2026-09-22T14:39:43Z"
+    },
+    {
+      "name": "copier update compatibility",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:39:25Z",
+      "completedAt": "2026-09-22T14:40:17Z"
+    },
+    {
+      "name": "Archetype builds",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:39:23Z",
+      "completedAt": "2026-09-22T14:42:24Z",
+      "steps": [
+        {
+          "name": "Install dependencies",
+          "conclusion": "success",
+          "startedAt": "2026-09-22T14:39:31Z",
+          "completedAt": "2026-09-22T14:39:33Z"
+        },
+        {
+          "name": "Build every production archetype",
+          "conclusion": "success",
+          "startedAt": "2026-09-22T14:39:33Z",
+          "completedAt": "2026-09-22T14:42:20Z"
+        }
+      ]
+    },
+    {
+      "name": "Windows smoke",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:39:25Z",
+      "completedAt": "2026-09-22T14:41:03Z"
+    },
+    {
+      "name": "hatchling + vcs",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:39:22Z",
+      "completedAt": "2026-09-22T14:39:55Z"
+    },
+    {
+      "name": "kitchen sink (all conditionals on)",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:39:22Z",
+      "completedAt": "2026-09-22T14:40:09Z"
+    },
+    {
+      "name": "uv_build + static",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:39:24Z",
+      "completedAt": "2026-09-22T14:39:59Z"
+    },
+    {
+      "name": "hatchling + static",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:39:23Z",
+      "completedAt": "2026-09-22T14:40:01Z"
+    },
+    {
+      "name": "All checks passed",
+      "conclusion": "success",
+      "startedAt": "2026-09-22T14:50:00Z",
+      "completedAt": "2026-09-22T14:50:03Z"
+    }
+  ]
+}

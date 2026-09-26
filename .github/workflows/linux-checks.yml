@@ -137,12 +137,12 @@ jobs:
   # pre-Stage-17 ten, twice over (once against the direct engine, once
   # through an independent-client simulation). Pure in-memory engine calls,
   # no build, no network -- but real cost: 5761 total cases (2 x 2880 + 1
-  # tripwire); FT-17.05 measured the then-4481 (2 x 2240 + 1) at ~47 minutes
-  # serial-in-one-job at -n 4. Split into
-  # two parallel jobs here so the critical path stays close to the existing
-  # `archetype` job's ~22-minute pole instead of doubling it; `uv run poe
-  # sweep` locally still runs both together as one task. See
-  # docs/provider-acceptance-validation.md (FT-17.05).
+  # tripwire). Split into two parallel jobs so the critical path is the slower
+  # one, not their sum; `uv run poe sweep` locally still runs both together.
+  # Measured cost (about 10.5 min for the independent-client sweep and 5.2 for
+  # this one), the approved warn/fail limits and the tiers are in
+  # docs/validation-budget.md and .github/validation-budgets.toml (FT-26.01,
+  # ADR 0076); docs/provider-acceptance-validation.md has the FT-17.05 origin.
   # ---------------------------------------------------------------------------
   sweep-composition:
     name: Composition sweep -- direct engine

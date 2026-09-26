@@ -67,6 +67,7 @@ Run additional checks according to the affected surface:
 | Component manifests/resources or wheel configuration | `uv run poe check:wheel` |
 | A provider/client boundary visible to `create-forge` | `uv run poe crossrepo` with a sibling checkout |
 | `pyproject.toml` dependencies or `uv.lock` | `uv run poe audit` (needs network) |
+| Catalogue growth or CI job cost | the growth guard in `poe check`; `uv run poe ci:timings` to re-baseline |
 
 `poe combos` renders four direct-Copier configurations and runs each generated
 project's checks. It uses the working tree by default; add `--from-git` when a
@@ -128,12 +129,19 @@ Linux checks validate:
 - A dependency-vulnerability audit of the locked graphs (`audit` job, part of
   `All checks passed`; also weekly and before a release).
 
-`All checks passed` aggregates the pinned Linux call and the Windows job and
-is the branch-protection target. `runner-canary.yml` runs the identical Linux
-checks on the next Ubuntu image; it is non-blocking and never part of that
-gate. Workflows name explicit runner images rather than `ubuntu-latest`; see
+`All checks passed` aggregates the pinned Linux call, the Windows job and the
+dependency audit, and is the branch-protection target. `runner-canary.yml`
+runs the identical Linux checks on the next Ubuntu image; it is non-blocking
+and never part of that gate. Workflows name explicit runner images rather
+than `ubuntu-latest`; see
 [the runner baseline contract](docs/ci-runner-baseline.md) for the canary's
 ownership and promotion criteria.
+
+Job cost is budgeted: [the validation budget](docs/validation-budget.md)
+records the measured baseline, the approved limits and the tiers. Adding a
+capability or platform that pushes a sweep past its limit fails `poe check`
+until the tiering is decided.
+
 A local green run does not prove GitHub Actions itself is green; inspect the
 actual run after pushing. Cross-repository validation and generated-project
 live CI verification remain deliberate local checks because they require a

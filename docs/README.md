@@ -193,6 +193,11 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   pinned to `>=0.4.1,<0.5` is unaffected by the publication, pinned by
   `tests/test_released_provider_cutover.py` and
   `tests/test_released_client_compatibility.py`.
+- [validation-budget.md](validation-budget.md) — FT-26.01's measured cost of
+  composition validation, the approved per-job and critical-path limits and
+  their noise treatment, the tiers and guarantee map, and the path-sensitive
+  escalation design FT-26.02 implements, pinned by
+  `tests/test_validation_budget.py` (ADR 0076).
 - [dependency-audit.md](dependency-audit.md) — FT-24.02's contract for auditing
   this repository's locked runtime and full dependency graphs for known
   vulnerabilities with `uv audit`: scope and coverage, outcomes, enforcement
