@@ -78,6 +78,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0073 — Scaffold tasks run only on copy](0073-scaffold-tasks-run-only-on-copy.md)
 - [0074 — Pin the Ubuntu runner baseline with a canary](0074-pin-the-ubuntu-runner-baseline-with-a-canary.md)
 - [0075 — Audit locked dependencies with uv audit](0075-audit-locked-dependencies-with-uv-audit.md)
+- [0076 — Approve validation budgets and tiers](0076-approve-validation-budgets-and-tiers.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

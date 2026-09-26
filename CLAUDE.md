@@ -137,6 +137,9 @@ The full rationale and migration consequences live in
 - Pydantic contract models are strict and reject unknown input.
 - Public results and errors remain deterministic and structured.
 - External GitHub Actions use full reviewed commit SHAs with version comments.
+- CI cost is budgeted ([validation budget](docs/validation-budget.md)): a
+  catalogue change that pushes a sweep past its limit needs a tiering decision,
+  not a raised limit; full composition coverage stays mandatory before release.
 - Locked dependencies are audited with `uv audit` (`uv run poe audit`); exceptions
   are reviewed, scoped and expiring ([audit contract](docs/dependency-audit.md)).
 - This repository's workflows name explicit runner images, never

@@ -1,0 +1,330 @@
+# Approved validation budgets, tiers and PR escalation (FT-26.01, ADR 0076).
+#
+# The machine-readable half of docs/validation-budget.md, and the input FT-26.02
+# implements against. tests/test_validation_budget.py pins it to the workflows,
+# the catalogue and the rule below; scripts/ci_timings.py reproduces every
+# baseline number from the recorded window. Re-baseline only in a reviewed pull
+# request that re-runs that script and cites the commits, never by hand.
+#
+# Times are minutes of a job's own wall time (queueing excluded).
+
+schema = 1
+
+[baseline]
+workflow = "test-template.yml"
+window_first_run = 35475114537       # d1de861, 2026-09-19: first run with FT-20.03's archetype cells
+window_last_run = 36241783316        # d0b3ec2, 2026-09-26
+first_commit = "d1de861"
+last_commit = "d0b3ec2"
+runs = 25                            # successful push, pull_request and schedule runs
+runner_image = "ubuntu-24.04"        # every measured Ubuntu job
+xdist_workers = 4
+cache = "warm"                       # uv cache restored in every sampled run; see the contract for the cold figure
+
+[rule]
+warn_factor = 1.25                   # warn = ceil_to_step(warn_factor x baseline p90)
+fail_factor = 1.5                    # fail = ceil_to_step(fail_factor x baseline p90)
+step_minutes = 0.5
+floor_warn_minutes = 1.5             # small jobs never warn below this
+floor_fail_minutes = 2.0
+min_baseline_runs = 20
+# Noise treatment (implemented by FT-26.02): one hardware outlier must not fail a build.
+warn_requires = "2 of the last 3 runs above warn"
+fail_requires = "one run above fail AND the median of the last 3 above warn"
+
+# The PR critical path: first job start to last job end. Approved figures, not the rule's.
+[critical_path]
+baseline_p90_minutes = 13.3
+warn_minutes = 16.0
+fail_minutes = 20.0
+
+# Wall seconds per composition, from the sweeps' own steps at the baseline
+# (618 s and 298 s over 2,880 compositions, rounded up). The growth guard
+# multiplies these by the catalogue's valid count.
+[cost]
+independent_seconds_per_composition = 0.215
+direct_seconds_per_composition = 0.104
+valid_compositions = 2880
+raw_candidates = 8192
+rejected_candidates = 5312
+
+# --- Tiers -------------------------------------------------------------------
+# `markers` are the registered pytest markers each tier runs (`fast` is the
+# unmarked default suite, `poe check`). `jobs` are "<workflow>:<job id>".
+
+[[tier]]
+id = "T0"
+name = "fast"
+markers = ["fast"]
+jobs = ["linux-checks.yml:lint"]
+summary = "format, lint, strict types, the contract and public-API pins: every PR, always"
+
+[[tier]]
+id = "T1"
+name = "project proof"
+markers = ["combos", "update", "archetype", "cutover"]
+jobs = [
+    "linux-checks.yml:scaffold",
+    "linux-checks.yml:archetype",
+    "linux-checks.yml:update-compat",
+    "linux-checks.yml:wheel",
+    "linux-checks.yml:released-client",
+    "test-template.yml:windows",
+    "test-template.yml:audit",
+]
+summary = "real generated projects, distributions, the released client and the dependency audit: every PR, always"
+
+[[tier]]
+id = "T2"
+name = "exhaustive"
+markers = ["sweep"]
+jobs = ["linux-checks.yml:sweep-composition"]
+summary = "every valid composition plans and renders (direct engine)"
+
+[[tier]]
+id = "T3"
+name = "independent client"
+markers = ["sweep"]
+jobs = ["linux-checks.yml:sweep-independence"]
+summary = "every valid composition renders through an independent client from path-free facts"
+
+[[tier]]
+id = "T4"
+name = "sibling-gated"
+markers = ["crossrepo", "cutover"]
+jobs = []
+summary = "pairing with a sibling create-forge checkout; deliberately outside CI (ADR 0057)"
+
+# Jobs that are not timed tiers: the required aggregate, the reusable-workflow
+# caller, the non-blocking canary and the release path.
+[structural]
+jobs = [
+    "test-template.yml:linux",
+    "test-template.yml:all-green",
+    "runner-canary.yml:canary",
+    "release.yml:audit",
+    "release.yml:release",
+    "release.yml:publish",
+]
+
+# --- Approved per-job limits ---------------------------------------------------
+
+[[job]]
+id = "linux-checks.yml:sweep-independence"
+display = ["Composition sweep -- independent client"]
+tier = "T3"
+baseline_p50 = 10.5
+baseline_p90 = 10.6
+warn_minutes = 13.5
+fail_minutes = 16.0
+
+[[job]]
+id = "linux-checks.yml:sweep-composition"
+display = ["Composition sweep -- direct engine"]
+tier = "T2"
+baseline_p50 = 5.2
+baseline_p90 = 5.3
+warn_minutes = 7.0
+fail_minutes = 8.0
+
+[[job]]
+id = "linux-checks.yml:archetype"
+display = ["Archetype builds"]
+tier = "T1"
+baseline_p50 = 3.6
+baseline_p90 = 3.9
+warn_minutes = 5.0
+fail_minutes = 6.0
+
+[[job]]
+id = "linux-checks.yml:lint"
+display = ["Lint template"]
+tier = "T0"
+baseline_p50 = 2.5
+baseline_p90 = 2.6
+warn_minutes = 3.5
+fail_minutes = 4.0
+
+[[job]]
+id = "test-template.yml:windows"
+display = ["Windows smoke"]
+tier = "T1"
+baseline_p50 = 1.6
+baseline_p90 = 2.0
+warn_minutes = 2.5
+fail_minutes = 3.0
+
+[[job]]
+id = "linux-checks.yml:scaffold"
+display = [
+    "uv_build + static",
+    "hatchling + static",
+    "hatchling + vcs",
+    "kitchen sink (all conditionals on)",
+]
+tier = "T1"
+baseline_p50 = 0.6
+baseline_p90 = 0.9
+warn_minutes = 1.5
+fail_minutes = 2.0
+
+[[job]]
+id = "linux-checks.yml:update-compat"
+display = ["copier update compatibility"]
+tier = "T1"
+baseline_p50 = 0.8
+baseline_p90 = 0.9
+warn_minutes = 1.5
+fail_minutes = 2.0
+
+[[job]]
+id = "linux-checks.yml:wheel"
+display = ["Wheel contents"]
+tier = "T1"
+baseline_p50 = 0.2
+baseline_p90 = 0.3
+warn_minutes = 1.5
+fail_minutes = 2.0
+
+[[job]]
+id = "linux-checks.yml:released-client"
+display = ["Released client compatibility"]
+tier = "T1"
+baseline_p50 = 0.3
+baseline_p90 = 0.3
+warn_minutes = 1.5
+fail_minutes = 2.0
+
+# Added by FT-24.02 after the baseline window opened: 2 runs, below
+# min_baseline_runs, so the floor limits apply until a real baseline exists.
+[[job]]
+id = "test-template.yml:audit"
+display = ["Dependency audit"]
+tier = "T1"
+baseline_p50 = 0.2
+baseline_p90 = 0.2
+warn_minutes = 1.5
+fail_minutes = 2.0
+provisional = true
+
+# --- Escalation (implemented by FT-26.02; nothing in CI changes in FT-26.01) ----
+# A pull request runs T2 and T3 only when it changes one of these paths. T2 and T3
+# ALWAYS run on `main`, on the weekly schedule and as a release gate. Every
+# protected check stays in place until FT-26.02's replacement coverage is approved.
+
+[escalation]
+sensitive_paths = [
+    "src/forge_template/**",
+    "tests/composition_matrix.py",
+    "tests/test_composition_sweep.py",
+    "tests/test_no_copy_inheritance.py",
+    "tests/no_copy_downstream.py",
+    "tests/conftest.py",
+    "pyproject.toml",
+    "uv.lock",
+    ".github/workflows/**",
+]
+# The check-only modules the wheel excludes (scripts/check_wheel.py's
+# _MUST_NOT_CONTAIN): changing them cannot change what the sweeps render.
+excluded_paths = [
+    "src/forge_template/adr.py",
+    "src/forge_template/github_actions.py",
+    "src/forge_template/render.py",
+    "src/forge_template/schema.py",
+]
+always_run_on = ["push to main", "weekly schedule", "workflow_dispatch", "release"]
+
+# --- Guarantee map --------------------------------------------------------------
+# Every current safety and compatibility guarantee class, the tier that proves it
+# and what pins it. Full accepted-composition coverage (T2 and T3) stays mandatory
+# before a release.
+
+[[guarantee]]
+id = "static-quality"
+statement = "formatting, lint and strict types hold across src and tests"
+tier = "T0"
+pinned_by = ["pyproject.toml"]
+
+[[guarantee]]
+id = "living-contracts"
+statement = "living docs, ADRs and the compatibility-policy tables cannot drift from the catalogue"
+tier = "T0"
+pinned_by = ["tests/test_living_docs.py", "tests/test_compatibility_policy.py", "tests/test_adr.py"]
+
+[[guarantee]]
+id = "public-engine-api"
+statement = "public signatures, result models, error codes and protocol axes are unchanged bar approved additions"
+tier = "T0"
+pinned_by = ["tests/test_engine.py", "tests/test_generation_provenance.py", "tests/test_cutover_gates.py", "tests/test_streamlit_gates.py"]
+
+[[guarantee]]
+id = "composition-rules"
+statement = "manifests, ordering, conflicts, extension points and golden composed output are deterministic and valid"
+tier = "T0"
+pinned_by = ["tests/test_component_manifest.py", "tests/test_composition_contract.py", "tests/test_extension_points.py", "tests/test_platform_composition.py", "tests/test_parity_inventory.py"]
+
+[[guarantee]]
+id = "workflow-policy"
+statement = "SHA-pinned actions, explicit runner images, the dependency-audit rules and these budgets hold"
+tier = "T0"
+pinned_by = ["tests/test_github_actions.py", "tests/test_runner_baseline.py", "tests/test_dependency_audit.py", "tests/test_dependency_updates.py"]
+
+[[guarantee]]
+id = "direct-copier-projects"
+statement = "the four direct-Copier configurations scaffold and pass their own checks"
+tier = "T1"
+pinned_by = ["tests/test_combos.py"]
+
+[[guarantee]]
+id = "copier-update"
+statement = "copier update from the last release keeps local edits and does not fail"
+tier = "T1"
+pinned_by = ["tests/test_update.py"]
+
+[[guarantee]]
+id = "generated-project-proof"
+statement = "representative archetype and capability projects lock, build, install, pass their own checks and need neither Forge repository"
+tier = "T1"
+pinned_by = ["tests/test_full_composition_build.py", "tests/test_streamlit_endpoints.py", "tests/test_scientific_python_capability_build.py"]
+
+[[guarantee]]
+id = "distribution-contents"
+statement = "the wheel and sdist ship the public facade and content and exclude repo tooling"
+tier = "T1"
+pinned_by = ["scripts/check_wheel.py"]
+
+[[guarantee]]
+id = "released-client-compatibility"
+statement = "a client pinned to the previous line still resolves, installs and generates"
+tier = "T1"
+pinned_by = ["tests/test_released_client_compatibility.py"]
+
+[[guarantee]]
+id = "dependency-vulnerabilities"
+statement = "no unsuppressed known vulnerability in the locked runtime and full graphs"
+tier = "T1"
+pinned_by = ["scripts/audit_dependencies.py"]
+
+[[guarantee]]
+id = "windows-portability"
+statement = "scaffolding works on Windows paths and line endings"
+tier = "T1"
+pinned_by = ["tests/test_combos.py"]
+
+[[guarantee]]
+id = "every-valid-composition-renders"
+statement = "every valid composition the catalogue accepts plans and renders"
+tier = "T2"
+pinned_by = ["tests/test_composition_sweep.py"]
+
+[[guarantee]]
+id = "client-independence"
+statement = "an independent client renders every valid composition from path-free facts, never reading a component resource"
+tier = "T3"
+pinned_by = ["tests/test_no_copy_inheritance.py"]
+
+[[guarantee]]
+id = "cross-repository-pairing"
+statement = "the current provider and the sibling client pair and pass together"
+tier = "T4"
+pinned_by = ["tests/test_cross_repository_validation.py", "tests/test_released_provider_cutover.py"]
