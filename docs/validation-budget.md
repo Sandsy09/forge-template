@@ -319,3 +319,5 @@ re-baseline; a change in what the jobs do is.
 The budget covers this repository's own CI. It does not govern
 `create-forge`'s workflows or any generated project's CI. It does not reduce
 release coverage and it makes no performance change to the engine.
+
+Throwaway note that exists only to exercise the docs-only PR path.
