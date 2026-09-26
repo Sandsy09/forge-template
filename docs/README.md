@@ -211,5 +211,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   pinned `ubuntu-24.04` baseline, the non-blocking `ubuntu-26.04` canary,
   ownership, promotion and rollback criteria, and the generated-workflow
   exclusion, pinned by `tests/test_runner_baseline.py` (ADR 0074).
+- [roadmap-tracking.md](roadmap-tracking.md) — FT-24.03's contract for roadmap
+  packs, `roadmap:N` labels, stage milestones, native sub-issue and blocked-by
+  relationships, status labels, derived traceability and the mirror rule, pinned
+  by `tests/test_roadmap_packs.py` and `tests/test_roadmap_sync.py` (ADR 0078).
 - [adr/](adr/) — Architecture Decision Records: why this repo is shaped the
   way it is, not just what it currently looks like.

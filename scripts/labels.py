@@ -76,7 +76,12 @@ def current_labels(repo: str | None) -> dict[str, LabelSpec]:
     cmd = ["gh", "label", "list", "--json", "name,color,description", "--limit", "200"]
     if repo:
         cmd += ["--repo", repo]
-    result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+    # `gh` emits UTF-8. Decoding with the locale's default (cp1252 on Windows)
+    # turns an em dash into mojibake, so every non-ASCII description looked
+    # changed and the dry run reported drift that did not exist.
+    result = subprocess.run(
+        cmd, check=True, capture_output=True, text=True, encoding="utf-8"
+    )
     rows = json.loads(result.stdout)
     return {
         row["name"]: LabelSpec(
