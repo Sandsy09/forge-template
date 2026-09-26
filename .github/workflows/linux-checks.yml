@@ -97,6 +97,15 @@ jobs:
       - name: Scaffold and verify -- ${{ matrix.combo }}
         run: uv run pytest -m combos -k ${{ matrix.combo }} --from-git -v
 
+      # TEMPORARY (#209): prove the 26.04 /tmp tmpfs diagnosis with our own
+      # numbers. Removed before merge.
+      - name: Temp-space diagnostics
+        if: always()
+        run: |
+          df -hT /tmp "$RUNNER_TEMP"
+          findmnt -no FSTYPE,SIZE,OPTIONS /tmp || true
+          du -sh /tmp/pytest-of-* /tmp/copier-combos 2>/dev/null || true
+
   # ---------------------------------------------------------------------------
   # Real generated-project proof for every production archetype (Library, CLI,
   # Data Science, Streamlit) and capability composition -- tests/*_build.py,
@@ -121,6 +130,15 @@ jobs:
 
       - name: Build every production archetype
         run: uv run poe archetype
+
+      # TEMPORARY (#209): prove the 26.04 /tmp tmpfs diagnosis with our own
+      # numbers. Removed before merge.
+      - name: Temp-space diagnostics
+        if: always()
+        run: |
+          df -hT /tmp "$RUNNER_TEMP"
+          findmnt -no FSTYPE,SIZE,OPTIONS /tmp || true
+          du -sh /tmp/pytest-of-* /tmp/copier-combos 2>/dev/null || true
 
   # ---------------------------------------------------------------------------
   # Exhaustive composition sweep -- plans and renders every one of the 2880
@@ -202,6 +220,15 @@ jobs:
 
       - name: copier update scenarios
         run: uv run pytest -m update -v
+
+      # TEMPORARY (#209): prove the 26.04 /tmp tmpfs diagnosis with our own
+      # numbers. Removed before merge.
+      - name: Temp-space diagnostics
+        if: always()
+        run: |
+          df -hT /tmp "$RUNNER_TEMP"
+          findmnt -no FSTYPE,SIZE,OPTIONS /tmp || true
+          du -sh /tmp/pytest-of-* /tmp/copier-combos 2>/dev/null || true
 
   # ---------------------------------------------------------------------------
   # Verifies the built wheel ships the public engine facade and content
