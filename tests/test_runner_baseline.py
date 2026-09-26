@@ -156,3 +156,12 @@ def test_generated_workflows_keep_their_own_baseline() -> None:
         text = Path(path).read_text(encoding="utf-8")
         assert "runs-on: ubuntu-latest" in text, path
         assert "ubuntu-24.04" not in text and "ubuntu-26.04" not in text, path
+
+
+def test_archetype_job_keeps_temp_data_off_the_26_04_tmpfs() -> None:
+    """ubuntu-26.04 mounts ``/tmp`` as a ~7.8G RAM tmpfs with a per-user quota
+    (actions/runner-images#14777), which the archetype builds' temp venvs fill
+    (#209). Its first step exports ``TMPDIR`` from ``RUNNER_TEMP`` -- on the
+    workspace disk, like the uv cache -- so the fix cannot be dropped silently."""
+    steps = _workflow("linux-checks.yml")["jobs"]["archetype"]["steps"]
+    assert steps[0]["run"] == 'echo "TMPDIR=$RUNNER_TEMP" >> "$GITHUB_ENV"'

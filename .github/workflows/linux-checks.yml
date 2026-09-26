@@ -107,6 +107,14 @@ jobs:
     runs-on: ${{ inputs.runner }}
     needs: lint
     steps:
+      # ubuntu-26.04 mounts /tmp as a ~7.8G RAM tmpfs with a per-user quota
+      # (actions/runner-images#14777); ubuntu-24.04 keeps it on the root disk.
+      # This job's temp venvs (scipy, mypy, notebooks) fill that quota, so
+      # keep test temp data on the workspace disk -- also the filesystem of
+      # the uv cache, so hardlinks work. See docs/ci-runner-baseline.md.
+      - name: Keep temp data on the workspace disk
+        run: echo "TMPDIR=$RUNNER_TEMP" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install uv
