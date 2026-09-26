@@ -147,6 +147,9 @@ The full rationale and migration consequences live in
 - This repository's workflows name explicit runner images, never
   `ubuntu-latest`; generated workflows are unchanged by that rule
   ([runner baseline](docs/ci-runner-baseline.md)).
+- Roadmap packs record exact filed bodies and are mirrored byte-for-byte in
+  `create-forge`; completed packs are never rewritten
+  ([tracking contract](docs/roadmap-tracking.md)).
 - Architectural decisions are immutable Nygard-format records in
   [docs/adr/](docs/adr/); living behaviour belongs in `docs/*.md` contracts.
 - Historical and planned work belongs in the appropriate

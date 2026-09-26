@@ -18,6 +18,15 @@
       "filter": ["docs/adr/**"],
       "config": { "MD013": false },
       "combine": "merge"
+    },
+    {
+      // docs/roadmap-v5/github-issues/*/*.md: each issue body is recorded
+      // exactly as filed on GitHub and hash-pinned by scripts/check_roadmaps.py
+      // (docs/roadmap-tracking.md), so its single-line paragraphs cannot wrap.
+      // Structural rules still apply. The generated indexes share the folder.
+      "filter": ["docs/roadmap-v5/github-issues/*/*.md"],
+      "config": { "MD013": false },
+      "combine": "merge"
     }
   ]
 }

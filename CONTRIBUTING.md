@@ -137,6 +137,11 @@ than `ubuntu-latest`; see
 [the runner baseline contract](docs/ci-runner-baseline.md) for the canary's
 ownership and promotion criteria.
 
+Roadmap issues are tracked by [the roadmap tracking contract](docs/roadmap-tracking.md):
+`scripts/roadmap_sync.py` reconciles labels, milestones and native relationships
+(dry run by default) and `scripts/check_roadmaps.py --mirror ../create-forge`
+must pass in both repositories.
+
 Job cost is budgeted: [the validation budget](docs/validation-budget.md)
 records the measured baseline, the approved limits and the tiers. Adding a
 capability or platform that pushes a sweep past its limit fails `poe check`
