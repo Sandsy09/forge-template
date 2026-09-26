@@ -66,6 +66,7 @@ Run additional checks according to the affected surface:
 | Catalogue, selection, composition, or public render facade | `uv run poe sweep` |
 | Component manifests/resources or wheel configuration | `uv run poe check:wheel` |
 | A provider/client boundary visible to `create-forge` | `uv run poe crossrepo` with a sibling checkout |
+| `pyproject.toml` dependencies or `uv.lock` | `uv run poe audit` (needs network) |
 
 `poe combos` renders four direct-Copier configurations and runs each generated
 project's checks. It uses the working tree by default; add `--from-git` when a
@@ -124,6 +125,8 @@ Linux checks validate:
 - Installed archetype builds and full composition sweeps.
 - Copier update compatibility.
 - Wheel contents and clean public-package imports.
+- A dependency-vulnerability audit of the locked graphs (`audit` job, part of
+  `All checks passed`; also weekly and before a release).
 
 `All checks passed` aggregates the pinned Linux call and the Windows job and
 is the branch-protection target. `runner-canary.yml` runs the identical Linux
@@ -162,6 +165,13 @@ are compatibility claims, so major-line moves require deliberate review and
 their policy-prescribed validation. Generated-project dependencies are owned by
 their components or the direct-Copier schema, not by root Dependabot settings.
 
+Locked dependencies are audited for known vulnerabilities with `uv audit` under
+[the dependency audit contract](docs/dependency-audit.md): run
+`uv run poe audit`, fix a finding with `uv lock --upgrade-package <name>`, and
+accept one only through a reviewed, expiring entry in
+`.github/audit-exceptions.toml`. A lock-only upgrade is not automatically a
+change to a published support floor.
+
 External GitHub Actions follow
 [the action-pinning policy](docs/github-action-pinning.md): use a full
 40-character commit SHA with the exact release tag in a same-line comment.
@@ -189,7 +199,9 @@ direct-Copier projects.
 
 1. Open and merge a reviewed version-bump pull request after all required
    validation passes.
-2. Run `uv run poe check:wheel` against the release candidate.
+2. Run `uv run poe check:wheel` against the release candidate. The release
+   workflow also runs the dependency audit first and stops on findings or an
+   unreachable advisory service; there is no bypass, so rerun it.
 3. In GitHub Actions, run the manual **Release template** workflow from `main`
    with `dry_run: true` and inspect the derived tag and release notes.
 4. Run it again with `dry_run: false`. The workflow creates the tag and GitHub

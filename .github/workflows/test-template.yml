@@ -63,14 +63,40 @@ jobs:
         run: uv run pytest -m combos -k c1-uvbuild-static --from-git -v
 
   # ---------------------------------------------------------------------------
+  # Dependency-vulnerability audit of the locked runtime and full graphs
+  # (`uv audit`, preview; docs/dependency-audit.md, ADR 0075). Not part of
+  # linux-checks.yml: it does not depend on the runner image, so the canary
+  # would only repeat it. Unsuppressed findings always fail. An unreachable
+  # advisory service fails the weekly schedule and manual runs, but only warns
+  # on pull requests and pushes, where it is not the change's fault and is
+  # still reported loudly as NOT a clean result.
+  # ---------------------------------------------------------------------------
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-24.04
+    env:
+      ON_OUTAGE: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && 'fail' || 'warn' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+
+      - name: Audit locked dependencies
+        run: uv run --no-project python scripts/audit_dependencies.py --on-outage "$ON_OUTAGE"
+
+  # ---------------------------------------------------------------------------
   # Single required status check for branch protection. It gates the pinned
-  # Linux call and Windows only; the canary is a separate workflow and never
-  # a `needs` of this job.
+  # Linux call, Windows and the dependency audit; the canary is a separate
+  # workflow and never a `needs` of this job.
   # ---------------------------------------------------------------------------
   all-green:
     name: All checks passed
     runs-on: ubuntu-24.04
-    needs: [linux, windows]
+    needs: [linux, windows, audit]
     if: always()
     steps:
       - name: Verify
