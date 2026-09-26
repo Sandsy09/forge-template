@@ -299,6 +299,21 @@ def test_a_skipped_sweep_is_a_failure_when_the_sweeps_were_required() -> None:
     )
 
 
+def test_a_sweep_skipped_after_an_upstream_failure_says_so() -> None:
+    """Lint failing skips the sweeps that need it; the report names the cause."""
+    jobs = copy.deepcopy(_jobs("success"))
+    lint = _job(jobs, "Lint template")
+    lint["conclusion"] = "failure"
+    lint["steps"] = [{"name": "Schema and unit tests", "conclusion": "failure"}]
+    for name in (_DIRECT, _INDEPENDENT):
+        _job(jobs, name)["conclusion"] = "skipped"
+    result = _budget(jobs)
+    skipped = [p for p in result.problems if "sweep was required" in p]
+    assert len(skipped) == 2
+    assert all("an earlier job failed in this run" in p for p in skipped)
+    assert result.problems[0].startswith("Lint template: test failure")
+
+
 def test_a_missing_sweep_is_a_failure_when_the_sweeps_were_required() -> None:
     jobs = [job for job in _jobs("success") if _INDEPENDENT not in job["name"]]
     result = _budget(jobs)

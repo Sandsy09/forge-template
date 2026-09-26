@@ -495,6 +495,11 @@ def _sweep_section(
     problems: list[str],
 ) -> list[str]:
     valid = budgets["cost"]["valid_compositions"]
+    upstream = (
+        " (an earlier job failed in this run, so it did not start: fix that first)"
+        if problems
+        else ""
+    )
     lines = [
         "",
         "### Matrix size and coverage",
@@ -518,7 +523,7 @@ def _sweep_section(
         if state != "success":
             problems.append(
                 f"the {kind} sweep was required but its job was {state}: a "
-                "skipped or missing exhaustive tier is never acceptable"
+                f"skipped or missing exhaustive tier is never acceptable{upstream}"
             )
         elif ran != str(valid):
             problems.append(
