@@ -352,7 +352,8 @@ point is checked against it when supplied, and left unverified — not
 rejected — when it is not, since a caller such as
 `forge_template.composition`'s internal re-validation has no reason to know
 the installed Foundation source at all. The caller that actually has it
-(`forge_template.engine`) performs the authoritative check.
+(the engine's private discovery module, `forge_template._discovery`)
+performs the authoritative check.
 
 ## ProjectSpec selection validation
 

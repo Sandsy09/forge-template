@@ -10,8 +10,9 @@ component versions, and a digest and ownership entry per rendered file. It
 records no timestamp, no absolute path, and no environment value.
 
 This module owns only the document's shape and its serialisation. Building one
-from a render and validating one a client hands back both live in
-``forge_template.engine`` -- they need the catalogue and the renderer, and
+from a render and validating one a client hands back both live behind the
+``forge_template.engine`` facade (in the private ``_provenance`` module) --
+they need the catalogue and the renderer, and
 their failures are the two ``EngineErrorCode`` values
 ``invalid-generation-metadata`` and ``unsupported-generation-metadata``. See
 docs/generation-provenance.md (FT-15.02 / ADR 0059) and

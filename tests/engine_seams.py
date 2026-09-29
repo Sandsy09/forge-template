@@ -4,8 +4,8 @@ FT-25.01 / ADR 0079. The catalogue and Foundation root overrides (and the
 catalogue loader ``get_engine_info`` must never call) are deliberately
 private: clients cannot redirect discovery to arbitrary content. Tests used
 to patch them directly on ``forge_template.engine`` in a dozen modules; they
-now go through this module, so moving those seams into a private module
-(FT-25.02) changes exactly one line here -- :data:`SEAM_MODULE`.
+now go through this module, which is how FT-25.02 moved them into the private
+``forge_template._discovery`` by changing one line -- :data:`SEAM_MODULE`.
 
 Nothing here is a supported API, and nothing outside ``tests/`` may use it.
 """
@@ -19,7 +19,7 @@ from pathlib import Path
 from types import ModuleType
 from typing import TYPE_CHECKING, Final
 
-import forge_template.engine as SEAM_MODULE  # noqa: N812
+import forge_template._discovery as SEAM_MODULE  # noqa: N812
 
 if TYPE_CHECKING:
     import pytest
@@ -42,7 +42,7 @@ UNCHANGED: Final = _Unchanged.TOKEN
 
 _CATALOGUE = "_CATALOGUE_ROOT_OVERRIDE"
 _FOUNDATION = "_FOUNDATION_ROOT_OVERRIDE"
-_LOADER = "_load_catalogue"
+_LOADER = "load_catalogue"
 
 
 def _module() -> ModuleType:

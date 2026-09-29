@@ -653,8 +653,8 @@ def _reject_unknown_extension_points(
     knowing the installed Foundation source, such as
     ``forge_template.composition``'s internal re-validation -- that specific
     check is deferred rather than assumed to fail; the caller that actually
-    has the Foundation source (``forge_template.engine``) performs the
-    authoritative check.
+    has the Foundation source (the engine's ``forge_template._discovery``)
+    performs the authoritative check.
     """
     for manifest in manifests:
         for contribution in manifest.contributions:
