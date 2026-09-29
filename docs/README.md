@@ -31,6 +31,12 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   selections, the Python and dependency evidence, the bounded non-serving
   smoke, the executable acceptance matrix and the provider-first release
   gates, pinned by `tests/test_streamlit_gates.py`.
+- [batch-archetype.md](batch-archetype.md) — the accepted project shape,
+  entry point, packaging, dependency, idempotency, failure-handling, test and
+  exclusion contract for the Batch archetype (FT-27.01, ADR 0080), pinned by
+  `tests/test_batch_contract.py`. No implementation exists yet;
+  [FT-27.02](https://github.com/Sandsy09/forge-template/issues/200) decides
+  its compatibility and acceptance matrix next.
 - [data-science-capabilities.md](data-science-capabilities.md) — the accepted
   optionless Jupyter tooling and optional Scientific Python dependency
   contracts, including both production capability implementations on `main`.
