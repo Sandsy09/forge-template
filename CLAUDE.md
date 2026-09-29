@@ -27,7 +27,12 @@ forge-template/
 ├── copier.yml                 Direct-Copier question schema; must stay at root
 ├── template/                  Files rendered by the direct-Copier path
 ├── src/forge_template/
-│   ├── engine.py              Supported discovery, planning, and render facade
+│   ├── engine.py              Supported facade; delegates to the private modules
+│   ├── _discovery.py          Catalogue loading and ProjectSpec validation
+│   ├── _rendering.py          Planning, extension contract, rendering, output checks
+│   ├── _provenance.py         Protocols, generation metadata, update planning
+│   ├── _models.py, _errors.py Public result models and the structured error type
+│   ├── _legacy_answers.py     Legacy Copier Library answer mapping
 │   ├── project_spec.py        Strict generation-request models
 │   ├── component_manifest.py  Component metadata and compatibility validation
 │   ├── composition.py         Deterministic selection and application order
@@ -103,7 +108,8 @@ behaviour.
 - The supported client boundary is the top-level `forge_template` facade
   described by [the engine API contract](docs/template-engine-api.md). Do not
   expose arbitrary catalogue roots or test-only Foundation/component override
-  seams.
+  seams. Underscore modules are private; their map and the frozen baseline
+  that guards them are in [engine internals](docs/engine-internals.md).
 - Generation metadata and `plan_update` describe reproducible output changes.
   The engine plans updates; the client performs merges and protects user files.
 - Component and protocol compatibility changes follow

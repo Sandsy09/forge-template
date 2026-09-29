@@ -109,3 +109,56 @@ The existing composition modules (`component_manifest`, `composition`,
   import one.
 - Tests reach the root overrides and the catalogue loader only through
   `tests/engine_seams.py`.
+
+## Installed and paired verification
+
+FT-25.03 checks the decomposed engine the way clients receive it. Run it with
+`uv run poe pairing`: it needs network access and a few minutes, so it is a
+deliberate local check like `poe crossrepo`, not a CI job.
+`tests/test_decomposed_engine_pairing.py` works only through subprocesses in
+fresh virtual environments:
+
+1. **Artefacts.** The candidate wheel, and a wheel built from the candidate
+   sdist, each install cleanly. Both import the facade and all six private
+   modules, ship `py.typed`, `foundation.toml` and every component manifest,
+   and contain none of the check-only modules.
+2. **A minimal independent client.** `tests/independent_client_probe.py`
+   imports only the standard library and top-level `forge_template` (a
+   fast-suite test enforces this). It runs in each candidate installation and
+   in the published `0.6.0` wheel from PyPI (digest-verified), covering:
+   - the smallest, smallest-with-`github` and largest composition of every
+     archetype;
+   - four update transitions per archetype;
+   - four structured failures;
+   - `get_engine_info`, the public names and the whole catalogue.
+
+   The candidate and the published installation must report identical
+   observations, and the fingerprints must equal the checked-in baseline.
+3. **The supported released client.** `create-forge 0.5.0` from PyPI
+   generates the smallest project of every archetype, plus a large `library`
+   project with `github`. It does this once against the published `0.6.0`
+   and once with the candidate wheel installed in its place. The trees,
+   excluding `.git` and `.venv`, must be byte-identical. `create-forge doctor
+   --json` must also accept the candidate's negotiation payload.
+
+A one-byte change to one rendered file fails checks 2 and 3, naming the
+composition and the file.
+
+### Validation evidence
+
+Recorded for the decomposition on `main` at `cb6c206` (FT-25.02, PR #219).
+Artefacts were built locally on Windows; the hashes of a Linux build differ.
+
+| Check | Result |
+| --- | --- |
+| Candidate wheel (`uv run poe check:wheel`) | `forge_template-0.6.0-py3-none-any.whl`, 121,480 bytes, sha256 `a8304b9cf409e07924a57f318cbbb86c3acd34b8f172ddbd6d462dcccc61ca54`; wheel built from the sdist, private modules required, check-only modules excluded |
+| Published comparison artefact | `forge_template-0.6.0-py3-none-any.whl`, 115,232 bytes, sha256 `cf21152242a81b6a19d5298521a77f504063091759b5cca721b3f527c64ac742` |
+| Released client | `create-forge 0.5.0` from PyPI (`forge-template>=0.6,<0.7`) |
+| `uv run poe pairing` | 5 passed: both installs, the independent client and the released client identical to `0.6.0`; `doctor` reports engine `0.6.0`, protocols `1` / `1,2,3` / `1` |
+| Mutation (one extra byte in rendered `README.md`) | both comparison tests fail, naming `README.md` and `.forge/generation.json` |
+| `uv run poe crossrepo` against `create-forge` `main` `e0f22c2` | 20 passed |
+| Sweeps and archetype builds on PR #219 | green, all 2,880 fingerprints unchanged ([run 36619901908](https://github.com/Sandsy09/forge-template/actions/runs/36619901908)) |
+
+The public compatibility is unchanged: no export, signature, error,
+protocol, catalogue or output change. There is no downstream dependency bump,
+and the decomposition stays unreleased until the next tagged `0.6.x` release.

@@ -135,8 +135,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   extension markers, and structured engine failures.
 - [engine-internals.md](engine-internals.md) — FT-25.01's frozen facade and
   output baseline (signatures, schemas, error identities, per-composition
-  fingerprints, update classifications) and the private module map the
-  engine decomposition follows (ADR 0079).
+  fingerprints, update classifications), the private module map FT-25.02
+  implemented (ADR 0079), and FT-25.03's installed-artefact, independent-client
+  and released-client verification (`poe pairing`).
 - [generated-project-validation.md](generated-project-validation.md) — the
   side-effect-free plan/output, `pyproject.toml`, and template-completion checks
   every successful engine render passes.

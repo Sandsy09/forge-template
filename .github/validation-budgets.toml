@@ -91,9 +91,9 @@ summary = "every valid composition renders through an independent client from pa
 [[tier]]
 id = "T4"
 name = "sibling-gated"
-markers = ["crossrepo", "cutover"]
+markers = ["crossrepo", "cutover", "pairing"]
 jobs = []
-summary = "pairing with a sibling create-forge checkout; deliberately outside CI (ADR 0057)"
+summary = "pairing with a sibling create-forge checkout or the released client; deliberately outside CI (ADR 0057)"
 
 # Jobs that are not timed tiers: the required aggregate, the reusable-workflow
 # caller, the non-blocking canary and the release path.
@@ -263,7 +263,7 @@ pinned_by = ["tests/test_living_docs.py", "tests/test_compatibility_policy.py", 
 id = "public-engine-api"
 statement = "public signatures, result models, error codes and protocol axes are unchanged bar approved additions"
 tier = "T0"
-pinned_by = ["tests/test_engine.py", "tests/test_generation_provenance.py", "tests/test_cutover_gates.py", "tests/test_streamlit_gates.py"]
+pinned_by = ["tests/test_engine.py", "tests/test_generation_provenance.py", "tests/test_cutover_gates.py", "tests/test_streamlit_gates.py", "tests/test_engine_facade_contract.py", "tests/test_engine_baseline.py"]
 
 [[guarantee]]
 id = "composition-rules"
@@ -333,6 +333,6 @@ pinned_by = ["tests/test_no_copy_inheritance.py"]
 
 [[guarantee]]
 id = "cross-repository-pairing"
-statement = "the current provider and the sibling client pair and pass together"
+statement = "the current provider and the sibling client pair and pass together, and the candidate's installed artefacts behave exactly like the published release for the released and an independent client"
 tier = "T4"
-pinned_by = ["tests/test_cross_repository_validation.py", "tests/test_released_provider_cutover.py"]
+pinned_by = ["tests/test_cross_repository_validation.py", "tests/test_released_provider_cutover.py", "tests/test_decomposed_engine_pairing.py"]
