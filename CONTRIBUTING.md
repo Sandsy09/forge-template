@@ -67,6 +67,7 @@ Run additional checks according to the affected surface:
 | Component manifests/resources or wheel configuration | `uv run poe check:wheel` |
 | A provider/client boundary visible to `create-forge` | `uv run poe crossrepo` with a sibling checkout |
 | `pyproject.toml` dependencies or `uv.lock` | `uv run poe audit` (needs network) |
+| Engine internals or how the package is built | `uv run poe pairing` (needs network; installed artefacts, released client, independent client) |
 | Catalogue growth or CI job cost | the growth guard in `poe check`; `uv run poe ci:timings` to re-baseline |
 
 `poe combos` renders four direct-Copier configurations and runs each generated

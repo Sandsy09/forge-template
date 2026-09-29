@@ -26,6 +26,7 @@ loads no check-only module, and writes nothing.
 
 from __future__ import annotations
 
+import ast
 import inspect
 import json
 import shutil
@@ -482,3 +483,22 @@ def test_importing_the_facade_has_no_side_effects(tmp_path: Path) -> None:
 def test_generation_metadata_is_the_public_type() -> None:
     project = _library_project()
     assert type(project.metadata) is GenerationMetadata
+
+
+def test_the_independent_client_probe_imports_only_the_facade() -> None:
+    """FT-25.03: ``tests/independent_client_probe.py`` runs in environments
+    with nothing but an installed ``forge-template``, so it may import the
+    standard library and the top-level package only -- never a private
+    module, a submodule, the repository's ``tests`` package or a seam."""
+    probe = Path(__file__).parent / "independent_client_probe.py"
+    tree = ast.parse(probe.read_text(encoding="utf-8"))
+    imported: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module is not None:
+            imported.add(node.module)
+        elif isinstance(node, ast.Import):
+            imported.update(alias.name for alias in node.names)
+    third_party = {
+        name for name in imported if name.split(".")[0] not in sys.stdlib_module_names
+    }
+    assert third_party == {"forge_template"}, third_party

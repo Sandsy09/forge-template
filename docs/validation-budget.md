@@ -166,7 +166,7 @@ exactly one tier (`structural` jobs aside).
 | T1 | project proof | combos, archetype builds, `copier update`, wheel, released client, Windows smoke, audit | real generated projects, distributions |
 | T2 | exhaustive | direct-engine sweep | every valid composition plans and renders |
 | T3 | independent client | independent-client sweep | every valid composition renders from path-free facts |
-| T4 | sibling-gated | `crossrepo`, `cutover` row 339 | pairing with a sibling `create-forge`; outside CI (ADR 0057) |
+| T4 | sibling-gated | `crossrepo`, `cutover` row 339, `pairing` | pairing with a sibling `create-forge` or the released client; outside CI (ADR 0057) |
 
 `tests/test_no_copy_inheritance.py` holds both fast tests (T0) and the
 independent-client sweep (T3); the `cutover` marker covers the hermetic
@@ -176,7 +176,7 @@ released-client check (T1) and the sibling-gated pairing (T4).
 | --- | --- | --- |
 | `static-quality` | T0 | ruff and strict mypy (`pyproject.toml`) |
 | `living-contracts` | T0 | `test_living_docs`, `test_compatibility_policy`, `test_adr` |
-| `public-engine-api` | T0 | `test_engine`, `test_generation_provenance`, `test_cutover_gates`, `test_streamlit_gates` |
+| `public-engine-api` | T0 | `test_engine`, `test_generation_provenance`, `test_cutover_gates`, `test_streamlit_gates`, `test_engine_facade_contract`, `test_engine_baseline` |
 | `composition-rules` | T0 | `test_component_manifest`, `test_composition_contract`, `test_extension_points`, `test_platform_composition`, `test_parity_inventory` |
 | `workflow-policy` | T0 | `test_github_actions`, `test_runner_baseline`, `test_dependency_audit`, `test_dependency_updates` |
 | `direct-copier-projects` | T1 | `test_combos` |
@@ -188,7 +188,7 @@ released-client check (T1) and the sibling-gated pairing (T4).
 | `windows-portability` | T1 | `test_combos` on Windows |
 | `every-valid-composition-renders` | T2 | `test_composition_sweep` |
 | `client-independence` | T3 | `test_no_copy_inheritance` |
-| `cross-repository-pairing` | T4 | `test_cross_repository_validation`, `test_released_provider_cutover` |
+| `cross-repository-pairing` | T4 | `test_cross_repository_validation`, `test_released_provider_cutover`, `test_decomposed_engine_pairing` |
 
 **Full accepted-composition coverage stays mandatory before a release.** T2
 and T3 are never sampled, shortened or dropped for a release.

@@ -111,7 +111,7 @@ def _pypi_release_metadata(version: str) -> dict[str, object]:
 
 
 def download_verified_artefact(
-    identity: ArtefactIdentity, dest_dir: Path
+    identity: ArtefactIdentity, dest_dir: Path, *, version: str = ENGINE_VERSION
 ) -> VerifiedDownload:
     """Download one published `forge-template` artefact and verify it three
     ways against `identity`: PyPI's own reported size and digest (before a
@@ -126,12 +126,12 @@ def download_verified_artefact(
     exists to catch.
     """
     try:
-        metadata = _pypi_release_metadata(ENGINE_VERSION)
+        metadata = _pypi_release_metadata(version)
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
         pytest.skip(f"PyPI unreachable: {exc}")
 
     urls = metadata.get("urls")
-    assert isinstance(urls, list), f"malformed PyPI response for {ENGINE_VERSION}"
+    assert isinstance(urls, list), f"malformed PyPI response for {version}"
     matches = [entry for entry in urls if entry.get("filename") == identity.filename]
     assert len(matches) == 1, (
         f"expected exactly one {identity.filename} release file, found "
