@@ -68,6 +68,15 @@ from pathlib import Path
 
 _MUST_CONTAIN = (
     "forge_template/engine.py",
+    # The facade's private modules (ADR 0079 / docs/engine-internals.md): a
+    # packaging rule that skipped underscore-prefixed files would ship a
+    # facade that cannot import.
+    "forge_template/_discovery.py",
+    "forge_template/_errors.py",
+    "forge_template/_legacy_answers.py",
+    "forge_template/_models.py",
+    "forge_template/_provenance.py",
+    "forge_template/_rendering.py",
     "forge_template/project_spec.py",
     "forge_template/generation_metadata.py",
     # The Foundation content source and its manifest -- the wheel is

@@ -789,7 +789,7 @@ def test_component_may_contribute_to_foundation_without_self_contribution_error(
 def test_foundation_target_is_unchecked_without_a_foundation_source() -> None:
     """Catalogue-wide validation defers a Foundation-targeted contribution's
     published-point check to whichever caller actually has the installed
-    Foundation source (``forge_template.engine``); it is not an error by
+    Foundation source (``forge_template._discovery``); it is not an error by
     itself for ``validate_manifest_set`` to be called without one."""
     contributor = _manifest_v2(
         "library-v2",

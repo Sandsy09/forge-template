@@ -354,7 +354,7 @@ This policy does not promise:
 
 - that an uninstalled source-tree checkout reports a meaningful version
   (`get_engine_info()` reports `"0+unknown"` in that case, by design — see
-  `forge_template.engine._package_version`);
+  the private `forge_template._provenance.package_version`);
 - that an engine newer than a client's declared upper bound is safe to adopt
   without the range actually being widened;
 - any commitment about what a future Blueprint-class release may assume

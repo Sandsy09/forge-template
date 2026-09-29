@@ -152,7 +152,7 @@ def test_render_is_invariant_to_catalogue_filesystem_layout(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """The engine sorts ``component.toml`` paths before loading them
-    (engine.py ``_load_catalogue``). Rendering against a fresh copy of the
+    (``_discovery.load_catalogue``). Rendering against a fresh copy of the
     production catalogue -- a different on-disk inode order -- must produce
     byte-identical output. Only the private test seam moves; the installed
     Foundation source stays live."""

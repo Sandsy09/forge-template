@@ -50,7 +50,7 @@ collision that would need either fails clearly instead."""
 
 _PATH_JINJA_ENVIRONMENT = Environment(undefined=StrictUndefined)
 """Renders content *paths* only -- never file content, which the supported
-facade in ``forge_template.engine`` renders with its own environment. Kept
+facade renders (in ``forge_template._rendering``) with its own environment. Kept
 separate so this module's Jinja usage stays limited to what output-target
 derivation needs; it performs no autoescaping decision because a path is
 never HTML."""

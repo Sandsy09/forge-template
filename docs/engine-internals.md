@@ -7,8 +7,8 @@ nothing a client can see.
 the decision. The supported API itself is
 [template-engine-api.md](template-engine-api.md).
 
-Status: the baseline is in force (FT-25.01). The module split below is
-approved and is implemented by FT-25.02.
+Status: the baseline is in force (FT-25.01), and the module split below is
+implemented (FT-25.02) with every recorded baseline unchanged.
 
 ## What is frozen
 
@@ -75,7 +75,9 @@ test modules. Review each diff before committing it.
   errors and functions report `forge_template.engine`; the metadata models
   report `forge_template.generation_metadata`, the owners
   `forge_template.file_conflicts`, and the ProjectSpec models
-  `forge_template.project_spec`. The split may change the first group.
+  `forge_template.project_spec`. Since FT-25.02 the engine functions still
+  report `forge_template.engine`, while the engine models report
+  `forge_template._models` and the error types `forge_template._errors`.
 - Importing `forge_template` loads none of the check-only modules (`adr`,
   `render`, `schema`, `github_actions`), neither the `components` nor the
   `foundation` package, and writes nothing.

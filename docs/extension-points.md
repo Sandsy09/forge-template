@@ -230,7 +230,8 @@ component. It does not gain a channel to replace one.
 - **Executable hooks or plugins.** No manifest field, policy field, or engine
   entry point runs downstream code during planning or rendering.
 - **The private catalogue-root test seams.** `_CATALOGUE_ROOT_OVERRIDE` and
-  `_FOUNDATION_ROOT_OVERRIDE` in `forge_template.engine` exist only for this
+  `_FOUNDATION_ROOT_OVERRIDE` in the private `forge_template._discovery`
+  module (reached only through `tests/engine_seams.py`) exist only for this
   repository's own test suite. They are not public API, are never guaranteed
   to exist, and must never be exposed or documented as an integration path —
   the same rule [composition-fixtures.md](composition-fixtures.md) already
