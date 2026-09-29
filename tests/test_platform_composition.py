@@ -30,7 +30,6 @@ from pathlib import Path
 
 import pytest
 
-import forge_template.engine as engine_module
 from forge_template import (
     ComponentOwner,
     EngineErrorCode,
@@ -41,6 +40,7 @@ from forge_template import (
     render_project,
 )
 from forge_template.foundation_source import load_foundation_source
+from tests.engine_seams import override_sources
 
 _ROOT = Path(__file__).parents[1]
 _CONTRACT = _ROOT / "docs" / "platform-and-tooling-parity.md"
@@ -102,8 +102,7 @@ def overlaid_catalogue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     shutil.copytree(_PRODUCTION_COMPONENTS, root)
     for component in _SYNTHETIC:
         shutil.copytree(_SYNTHETIC_FIXTURES / component, root / component)
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", root)
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", None)
+    override_sources(monkeypatch, catalogue=root, foundation=None)
     return root
 
 

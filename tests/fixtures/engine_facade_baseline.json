@@ -1,0 +1,2656 @@
+{
+  "constants": {
+    "DEFAULT_GENERATION_METADATA_TARGET": ".forge/generation.json",
+    "EngineErrorCode": {
+      "COMPONENT_DISCOVERY_FAILED": "component-discovery-failed",
+      "GENERATED_PROJECT_INVALID": "generated-project-invalid",
+      "GENERATION_PLAN_FAILED": "generation-plan-failed",
+      "INVALID_COMPONENT_OPTIONS": "invalid-component-options",
+      "INVALID_COMPONENT_SELECTION": "invalid-component-selection",
+      "INVALID_GENERATION_METADATA": "invalid-generation-metadata",
+      "INVALID_PROJECT_SPEC": "invalid-project-spec",
+      "TEMPLATE_RENDER_FAILED": "template-render-failed",
+      "UNSUPPORTED_GENERATION_METADATA": "unsupported-generation-metadata"
+    },
+    "GENERATION_METADATA_VERSION": 1,
+    "PROJECT_SPEC_PROTOCOL_VERSION": 1,
+    "SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS": [
+      1,
+      2,
+      3
+    ],
+    "SUPPORTED_PROJECTSPEC_PROTOCOLS": [
+      1
+    ]
+  },
+  "errors": {
+    "discover_components/catalogue-unavailable": {
+      "code": "component-discovery-failed",
+      "details": [
+        {
+          "code": "catalogue-unavailable",
+          "path": []
+        }
+      ],
+      "message": "The installed component catalogue could not be read.",
+      "operation": "discover"
+    },
+    "map_legacy_library_answers/missing": {
+      "code": "invalid-component-options",
+      "details": [
+        {
+          "code": "missing-legacy-answer",
+          "path": []
+        }
+      ],
+      "message": "Legacy Library answers are invalid.",
+      "operation": "map-legacy-answers"
+    },
+    "map_legacy_library_answers/non-string": {
+      "code": "invalid-component-options",
+      "details": [
+        {
+          "code": "invalid-legacy-answer-type",
+          "path": []
+        }
+      ],
+      "message": "Legacy Library answers are invalid.",
+      "operation": "map-legacy-answers"
+    },
+    "map_legacy_library_answers/unexpected": {
+      "code": "invalid-component-options",
+      "details": [
+        {
+          "code": "unexpected-legacy-answer",
+          "path": []
+        }
+      ],
+      "message": "Legacy Library answers are invalid.",
+      "operation": "map-legacy-answers"
+    },
+    "map_legacy_library_answers/unsupported": {
+      "code": "invalid-component-options",
+      "details": [
+        {
+          "code": "unsupported-legacy-answer-combination",
+          "path": []
+        }
+      ],
+      "message": "Legacy Library answers are invalid.",
+      "operation": "map-legacy-answers"
+    },
+    "parse_generation_metadata/malformed": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "extra_forbidden",
+          "path": [
+            "surprise"
+          ]
+        }
+      ],
+      "message": "The generation-metadata document is malformed.",
+      "operation": "validate"
+    },
+    "parse_generation_metadata/not-an-object": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "invalid-generation-metadata",
+          "path": []
+        }
+      ],
+      "message": "a generation-metadata document must be a JSON object.",
+      "operation": "parse"
+    },
+    "parse_generation_metadata/not-json": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "json_invalid",
+          "path": []
+        }
+      ],
+      "message": "The generation-metadata document is malformed.",
+      "operation": "validate"
+    },
+    "parse_generation_metadata/selection-mismatch": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "invalid-generation-metadata",
+          "path": [
+            "components"
+          ]
+        }
+      ],
+      "message": "recorded components do not match the embedded spec's selection.",
+      "operation": "validate"
+    },
+    "parse_generation_metadata/spec-invalid": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "invalid-generation-metadata",
+          "path": [
+            "spec"
+          ]
+        }
+      ],
+      "message": "the embedded ProjectSpec does not parse.",
+      "operation": "validate"
+    },
+    "parse_generation_metadata/unknown-component": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "invalid-generation-metadata",
+          "path": [
+            "components",
+            "0"
+          ]
+        }
+      ],
+      "message": "recorded component 'nonesuch' is not in the installed catalogue.",
+      "operation": "validate"
+    },
+    "parse_generation_metadata/unsupported-manifest": {
+      "code": "unsupported-generation-metadata",
+      "details": [
+        {
+          "code": "unsupported-generation-metadata",
+          "path": [
+            "protocols",
+            "component_manifest"
+          ]
+        }
+      ],
+      "message": "recorded component-manifest protocol(s) [9] are outside the supported set [1, 2, 3].",
+      "operation": "validate"
+    },
+    "parse_generation_metadata/unsupported-projectspec": {
+      "code": "unsupported-generation-metadata",
+      "details": [
+        {
+          "code": "unsupported-generation-metadata",
+          "path": [
+            "protocols",
+            "projectspec"
+          ]
+        }
+      ],
+      "message": "recorded ProjectSpec protocol 7 is outside the supported set [1].",
+      "operation": "validate"
+    },
+    "parse_generation_metadata/unsupported-version": {
+      "code": "unsupported-generation-metadata",
+      "details": [
+        {
+          "code": "unsupported-generation-metadata",
+          "path": [
+            "metadata_version"
+          ]
+        }
+      ],
+      "message": "metadata_version 7 is not supported; this engine reads [1].",
+      "operation": "validate"
+    },
+    "parse_generation_metadata/version-drift": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "invalid-generation-metadata",
+          "path": [
+            "components",
+            "0",
+            "version"
+          ]
+        }
+      ],
+      "message": "recorded 'library' version '0.0.1' does not match the installed '1.0.1'.",
+      "operation": "validate"
+    },
+    "parse_project_spec/invalid-json": {
+      "code": "invalid-project-spec",
+      "details": [
+        {
+          "code": "json_invalid",
+          "path": []
+        }
+      ],
+      "message": "ProjectSpec is invalid.",
+      "operation": "parse"
+    },
+    "parse_project_spec/invalid-mapping": {
+      "code": "invalid-project-spec",
+      "details": [
+        {
+          "code": "missing",
+          "path": [
+            "project"
+          ]
+        },
+        {
+          "code": "missing",
+          "path": [
+            "python"
+          ]
+        },
+        {
+          "code": "missing",
+          "path": [
+            "components"
+          ]
+        }
+      ],
+      "message": "ProjectSpec is invalid.",
+      "operation": "parse"
+    },
+    "parse_project_spec/invalid-type": {
+      "code": "invalid-project-spec",
+      "details": [
+        {
+          "code": "invalid-input-type",
+          "path": []
+        }
+      ],
+      "message": "ProjectSpec input must be a ProjectSpec, mapping, JSON string, or bytes.",
+      "operation": "parse"
+    },
+    "plan_generation/foundation-unavailable": {
+      "code": "generation-plan-failed",
+      "details": [
+        {
+          "code": "invalid-generation-plan",
+          "path": []
+        }
+      ],
+      "message": "The generation plan is invalid.",
+      "operation": "plan"
+    },
+    "plan_update/digest-mismatch": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "invalid-generation-metadata",
+          "path": [
+            "output"
+          ]
+        }
+      ],
+      "message": "the supplied old render does not match the recorded digest for 'pyproject.toml'.",
+      "operation": "validate"
+    },
+    "plan_update/not-an-object": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "invalid-generation-metadata",
+          "path": []
+        }
+      ],
+      "message": "a generation-metadata document must be a JSON object.",
+      "operation": "parse"
+    },
+    "plan_update/target-mismatch": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "invalid-generation-metadata",
+          "path": [
+            "output"
+          ]
+        }
+      ],
+      "message": "the supplied old render does not match the recorded output target set.",
+      "operation": "validate"
+    },
+    "plan_update/unavailable-provider": {
+      "code": "unsupported-generation-metadata",
+      "details": [
+        {
+          "code": "unsupported-generation-metadata",
+          "path": [
+            "provider"
+          ]
+        }
+      ],
+      "message": "recorded provider version '<package-version>' was not supplied as reproduced old-render input; provision that exact forge-template release and reproduce it, or record an explicit degraded two-way update.",
+      "operation": "validate"
+    },
+    "render_project/strict-undefined": {
+      "code": "template-render-failed",
+      "details": [
+        {
+          "code": "template-render-failed",
+          "path": []
+        }
+      ],
+      "message": "Project rendering failed.",
+      "operation": "render"
+    },
+    "validate_project_spec/invalid-option": {
+      "code": "invalid-component-options",
+      "details": [
+        {
+          "code": "invalid-options",
+          "path": []
+        }
+      ],
+      "message": "ProjectSpec component options are invalid.",
+      "operation": "validate"
+    },
+    "validate_project_spec/unknown-archetype": {
+      "code": "invalid-component-selection",
+      "details": [
+        {
+          "code": "invalid-selection",
+          "path": []
+        }
+      ],
+      "message": "ProjectSpec component selection is invalid.",
+      "operation": "validate"
+    },
+    "validate_rendered_project/empty-project": {
+      "code": "generated-project-invalid",
+      "details": [
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            ".editorconfig"
+          ]
+        },
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            ".gitattributes"
+          ]
+        },
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            ".gitignore"
+          ]
+        },
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            ".python-version"
+          ]
+        },
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            "CONTRIBUTING.md"
+          ]
+        },
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            "LICENSE"
+          ]
+        },
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            "SECURITY.md"
+          ]
+        },
+        {
+          "code": "missing-pyproject",
+          "path": [
+            "pyproject.toml"
+          ]
+        },
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            "pyproject.toml"
+          ]
+        },
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            "src/example_project/__init__.py"
+          ]
+        },
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            "src/example_project/py.typed"
+          ]
+        },
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            "tests/__init__.py"
+          ]
+        },
+        {
+          "code": "missing-rendered-file",
+          "path": [
+            "tests/test_smoke.py"
+          ]
+        }
+      ],
+      "message": "The generated project is invalid.",
+      "operation": "validate-output"
+    },
+    "verify_generation_metadata/coverage": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "invalid-generation-metadata",
+          "path": [
+            "output"
+          ]
+        }
+      ],
+      "message": "recorded output does not cover exactly the reproduced targets.",
+      "operation": "validate"
+    },
+    "verify_generation_metadata/digest": {
+      "code": "invalid-generation-metadata",
+      "details": [
+        {
+          "code": "invalid-generation-metadata",
+          "path": [
+            "output",
+            "8",
+            "digest"
+          ]
+        }
+      ],
+      "message": "recorded digest for 'pyproject.toml' does not match the reproduced content.",
+      "operation": "validate"
+    }
+  },
+  "models": {
+    "AppliedRename": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": true,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "One owner-declared path move a client should apply before diffing.\n\nRestates a component manifest's ``[[renames]]`` record\n(``forge_template.component_manifest.RenameRecord``, manifest protocol 3)\nas public update output, scoped to the recorded/installed version window\nthat made it apply to this particular update -- see\n``docs/generation-provenance.md#owner-declared-rename-records``.",
+        "properties": {
+          "component_id": {
+            "minLength": 1,
+            "title": "Component Id",
+            "type": "string"
+          },
+          "from": {
+            "minLength": 1,
+            "title": "From",
+            "type": "string"
+          },
+          "since": {
+            "minLength": 1,
+            "title": "Since",
+            "type": "string"
+          },
+          "to": {
+            "minLength": 1,
+            "title": "To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "component_id",
+          "from",
+          "to",
+          "since"
+        ],
+        "title": "AppliedRename",
+        "type": "object"
+      }
+    },
+    "Author": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "Provider-neutral project author or maintainer metadata.",
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Email"
+          },
+          "name": {
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "Author",
+        "type": "object"
+      }
+    },
+    "ComponentDescriptor": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "$defs": {
+          "ComponentOption": {
+            "additionalProperties": false,
+            "description": "One owner-local option declaration exposed during discovery.",
+            "properties": {
+              "choices": {
+                "items": {
+                  "$ref": "#/$defs/JsonValue"
+                },
+                "title": "Choices",
+                "type": "array"
+              },
+              "default": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "description": {
+                "title": "Description",
+                "type": "string"
+              },
+              "format": {
+                "anyOf": [
+                  {
+                    "const": "pep440",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Format"
+              },
+              "name": {
+                "title": "Name",
+                "type": "string"
+              },
+              "required": {
+                "title": "Required",
+                "type": "boolean"
+              },
+              "type": {
+                "enum": [
+                  "string",
+                  "integer",
+                  "boolean",
+                  "string_list"
+                ],
+                "title": "Type",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "type",
+              "required",
+              "default",
+              "choices",
+              "description"
+            ],
+            "title": "ComponentOption",
+            "type": "object"
+          },
+          "ComponentRelation": {
+            "additionalProperties": false,
+            "description": "One component requirement or conflict exposed for client guidance.",
+            "properties": {
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "version": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Version"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "title": "ComponentRelation",
+            "type": "object"
+          },
+          "JsonValue": {}
+        },
+        "additionalProperties": false,
+        "description": "Path-free component metadata suitable for client choice presentation.",
+        "properties": {
+          "conflicts": {
+            "items": {
+              "$ref": "#/$defs/ComponentRelation"
+            },
+            "title": "Conflicts",
+            "type": "array"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "archetype",
+              "capability",
+              "platform"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/$defs/ComponentOption"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "projectspec_protocols": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Projectspec Protocols",
+            "type": "array"
+          },
+          "requires": {
+            "items": {
+              "$ref": "#/$defs/ComponentRelation"
+            },
+            "title": "Requires",
+            "type": "array"
+          },
+          "requires_python": {
+            "title": "Requires Python",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "kind",
+          "version",
+          "projectspec_protocols",
+          "requires_python",
+          "requires",
+          "conflicts",
+          "options"
+        ],
+        "title": "ComponentDescriptor",
+        "type": "object"
+      }
+    },
+    "ComponentOption": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "$defs": {
+          "JsonValue": {}
+        },
+        "additionalProperties": false,
+        "description": "One owner-local option declaration exposed during discovery.",
+        "properties": {
+          "choices": {
+            "items": {
+              "$ref": "#/$defs/JsonValue"
+            },
+            "title": "Choices",
+            "type": "array"
+          },
+          "default": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "format": {
+            "anyOf": [
+              {
+                "const": "pep440",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Format"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          },
+          "type": {
+            "enum": [
+              "string",
+              "integer",
+              "boolean",
+              "string_list"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "required",
+          "default",
+          "choices",
+          "description"
+        ],
+        "title": "ComponentOption",
+        "type": "object"
+      }
+    },
+    "ComponentOwner": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "One selected component, identified as an output target's owner.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "const": "component",
+            "default": "component",
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "ComponentOwner",
+        "type": "object"
+      }
+    },
+    "ComponentRelation": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "One component requirement or conflict exposed for client guidance.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Version"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "ComponentRelation",
+        "type": "object"
+      }
+    },
+    "ComponentSelection": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "The effective archetype, capability, and platform selection.",
+        "properties": {
+          "archetype": {
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+            "title": "Archetype",
+            "type": "string"
+          },
+          "capabilities": {
+            "default": [],
+            "items": {
+              "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+              "type": "string"
+            },
+            "title": "Capabilities",
+            "type": "array"
+          },
+          "platforms": {
+            "default": [],
+            "items": {
+              "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+              "type": "string"
+            },
+            "title": "Platforms",
+            "type": "array"
+          }
+        },
+        "required": [
+          "archetype"
+        ],
+        "title": "ComponentSelection",
+        "type": "object"
+      }
+    },
+    "EngineErrorDetail": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "One structured location and reason attached to an engine failure.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "path": {
+            "default": [],
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Path",
+            "type": "array"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "EngineErrorDetail",
+        "type": "object"
+      }
+    },
+    "EngineInfo": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "Installed engine package and data-protocol compatibility metadata.",
+        "properties": {
+          "component_manifest_protocols": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Component Manifest Protocols",
+            "type": "array"
+          },
+          "metadata_version": {
+            "title": "Metadata Version",
+            "type": "integer"
+          },
+          "package_version": {
+            "title": "Package Version",
+            "type": "string"
+          },
+          "projectspec_protocols": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Projectspec Protocols",
+            "type": "array"
+          }
+        },
+        "required": [
+          "package_version",
+          "projectspec_protocols",
+          "component_manifest_protocols",
+          "metadata_version"
+        ],
+        "title": "EngineInfo",
+        "type": "object"
+      }
+    },
+    "FoundationOwner": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "The implicit Foundation content source, identified as an owner.",
+        "properties": {
+          "kind": {
+            "const": "foundation",
+            "default": "foundation",
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "title": "FoundationOwner",
+        "type": "object"
+      }
+    },
+    "GenerationMetadata": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "$defs": {
+          "JsonValue": {},
+          "MetadataProtocols": {
+            "additionalProperties": false,
+            "description": "The protocol integers in force for a render.",
+            "properties": {
+              "component_manifest": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Component Manifest",
+                "type": "array"
+              },
+              "projectspec": {
+                "title": "Projectspec",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "projectspec",
+              "component_manifest"
+            ],
+            "title": "MetadataProtocols",
+            "type": "object"
+          },
+          "OutputRecord": {
+            "additionalProperties": false,
+            "description": "One rendered file: its target, owner, content digest and disposition.",
+            "properties": {
+              "digest": {
+                "pattern": "^sha256:[0-9a-f]{64}$",
+                "title": "Digest",
+                "type": "string"
+              },
+              "owner": {
+                "minLength": 1,
+                "title": "Owner",
+                "type": "string"
+              },
+              "regeneration": {
+                "enum": [
+                  "replace",
+                  "skip-if-exists"
+                ],
+                "title": "Regeneration",
+                "type": "string"
+              },
+              "target": {
+                "minLength": 1,
+                "title": "Target",
+                "type": "string"
+              }
+            },
+            "required": [
+              "target",
+              "owner",
+              "digest",
+              "regeneration"
+            ],
+            "title": "OutputRecord",
+            "type": "object"
+          },
+          "ProviderIdentity": {
+            "additionalProperties": false,
+            "description": "The exact installable that produced a render.",
+            "properties": {
+              "distribution": {
+                "const": "forge-template",
+                "title": "Distribution",
+                "type": "string"
+              },
+              "version": {
+                "minLength": 1,
+                "title": "Version",
+                "type": "string"
+              }
+            },
+            "required": [
+              "distribution",
+              "version"
+            ],
+            "title": "ProviderIdentity",
+            "type": "object"
+          },
+          "ReproductionRecord": {
+            "additionalProperties": false,
+            "description": "Whether the merge base for the next update is intact.",
+            "properties": {
+              "mode": {
+                "enum": [
+                  "exact",
+                  "degraded"
+                ],
+                "title": "Mode",
+                "type": "string"
+              },
+              "reason": {
+                "default": "",
+                "title": "Reason",
+                "type": "string"
+              }
+            },
+            "required": [
+              "mode"
+            ],
+            "title": "ReproductionRecord",
+            "type": "object"
+          },
+          "SelectedComponent": {
+            "additionalProperties": false,
+            "description": "One selected component and the version that rendered.",
+            "properties": {
+              "id": {
+                "minLength": 1,
+                "title": "Id",
+                "type": "string"
+              },
+              "version": {
+                "minLength": 1,
+                "title": "Version",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "version"
+            ],
+            "title": "SelectedComponent",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One generated project's complete provenance document.\n\nField order here is the documented order\n(docs/generation-provenance.md#the-generation-metadata-document);\n:meth:`to_json` sorts keys for a canonical on-disk form.",
+        "properties": {
+          "components": {
+            "items": {
+              "$ref": "#/$defs/SelectedComponent"
+            },
+            "title": "Components",
+            "type": "array"
+          },
+          "metadata_version": {
+            "title": "Metadata Version",
+            "type": "integer"
+          },
+          "output": {
+            "items": {
+              "$ref": "#/$defs/OutputRecord"
+            },
+            "title": "Output",
+            "type": "array"
+          },
+          "protocols": {
+            "$ref": "#/$defs/MetadataProtocols"
+          },
+          "provider": {
+            "$ref": "#/$defs/ProviderIdentity"
+          },
+          "reproduction": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ReproductionRecord"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "spec": {
+            "additionalProperties": {
+              "$ref": "#/$defs/JsonValue"
+            },
+            "title": "Spec",
+            "type": "object"
+          }
+        },
+        "required": [
+          "metadata_version",
+          "provider",
+          "protocols",
+          "spec",
+          "components",
+          "output"
+        ],
+        "title": "GenerationMetadata",
+        "type": "object"
+      }
+    },
+    "GenerationPlan": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "$defs": {
+          "ComponentOwner": {
+            "additionalProperties": false,
+            "description": "One selected component, identified as an output target's owner.",
+            "properties": {
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "kind": {
+                "const": "component",
+                "default": "component",
+                "title": "Kind",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "title": "ComponentOwner",
+            "type": "object"
+          },
+          "FoundationOwner": {
+            "additionalProperties": false,
+            "description": "The implicit Foundation content source, identified as an owner.",
+            "properties": {
+              "kind": {
+                "const": "foundation",
+                "default": "foundation",
+                "title": "Kind",
+                "type": "string"
+              }
+            },
+            "title": "FoundationOwner",
+            "type": "object"
+          },
+          "PlannedExtension": {
+            "additionalProperties": false,
+            "description": "One selected component extending an owner-declared point.",
+            "properties": {
+              "component_id": {
+                "title": "Component Id",
+                "type": "string"
+              },
+              "extension_point": {
+                "title": "Extension Point",
+                "type": "string"
+              }
+            },
+            "required": [
+              "component_id",
+              "extension_point"
+            ],
+            "title": "PlannedExtension",
+            "type": "object"
+          },
+          "PlannedFile": {
+            "additionalProperties": false,
+            "description": "One generated target and its ownership metadata.\n\n``owner`` is discriminated on ``kind``: ``FoundationOwner(kind=\n\"foundation\")`` for the implicit Foundation content source, or\n``ComponentOwner(kind=\"component\", id=...)`` for a selected component.\nBoth types are ``forge_template.file_conflicts``' own -- reused directly,\nnot redeclared, so this field can never drift from what\n``resolve_output_plan`` actually resolved. This replaced\n``owner_component_id`` in the ``0.3.0`` line (FT-08.02/ADR 0033): a plain\ncomponent-id string could not truthfully represent a Foundation-owned\nfile. ``component_order`` still lists selected components only --\nFoundation is never a member of it, whether or not it owns a file here.",
+            "properties": {
+              "extensions": {
+                "default": [],
+                "items": {
+                  "$ref": "#/$defs/PlannedExtension"
+                },
+                "title": "Extensions",
+                "type": "array"
+              },
+              "owner": {
+                "discriminator": {
+                  "mapping": {
+                    "component": "#/$defs/ComponentOwner",
+                    "foundation": "#/$defs/FoundationOwner"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/ComponentOwner"
+                  },
+                  {
+                    "$ref": "#/$defs/FoundationOwner"
+                  }
+                ],
+                "title": "Owner"
+              },
+              "regeneration": {
+                "default": "replace",
+                "enum": [
+                  "replace",
+                  "skip-if-exists"
+                ],
+                "title": "Regeneration",
+                "type": "string"
+              },
+              "target": {
+                "title": "Target",
+                "type": "string"
+              }
+            },
+            "required": [
+              "target",
+              "owner"
+            ],
+            "title": "PlannedFile",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Deterministic, path-free preview of a generation request.",
+        "properties": {
+          "component_order": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Component Order",
+            "type": "array"
+          },
+          "files": {
+            "items": {
+              "$ref": "#/$defs/PlannedFile"
+            },
+            "title": "Files",
+            "type": "array"
+          }
+        },
+        "required": [
+          "component_order",
+          "files"
+        ],
+        "title": "GenerationPlan",
+        "type": "object"
+      }
+    },
+    "MetadataProtocols": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "The protocol integers in force for a render.",
+        "properties": {
+          "component_manifest": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Component Manifest",
+            "type": "array"
+          },
+          "projectspec": {
+            "title": "Projectspec",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "projectspec",
+          "component_manifest"
+        ],
+        "title": "MetadataProtocols",
+        "type": "object"
+      }
+    },
+    "OutputRecord": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "One rendered file: its target, owner, content digest and disposition.",
+        "properties": {
+          "digest": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Digest",
+            "type": "string"
+          },
+          "owner": {
+            "minLength": 1,
+            "title": "Owner",
+            "type": "string"
+          },
+          "regeneration": {
+            "enum": [
+              "replace",
+              "skip-if-exists"
+            ],
+            "title": "Regeneration",
+            "type": "string"
+          },
+          "target": {
+            "minLength": 1,
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "owner",
+          "digest",
+          "regeneration"
+        ],
+        "title": "OutputRecord",
+        "type": "object"
+      }
+    },
+    "PlannedExtension": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "One selected component extending an owner-declared point.",
+        "properties": {
+          "component_id": {
+            "title": "Component Id",
+            "type": "string"
+          },
+          "extension_point": {
+            "title": "Extension Point",
+            "type": "string"
+          }
+        },
+        "required": [
+          "component_id",
+          "extension_point"
+        ],
+        "title": "PlannedExtension",
+        "type": "object"
+      }
+    },
+    "PlannedFile": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "$defs": {
+          "ComponentOwner": {
+            "additionalProperties": false,
+            "description": "One selected component, identified as an output target's owner.",
+            "properties": {
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "kind": {
+                "const": "component",
+                "default": "component",
+                "title": "Kind",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "title": "ComponentOwner",
+            "type": "object"
+          },
+          "FoundationOwner": {
+            "additionalProperties": false,
+            "description": "The implicit Foundation content source, identified as an owner.",
+            "properties": {
+              "kind": {
+                "const": "foundation",
+                "default": "foundation",
+                "title": "Kind",
+                "type": "string"
+              }
+            },
+            "title": "FoundationOwner",
+            "type": "object"
+          },
+          "PlannedExtension": {
+            "additionalProperties": false,
+            "description": "One selected component extending an owner-declared point.",
+            "properties": {
+              "component_id": {
+                "title": "Component Id",
+                "type": "string"
+              },
+              "extension_point": {
+                "title": "Extension Point",
+                "type": "string"
+              }
+            },
+            "required": [
+              "component_id",
+              "extension_point"
+            ],
+            "title": "PlannedExtension",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One generated target and its ownership metadata.\n\n``owner`` is discriminated on ``kind``: ``FoundationOwner(kind=\n\"foundation\")`` for the implicit Foundation content source, or\n``ComponentOwner(kind=\"component\", id=...)`` for a selected component.\nBoth types are ``forge_template.file_conflicts``' own -- reused directly,\nnot redeclared, so this field can never drift from what\n``resolve_output_plan`` actually resolved. This replaced\n``owner_component_id`` in the ``0.3.0`` line (FT-08.02/ADR 0033): a plain\ncomponent-id string could not truthfully represent a Foundation-owned\nfile. ``component_order`` still lists selected components only --\nFoundation is never a member of it, whether or not it owns a file here.",
+        "properties": {
+          "extensions": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/PlannedExtension"
+            },
+            "title": "Extensions",
+            "type": "array"
+          },
+          "owner": {
+            "discriminator": {
+              "mapping": {
+                "component": "#/$defs/ComponentOwner",
+                "foundation": "#/$defs/FoundationOwner"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/ComponentOwner"
+              },
+              {
+                "$ref": "#/$defs/FoundationOwner"
+              }
+            ],
+            "title": "Owner"
+          },
+          "regeneration": {
+            "default": "replace",
+            "enum": [
+              "replace",
+              "skip-if-exists"
+            ],
+            "title": "Regeneration",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "owner"
+        ],
+        "title": "PlannedFile",
+        "type": "object"
+      }
+    },
+    "ProjectMetadata": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "$defs": {
+          "Author": {
+            "additionalProperties": false,
+            "description": "Provider-neutral project author or maintainer metadata.",
+            "properties": {
+              "email": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Email"
+              },
+              "name": {
+                "minLength": 1,
+                "title": "Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "title": "Author",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Provider-neutral identity and handoff metadata for a project.",
+        "properties": {
+          "authors": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/Author"
+            },
+            "title": "Authors",
+            "type": "array"
+          },
+          "description": {
+            "default": "",
+            "title": "Description",
+            "type": "string"
+          },
+          "licence": {
+            "minLength": 1,
+            "title": "Licence",
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "package_name": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "title": "Package Name",
+            "type": "string"
+          },
+          "repository_name": {
+            "pattern": "^[a-z0-9][a-z0-9._-]*$",
+            "title": "Repository Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "package_name",
+          "repository_name",
+          "licence"
+        ],
+        "title": "ProjectMetadata",
+        "type": "object"
+      }
+    },
+    "ProjectSpec": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "$defs": {
+          "Author": {
+            "additionalProperties": false,
+            "description": "Provider-neutral project author or maintainer metadata.",
+            "properties": {
+              "email": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Email"
+              },
+              "name": {
+                "minLength": 1,
+                "title": "Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "title": "Author",
+            "type": "object"
+          },
+          "ComponentSelection": {
+            "additionalProperties": false,
+            "description": "The effective archetype, capability, and platform selection.",
+            "properties": {
+              "archetype": {
+                "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+                "title": "Archetype",
+                "type": "string"
+              },
+              "capabilities": {
+                "default": [],
+                "items": {
+                  "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+                  "type": "string"
+                },
+                "title": "Capabilities",
+                "type": "array"
+              },
+              "platforms": {
+                "default": [],
+                "items": {
+                  "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+                  "type": "string"
+                },
+                "title": "Platforms",
+                "type": "array"
+              }
+            },
+            "required": [
+              "archetype"
+            ],
+            "title": "ComponentSelection",
+            "type": "object"
+          },
+          "JsonValue": {},
+          "ProjectMetadata": {
+            "additionalProperties": false,
+            "description": "Provider-neutral identity and handoff metadata for a project.",
+            "properties": {
+              "authors": {
+                "default": [],
+                "items": {
+                  "$ref": "#/$defs/Author"
+                },
+                "title": "Authors",
+                "type": "array"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "licence": {
+                "minLength": 1,
+                "title": "Licence",
+                "type": "string"
+              },
+              "name": {
+                "minLength": 1,
+                "title": "Name",
+                "type": "string"
+              },
+              "package_name": {
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "title": "Package Name",
+                "type": "string"
+              },
+              "repository_name": {
+                "pattern": "^[a-z0-9][a-z0-9._-]*$",
+                "title": "Repository Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "package_name",
+              "repository_name",
+              "licence"
+            ],
+            "title": "ProjectMetadata",
+            "type": "object"
+          },
+          "PythonSelection": {
+            "additionalProperties": false,
+            "description": "Generated-project compatibility floor and development interpreter.",
+            "properties": {
+              "development": {
+                "pattern": "^3\\.\\d+$",
+                "title": "Development",
+                "type": "string"
+              },
+              "minimum": {
+                "pattern": "^3\\.\\d+$",
+                "title": "Minimum",
+                "type": "string"
+              }
+            },
+            "required": [
+              "minimum",
+              "development"
+            ],
+            "title": "PythonSelection",
+            "type": "object"
+          },
+          "SelectionProvenance": {
+            "additionalProperties": false,
+            "description": "Non-enforcing provenance for defaults and constraints already applied.",
+            "properties": {
+              "policies": {
+                "default": [],
+                "items": {
+                  "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+                  "type": "string"
+                },
+                "title": "Policies",
+                "type": "array"
+              },
+              "profile": {
+                "anyOf": [
+                  {
+                    "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Profile"
+              }
+            },
+            "title": "SelectionProvenance",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A strict, serialisable, effective Forge generation request.",
+        "properties": {
+          "component_options": {
+            "patternProperties": {
+              "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$": {
+                "patternProperties": {
+                  "^[a-z][a-z0-9_]*$": {
+                    "$ref": "#/$defs/JsonValue"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "title": "Component Options",
+            "type": "object"
+          },
+          "components": {
+            "$ref": "#/$defs/ComponentSelection"
+          },
+          "project": {
+            "$ref": "#/$defs/ProjectMetadata"
+          },
+          "protocol_version": {
+            "const": 1,
+            "title": "Protocol Version",
+            "type": "integer"
+          },
+          "provenance": {
+            "$ref": "#/$defs/SelectionProvenance"
+          },
+          "python": {
+            "$ref": "#/$defs/PythonSelection"
+          }
+        },
+        "required": [
+          "protocol_version",
+          "project",
+          "python",
+          "components"
+        ],
+        "title": "ProjectSpec",
+        "type": "object"
+      }
+    },
+    "ProviderIdentity": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "The exact installable that produced a render.",
+        "properties": {
+          "distribution": {
+            "const": "forge-template",
+            "title": "Distribution",
+            "type": "string"
+          },
+          "version": {
+            "minLength": 1,
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "distribution",
+          "version"
+        ],
+        "title": "ProviderIdentity",
+        "type": "object"
+      }
+    },
+    "PythonSelection": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "Generated-project compatibility floor and development interpreter.",
+        "properties": {
+          "development": {
+            "pattern": "^3\\.\\d+$",
+            "title": "Development",
+            "type": "string"
+          },
+          "minimum": {
+            "pattern": "^3\\.\\d+$",
+            "title": "Minimum",
+            "type": "string"
+          }
+        },
+        "required": [
+          "minimum",
+          "development"
+        ],
+        "title": "PythonSelection",
+        "type": "object"
+      }
+    },
+    "RenderedFile": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "One immutable project-relative target and its rendered bytes.",
+        "properties": {
+          "content": {
+            "format": "binary",
+            "title": "Content",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "content"
+        ],
+        "title": "RenderedFile",
+        "type": "object"
+      }
+    },
+    "RenderedProject": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "$defs": {
+          "ComponentOwner": {
+            "additionalProperties": false,
+            "description": "One selected component, identified as an output target's owner.",
+            "properties": {
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "kind": {
+                "const": "component",
+                "default": "component",
+                "title": "Kind",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "title": "ComponentOwner",
+            "type": "object"
+          },
+          "FoundationOwner": {
+            "additionalProperties": false,
+            "description": "The implicit Foundation content source, identified as an owner.",
+            "properties": {
+              "kind": {
+                "const": "foundation",
+                "default": "foundation",
+                "title": "Kind",
+                "type": "string"
+              }
+            },
+            "title": "FoundationOwner",
+            "type": "object"
+          },
+          "GenerationMetadata": {
+            "additionalProperties": false,
+            "description": "One generated project's complete provenance document.\n\nField order here is the documented order\n(docs/generation-provenance.md#the-generation-metadata-document);\n:meth:`to_json` sorts keys for a canonical on-disk form.",
+            "properties": {
+              "components": {
+                "items": {
+                  "$ref": "#/$defs/SelectedComponent"
+                },
+                "title": "Components",
+                "type": "array"
+              },
+              "metadata_version": {
+                "title": "Metadata Version",
+                "type": "integer"
+              },
+              "output": {
+                "items": {
+                  "$ref": "#/$defs/OutputRecord"
+                },
+                "title": "Output",
+                "type": "array"
+              },
+              "protocols": {
+                "$ref": "#/$defs/MetadataProtocols"
+              },
+              "provider": {
+                "$ref": "#/$defs/ProviderIdentity"
+              },
+              "reproduction": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ReproductionRecord"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "spec": {
+                "additionalProperties": {
+                  "$ref": "#/$defs/JsonValue"
+                },
+                "title": "Spec",
+                "type": "object"
+              }
+            },
+            "required": [
+              "metadata_version",
+              "provider",
+              "protocols",
+              "spec",
+              "components",
+              "output"
+            ],
+            "title": "GenerationMetadata",
+            "type": "object"
+          },
+          "GenerationPlan": {
+            "additionalProperties": false,
+            "description": "Deterministic, path-free preview of a generation request.",
+            "properties": {
+              "component_order": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Component Order",
+                "type": "array"
+              },
+              "files": {
+                "items": {
+                  "$ref": "#/$defs/PlannedFile"
+                },
+                "title": "Files",
+                "type": "array"
+              }
+            },
+            "required": [
+              "component_order",
+              "files"
+            ],
+            "title": "GenerationPlan",
+            "type": "object"
+          },
+          "JsonValue": {},
+          "MetadataProtocols": {
+            "additionalProperties": false,
+            "description": "The protocol integers in force for a render.",
+            "properties": {
+              "component_manifest": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Component Manifest",
+                "type": "array"
+              },
+              "projectspec": {
+                "title": "Projectspec",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "projectspec",
+              "component_manifest"
+            ],
+            "title": "MetadataProtocols",
+            "type": "object"
+          },
+          "OutputRecord": {
+            "additionalProperties": false,
+            "description": "One rendered file: its target, owner, content digest and disposition.",
+            "properties": {
+              "digest": {
+                "pattern": "^sha256:[0-9a-f]{64}$",
+                "title": "Digest",
+                "type": "string"
+              },
+              "owner": {
+                "minLength": 1,
+                "title": "Owner",
+                "type": "string"
+              },
+              "regeneration": {
+                "enum": [
+                  "replace",
+                  "skip-if-exists"
+                ],
+                "title": "Regeneration",
+                "type": "string"
+              },
+              "target": {
+                "minLength": 1,
+                "title": "Target",
+                "type": "string"
+              }
+            },
+            "required": [
+              "target",
+              "owner",
+              "digest",
+              "regeneration"
+            ],
+            "title": "OutputRecord",
+            "type": "object"
+          },
+          "PlannedExtension": {
+            "additionalProperties": false,
+            "description": "One selected component extending an owner-declared point.",
+            "properties": {
+              "component_id": {
+                "title": "Component Id",
+                "type": "string"
+              },
+              "extension_point": {
+                "title": "Extension Point",
+                "type": "string"
+              }
+            },
+            "required": [
+              "component_id",
+              "extension_point"
+            ],
+            "title": "PlannedExtension",
+            "type": "object"
+          },
+          "PlannedFile": {
+            "additionalProperties": false,
+            "description": "One generated target and its ownership metadata.\n\n``owner`` is discriminated on ``kind``: ``FoundationOwner(kind=\n\"foundation\")`` for the implicit Foundation content source, or\n``ComponentOwner(kind=\"component\", id=...)`` for a selected component.\nBoth types are ``forge_template.file_conflicts``' own -- reused directly,\nnot redeclared, so this field can never drift from what\n``resolve_output_plan`` actually resolved. This replaced\n``owner_component_id`` in the ``0.3.0`` line (FT-08.02/ADR 0033): a plain\ncomponent-id string could not truthfully represent a Foundation-owned\nfile. ``component_order`` still lists selected components only --\nFoundation is never a member of it, whether or not it owns a file here.",
+            "properties": {
+              "extensions": {
+                "default": [],
+                "items": {
+                  "$ref": "#/$defs/PlannedExtension"
+                },
+                "title": "Extensions",
+                "type": "array"
+              },
+              "owner": {
+                "discriminator": {
+                  "mapping": {
+                    "component": "#/$defs/ComponentOwner",
+                    "foundation": "#/$defs/FoundationOwner"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/ComponentOwner"
+                  },
+                  {
+                    "$ref": "#/$defs/FoundationOwner"
+                  }
+                ],
+                "title": "Owner"
+              },
+              "regeneration": {
+                "default": "replace",
+                "enum": [
+                  "replace",
+                  "skip-if-exists"
+                ],
+                "title": "Regeneration",
+                "type": "string"
+              },
+              "target": {
+                "title": "Target",
+                "type": "string"
+              }
+            },
+            "required": [
+              "target",
+              "owner"
+            ],
+            "title": "PlannedFile",
+            "type": "object"
+          },
+          "ProviderIdentity": {
+            "additionalProperties": false,
+            "description": "The exact installable that produced a render.",
+            "properties": {
+              "distribution": {
+                "const": "forge-template",
+                "title": "Distribution",
+                "type": "string"
+              },
+              "version": {
+                "minLength": 1,
+                "title": "Version",
+                "type": "string"
+              }
+            },
+            "required": [
+              "distribution",
+              "version"
+            ],
+            "title": "ProviderIdentity",
+            "type": "object"
+          },
+          "RenderedFile": {
+            "additionalProperties": false,
+            "description": "One immutable project-relative target and its rendered bytes.",
+            "properties": {
+              "content": {
+                "format": "binary",
+                "title": "Content",
+                "type": "string"
+              },
+              "target": {
+                "title": "Target",
+                "type": "string"
+              }
+            },
+            "required": [
+              "target",
+              "content"
+            ],
+            "title": "RenderedFile",
+            "type": "object"
+          },
+          "ReproductionRecord": {
+            "additionalProperties": false,
+            "description": "Whether the merge base for the next update is intact.",
+            "properties": {
+              "mode": {
+                "enum": [
+                  "exact",
+                  "degraded"
+                ],
+                "title": "Mode",
+                "type": "string"
+              },
+              "reason": {
+                "default": "",
+                "title": "Reason",
+                "type": "string"
+              }
+            },
+            "required": [
+              "mode"
+            ],
+            "title": "ReproductionRecord",
+            "type": "object"
+          },
+          "SelectedComponent": {
+            "additionalProperties": false,
+            "description": "One selected component and the version that rendered.",
+            "properties": {
+              "id": {
+                "minLength": 1,
+                "title": "Id",
+                "type": "string"
+              },
+              "version": {
+                "minLength": 1,
+                "title": "Version",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "version"
+            ],
+            "title": "SelectedComponent",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A generation plan, its deterministic in-memory file set, and provenance.",
+        "properties": {
+          "files": {
+            "items": {
+              "$ref": "#/$defs/RenderedFile"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/GenerationMetadata"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "plan": {
+            "$ref": "#/$defs/GenerationPlan"
+          }
+        },
+        "required": [
+          "plan",
+          "files"
+        ],
+        "title": "RenderedProject",
+        "type": "object"
+      }
+    },
+    "ReproductionRecord": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "Whether the merge base for the next update is intact.",
+        "properties": {
+          "mode": {
+            "enum": [
+              "exact",
+              "degraded"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "reason": {
+            "default": "",
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "title": "ReproductionRecord",
+        "type": "object"
+      }
+    },
+    "SelectedComponent": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "One selected component and the version that rendered.",
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "version": {
+            "minLength": 1,
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "version"
+        ],
+        "title": "SelectedComponent",
+        "type": "object"
+      }
+    },
+    "SelectionProvenance": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "Non-enforcing provenance for defaults and constraints already applied.",
+        "properties": {
+          "policies": {
+            "default": [],
+            "items": {
+              "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+              "type": "string"
+            },
+            "title": "Policies",
+            "type": "array"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Profile"
+          }
+        },
+        "title": "SelectionProvenance",
+        "type": "object"
+      }
+    },
+    "UpdatePlan": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "$defs": {
+          "AppliedRename": {
+            "additionalProperties": false,
+            "description": "One owner-declared path move a client should apply before diffing.\n\nRestates a component manifest's ``[[renames]]`` record\n(``forge_template.component_manifest.RenameRecord``, manifest protocol 3)\nas public update output, scoped to the recorded/installed version window\nthat made it apply to this particular update -- see\n``docs/generation-provenance.md#owner-declared-rename-records``.",
+            "properties": {
+              "component_id": {
+                "minLength": 1,
+                "title": "Component Id",
+                "type": "string"
+              },
+              "from": {
+                "minLength": 1,
+                "title": "From",
+                "type": "string"
+              },
+              "since": {
+                "minLength": 1,
+                "title": "Since",
+                "type": "string"
+              },
+              "to": {
+                "minLength": 1,
+                "title": "To",
+                "type": "string"
+              }
+            },
+            "required": [
+              "component_id",
+              "from",
+              "to",
+              "since"
+            ],
+            "title": "AppliedRename",
+            "type": "object"
+          },
+          "ReproductionRecord": {
+            "additionalProperties": false,
+            "description": "Whether the merge base for the next update is intact.",
+            "properties": {
+              "mode": {
+                "enum": [
+                  "exact",
+                  "degraded"
+                ],
+                "title": "Mode",
+                "type": "string"
+              },
+              "reason": {
+                "default": "",
+                "title": "Reason",
+                "type": "string"
+              }
+            },
+            "required": [
+              "mode"
+            ],
+            "title": "ReproductionRecord",
+            "type": "object"
+          },
+          "UpdateTarget": {
+            "additionalProperties": false,
+            "description": "One target's classification against the recorded/current render pair.",
+            "properties": {
+              "classification": {
+                "enum": [
+                  "unchanged",
+                  "added",
+                  "removed",
+                  "changed",
+                  "renamed"
+                ],
+                "title": "Classification",
+                "type": "string"
+              },
+              "owner": {
+                "minLength": 1,
+                "title": "Owner",
+                "type": "string"
+              },
+              "regeneration": {
+                "enum": [
+                  "replace",
+                  "skip-if-exists"
+                ],
+                "title": "Regeneration",
+                "type": "string"
+              },
+              "target": {
+                "minLength": 1,
+                "title": "Target",
+                "type": "string"
+              }
+            },
+            "required": [
+              "target",
+              "classification",
+              "owner",
+              "regeneration"
+            ],
+            "title": "UpdateTarget",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The reproducible-render hand-off: classified targets plus applied renames.\n\nReturned by ``forge_template.engine.plan_update`` from a recorded\ngeneration-metadata document, the client-reproduced old render, and a\nfresh new render. Carries no filesystem state and performs no merge --\nthe client applies it (FT-ROADMAP-01-EX-01).",
+        "properties": {
+          "renames": {
+            "items": {
+              "$ref": "#/$defs/AppliedRename"
+            },
+            "title": "Renames",
+            "type": "array"
+          },
+          "reproduction": {
+            "$ref": "#/$defs/ReproductionRecord"
+          },
+          "targets": {
+            "items": {
+              "$ref": "#/$defs/UpdateTarget"
+            },
+            "title": "Targets",
+            "type": "array"
+          }
+        },
+        "required": [
+          "targets",
+          "renames",
+          "reproduction"
+        ],
+        "title": "UpdatePlan",
+        "type": "object"
+      }
+    },
+    "UpdateTarget": {
+      "config": {
+        "extra": "forbid",
+        "frozen": true,
+        "populate_by_name": null,
+        "strict": true
+      },
+      "schema": {
+        "additionalProperties": false,
+        "description": "One target's classification against the recorded/current render pair.",
+        "properties": {
+          "classification": {
+            "enum": [
+              "unchanged",
+              "added",
+              "removed",
+              "changed",
+              "renamed"
+            ],
+            "title": "Classification",
+            "type": "string"
+          },
+          "owner": {
+            "minLength": 1,
+            "title": "Owner",
+            "type": "string"
+          },
+          "regeneration": {
+            "enum": [
+              "replace",
+              "skip-if-exists"
+            ],
+            "title": "Regeneration",
+            "type": "string"
+          },
+          "target": {
+            "minLength": 1,
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "classification",
+          "owner",
+          "regeneration"
+        ],
+        "title": "UpdateTarget",
+        "type": "object"
+      }
+    }
+  },
+  "signatures": {
+    "ForgeEngineError.__init__": "(self, *, code: 'EngineErrorCode', operation: 'str', message: 'str', details: 'tuple[EngineErrorDetail, ...]' = ()) -> 'None'",
+    "ForgeEngineError.as_dict": "(self) -> 'dict[str, JsonValue]'",
+    "discover_components": "() -> 'tuple[ComponentDescriptor, ...]'",
+    "get_engine_info": "() -> 'EngineInfo'",
+    "map_legacy_library_answers": "(answers: 'Mapping[str, JsonValue]') -> 'dict[str, JsonValue]'",
+    "parse_generation_metadata": "(payload: 'GenerationMetadataPayload') -> 'GenerationMetadata'",
+    "parse_project_spec": "(payload: 'object') -> 'ProjectSpec'",
+    "parse_project_spec@overloads": [
+      "(payload: 'ProjectSpec') -> 'ProjectSpec'",
+      "(payload: 'Mapping[str, object]') -> 'ProjectSpec'",
+      "(payload: 'str | bytes') -> 'ProjectSpec'"
+    ],
+    "plan_generation": "(spec: 'ProjectSpec') -> 'GenerationPlan'",
+    "plan_update": "(recorded: 'GenerationMetadataPayload', *, old: 'Mapping[str, bytes]', new: 'RenderedProject') -> 'UpdatePlan'",
+    "render_project": "(spec: 'ProjectSpec') -> 'RenderedProject'",
+    "validate_project_spec": "(spec: 'ProjectSpec') -> 'ProjectSpec'",
+    "validate_rendered_project": "(spec: 'ProjectSpec', project: 'RenderedProject') -> 'RenderedProject'",
+    "verify_generation_metadata": "(metadata: 'GenerationMetadata', project: 'RenderedProject') -> 'None'"
+  }
+}

@@ -24,7 +24,6 @@ from typing import Any
 
 import pytest
 
-import forge_template.engine as engine_module
 from forge_template import (
     ComponentOwner,
     EngineErrorCode,
@@ -34,6 +33,7 @@ from forge_template import (
     plan_generation,
     render_project,
 )
+from tests.engine_seams import override_sources
 
 _ROOT = Path(__file__).parents[1]
 _PRODUCTION_COMPONENTS = _ROOT / "src" / "forge_template" / "components"
@@ -160,8 +160,7 @@ def test_render_is_invariant_to_catalogue_filesystem_layout(
 
     overlay = tmp_path / "components"
     shutil.copytree(_PRODUCTION_COMPONENTS, overlay)
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", overlay)
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", None)
+    override_sources(monkeypatch, catalogue=overlay, foundation=None)
 
     assert _render_map(_payload(capabilities=capabilities)) == installed
 

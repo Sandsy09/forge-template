@@ -20,7 +20,6 @@ from typing import Any
 
 import pytest
 
-import forge_template.engine as engine_module
 from forge_template import (
     get_engine_info,
     parse_project_spec,
@@ -34,6 +33,7 @@ from forge_template.foundation_source import (
     FOUNDATION_SOURCE_PROTOCOL_VERSION,
     load_foundation_source,
 )
+from tests.engine_seams import override_sources
 
 _SRC = Path(__file__).parents[1] / "src" / "forge_template"
 _PRODUCTION_FOUNDATION = _SRC / "foundation"
@@ -139,8 +139,7 @@ def catalogue_with_capability_fixtures(
     shutil.copytree(_PRODUCTION_COMPONENTS, root)
     for capability in ("alpha-tooling", "beta-tooling"):
         shutil.copytree(_CAPABILITY_FIXTURES / capability, root / capability)
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", root)
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", None)
+    override_sources(monkeypatch, catalogue=root, foundation=None)
     return root
 
 
@@ -151,8 +150,7 @@ def catalogue_with_capability_fixtures(
 def test_unfilled_points_render_production_archetypes_unchanged(
     archetype: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", None)
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", None)
+    override_sources(monkeypatch, catalogue=None, foundation=None)
     production = _render(_payload(archetype=archetype))
 
     stripped = tmp_path / "foundation"
@@ -166,10 +164,9 @@ def test_unfilled_points_render_production_archetypes_unchanged(
     for child in pre_capability_catalogue.iterdir():
         if child.is_dir() and child.name not in {"library", "cli"}:
             shutil.rmtree(child)
-    monkeypatch.setattr(
-        engine_module, "_CATALOGUE_ROOT_OVERRIDE", pre_capability_catalogue
+    override_sources(
+        monkeypatch, catalogue=pre_capability_catalogue, foundation=stripped
     )
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", stripped)
     baseline = _render(_payload(archetype=archetype))
 
     assert production == baseline

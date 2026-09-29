@@ -31,7 +31,6 @@ from typing import Any
 
 import pytest
 
-import forge_template.engine as engine_module
 from forge_template import (
     DEFAULT_GENERATION_METADATA_TARGET,
     GENERATION_METADATA_VERSION,
@@ -48,6 +47,7 @@ from forge_template import (
     render_project,
     verify_generation_metadata,
 )
+from tests.engine_seams import override_sources
 from tests.generation_provenance_contract import (
     CLASSIFICATIONS,
     OPTIONAL_FIELDS,
@@ -540,7 +540,7 @@ def rename_fixture_catalogue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
     root = tmp_path / "catalogue"
     shutil.copytree(_PRODUCTION_COMPONENTS, root)
     shutil.copytree(_RENAME_FIXTURE, root / "renaming-widget")
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", root)
+    override_sources(monkeypatch, catalogue=root)
 
 
 def test_plan_update_surfaces_only_in_window_renames(

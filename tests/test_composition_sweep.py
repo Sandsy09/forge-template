@@ -33,62 +33,26 @@ import pytest
 
 from forge_template import (
     FoundationOwner,
-    parse_project_spec,
     plan_generation,
     render_project,
 )
+from tests.composition_fingerprints import (
+    fingerprint,
+    load_fingerprints,
+    sweep_spec,
+)
 from tests.composition_matrix import (
     EXPECTED_COMPOSITION_COUNT,
-    Composition,
     valid_compositions,
 )
 
 if TYPE_CHECKING:
-    from forge_template import ProjectSpec
+    from tests.composition_matrix import Composition
 
 pytestmark = pytest.mark.sweep
 
 _COMPOSITIONS = valid_compositions()
-
-
-def _payload(composition: Composition) -> dict[str, object]:
-    options: dict[str, dict[str, object]] = {
-        "library": {"packaging_mode": "uv-build-static", "initial_version": "0.1.0"},
-    }
-    if "github" in composition.platforms:
-        options["github"] = {"organisation": "sweep-org"}
-    if "coverage" in composition.capabilities:
-        options["coverage"] = {"fail_under": 80}
-    if "documentation" in composition.capabilities:
-        options["documentation"] = {"site_name": "Sweep Fixture"}
-    return {
-        "protocol_version": 1,
-        "project": {
-            "name": "Composition Sweep Fixture",
-            "package_name": "composition_sweep_fixture",
-            "repository_name": "composition-sweep-fixture",
-            "description": "FT-17.05 exhaustive composition sweep fixture.",
-            "licence": "mit",
-            "authors": [{"name": "Test User"}],
-        },
-        "python": {"minimum": "3.11", "development": "3.13"},
-        "components": {
-            "archetype": composition.archetype,
-            "capabilities": list(composition.capabilities),
-            "platforms": list(composition.platforms),
-        },
-        "component_options": {
-            component_id: value
-            for component_id, value in options.items()
-            if component_id == composition.archetype
-            or component_id in composition.capabilities
-            or component_id in composition.platforms
-        },
-    }
-
-
-def _spec(composition: Composition) -> ProjectSpec:
-    return parse_project_spec(_payload(composition))
+_FINGERPRINTS = load_fingerprints()
 
 
 def test_the_derived_matrix_size_is_the_recorded_tripwire() -> None:
@@ -97,9 +61,15 @@ def test_the_derived_matrix_size_is_the_recorded_tripwire() -> None:
     assert len(_COMPOSITIONS) == EXPECTED_COMPOSITION_COUNT
 
 
+def test_the_fingerprint_baseline_covers_exactly_the_derived_matrix() -> None:
+    """FT-25.01: every accepted composition has exactly one recorded
+    fingerprint (tests/fixtures/composition_fingerprints.json)."""
+    assert set(_FINGERPRINTS) == {composition.slug for composition in _COMPOSITIONS}
+
+
 @pytest.mark.parametrize("composition", _COMPOSITIONS, ids=lambda c: c.slug)
 def test_every_valid_composition_plans_and_renders(composition: Composition) -> None:
-    spec = _spec(composition)
+    spec = sweep_spec(composition)
     plan = plan_generation(spec)
 
     expected_order = (
@@ -128,4 +98,12 @@ def test_every_valid_composition_plans_and_renders(composition: Composition) -> 
     assert all(
         not dependency.lower().startswith(("forge-template", "create-forge"))
         for dependency in dependencies
+    )
+
+    # FT-25.01 / ADR 0079: the client-observable output is byte-for-byte the
+    # recorded baseline. A mismatch is a behaviour change to explain, never a
+    # fixture to regenerate reflexively (tests/composition_fingerprints.py).
+    assert fingerprint(project) == _FINGERPRINTS[composition.slug], (
+        f"{composition.slug}: rendered output drifted from the recorded "
+        "fingerprint baseline"
     )

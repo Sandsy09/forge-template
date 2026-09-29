@@ -202,8 +202,10 @@ and nothing else was weakened.
 
 - **What is sensitive.** Anything under `src/forge_template/` except the four
   check-only modules the wheel excludes (`adr.py`, `github_actions.py`,
-  `render.py`, `schema.py`), `tests/composition_matrix.py`, the two sweep test
-  modules, `tests/no_copy_downstream.py`, `tests/conftest.py`, `pyproject.toml`,
+  `render.py`, `schema.py`), `tests/composition_matrix.py`, the composition
+  fingerprint baseline (`tests/composition_fingerprints.py` and its fixture,
+  FT-25.01), `tests/engine_seams.py`, the two sweep test modules,
+  `tests/no_copy_downstream.py`, `tests/conftest.py`, `pyproject.toml`,
   `uv.lock` and `.github/workflows/**`. The list is the `[escalation]` table of
   the budgets file.
 - **Who decides.** The `classify` job runs `scripts/classify_changes.py`, which

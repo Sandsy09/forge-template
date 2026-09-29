@@ -92,8 +92,16 @@ answer pair.
 
 Undocumented names in `forge_template.engine`, `component_manifest`,
 `composition`, `file_conflicts`, `foundation_source`, `project_spec`, and
-`template_variables` are implementation details. They may change within the
-`0.6.x` line when the supported top-level behaviour remains compatible.
+`template_variables` are implementation details, as is every module whose
+name starts with an underscore. They may change within the `0.6.x` line when
+the supported top-level behaviour remains compatible.
+
+Import paths are part of the contract; a class's `__module__` is not. Every
+documented name stays importable from `forge_template`, and every one of them
+reachable from `forge_template.engine` in `0.6.0` stays reachable there as
+the same object. Importing the package has no side effects. The frozen
+baseline and the private module map are in
+[engine-internals.md](engine-internals.md) (ADR 0079).
 
 ## Engine and protocol information
 

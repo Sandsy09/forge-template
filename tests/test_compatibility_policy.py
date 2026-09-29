@@ -20,7 +20,6 @@ import pytest
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
-import forge_template.engine as engine_module
 from forge_template import (
     EngineErrorCode,
     ForgeEngineError,
@@ -37,6 +36,7 @@ from forge_template.foundation_source import (
 from forge_template.generation_metadata import GENERATION_METADATA_VERSION
 from forge_template.project_spec import PROJECT_SPEC_PROTOCOL_VERSION
 from forge_template.template_variables import OPTION_SCHEMA_PROTOCOL_VERSIONS
+from tests.engine_seams import override_sources
 from tests.test_capability_composition import PATH_LEAK_TOKENS
 
 _ROOT = Path(__file__).parents[1]
@@ -160,8 +160,7 @@ def test_negotiation_precedes_discovery(
     pointed at a path that does not exist, standing in for "no destination
     yet"."""
     missing = tmp_path / "does-not-exist"
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", missing)
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", missing)
+    override_sources(monkeypatch, catalogue=missing, foundation=missing)
 
     info = get_engine_info()
     assert info.package_version

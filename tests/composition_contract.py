@@ -9,9 +9,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import forge_template.engine as engine_module
 from forge_template import render_project
 from forge_template.project_spec import ProjectSpec
+from tests.engine_seams import overridden_sources
 
 FIXTURES = Path(__file__).parent / "fixtures" / "component_manifests"
 
@@ -61,20 +61,13 @@ def compose(spec: ProjectSpec, manifest_paths: dict[str, Path]) -> dict[str, Any
         raise ValueError(msg)
     catalogue_root = roots.pop()
 
-    previous_catalogue = engine_module._CATALOGUE_ROOT_OVERRIDE
-    previous_foundation = engine_module._FOUNDATION_ROOT_OVERRIDE
-    engine_module._CATALOGUE_ROOT_OVERRIDE = catalogue_root
     # None of these fixture components target Foundation (they predate
     # FT-08.02), so isolate from the real installed Foundation source the
     # same way discovery is already isolated from the real installed
     # catalogue -- catalogue_root itself has no foundation.toml at its root,
     # so this resolves to "no Foundation available" for this scenario.
-    engine_module._FOUNDATION_ROOT_OVERRIDE = catalogue_root
-    try:
+    with overridden_sources(catalogue=catalogue_root, foundation=catalogue_root):
         rendered = render_project(spec)
-    finally:
-        engine_module._CATALOGUE_ROOT_OVERRIDE = previous_catalogue
-        engine_module._FOUNDATION_ROOT_OVERRIDE = previous_foundation
 
     return {
         "order": list(rendered.plan.component_order),
