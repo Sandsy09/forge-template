@@ -9,7 +9,6 @@ from typing import Any
 
 import pytest
 
-import forge_template.engine as engine_module
 from forge_template import (
     ComponentOwner,
     FoundationOwner,
@@ -21,10 +20,12 @@ from forge_template import (
     discover_components,
     parse_project_spec,
     plan_generation,
+    plan_update,
     render_project,
 )
 from tests.composition_matrix import Composition, valid_compositions
-from tests.no_copy_downstream import generate_from_policies
+from tests.engine_seams import override_sources
+from tests.no_copy_downstream import generate_from_policies, update_from_record
 from tests.organisation_policy_contract import ExplicitSelection
 
 COMPONENT_FIXTURES = Path(__file__).parent / "fixtures" / "component_manifests"
@@ -146,8 +147,9 @@ def test_fixture_policy_adds_only_declared_component_contributions(
 ) -> None:
     """Private fixtures prove additive composition, never a public plugin seam."""
 
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", COMPONENT_FIXTURES)
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", FOUNDATION_FIXTURE)
+    override_sources(
+        monkeypatch, catalogue=COMPONENT_FIXTURES, foundation=FOUNDATION_FIXTURE
+    )
     payload = _payload(
         archetype="library-v2",
         component_options={
@@ -319,3 +321,46 @@ def test_repeated_downstream_generation_is_deterministic() -> None:
     )
     assert first == second
     _assert_no_forge_runtime_dependency(first.project)
+
+
+def test_downstream_client_reproduces_and_plans_an_update_from_its_record() -> None:
+    """FT-25.01: an independent client persists the metadata document,
+    reproduces and verifies it, and plans an update -- all through the
+    top-level facade -- with the same result as a direct engine call."""
+    payload = _payload(
+        archetype="library",
+        component_options={
+            "library": {
+                "packaging_mode": "uv-build-static",
+                "initial_version": "0.1.0",
+            }
+        },
+    )
+    downstream = generate_from_policies(
+        payload,
+        policy_names=(),
+        explicit=ExplicitSelection(
+            archetype="library",
+            capabilities=frozenset(),
+            platforms=frozenset(),
+        ),
+    )
+    assert downstream.project.metadata is not None
+    recorded = downstream.project.metadata.to_json()
+
+    unchanged = update_from_record(recorded, downstream.spec.model_dump(mode="json"))
+    assert {target.classification for target in unchanged.targets} == {"unchanged"}
+    assert unchanged.renames == ()
+    assert unchanged.reproduction.mode == "exact"
+
+    grown = downstream.spec.model_dump(mode="json")
+    grown["components"]["capabilities"] = ["changelog"]
+    update = update_from_record(recorded, grown)
+    direct = plan_update(
+        recorded,
+        old=_files(downstream.project),
+        new=render_project(parse_project_spec(grown)),
+    )
+    assert update == direct
+    added = {t.target for t in update.targets if t.classification == "added"}
+    assert added == {"CHANGELOG.md", "cliff.toml"}

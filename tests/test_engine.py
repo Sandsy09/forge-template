@@ -12,7 +12,6 @@ from typing import Any
 import pytest
 from pydantic import BaseModel, ValidationError
 
-import forge_template.engine as engine_module
 from forge_template import (
     DEFAULT_GENERATION_METADATA_TARGET,
     GENERATION_METADATA_VERSION,
@@ -45,6 +44,7 @@ from forge_template import (
     verify_generation_metadata,
 )
 from forge_template.schema import REPO_ROOT
+from tests.engine_seams import override_sources, replace_catalogue_loader
 
 FIXTURES = Path(__file__).parent / "fixtures" / "component_manifests"
 FOUNDATION_FIXTURE = Path(__file__).parent / "fixtures" / "foundation"
@@ -81,13 +81,13 @@ def _spec(**kwargs: Any) -> ProjectSpec:
 
 @pytest.fixture
 def fixture_catalogue(monkeypatch: pytest.MonkeyPatch) -> Path:
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", FIXTURES)
+    override_sources(monkeypatch, catalogue=FIXTURES)
     # None of these fixture components target Foundation (they predate
     # FT-08.02), so isolate from the real installed Foundation source the
     # same way discovery is already isolated from the real installed
     # catalogue -- FIXTURES has no foundation.toml at its own root, so this
     # resolves to "no Foundation available" for these tests.
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", FIXTURES)
+    override_sources(monkeypatch, foundation=FIXTURES)
     return FIXTURES
 
 
@@ -95,8 +95,7 @@ def fixture_catalogue(monkeypatch: pytest.MonkeyPatch) -> Path:
 def copied_catalogue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     root = tmp_path / "components"
     shutil.copytree(FIXTURES, root)
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", root)
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", root)
+    override_sources(monkeypatch, catalogue=root, foundation=root)
     return root
 
 
@@ -106,7 +105,7 @@ def test_engine_info_reports_package_and_protocols_without_discovery(
     def fail_discovery() -> None:
         raise AssertionError("engine information must not scan the catalogue")
 
-    monkeypatch.setattr(engine_module, "_load_catalogue", fail_discovery)
+    replace_catalogue_loader(monkeypatch, fail_discovery)
 
     info = get_engine_info()
 
@@ -191,7 +190,7 @@ def test_discovery_wraps_missing_and_invalid_catalogues(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     missing = tmp_path / "missing"
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", missing)
+    override_sources(monkeypatch, catalogue=missing)
     with pytest.raises(ForgeEngineError) as missing_error:
         discover_components()
     assert missing_error.value.code is EngineErrorCode.COMPONENT_DISCOVERY_FAILED
@@ -199,7 +198,7 @@ def test_discovery_wraps_missing_and_invalid_catalogues(
     duplicate_root = tmp_path / "duplicate"
     shutil.copytree(FIXTURES, duplicate_root)
     shutil.copytree(duplicate_root / "library", duplicate_root / "library-copy")
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", duplicate_root)
+    override_sources(monkeypatch, catalogue=duplicate_root)
     with pytest.raises(ForgeEngineError) as invalid_error:
         discover_components()
     assert invalid_error.value.code is EngineErrorCode.COMPONENT_DISCOVERY_FAILED
@@ -305,7 +304,7 @@ def test_missing_installed_foundation_source_is_a_generation_plan_error(
     """``library`` always targets Foundation; a missing installed Foundation
     source (simulated here, not reachable in a normal installation) fails at
     planning rather than being silently ignored."""
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", tmp_path)
+    override_sources(monkeypatch, foundation=tmp_path)
     spec = parse_project_spec(_real_library_payload())
 
     with pytest.raises(ForgeEngineError) as exc_info:
@@ -570,8 +569,7 @@ def test_invalid_extension_contracts_fail_during_planning(
 def foundation_and_v2_catalogue(monkeypatch: pytest.MonkeyPatch) -> Path:
     """The whole fixture catalogue (including ``library-v2``) plus a real
     Foundation source, both via the private test-only override seam."""
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", FIXTURES)
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", FOUNDATION_FIXTURE)
+    override_sources(monkeypatch, catalogue=FIXTURES, foundation=FOUNDATION_FIXTURE)
     return FIXTURES
 
 

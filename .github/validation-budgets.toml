@@ -221,6 +221,9 @@ provisional = true
 sensitive_paths = [
     "src/forge_template/**",
     "tests/composition_matrix.py",
+    "tests/composition_fingerprints.py",
+    "tests/fixtures/composition_fingerprints.json",
+    "tests/engine_seams.py",
     "tests/test_composition_sweep.py",
     "tests/test_no_copy_inheritance.py",
     "tests/no_copy_downstream.py",

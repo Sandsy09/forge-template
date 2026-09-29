@@ -34,7 +34,6 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-import forge_template.engine as engine_module
 from forge_template import (
     ComponentOwner,
     EngineErrorCode,
@@ -49,6 +48,7 @@ from forge_template import (
 )
 from forge_template.component_manifest import load_component_manifest
 from forge_template.foundation_source import load_foundation_source
+from tests.engine_seams import override_sources
 
 _SRC = Path(__file__).parents[1] / "src" / "forge_template"
 _PRODUCTION_COMPONENTS = _SRC / "components"
@@ -178,8 +178,7 @@ def overlaid_catalogue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     shutil.copytree(_PRODUCTION_COMPONENTS, root)
     for capability in _SYNTHETIC:
         shutil.copytree(_SYNTHETIC_FIXTURES / capability, root / capability)
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", root)
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", None)
+    override_sources(monkeypatch, catalogue=root, foundation=None)
     return root
 
 

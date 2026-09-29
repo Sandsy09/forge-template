@@ -20,6 +20,7 @@ from forge_template import (
     render_project,
     validate_rendered_project,
 )
+from tests.engine_seams import override_sources
 
 FIXTURES = Path(__file__).parent / "fixtures" / "component_manifests"
 
@@ -106,11 +107,11 @@ def test_valid_project_returns_the_same_immutable_result(tmp_path: Path) -> None
 def test_render_project_invokes_public_validation(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", FIXTURES)
+    override_sources(monkeypatch, catalogue=FIXTURES)
     # Isolate from the real installed Foundation source (FT-08.02): this
     # fixture's "library" component owns pyproject.toml.jinja directly and
     # predates Foundation, so a real Foundation source would collide with it.
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", FIXTURES)
+    override_sources(monkeypatch, foundation=FIXTURES)
     calls: list[RenderedProject] = []
     validator = validate_rendered_project
 

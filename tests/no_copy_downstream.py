@@ -17,10 +17,14 @@ from forge_template import (
     GenerationPlan,
     ProjectSpec,
     RenderedProject,
+    UpdatePlan,
     discover_components,
+    parse_generation_metadata,
     parse_project_spec,
     plan_generation,
+    plan_update,
     render_project,
+    verify_generation_metadata,
 )
 from tests.organisation_policy_contract import (
     POLICY_FIXTURES,
@@ -70,3 +74,25 @@ def generate_from_policies(
     plan = plan_generation(spec)
     project = render_project(spec)
     return DownstreamGeneration(spec=spec, plan=plan, project=project)
+
+
+def update_from_record(recorded: str, new_payload: Mapping[str, object]) -> UpdatePlan:
+    """Reproduce a recorded project and plan its update, facade-only.
+
+    FT-25.01: the client half of the provenance contract
+    (docs/generation-provenance.md). The client persisted ``recorded`` (the
+    ``to_json()`` of a render's metadata); here it parses it back, reproduces
+    the recorded render on the same release, verifies every recorded digest,
+    renders the new effective spec, and asks the engine to classify the
+    update. It never reads or writes a filesystem -- applying the plan stays
+    the client's job.
+    """
+    document = parse_generation_metadata(recorded)
+    reproduced = render_project(parse_project_spec(document.spec))
+    verify_generation_metadata(document, reproduced)
+    new = render_project(parse_project_spec(dict(new_payload)))
+    return plan_update(
+        recorded,
+        old={item.target: item.content for item in reproduced.files},
+        new=new,
+    )

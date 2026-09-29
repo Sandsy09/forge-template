@@ -63,7 +63,7 @@ Run additional checks according to the affected surface:
 | A path present in released Copier projects | `uv run poe update` |
 | Generated GitHub Actions | `./scripts/verify-ci.sh <org>` after `poe combos` |
 | Foundation or component generated content | `uv run poe archetype` |
-| Catalogue, selection, composition, or public render facade | `uv run poe sweep` |
+| Catalogue, selection, composition, engine internals, or public render facade | `uv run poe sweep` (asserts every composition's output fingerprint) |
 | Component manifests/resources or wheel configuration | `uv run poe check:wheel` |
 | A provider/client boundary visible to `create-forge` | `uv run poe crossrepo` with a sibling checkout |
 | `pyproject.toml` dependencies or `uv.lock` | `uv run poe audit` (needs network) |
@@ -92,6 +92,18 @@ uv run pytest tests/test_composition_contract.py --update-goldens
 
 Update archetype regression digests only when the corresponding output change
 is intentional and explained by the pull request.
+
+The engine's frozen baseline ([engine-internals.md](docs/engine-internals.md))
+follows the same rule. `tests/test_engine_facade_contract.py` and
+`tests/test_engine_baseline.py` take `--update-goldens`; the per-composition
+output fingerprints the sweep asserts regenerate with:
+
+```bash
+uv run python -m tests.composition_fingerprints --write
+```
+
+A moved fingerprint is a changed output. Explain it; do not regenerate it to
+make a refactor pass.
 
 ## Opening a pull request
 

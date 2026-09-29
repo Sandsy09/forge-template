@@ -81,6 +81,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0076 — Approve validation budgets and tiers](0076-approve-validation-budgets-and-tiers.md)
 - [0077 — Implement validation tiers and thresholds](0077-implement-validation-tiers-and-thresholds.md)
 - [0078 — Synchronise the roadmap mirror and tracking conventions](0078-synchronise-roadmap-mirror-and-tracking.md)
+- [0079 — Decompose the engine behind a frozen facade](0079-decompose-the-engine-behind-a-frozen-facade.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

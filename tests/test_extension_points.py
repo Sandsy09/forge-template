@@ -17,7 +17,6 @@ from pathlib import Path, PurePosixPath
 import pytest
 from pydantic import ValidationError
 
-import forge_template.engine as engine_module
 from forge_template import (
     EngineErrorCode,
     ForgeEngineError,
@@ -33,6 +32,7 @@ from forge_template.file_conflicts import (
     output_target,
 )
 from forge_template.foundation_source import load_foundation_source
+from tests.engine_seams import override_sources
 
 _ROOT = Path(__file__).parents[1] / "src" / "forge_template"
 _FOUNDATION_TOML = _ROOT / "foundation" / "foundation.toml"
@@ -331,11 +331,11 @@ def test_unsupported_override_fails_as_a_structured_engine_error(
     shutil.copytree(FIXTURES, root)
     shutil.copytree(INVALID_FIXTURES / "colliding-first", root / "colliding-first")
     shutil.copytree(INVALID_FIXTURES / "colliding-second", root / "colliding-second")
-    monkeypatch.setattr(engine_module, "_CATALOGUE_ROOT_OVERRIDE", root)
+    override_sources(monkeypatch, catalogue=root)
     # These fixtures predate FT-08.02 and target no Foundation source; a
     # missing Foundation source here resolves to "none available", the same
     # isolation `tests/test_engine.py`'s `fixture_catalogue` fixture relies on.
-    monkeypatch.setattr(engine_module, "_FOUNDATION_ROOT_OVERRIDE", root)
+    override_sources(monkeypatch, foundation=root)
 
     spec = parse_project_spec(
         _fixture_payload(capabilities=("colliding-first", "colliding-second"))
