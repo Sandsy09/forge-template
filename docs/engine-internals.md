@@ -84,12 +84,12 @@ test modules. Review each diff before committing it.
 
 | Module | Owns |
 | --- | --- |
-| `engine.py` | The facade: protocol constants, payload aliases, re-exports, and the public functions with their overloads and docstrings, each delegating below. `render_project` still calls the module-level `validate_rendered_project`. |
+| `engine.py` | The facade: re-exports and the public functions with their overloads and docstrings, each delegating below. `render_project` still calls the module-level `validate_rendered_project`. |
 | `_models.py` | The public result models. |
 | `_errors.py` | `EngineErrorCode`, `EngineErrorDetail`, `ForgeEngineError`, and the helpers that build error details. |
 | `_discovery.py` | The test-only catalogue and Foundation root overrides, catalogue and Foundation loading, descriptors, ProjectSpec parsing, and selection and option validation. |
 | `_rendering.py` | Plan preparation, the extension contract, template assembly, the Jinja environment, rendering, and rendered-output validation. |
-| `_provenance.py` | Package identity, generation-metadata construction, parsing, negotiation and verification, rename windows, classification, and update planning. |
+| `_provenance.py` | Package identity, the supported protocol constants and the metadata payload alias (re-exported by the facade), generation-metadata construction, parsing, negotiation and verification, rename windows, classification, and update planning. |
 | `_legacy_answers.py` | `map_legacy_library_answers`. |
 
 The existing composition modules (`component_manifest`, `composition`,

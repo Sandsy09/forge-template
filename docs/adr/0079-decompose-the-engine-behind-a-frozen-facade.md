@@ -49,9 +49,9 @@ them.
    object. Importing the package loads no check-only module, no component or
    Foundation package, and writes nothing. The defining module of a class is
    an implementation detail and may change.
-3. **Private seams.** `engine.py` stays the facade: protocol constants,
-   payload aliases, re-exports, and the public function definitions (with
-   their overloads and docstrings) delegating to private modules:
+3. **Private seams.** `engine.py` stays the facade: re-exports and the
+   public function definitions (with their overloads and docstrings)
+   delegating to private modules:
    - `_models.py` — the public result models;
    - `_errors.py` — `EngineErrorCode`, `EngineErrorDetail`,
      `ForgeEngineError` and the error-detail helpers;
@@ -60,7 +60,9 @@ them.
      validation;
    - `_rendering.py` — plan preparation, the extension contract, template
      assembly and rendering, and rendered-output validation;
-   - `_provenance.py` — package identity, generation-metadata construction,
+   - `_provenance.py` — package identity and the supported protocol
+     constants (re-exported unchanged, because metadata negotiation reads
+     them), generation-metadata construction,
      parsing, negotiation and verification, rename windows, classification,
      and update planning;
    - `_legacy_answers.py` — the legacy Copier answer mapping.
