@@ -34,9 +34,14 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
 - [batch-archetype.md](batch-archetype.md) — the accepted project shape,
   entry point, packaging, dependency, idempotency, failure-handling, test and
   exclusion contract for the Batch archetype (FT-27.01, ADR 0080), pinned by
-  `tests/test_batch_contract.py`. No implementation exists yet;
-  [FT-27.02](https://github.com/Sandsy09/forge-template/issues/200) decides
-  its compatibility and acceptance matrix next.
+  `tests/test_batch_contract.py`. No implementation exists yet.
+- [batch-compatibility-and-acceptance.md](batch-compatibility-and-acceptance.md)
+  — FT-27.02's classification of the versioned axes the batch line moves
+  (`forge-template` `0.7.0`, component `1.0.0`), the 640-composition
+  capability matrix, the Python and dependency evidence, the bounded
+  deterministic smoke, and the executable acceptance matrix for the
+  already-filed Stage 28 (FT-EPIC-28, #190) implementation, pinned by
+  `tests/test_batch_gates.py`. No implementation exists yet.
 - [data-science-capabilities.md](data-science-capabilities.md) — the accepted
   optionless Jupyter tooling and optional Scientific Python dependency
   contracts, including both production capability implementations on `main`.
