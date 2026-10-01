@@ -46,6 +46,7 @@ def test_discovery_exposes_cli_with_library_and_capabilities() -> None:
     descriptors = discover_components()
 
     assert [descriptor.id for descriptor in descriptors] == [
+        "batch",
         "changelog",
         "cli",
         "coverage",

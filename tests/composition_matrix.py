@@ -39,7 +39,10 @@ if TYPE_CHECKING:
 #: The count this module currently derives. A tripwire, not a target: it
 #: changes only when the catalogue itself changes, and any such change is a
 #: real one worth noticing in review, not a value to update reflexively.
-EXPECTED_COMPOSITION_COUNT = 2880
+#: FT-28.01 / ADR 0082 added the ``batch`` archetype (no ``requires`` or
+#: ``conflicts``, same shape as ``cli``/``streamlit``), moving this from 2880
+#: to 3520 -- exactly the +640 ADR 0081 projected.
+EXPECTED_COMPOSITION_COUNT = 3520
 
 
 @dataclass(frozen=True, order=True)

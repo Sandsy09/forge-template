@@ -10,14 +10,17 @@ child of [FT-EPIC-27](https://github.com/Sandsy09/forge-template/issues/189).
 It completes the Stage 27 pair with the
 [archetype contract](batch-archetype.md) (FT-27.01 / ADR 0080).
 
-This is a decision contract. It bumps no version, publishes no package, and
-changes no code, generated content or protocol integer. No implementation
-exists yet: `discover_components()` does not return `batch`, and
-`tests/test_batch_gates.py` pins that fact deliberately, the same discipline
-`tests/test_streamlit_gates.py` followed until FT-20.01 landed.
+This was a decision contract: it bumped no version, published no package, and
+changed no code, generated content or protocol integer on merge.
 [FT-EPIC-28](https://github.com/Sandsy09/forge-template/issues/190) and its
-already-filed children FT-28.01–03 implement and release the line this
-contract classifies.
+children FT-28.01–03 implement and release the line this contract classifies.
+[FT-28.01](https://github.com/Sandsy09/forge-template/issues/201) /
+[ADR 0082](adr/0082-batch-archetype-implementation.md) has now landed the
+component: `discover_components()` returns `batch`, though the `0.7.0` line
+itself is not yet published -- that is FT-28.03's event.
+`tests/test_batch_gates.py` pins both facts, updated in step with each stage
+rather than deleted, the same discipline `tests/test_streamlit_gates.py`
+followed through Stage 20.
 
 ## Normative constants
 

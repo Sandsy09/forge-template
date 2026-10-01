@@ -1,0 +1,59 @@
+# The production Batch Job archetype. See docs/batch-archetype.md,
+# docs/batch-compatibility-and-acceptance.md and ADR 0080/0081/0082.
+# batch is the one archetype with no intrinsic runtime dependency (ADR 0080
+# choice 3), so it contributes neither `pyproject-runtime-dependencies` nor
+# `pyproject-development-dependencies`. Nothing is contributed to
+# `pyproject-aggregate-check`: `check` must terminate.
+manifest_version = 2
+id = "batch"
+name = "Batch Job"
+description = "A scheduling-neutral, package-backed batch transformation job."
+kind = "archetype"
+version = "1.0.0"
+content_root = "content"
+requires = []
+conflicts = []
+
+[compatibility]
+projectspec_protocols = [1]
+requires_python = ">=3.11"
+
+[[contributions]]
+extension_point = "pyproject-build-system"
+content = "extensions/build-system.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-archetype-metadata"
+content = "extensions/archetype-metadata.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-build-configuration"
+content = "extensions/build-configuration.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-classifiers"
+content = "extensions/classifiers.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-entry-points"
+content = "extensions/entry-points.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "pyproject-task-definitions"
+content = "extensions/task-definitions.toml.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "gitignore-project-shape"
+content = "extensions/gitignore-project-shape.jinja"
+target.kind = "foundation"
+
+[[contributions]]
+extension_point = "readme-project-shape"
+content = "extensions/readme-project-shape.md.jinja"
+target.kind = "foundation"

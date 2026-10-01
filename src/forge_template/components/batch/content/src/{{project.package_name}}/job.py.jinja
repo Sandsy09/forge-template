@@ -1,0 +1,84 @@
+"""{{ project.name }} batch job.
+
+Reads ``data/sample_input.json``, applies one deterministic transformation to
+each record, and writes ``data/output.json``. There is no scheduler, worker,
+queue, retry or checkpoint: rerunning is the only supported way to
+re-execute the job, and rerunning is always safe -- the transformation is a
+pure function of the tracked input, so two runs against an unchanged input
+produce byte-identical output.
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+import os
+import sys
+from pathlib import Path
+from typing import Any
+
+logger = logging.getLogger(__name__)
+
+_INPUT_PATH = Path("data/sample_input.json")
+_OUTPUT_PATH = Path("data/output.json")
+
+
+class _MalformedRecordError(Exception):
+    """Raised when a record has no usable string ``id`` field."""
+
+
+def _transform(record: dict[str, Any], index: int) -> dict[str, Any]:
+    """Return ``record`` with a normalised, upper-cased ``id`` field.
+
+    Args:
+        record: The raw JSON record.
+        index: The record's position in the input list, for error reporting.
+
+    Raises:
+        _MalformedRecordError: If ``record`` has no non-empty string ``id``.
+    """
+    raw_id = record.get("id")
+    if not isinstance(raw_id, str) or not raw_id:
+        raise _MalformedRecordError(f'record {index} has no string "id" field')
+    return {**record, "id": raw_id.strip().upper()}
+
+
+def _write_atomically(path: Path, payload: list[dict[str, Any]]) -> None:
+    """Write ``payload`` to ``path`` atomically via a temporary file.
+
+    A crash mid-write leaves the previous good output in place rather than a
+    truncated file.
+
+    Args:
+        path: The destination file.
+        payload: The JSON-serialisable content to write.
+    """
+    tmp_path = path.with_name(f"{path.name}.tmp")
+    tmp_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    os.replace(tmp_path, path)
+
+
+def main() -> None:
+    """Run the batch job.
+
+    Reads the tracked input, transforms every record, and writes the output.
+    On a malformed record, logs the failure, exits ``1`` and writes no
+    output -- fail-fast rather than shipping a silently partial result.
+    """
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    records = json.loads(_INPUT_PATH.read_text(encoding="utf-8"))
+
+    transformed: list[dict[str, Any]] = []
+    for index, record in enumerate(records):
+        try:
+            transformed.append(_transform(record, index))
+        except _MalformedRecordError as exc:
+            logger.error("%s", exc)
+            sys.exit(1)
+
+    _write_atomically(_OUTPUT_PATH, transformed)
+    logger.info("processed %d record(s)", len(transformed))
+
+
+if __name__ == "__main__":
+    main()

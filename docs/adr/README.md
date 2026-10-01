@@ -84,6 +84,7 @@ format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - [0079 — Decompose the engine behind a frozen facade](0079-decompose-the-engine-behind-a-frozen-facade.md)
 - [0080 — Define the batch project shape and ownership](0080-batch-project-shape.md)
 - [0081 — Define batch composition, compatibility and acceptance](0081-batch-composition-compatibility-and-acceptance.md)
+- [0082 — Implement the independent batch archetype](0082-batch-archetype-implementation.md)
 
 Add a new record by copying the most recent one and incrementing the number.
 Records are immutable: supersede them rather than editing.

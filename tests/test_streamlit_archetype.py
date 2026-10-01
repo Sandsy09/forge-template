@@ -89,7 +89,7 @@ def test_discovery_exposes_streamlit_as_the_lexically_last_archetype() -> None:
         "scientific-python",
         "streamlit",
     ]
-    assert len(descriptors) == 15
+    assert len(descriptors) == 16
 
     streamlit = next(d for d in descriptors if d.id == "streamlit")
     assert streamlit.name == "Streamlit"

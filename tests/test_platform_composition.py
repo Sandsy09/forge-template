@@ -258,16 +258,18 @@ def test_contract_states_the_exclusion_and_the_archetype_set() -> None:
 # --- FT-ROADMAP-01-EX-03: no new archetype (turned over by FT-20.01) --------
 
 
-def test_discovery_is_four_archetypes_ten_capabilities_and_one_platform() -> None:
+def test_discovery_is_five_archetypes_ten_capabilities_and_one_platform() -> None:
     """Runs against the real installed catalogue -- no overlay. FT-17.02 added
     the first platform (``github``); FT-17.03 added the eight tooling
     capabilities. The v3 line added no archetype (FT-ROADMAP-01-EX-03), so the
     set stayed ``cli`` / ``data-science`` / ``library``; the v4 Streamlit line
-    (FT-20.01 / ADR 0070) has since added ``streamlit``."""
+    (FT-20.01 / ADR 0070) added ``streamlit``, and the v5 batch line
+    (FT-28.01 / ADR 0082) has since added ``batch``."""
     by_kind: dict[str, list[str]] = {}
     for component in discover_components():
         by_kind.setdefault(component.kind, []).append(component.id)
     assert sorted(by_kind["archetype"]) == [
+        "batch",
         "cli",
         "data-science",
         "library",

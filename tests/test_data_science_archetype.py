@@ -58,6 +58,7 @@ def test_discovery_exposes_data_science_between_cli_and_jupyter() -> None:
     descriptors = discover_components()
 
     assert [descriptor.id for descriptor in descriptors] == [
+        "batch",
         "changelog",
         "cli",
         "coverage",

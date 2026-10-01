@@ -29,22 +29,24 @@ uv run poe ci:timings -- --since 2026-09-19T23:00 --until 2026-09-26T12:30 \
 
 ### Composition counts
 
-The catalogue has 4 archetypes, 10 capabilities and 1 platform, so a selection
-is one archetype, any subset of capabilities and either platform choice.
-`tests/composition_matrix.py` derives the valid set from the components' own
-`requires` and `conflicts` edges; the count is deterministic, sorted and unique
-(pinned).
+The catalogue has 5 archetypes, 10 capabilities and 1 platform (FT-28.01 /
+ADR 0082 added `batch`), so a selection is one archetype, any subset of
+capabilities and either platform choice. `tests/composition_matrix.py`
+derives the valid set from the components' own `requires` and `conflicts`
+edges; the count is deterministic, sorted and unique (pinned).
 
 | | Count |
 | --- | --- |
-| Raw candidates (4 x 2^10 x 2^1) | 8,192 |
-| Valid compositions | **2,880** |
-| Rejected compositions | 5,312 |
-| Valid per archetype | 640 `cli`, 320 `data-science`, 1,280 `library`, 640 `streamlit` |
+| Raw candidates (5 x 2^10 x 2^1) | 10,240 |
+| Valid compositions | **3,520** |
+| Rejected compositions | 6,720 |
+| Valid per archetype | 640 `batch`, 640 `cli`, 320 `data-science`, 1,280 `library`, 640 `streamlit` |
 
-Collected tests per marker at this catalogue: fast 930, `sweep` 5,761 (two
-sweeps of 2,880 plus one tripwire), `archetype` 57, `combos` 4, `update` 3,
-`cutover` 41, `crossrepo` 20.
+Collected tests per marker at this catalogue: `sweep` 7,041 (two sweeps of
+3,520 plus one tripwire). The per-composition second figures below are
+unchanged pending FT-28.02's real CI re-measurement; the other markers' fast
+counts move only slightly with the new archetype's own test files and are not
+re-quoted here to avoid a second hand-kept copy.
 
 ### Wall time per job
 
@@ -79,9 +81,14 @@ The count grows multiplicatively: a capability or a platform with no
 
 | Change | Valid compositions | Independent sweep | Direct sweep |
 | --- | --- | --- | --- |
-| Today | 2,880 | 10.3 min | 5.0 min |
-| One more archetype | about 3,900 | 13.9 min | 6.7 min |
-| One more free capability or platform | about 5,760 | 20.6 min | 9.9 min |
+| Today (post FT-28.01, `batch` added) | 3,520 | 12.6 min | 6.1 min |
+| One more archetype | about 4,200 | 15.1 min | 7.3 min |
+| One more free capability or platform | about 7,040 | 25.2 min | 12.2 min |
+
+The "Today" row's minutes are projected from the unchanged per-composition
+seconds figures below, not yet a real re-measurement; FT-28.02 re-runs
+`scripts/ci_timings.py` against an actual `batch`-inclusive sweep before this
+row is treated as a measured baseline.
 
 ### Runner noise is hardware
 

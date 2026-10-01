@@ -96,6 +96,7 @@ def test_published_compatibility_state_matches_the_engine() -> None:
 
     components = {c.id: c for c in discover_components()}
     assert components.keys() == {
+        "batch",
         "changelog",
         "cli",
         "coverage",
@@ -120,6 +121,8 @@ def test_published_compatibility_state_matches_the_engine() -> None:
     # FT-20.01 / ADR 0070: added on `main`; FT-20.04 published it in 0.6.0.
     assert components["streamlit"].version == "1.0.0"
     assert components["github"].version == "1.0.0"
+    # FT-28.01 / ADR 0082: added on `main`; not yet published (FT-28.03).
+    assert components["batch"].version == "1.0.0"
     for capability in (
         "changelog",
         "coverage",

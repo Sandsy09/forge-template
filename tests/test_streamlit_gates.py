@@ -179,8 +179,11 @@ def test_the_prose_repeats_the_constants_it_defines() -> None:
 def test_axis_cells_match_the_live_engine_as_the_line_lands() -> None:
     """The table records the 19 September 2026 decision baseline (before ->
     after). The unchanged axes equal live; the "Streamlit line" value of the
-    component axes is live because FT-20.01 landed it, and of the package
-    because FT-20.04 published it."""
+    component axes was live once FT-20.01 landed it and FT-20.04 published
+    the package. The batch line (FT-28.01 / ADR 0082) has since added a
+    sixteenth component, so "Discovered components" is now a floor, not an
+    equality -- this table is a point-in-time record of the Streamlit
+    transition, not a running total of every later archetype."""
     axes = _axes()
     info = get_engine_info()
 
@@ -196,8 +199,11 @@ def test_axis_cells_match_the_live_engine_as_the_line_lands() -> None:
     assert axes["Foundation extension points"][0] == str(
         len(foundation.extension_points)
     )
-    assert axes["Discovered components"][1] == str(len(discover_components()))
-    assert int(axes["Discovered components"][0]) + 1 == len(discover_components())
+    assert (
+        int(axes["Discovered components"][1])
+        == int(axes["Discovered components"][0]) + 1
+    )
+    assert len(discover_components()) >= int(axes["Discovered components"][1])
 
 
 def test_the_streamlit_line_moves_exactly_the_two_axes_it_claims() -> None:
@@ -252,6 +258,10 @@ def test_the_four_selections_are_valid_and_documentation_is_not() -> None:
 
 
 def test_the_sweep_count_matches_the_contract_arithmetic() -> None:
+    """``COMPOSITION_COUNT_WITH_STREAMLIT`` is this contract's own point-in-time
+    total (before the batch line added its own 640, FT-28.01 / ADR 0082), so
+    it is checked as a floor plus the per-archetype arithmetic it actually
+    claims, not an equality against the ever-growing live sweep total."""
     constants = _constants()
     live = valid_compositions()
     per_archetype = {
@@ -261,7 +271,7 @@ def test_the_sweep_count_matches_the_contract_arithmetic() -> None:
     streamlit_count = per_archetype["streamlit"]
 
     assert streamlit_count == per_archetype["cli"], "streamlit is cli-shaped"
-    assert len(live) == int(constants["COMPOSITION_COUNT_WITH_STREAMLIT"])
+    assert len(live) >= int(constants["COMPOSITION_COUNT_WITH_STREAMLIT"])
     assert len(live) == EXPECTED_COMPOSITION_COUNT
     assert str(streamlit_count) in _text()
 

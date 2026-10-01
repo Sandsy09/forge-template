@@ -40,13 +40,17 @@ fail_minutes = 20.0
 
 # Wall seconds per composition, from the sweeps' own steps at the baseline
 # (618 s and 298 s over 2,880 compositions, rounded up). The growth guard
-# multiplies these by the catalogue's valid count.
+# multiplies these by the catalogue's valid count. FT-28.01 / ADR 0082 added
+# the `batch` archetype (16 components: 5 archetypes, 10 capabilities, 1
+# platform), moving the counts below from 2880/8192/5312 to 3520/10240/6720;
+# the per-composition second figures are unchanged until a real CI
+# re-measurement (FT-28.02) says otherwise.
 [cost]
 independent_seconds_per_composition = 0.215
 direct_seconds_per_composition = 0.104
-valid_compositions = 2880
-raw_candidates = 8192
-rejected_candidates = 5312
+valid_compositions = 3520
+raw_candidates = 10240
+rejected_candidates = 6720
 
 # --- Tiers -------------------------------------------------------------------
 # `markers` are the registered pytest markers each tier runs (`fast` is the
