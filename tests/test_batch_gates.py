@@ -2,29 +2,29 @@
 (FT-27.02 / ADR 0081).
 
 The contract fixes the provider line, the capability matrix, the bounds and
-the acceptance matrix, ahead of any implementation. It is only useful if it
-stays derivable from the engine and honest about how little of it exists
-yet. These tests:
+the acceptance matrix. FT-28.01 / ADR 0082 has now landed the component, so
+these tests:
 
 * read every number from the contract's own constants table -- never a
-  second copy -- and check its axis table against the live engine at their
-  unchanged, pre-implementation baseline;
+  second copy -- and check its axis table against the live engine: the
+  unchanged axes at their baseline, and the component axis at the "Batch
+  line" value now that ``batch`` is discovered (the package axis stays at
+  its baseline until FT-28.03 publishes ``0.7.0``);
 * prove the projected 640-composition growth and the ``documentation``
-  rejection against the live catalogue and the engine's own selection rule,
-  using a synthetic ``batch`` descriptor exactly as the contract's own
-  Context section derives it;
+  rejection directly against the live catalogue and the engine's own
+  selection rule -- no synthetic descriptor is needed now that ``batch`` is
+  real;
 * check the acceptance matrix names only filed issues and that each Stage 28
   provider child owns at least one row; and
-* tripwire on the line: this must be updated, not deleted, once FT-28.01
-  lands the component and FT-28.03 publishes the line, the same discipline
-  ``test_streamlit_gates.py`` followed through Stage 20.
+* tripwire on the line: this must be updated again, not deleted, once
+  FT-28.03 publishes ``0.7.0``, the same discipline ``test_streamlit_gates.py``
+  followed through Stage 20.
 """
 
 from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -35,7 +35,11 @@ from forge_template import (
     get_engine_info,
 )
 from forge_template.foundation_source import load_foundation_source
-from tests.composition_matrix import EXPECTED_COMPOSITION_COUNT, valid_compositions
+from tests.composition_matrix import (
+    EXPECTED_COMPOSITION_COUNT,
+    Composition,
+    valid_compositions,
+)
 
 _ROOT = Path(__file__).parents[1]
 _CONTRACT = _ROOT / "docs" / "batch-compatibility-and-acceptance.md"
@@ -46,12 +50,14 @@ _V5_MANIFEST = _ROOT / "docs" / "roadmap-v5" / "github-issues" / "filing-manifes
 _ISSUE_TOKEN = re.compile(r"(?:FT|CF)-(?:EPIC-)?\d{2}(?:\.\d{2})?")
 _STAGE_28_PROVIDER_CHILDREN = {"FT-28.01", "FT-28.02", "FT-28.03"}
 
-
-@dataclass(frozen=True)
-class _SyntheticComposition:
-    archetype: str
-    capabilities: tuple[str, ...]
-    platforms: tuple[str, ...]
+# The selections the contract approves, as the sorted capability tuples the
+# matrix derivation itself produces.
+_SOME_SELECTIONS = (
+    (),
+    ("jupyter",),
+    ("scientific-python",),
+    ("jupyter", "scientific-python"),
+)
 
 
 # --- doc parsing -------------------------------------------------------
@@ -147,7 +153,7 @@ def _filed_issue_ids() -> set[str]:
     return {entry["id"] for entry in manifest["issues"]}
 
 
-# --- constants and axes, at the pre-implementation baseline -------------
+# --- constants and axes, as the component lands -------------------------
 
 
 def test_contract_names_the_adr() -> None:
@@ -168,9 +174,11 @@ def test_the_prose_repeats_the_constants_it_defines() -> None:
     assert f"`{constants['PROVIDER_LINE']}`" in text
 
 
-def test_axis_cells_match_the_live_engine_at_the_decision_baseline() -> None:
-    """Batch has not landed: every axis's "Current" cell must equal the live
-    engine today. FT-28.01/FT-28.03 will make the "Batch line" cells live."""
+def test_axis_cells_match_the_live_engine_as_the_component_lands() -> None:
+    """FT-28.01 landed the component, so the "Batch line" value of the
+    component axis is live; the package axis stays at its baseline until
+    FT-28.03 publishes ``0.7.0``. Every unchanged axis equals live either
+    way."""
     axes = _axes()
     info = get_engine_info()
 
@@ -186,8 +194,8 @@ def test_axis_cells_match_the_live_engine_at_the_decision_baseline() -> None:
     assert axes["Foundation extension points"][0] == str(
         len(foundation.extension_points)
     )
-    assert axes["Discovered components"][0] == str(len(discover_components()))
-    assert "batch" not in {c.id for c in discover_components()}
+    assert axes["Discovered components"][1] == str(len(discover_components()))
+    assert "batch" in {c.id for c in discover_components()}
 
 
 def test_the_batch_line_moves_exactly_the_two_axes_it_claims() -> None:
@@ -206,9 +214,10 @@ def test_the_batch_line_moves_exactly_the_two_axes_it_claims() -> None:
 
 
 def test_the_provider_line_is_one_minor_past_the_live_package() -> None:
-    """Fails deliberately at the next unrelated minor bump, forcing the
-    contract to be revisited, exactly as test_streamlit_gates.py's
-    equivalent tripwire did through Stage 19/20."""
+    """The package has not moved yet: FT-28.03 publishes it. Fails
+    deliberately at the next unrelated minor bump, forcing the contract to
+    be revisited, exactly as test_streamlit_gates.py's equivalent tripwire
+    did through Stage 19/20."""
     live = get_engine_info().package_version
     line = _constants()["PROVIDER_LINE"]
     baseline = _axes()["`forge-template` package"][0].split(".")
@@ -216,35 +225,32 @@ def test_the_provider_line_is_one_minor_past_the_live_package() -> None:
     assert line.split(".")[:2] == ["0", str(int(baseline[1]) + 1)]
 
 
-# --- the projected composition growth, proven against the engine's rule -
+# --- the composition growth, proven against the live engine's own rule --
+
+
+def test_the_batch_selections_are_valid_and_documentation_is_not() -> None:
+    accepted = set(valid_compositions())
+    for capabilities in _SOME_SELECTIONS:
+        assert Composition("batch", capabilities, ()) in accepted, capabilities
+    batch_only = [c for c in accepted if c.archetype == "batch"]
+    assert batch_only, "no batch compositions derived"
+    assert all("documentation" not in c.capabilities for c in batch_only)
 
 
 def test_the_projected_growth_matches_the_contract_arithmetic() -> None:
-    """A synthetic no-edge ``batch`` descriptor, added to the live catalogue,
-    must add exactly the contract's claimed count. This is the same
-    technique ADR 0069 (Streamlit) used before FT-20.01 landed."""
-    live = discover_components()
-    synthetic = live[0].model_copy(
-        update={
-            "id": "batch",
-            "name": "Batch Job",
-            "kind": "archetype",
-            "requires": (),
-            "conflicts": (),
-            "options": (),
-        }
-    )
-    projected = valid_compositions((*live, synthetic))
-    current = valid_compositions(live)
+    """``batch`` is real now: the sweep itself, not a synthetic descriptor,
+    proves the contract's arithmetic."""
+    live = valid_compositions()
+    per_archetype = {
+        archetype: sum(1 for c in live if c.archetype == archetype)
+        for archetype in {c.archetype for c in live}
+    }
+    batch_count = per_archetype["batch"]
 
-    added = len(projected) - len(current)
-    assert added == 640, "batch should add exactly cli/streamlit's 640"
-    assert len(projected) == int(_constants()["COMPOSITION_COUNT_WITH_BATCH"])
-    assert len(current) == EXPECTED_COMPOSITION_COUNT
-
-    batch_only = [c for c in projected if c.archetype == "batch"]
-    assert batch_only, "no batch compositions derived"
-    assert all("documentation" not in c.capabilities for c in batch_only)
+    assert batch_count == per_archetype["cli"], "batch is cli-shaped"
+    assert len(live) == int(_constants()["COMPOSITION_COUNT_WITH_BATCH"])
+    assert len(live) == EXPECTED_COMPOSITION_COUNT
+    assert str(batch_count) in _text()
 
 
 # --- acceptance matrix ---------------------------------------------------
@@ -264,7 +270,9 @@ def test_every_stage_28_provider_child_owns_at_least_one_matrix_row() -> None:
     assert not missing, f"provider children with no acceptance row: {missing}"
 
 
-def test_batch_is_not_yet_a_discovered_component() -> None:
-    """Fails deliberately once FT-28.01 lands the component; that stage must
-    replace this assertion with the positive form."""
-    assert "batch" not in {c.id for c in discover_components()}
+def test_the_discovered_component_carries_the_contracts_identity() -> None:
+    batch = next(c for c in discover_components() if c.id == "batch")
+
+    assert batch.kind == "archetype"
+    assert batch.version == _constants()["COMPONENT_VERSION"]
+    assert (batch.requires, batch.conflicts, batch.options) == ((), (), ())

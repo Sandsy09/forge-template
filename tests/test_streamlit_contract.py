@@ -125,10 +125,13 @@ def test_env_example_is_owned_by_the_dotenv_example_capability() -> None:
 
 
 def test_streamlit_is_the_fourth_archetype_in_the_catalogue() -> None:
+    """Streamlit was the fourth archetype added; the batch line (FT-28.01 /
+    ADR 0082) has since added a fifth, so this checks Streamlit's own
+    membership rather than a closed set of exactly four."""
     components = {c.id: c.kind for c in discover_components()}
     assert components.get("streamlit") == "archetype"
     archetypes = {cid for cid, kind in components.items() if kind == "archetype"}
-    assert archetypes == {"library", "cli", "data-science", "streamlit"}
+    assert {"library", "cli", "data-science", "streamlit"} <= archetypes
 
 
 def test_the_live_manifest_contributes_the_points_the_contract_marks_used() -> None:

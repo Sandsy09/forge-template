@@ -1,0 +1,27 @@
+## Usage
+
+Run the job from the project root:
+
+```bash
+uv run poe run
+```
+
+This is the same as running `{{ project.repository_name }}` or
+`python -m {{ project.package_name }}` directly. The job reads
+`data/sample_input.json`, transforms each record, and writes
+`data/output.json`.
+
+## Project structure
+
+```text
+src/{{ project.package_name }}/   Package source, including the job
+tests/                            Test suite
+data/sample_input.json            Tracked sample input
+data/output.json                  Job output -- regenerated on every run, git-ignored
+```
+
+Rerunning the job is always safe: it is a deterministic, idempotent
+transformation of the tracked input, and output is written atomically. A
+malformed input record makes the job exit non-zero and log the failure
+without writing partial output. Edit `src/{{ project.package_name }}/job.py`
+to change the transformation.

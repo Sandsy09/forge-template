@@ -110,6 +110,7 @@ live engine state.
 | `pyright` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
 | `renovate` component | `1.0.0` | `1.0.0` | **New (FT-17.03)** |
 | `streamlit` component | `1.0.0` | — | **Outside the cutover** — added by the Streamlit line (FT-20.01), after the cutover line shipped; see [the Streamlit compatibility contract](streamlit-compatibility-and-acceptance.md) |
+| `batch` component | `1.0.0` | — | **Outside the cutover** — added by the batch line (FT-28.01), after the cutover line shipped; see [the batch compatibility contract](batch-compatibility-and-acceptance.md) |
 
 The rule that bounds the conditional component rows: an existing component
 moves its version only if the cutover changes its owned content or one of its

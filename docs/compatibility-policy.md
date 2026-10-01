@@ -305,6 +305,7 @@ above does not require a new ADR; a semantic change to those rules does (see
 | `jupyter` component | `1.0.0` |
 | `scientific-python` component | `1.0.0` |
 | `streamlit` component | `1.0.0` (FT-20.01, first shipped in `0.6.0`, FT-20.04) |
+| `batch` component | `1.0.0` (FT-28.01; not yet published -- the `0.7.0` line ships at FT-28.03) |
 | `github` component | `1.0.0` (first shipped platform, FT-17.02) |
 | `changelog` component | `1.0.0` (first shipped `manifest_version = 3`, FT-17.03) |
 | `coverage` component | `1.0.0` (FT-17.03) |

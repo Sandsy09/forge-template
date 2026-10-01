@@ -60,6 +60,7 @@ def test_discovery_exposes_path_free_immutable_jupyter_descriptor() -> None:
     descriptors = discover_components()
 
     assert [descriptor.id for descriptor in descriptors] == [
+        "batch",
         "changelog",
         "cli",
         "coverage",
@@ -76,7 +77,7 @@ def test_discovery_exposes_path_free_immutable_jupyter_descriptor() -> None:
         "scientific-python",
         "streamlit",
     ]
-    jupyter = descriptors[8]
+    jupyter = descriptors[9]
     assert jupyter.name == "Jupyter"
     assert (
         jupyter.description == "Notebook authoring, execution, and validation tooling."

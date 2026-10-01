@@ -33,15 +33,16 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   gates, pinned by `tests/test_streamlit_gates.py`.
 - [batch-archetype.md](batch-archetype.md) — the accepted project shape,
   entry point, packaging, dependency, idempotency, failure-handling, test and
-  exclusion contract for the Batch archetype (FT-27.01, ADR 0080), pinned by
-  `tests/test_batch_contract.py`. No implementation exists yet.
+  exclusion contract for the Batch archetype (FT-27.01, ADR 0080), implemented
+  by FT-28.01 (ADR 0082), pinned by `tests/test_batch_contract.py`.
 - [batch-compatibility-and-acceptance.md](batch-compatibility-and-acceptance.md)
   — FT-27.02's classification of the versioned axes the batch line moves
   (`forge-template` `0.7.0`, component `1.0.0`), the 640-composition
   capability matrix, the Python and dependency evidence, the bounded
-  deterministic smoke, and the executable acceptance matrix for the
-  already-filed Stage 28 (FT-EPIC-28, #190) implementation, pinned by
-  `tests/test_batch_gates.py`. No implementation exists yet.
+  deterministic smoke, and the executable acceptance matrix for Stage 28
+  (FT-EPIC-28, #190) — the component landed at FT-28.01, the `0.7.0` line
+  itself is not yet published (FT-28.03) — pinned by
+  `tests/test_batch_gates.py`.
 - [data-science-capabilities.md](data-science-capabilities.md) — the accepted
   optionless Jupyter tooling and optional Scientific Python dependency
   contracts, including both production capability implementations on `main`.

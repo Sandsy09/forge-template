@@ -120,6 +120,7 @@ def test_installed_catalogue_contains_the_production_components() -> None:
     descriptors = discover_components()
 
     assert [descriptor.id for descriptor in descriptors] == [
+        "batch",
         "changelog",
         "cli",
         "coverage",

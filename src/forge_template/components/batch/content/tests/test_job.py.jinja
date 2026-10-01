@@ -1,0 +1,49 @@
+"""Tests for the {{ project.package_name }} batch job."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from {{ project.package_name }}.job import main
+
+_OUTPUT_PATH = Path("data/output.json")
+
+
+def test_running_the_job_produces_the_expected_output() -> None:
+    main()
+
+    output = json.loads(_OUTPUT_PATH.read_text(encoding="utf-8"))
+    assert output == [
+        {"id": "A1", "name": "Widget"},
+        {"id": "B2", "name": "Gadget"},
+        {"id": "C3", "name": "Gizmo"},
+    ]
+
+
+def test_running_the_job_twice_is_idempotent() -> None:
+    main()
+    first = _OUTPUT_PATH.read_bytes()
+
+    main()
+    second = _OUTPUT_PATH.read_bytes()
+
+    assert first == second
+
+
+def test_a_malformed_record_exits_non_zero_and_writes_no_output(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "sample_input.json").write_text(
+        json.dumps([{"not_id": "a1"}]), encoding="utf-8"
+    )
+
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+
+    assert excinfo.value.code == 1
+    assert not (tmp_path / "data" / "output.json").exists()

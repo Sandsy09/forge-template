@@ -45,8 +45,9 @@ below: ADR 0056 measured a 72,566-byte local review wheel; the published
 wheel to ~85 KB, FT-17.03 (the eight tooling capabilities) to ~105 KB, and
 FT-17.04 (the reproducible-render `engine.py`/`generation_metadata.py`
 additions, no new content trees) to ~108 KB, FT-20.01 (the `streamlit` archetype)
-to 113,503 bytes (sdist 792,271), and FT-20.02 (its `run` task, configuration,
-ignore rule and README section) to 115,215 bytes (sdist ~795 KB), still under
+to 113,503 bytes (sdist 792,271), FT-20.02 (its `run` task, configuration,
+ignore rule and README section) to 115,215 bytes (sdist ~795 KB), and FT-28.01
+(the `batch` archetype) to 128,922 bytes (sdist 1,177,768), still under
 the 128 KiB ceiling.
 FT-17.05 measured the sdist at ~726 KB (it carries the full repo, unlike the
 wheel). Both ceilings are deliberately loose bounds, not tight pins -- archive
@@ -88,6 +89,9 @@ _MUST_CONTAIN = (
     # `exclude` that dropped `component.toml`, `extensions/`, or a component's
     # `options.schema.json` would otherwise publish an unusable catalogue --
     # see FT-11.04 / ADR 0052.
+    "forge_template/components/batch/component.toml",
+    "forge_template/components/batch/content/",
+    "forge_template/components/batch/extensions/",
     "forge_template/components/changelog/component.toml",
     "forge_template/components/changelog/content/",
     "forge_template/components/changelog/extensions/",
@@ -165,7 +169,7 @@ _SMOKE_IMPORT = (
     "descriptors = forge_template.discover_components(); "
     "ids = sorted(d.id for d in descriptors); "
     "assert ids == "
-    "['changelog', 'cli', 'coverage', 'data-science', 'dependabot', "
+    "['batch', 'changelog', 'cli', 'coverage', 'data-science', 'dependabot', "
     "'documentation', 'dotenv-example', 'github', 'jupyter', 'library', "
     "'pre-commit', 'pyright', 'renovate', 'scientific-python', 'streamlit'], "
     "ids; "
@@ -197,6 +201,22 @@ _SMOKE_IMPORT = (
     "assert 'streamlit run app.py' in rendered['pyproject.toml']; "
     "assert '/.streamlit/secrets.toml' in rendered['.gitignore']; "
     "assert 'gatherUsageStats = false' in rendered['.streamlit/config.toml']; "
+    # FT-28.01 / AC: the batch archetype must render too -- its job module,
+    # its console script and its output ignore rule.
+    "batch = forge_template.render_project(forge_template.parse_project_spec({"
+    "'protocol_version': 1, "
+    "'project': {'name': 'Smoke', 'package_name': 'smoke', "
+    "'repository_name': 'smoke', 'description': 'd', 'licence': 'mit', "
+    "'authors': [{'name': 'Smoke Test'}]}, "
+    "'python': {'minimum': '3.11', 'development': '3.13'}, "
+    "'components': {'archetype': 'batch', 'capabilities': [], "
+    "'platforms': []}, 'component_options': {}})); "
+    "batch_rendered = {f.target: f.content.decode() for f in batch.files}; "
+    "assert {'src/smoke/job.py', 'src/smoke/__main__.py', "
+    "'data/sample_input.json', 'tests/test_job.py'} <= set(batch_rendered), "
+    "sorted(batch_rendered); "
+    "assert 'smoke = \"smoke.job:main\"' in batch_rendered['pyproject.toml']; "
+    "assert '/data/output.json' in batch_rendered['.gitignore']; "
     "print('discovered:', ids); "
     "print('negotiated:', info.package_version, info.metadata_version); "
     "print('rendered:', len(project.files), 'files')"

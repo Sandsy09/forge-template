@@ -3,10 +3,12 @@
 This document defines the `batch` archetype's project shape and ownership
 boundaries. It is the canonical living contract accepted by
 [ADR 0080](adr/0080-batch-project-shape.md) for
-[FT-27.01](https://github.com/Sandsy09/forge-template/issues/199). No
-implementation has landed: `discover_components()` does not yet return
-`batch`, and `tests/test_batch_contract.py` pins that fact deliberately, so it
-fails the day a future implementation stage first adds the component.
+[FT-27.01](https://github.com/Sandsy09/forge-template/issues/199).
+[FT-28.01](https://github.com/Sandsy09/forge-template/issues/201) /
+[ADR 0082](adr/0082-batch-archetype-implementation.md) implemented this shape:
+`discover_components()` now returns `batch`, and
+`tests/test_batch_contract.py` pins that fact, updated in step with the
+implementation rather than deleted.
 
 ## Archetype identity and fixed choices
 
