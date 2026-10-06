@@ -9,6 +9,10 @@ boundaries. It is the canonical living contract accepted by
 `discover_components()` now returns `batch`, and
 `tests/test_batch_contract.py` pins that fact, updated in step with the
 implementation rather than deleted.
+[FT-28.02](https://github.com/Sandsy09/forge-template/issues/202) /
+[ADR 0083](adr/0083-validate-batch-generated-projects.md) then validated it as
+generated projects and distributions; the evidence is in
+[batch-validation.md](batch-validation.md).
 
 ## Archetype identity and fixed choices
 

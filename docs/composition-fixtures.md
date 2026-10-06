@@ -107,10 +107,11 @@ The same option also regenerates
 `tests/fixtures/archetype_regression/digests.json` — the per-target SHA-256
 map `tests/test_data_science_composition.py` pins `library` and `cli` output
 against across every capability selection (FT-12.03, ADR 0055), extended by
-FT-20.03 (ADR 0072) to `data-science` and `streamlit`. Unlike the goldens
+FT-20.03 (ADR 0072) to `data-science` and `streamlit` and by FT-28.02
+(ADR 0083) to `batch`. Unlike the goldens
 above, that fixture is generated from the **production** catalogue, not
 `tests/fixtures/component_manifests/`, so any deliberate change to `library`,
-`cli`, `data-science`, `streamlit`, `jupyter`, `scientific-python`, or
+`cli`, `data-science`, `streamlit`, `batch`, `jupyter`, `scientific-python`, or
 Foundation output must regenerate it:
 
 ```bash

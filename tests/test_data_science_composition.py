@@ -6,8 +6,9 @@ carries the fast proofs -- deterministic planning and rendering across both
 valid compositions, the documented rejections with an archetype in play, no
 Forge dependency in any generated project, and a byte-level regression pin on
 every recorded archetype's output -- ``library`` and ``cli`` since FT-12.03,
-``data-science`` and ``streamlit`` since FT-20.03. See
-docs/data-science-validation.md and docs/streamlit-validation.md.
+``data-science`` and ``streamlit`` since FT-20.03, and ``batch`` since
+FT-28.02. See docs/data-science-validation.md, docs/streamlit-validation.md
+and docs/batch-validation.md.
 """
 
 from __future__ import annotations
@@ -56,6 +57,7 @@ _REGRESSION_ARCHETYPES: dict[str, list[tuple[str, ...]]] = {
     "cli": _REGRESSION_SELECTIONS,
     "data-science": [("jupyter",), ("jupyter", "scientific-python")],
     "streamlit": _REGRESSION_SELECTIONS,
+    "batch": _REGRESSION_SELECTIONS,
 }
 
 

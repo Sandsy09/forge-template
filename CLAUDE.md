@@ -181,6 +181,16 @@ and the published release is recorded in
 release adds no client Streamlit support and makes no engine-default switch;
 `create-forge` adopts the line separately.
 
+`main` is ahead of that release: FT-28.01 and FT-28.02 have added and
+validated a sixteenth component, the `batch` archetype, which is unreleased
+until FT-28.03 publishes `forge-template 0.7.0`. It has no `requires` or
+`conflicts`, its owned content is fixed by
+[docs/batch-archetype.md](docs/batch-archetype.md), its line and acceptance
+matrix by
+[docs/batch-compatibility-and-acceptance.md](docs/batch-compatibility-and-acceptance.md),
+and its generated-project evidence by
+[docs/batch-validation.md](docs/batch-validation.md).
+
 The public engine supports component-manifest protocols 1–3, generation
 metadata, deterministic full-catalogue rendering, and reproducible update
 planning. The direct-Copier compatibility path remains available and
