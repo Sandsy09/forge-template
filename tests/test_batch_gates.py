@@ -7,17 +7,18 @@ these tests:
 
 * read every number from the contract's own constants table -- never a
   second copy -- and check its axis table against the live engine: the
-  unchanged axes at their baseline, and the component axis at the "Batch
-  line" value now that ``batch`` is discovered (the package axis stays at
-  its baseline until FT-28.03 publishes ``0.7.0``);
+  unchanged axes at their baseline, and the package and component axes at
+  the "Batch line" value now that ``0.7.0`` is published and ``batch`` is
+  discovered;
 * prove the projected 640-composition growth and the ``documentation``
   rejection directly against the live catalogue and the engine's own
   selection rule -- no synthetic descriptor is needed now that ``batch`` is
   real;
 * check the acceptance matrix names only filed issues and that each Stage 28
   provider child owns at least one row; and
-* tripwire on the line: this must be updated again, not deleted, once
-  FT-28.03 publishes ``0.7.0``, the same discipline ``test_streamlit_gates.py``
+* tripwire on the line: FT-28.03 published ``0.7.0``, so the live package
+  must equal the contract's provider line; this must be updated again, not
+  deleted, at the next bump, the same discipline ``test_streamlit_gates.py``
   followed through Stage 20.
 """
 
@@ -175,14 +176,13 @@ def test_the_prose_repeats_the_constants_it_defines() -> None:
 
 
 def test_axis_cells_match_the_live_engine_as_the_component_lands() -> None:
-    """FT-28.01 landed the component, so the "Batch line" value of the
-    component axis is live; the package axis stays at its baseline until
-    FT-28.03 publishes ``0.7.0``. Every unchanged axis equals live either
-    way."""
+    """FT-28.01 landed the component and FT-28.03 published ``0.7.0``, so the
+    "Batch line" value of both the package and the component axis is live.
+    Every unchanged axis equals live either way."""
     axes = _axes()
     info = get_engine_info()
 
-    assert axes["`forge-template` package"][0] == info.package_version
+    assert axes["`forge-template` package"][1] == info.package_version
     assert axes["ProjectSpec protocol"][0] == _join(SUPPORTED_PROJECTSPEC_PROTOCOLS)
     assert axes["Component manifest protocol"][0] == _join(
         SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS
@@ -213,15 +213,16 @@ def test_the_batch_line_moves_exactly_the_two_axes_it_claims() -> None:
     assert axes["`batch` component"][1] == _constants()["COMPONENT_VERSION"]
 
 
-def test_the_provider_line_is_one_minor_past_the_live_package() -> None:
-    """The package has not moved yet: FT-28.03 publishes it. Fails
-    deliberately at the next unrelated minor bump, forcing the contract to
-    be revisited, exactly as test_streamlit_gates.py's equivalent tripwire
-    did through Stage 19/20."""
+def test_the_live_package_is_the_provider_line() -> None:
+    """FT-28.03 published the line: the live package is exactly the contract's
+    ``PROVIDER_LINE``, one minor past the baseline the axis table records.
+    Tripwire: fails when a later release moves the package again, so the
+    contract and the implementation are brought back into step, exactly as
+    test_streamlit_gates.py's equivalent did until the batch release."""
     live = get_engine_info().package_version
     line = _constants()["PROVIDER_LINE"]
     baseline = _axes()["`forge-template` package"][0].split(".")
-    assert baseline == live.split(".")
+    assert live == line, "the package has moved; revisit the contract"
     assert line.split(".")[:2] == ["0", str(int(baseline[1]) + 1)]
 
 

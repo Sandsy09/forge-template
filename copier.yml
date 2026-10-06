@@ -10,7 +10,7 @@
 # =============================================================================
 
 _subdirectory: template
-_min_copier_version: "9.4.0"
+_min_copier_version: "9.6.0"
 _answers_file: .copier-answers.yml
 
 _exclude:
