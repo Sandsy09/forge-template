@@ -152,8 +152,9 @@ component content. Its evidence is the protected run below.
 
 Protected CI,
 [run 37445444559](https://github.com/Sandsy09/forge-template/actions/runs/37445444559)
-against the pull request's head commit, all checks passing on Linux
-(`ubuntu-24.04`), with the Windows smoke also passing:
+against commit `7293ccf` (the implementation commit; the evidence commit
+after it is docs-only), all checks passing on Linux (`ubuntu-24.04`), with the
+Windows smoke also passing:
 
 | Job | Result |
 | --- | --- |
