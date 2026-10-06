@@ -383,14 +383,15 @@ def test_contract_names_its_exclusions_literally() -> None:
 # --- axis state: all three axes ADR 0061 classified as moving have now moved
 
 
-def test_package_has_moved_to_the_0_6_line() -> None:
+def test_package_has_moved_to_the_0_7_line() -> None:
     """FT-17.06 / ADR 0061 moved the package to ``0.5.0``, the cutover release;
-    FT-20.04 / ADR 0069 then moved it to ``0.6.0``, the Streamlit line. This
-    tripwire turned over the way it did at ``0.5.0`` -- it asserted ``0.5.x``
-    until that release."""
-    assert get_engine_info().package_version.startswith("0.6."), (
-        "package version is not on the 0.6 line -- FT-20.04 was expected to "
-        "release 0.6.0; revisit docs/streamlit-compatibility-and-acceptance.md "
+    FT-20.04 / ADR 0069 then moved it to ``0.6.0``, the Streamlit line; and
+    FT-28.03 / ADR 0081 moved it to ``0.7.0``, the batch line. This tripwire
+    turned over the way it did at ``0.6.0`` -- it asserted ``0.6.x`` until
+    that release."""
+    assert get_engine_info().package_version.startswith("0.7."), (
+        "package version is not on the 0.7 line -- FT-28.03 was expected to "
+        "release 0.7.0; revisit docs/batch-compatibility-and-acceptance.md "
         "and this pin"
     )
 

@@ -58,9 +58,9 @@ has this identity:
 | Conflicts | none |
 
 Component version `1.0.1`, manifest protocol `2`, ProjectSpec protocol `1`,
-and the `forge-template` package version (`0.6.0`) are independent
+and the `forge-template` package version (`0.7.0`) are independent
 compatibility axes. `discover_components()` returns `library` alongside
-fourteen other independent components, including `cli`, `data-science`,
+fifteen other independent components, including `cli`, `data-science`,
 `jupyter`, and `scientific-python`. Foundation is never returned as a
 component descriptor.
 

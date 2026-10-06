@@ -143,10 +143,12 @@ optionless `jupyter` and `scientific-python` capabilities (FT-11.02 /
 0051](adr/0051-production-scientific-python-capability.md)), and, on `main`
 only, the `github` platform (FT-17.02 /
 [ADR 0063](adr/0063-implement-the-github-platform.md), released in `0.5.0`).
-Discovery returns fifteen components in lexical order: the fourteen of the
+Discovery returns sixteen components in lexical order: the fourteen of the
 published `0.5.0` catalogue plus the `streamlit` archetype (FT-20.01 /
 [ADR 0070](adr/0070-streamlit-archetype-implementation.md), first shipped in
-`0.6.0`), which sorts last. A ProjectSpec selects
+`0.6.0`) and the `batch` archetype (FT-28.01 /
+[ADR 0082](adr/0082-batch-archetype-implementation.md), first shipped in
+`0.7.0`), which sorts first. A ProjectSpec selects
 exactly one archetype and may independently select any capability and any
 platform; `data-science` requires `jupyter`.
 [`forge-template 0.4.0`](https://github.com/Sandsy09/forge-template/releases/tag/v0.4.0)
@@ -410,3 +412,10 @@ written against `0.5.0` keeps working against `0.6.0` within a widened range
 and `create-forge` `0.4.0`'s `>=0.5,<0.6` does not drift into it. Client
 adoption is
 [CF-21.01](https://github.com/Sandsy09/create-forge/issues/165).
+[FT-28.03](https://github.com/Sandsy09/forge-template/issues/203) then moved
+the package to `0.7.0` for the `batch` archetype on the same terms: the facade,
+protocol tuples and `EngineErrorCode` values are unchanged, so a client
+written against `0.6.0` keeps working against `0.7.0` within a widened range
+and `create-forge` `0.5.0`'s `>=0.6,<0.7` does not drift into it. Client
+adoption is
+[CF-29.01](https://github.com/Sandsy09/create-forge/issues/204).

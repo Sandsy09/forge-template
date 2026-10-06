@@ -16,10 +16,8 @@ the engine. FT-20.01 landed the component, so these tests:
   provider child owns at least one row;
 * check the contract's "no cutover implementation dependency" finding still
   holds in the filing manifest; and
-* tripwire on the line: FT-20.04 published ``0.6.0``, so the live package must
-  equal the contract's provider line and this fails deliberately at the next
-  bump, when the contract and the implementation must be brought back into
-  step.
+* check the line: FT-20.04 published ``0.6.0``; the live package must be at or
+  past the contract's provider line (FT-28.03 has since published ``0.7.0``).
 """
 
 from __future__ import annotations
@@ -28,6 +26,8 @@ import json
 import re
 from pathlib import Path
 from typing import Any
+
+from packaging.version import Version
 
 from forge_template import (
     SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS,
@@ -180,14 +180,15 @@ def test_axis_cells_match_the_live_engine_as_the_line_lands() -> None:
     """The table records the 19 September 2026 decision baseline (before ->
     after). The unchanged axes equal live; the "Streamlit line" value of the
     component axes was live once FT-20.01 landed it and FT-20.04 published
-    the package. The batch line (FT-28.01 / ADR 0082) has since added a
-    sixteenth component, so "Discovered components" is now a floor, not an
-    equality -- this table is a point-in-time record of the Streamlit
-    transition, not a running total of every later archetype."""
+    the package. The batch line (FT-28.01 / ADR 0082, released by FT-28.03)
+    has since added a sixteenth component and moved the package to ``0.7.0``,
+    so "Discovered components" and the package are now floors, not
+    equalities -- this table is a point-in-time record of the Streamlit
+    transition, not a running total of every later release."""
     axes = _axes()
     info = get_engine_info()
 
-    assert axes["`forge-template` package"][1] == info.package_version
+    assert Version(info.package_version) >= Version(axes["`forge-template` package"][1])
     assert axes["ProjectSpec protocol"][0] == _join(SUPPORTED_PROJECTSPEC_PROTOCOLS)
     assert axes["Component manifest protocol"][0] == _join(
         SUPPORTED_COMPONENT_MANIFEST_PROTOCOLS
@@ -221,16 +222,16 @@ def test_the_streamlit_line_moves_exactly_the_two_axes_it_claims() -> None:
     assert axes["`streamlit` component"][1] == _constants()["COMPONENT_VERSION"]
 
 
-def test_the_live_package_is_the_provider_line() -> None:
-    """FT-20.04 published the line: the live package is exactly the contract's
-    ``PROVIDER_LINE``, one minor past the baseline the axis table records.
-    Tripwire: fails when a later release moves the package again, so the
-    contract and the implementation are brought back into step."""
-    live = get_engine_info().package_version
-    line = _constants()["PROVIDER_LINE"]
-    baseline = _axes()["`forge-template` package"][0].split(".")
-    assert live == line, "the package has moved; revisit the contract"
-    assert line.split(".")[:2] == ["0", str(int(baseline[1]) + 1)]
+def test_the_live_package_is_at_or_past_the_provider_line() -> None:
+    """FT-20.04 published the line, one minor past the baseline the axis table
+    records. The batch release (FT-28.03 / ADR 0081) has since moved the
+    package to ``0.7.0``, so the live package is a floor, not an equality:
+    this contract is a point-in-time record of the Streamlit transition."""
+    live = Version(get_engine_info().package_version)
+    line = Version(_constants()["PROVIDER_LINE"])
+    baseline = Version(_axes()["`forge-template` package"][0])
+    assert live >= line, "the package is behind the Streamlit line"
+    assert line.release[:2] == (0, baseline.release[1] + 1)
 
 
 def test_python_endpoints_sit_inside_the_active_window() -> None:

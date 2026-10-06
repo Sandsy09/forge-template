@@ -141,6 +141,27 @@ The "Current compatibility state" table below lists both moves. Full detail
 and the acceptance matrix live in
 [streamlit-compatibility-and-acceptance.md](streamlit-compatibility-and-acceptance.md).
 
+## Classified: the batch transition
+
+[FT-27.02](https://github.com/Sandsy09/forge-template/issues/200) /
+[ADR 0081](adr/0081-batch-composition-compatibility-and-acceptance.md)
+classified which axes the batch archetype moves, against the rules in this
+document, and
+[FT-28.03](https://github.com/Sandsy09/forge-template/issues/203) releases the
+line as `0.7.0`:
+
+- **`forge-template` package** → a new minor line, `0.7.0`. Below `1.0` a
+  supported range is minor-scoped, so published `create-forge` `0.5.0`'s
+  `>=0.6,<0.7` does not drift into it and widens only at
+  [CF-29.01](https://github.com/Sandsy09/create-forge/issues/204); `1.0.0` is
+  explicitly not promised.
+- **Discovered components** → sixteen, with `batch` entering at component
+  version `1.0.0` on manifest protocol `2`.
+- **Every other axis, and the whole public facade** → unchanged.
+
+Full detail and the acceptance matrix live in
+[batch-compatibility-and-acceptance.md](batch-compatibility-and-acceptance.md).
+
 ## Generation metadata (`metadata_version`)
 
 [FT-15.02](https://github.com/Sandsy09/forge-template/issues/147)'s
@@ -289,13 +310,13 @@ rendered bytes.
 
 ## Current compatibility state
 
-Living snapshot, reviewed 2026-09-20. Advancing it in line with the rules
+Living snapshot, reviewed 2026-10-06. Advancing it in line with the rules
 above does not require a new ADR; a semantic change to those rules does (see
 "Ownership and change process").
 
 | Axis | Current value |
 | --- | --- |
-| `forge-template` package | `0.6.0` |
+| `forge-template` package | `0.7.0` |
 | ProjectSpec protocol | `1` |
 | Component manifest protocol | `1`, `2`, `3` |
 | Generation metadata (`metadata_version`) | `1` |
@@ -305,7 +326,7 @@ above does not require a new ADR; a semantic change to those rules does (see
 | `jupyter` component | `1.0.0` |
 | `scientific-python` component | `1.0.0` |
 | `streamlit` component | `1.0.0` (FT-20.01, first shipped in `0.6.0`, FT-20.04) |
-| `batch` component | `1.0.0` (FT-28.01; not yet published -- the `0.7.0` line ships at FT-28.03) |
+| `batch` component | `1.0.0` (FT-28.01, first shipped in `0.7.0`, FT-28.03) |
 | `github` component | `1.0.0` (first shipped platform, FT-17.02) |
 | `changelog` component | `1.0.0` (first shipped `manifest_version = 3`, FT-17.03) |
 | `coverage` component | `1.0.0` (FT-17.03) |

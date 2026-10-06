@@ -40,9 +40,8 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   (`forge-template` `0.7.0`, component `1.0.0`), the 640-composition
   capability matrix, the Python and dependency evidence, the bounded
   deterministic smoke, and the executable acceptance matrix for Stage 28
-  (FT-EPIC-28, #190) — the component landed at FT-28.01, the `0.7.0` line
-  itself is not yet published (FT-28.03) — pinned by
-  `tests/test_batch_gates.py`.
+  (FT-EPIC-28, #190) — the component landed at FT-28.01 and FT-28.03
+  releases the `0.7.0` line — pinned by `tests/test_batch_gates.py`.
 - [batch-validation.md](batch-validation.md) — what the `batch` archetype and
   its four capability selections are proven to do as generated projects and
   distributions: restoration from a committed lock, both window-edge Python
