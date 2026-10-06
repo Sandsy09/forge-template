@@ -125,7 +125,8 @@ fresh virtual environments:
 2. **A minimal independent client.** `tests/independent_client_probe.py`
    imports only the standard library and top-level `forge_template` (a
    fast-suite test enforces this). It runs in each candidate installation and
-   in the published `0.6.0` wheel from PyPI (digest-verified), covering:
+   in the published `0.7.0` wheel from PyPI (digest-verified against
+   [batch-provider-release.md](batch-provider-release.md)), covering:
    - the smallest, smallest-with-`github` and largest composition of every
      archetype;
    - four update transitions per archetype;
@@ -134,15 +135,21 @@ fresh virtual environments:
 
    The candidate and the published installation must report identical
    observations, and the fingerprints must equal the checked-in baseline.
-3. **The supported released client.** `create-forge 0.5.0` from PyPI
-   generates the smallest project of every archetype, plus a large `library`
-   project with `github`. It does this once against the published `0.6.0`
-   and once with the candidate wheel installed in its place. The trees,
-   excluding `.git` and `.venv`, must be byte-identical. `create-forge doctor
-   --json` must also accept the candidate's negotiation payload.
+3. **The supported released client, on its own line and past it.**
+   `create-forge 0.5.0` from PyPI declares `forge-template>=0.6,<0.7`, so the
+   `0.7` line is outside its range. A positive control shows it still
+   generates a `library` project with the `0.6` engine it resolves. With the
+   candidate wheel installed in its place, `create-forge new` must fail
+   closed before generating anything (exit `3`, the detected version and the
+   supported range in the message, no destination), for `library` and
+   `batch`. `create-forge doctor --json` must report the candidate's
+   negotiation payload; it negotiates protocols, not the package range, so it
+   reports the out-of-range engine healthy. At `0.6.0` this check compared
+   byte-identical generation across the two engines; no released client
+   supports `0.7` yet, so that comparison moves to CF-29.01.
 
-A one-byte change to one rendered file fails checks 2 and 3, naming the
-composition and the file.
+A one-byte change to one rendered file fails check 2, naming the composition
+and the file.
 
 ### Validation evidence
 
@@ -161,4 +168,14 @@ Artefacts were built locally on Windows; the hashes of a Linux build differ.
 
 The public compatibility is unchanged: no export, signature, error,
 protocol, catalogue or output change. There is no downstream dependency bump,
-and the decomposition stays unreleased until the next tagged `0.6.x` release.
+and the decomposition shipped, unchanged in behaviour, in `forge-template`
+`0.7.0`.
+
+Recorded again for the `0.7.0` release, after it was published
+([batch-provider-release.md](batch-provider-release.md)):
+
+| Check | Result |
+| --- | --- |
+| Published comparison artefact | `forge_template-0.7.0-py3-none-any.whl`, 128,920 bytes, sha256 `edaf0604fbfdc746c5ba6c5bd4b42b080919b8fa421b04d6f08345b6d89e37a3` |
+| Released client | `create-forge 0.5.0` from PyPI (`forge-template>=0.6,<0.7`), outside which the `0.7` line falls |
+| `uv run poe pairing` | 6 passed: both installs and the independent client identical to the published `0.7.0` (every archetype, `batch` included); the released client still generates with its own `0.6` engine and `new` refuses the candidate before generating, exit `3`; `doctor` reports engine `0.7.0`, protocols `1` / `1,2,3` / `1` |

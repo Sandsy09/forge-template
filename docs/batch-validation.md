@@ -179,10 +179,10 @@ later re-measurement over several runs may lower them.
 
 ## Downstream and later work
 
-- **FT-28.03** publishes `forge-template` `0.7.0` once every Engine,
+- **FT-28.03** published `forge-template` `0.7.0` once every Engine,
   Generated-project, Python-endpoint and Regression row of the acceptance
-  matrix has passed, and moves the package-line tripwires this issue left
-  alone; see `docs/batch-provider-release.md` once it exists.
+  matrix had passed, and moved the package-line tripwires this issue left
+  alone; see [batch-provider-release.md](batch-provider-release.md).
 - **`create-forge` Stage 29 / CF-29.01** adopts the `0.7` line and validates
   batch through the installed console; the client checks are not this
   repository's.

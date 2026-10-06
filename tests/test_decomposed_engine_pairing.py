@@ -3,9 +3,9 @@
 ``pairing``-marked (``uv run poe pairing``): network-dependent and slow, a
 deliberate local check like ``crossrepo``. Everything runs in fresh virtual
 environments through subprocesses, never in this pytest interpreter, and
-compares the candidate with the immutable published ``forge-template 0.6.0``
+compares the candidate with the immutable published ``forge-template 0.7.0``
 (downloaded from PyPI and digest-verified against
-docs/streamlit-provider-release.md):
+docs/batch-provider-release.md):
 
 1. **Artefacts.** The candidate wheel, and a wheel built from the candidate
    sdist, each install cleanly; the public facade, the private engine
@@ -16,10 +16,15 @@ docs/streamlit-provider-release.md):
    the same catalogue, output fingerprints, update plans and structured
    failures from all three installations -- and the fingerprints equal the
    checked-in baseline.
-3. **The supported released client.** ``create-forge 0.5.0`` from PyPI
-   (``forge-template>=0.6,<0.7``) generates byte-identical projects whether
-   it resolves the published ``0.6.0`` or has the candidate wheel installed
-   in its place.
+3. **The supported released client, on its own line and past it.**
+   ``create-forge 0.5.0`` from PyPI declares ``forge-template>=0.6,<0.7``,
+   so the ``0.7`` line is outside its range until ``CF-29.01`` widens it.
+   A positive control shows it still generates with the ``0.6`` engine it
+   resolves; with the candidate installed in its place, ``new`` must fail
+   closed before generating anything (exit ``3``, no destination), and
+   ``doctor`` must report the candidate's negotiation payload. Byte-identical
+   generation across the two engines is not asserted: no released client
+   supports ``0.7`` yet, so that proof moves to ``CF-29.01``.
 
 See docs/engine-internals.md#validation-evidence.
 """
@@ -28,6 +33,7 @@ from __future__ import annotations
 
 import json
 import shutil
+import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -49,18 +55,21 @@ from tests.released_provider import (
 )
 
 if TYPE_CHECKING:
+    import subprocess
     from collections.abc import Mapping
 
 pytestmark = pytest.mark.pairing
 
-PUBLISHED_VERSION = "0.6.0"
-# docs/streamlit-provider-release.md, the FT-20.04 published-artefact audit.
+PUBLISHED_VERSION = "0.7.0"
+# docs/batch-provider-release.md, the FT-28.03 published-artefact audit.
 PUBLISHED_WHEEL = ArtefactIdentity(
-    filename="forge_template-0.6.0-py3-none-any.whl",
-    size=115_232,
-    sha256="cf21152242a81b6a19d5298521a77f504063091759b5cca721b3f527c64ac742",
+    filename="forge_template-0.7.0-py3-none-any.whl",
+    size=128_920,
+    sha256="edaf0604fbfdc746c5ba6c5bd4b42b080919b8fa421b04d6f08345b6d89e37a3",
 )
 RELEASED_CLIENT = "create-forge==0.5.0"
+# The engine range the released client declares; the `0.7` line is outside it.
+RELEASED_CLIENT_ENGINE_RANGE = "forge-template>=0.6,<0.7"
 
 PROBE = Path(__file__).parent / "independent_client_probe.py"
 
@@ -293,16 +302,15 @@ def test_independent_client_observes_identical_behaviour(
 # --- 3. the supported released client -------------------------------------------
 
 
-def _client_compositions() -> tuple[Composition, ...]:
-    # The largest library cell drops `pre-commit`: its hook installation
-    # fetches hook repositories, which is not what this pairing compares.
-    return (
-        *(_smallest(archetype) for archetype in _archetypes()),
-        _largest("library", without=frozenset({"pre-commit"})),
-    )
+def _candidate_version() -> str:
+    with (REPO_ROOT / "pyproject.toml").open("rb") as handle:
+        version: str = tomllib.load(handle)["project"]["version"]
+    return version
 
 
-def _generate(installation: Installation, composition: Composition, dest: Path) -> None:
+def _run_new(
+    installation: Installation, composition: Composition, dest: Path
+) -> subprocess.CompletedProcess[str]:
     scripts = venv_python(installation.venv).parent
     env = child_env(dest.parent / ".config", extra_path=scripts)
     args: list[str] = [
@@ -329,19 +337,14 @@ def _generate(installation: Installation, composition: Composition, dest: Path) 
         args += ["--component-option", "github.organisation=pairing-org"]
     if "coverage" in composition.capabilities:
         args += ["--component-option", "coverage.fail_under=80"]
-    result = run(args, dest.parent, env=env)
+    return run(args, dest.parent, env=env)
+
+
+def _generate(installation: Installation, composition: Composition, dest: Path) -> None:
+    result = _run_new(installation, composition, dest)
     assert_success(
         result, context=f"{installation.label}: create-forge new {composition.slug}"
     )
-
-
-def _tree(root: Path) -> dict[str, bytes]:
-    ignored = {".git", ".venv"}
-    return {
-        path.relative_to(root).as_posix(): path.read_bytes()
-        for path in sorted(root.rglob("*"))
-        if path.is_file() and not ignored & set(path.relative_to(root).parts)
-    }
 
 
 @pytest.fixture(scope="module")
@@ -368,47 +371,79 @@ def released_clients(
     return {"published": published, "candidate": candidate}
 
 
-def _engine_origin(installation: Installation, cwd: Path) -> str:
-    result = run(
-        [
-            str(installation.python),
-            "-c",
-            "import forge_template, importlib.util as u; "
-            "print(u.find_spec('forge_template._discovery') is not None)",
-        ],
-        cwd,
-    )
-    assert_success(result, context=f"{installation.label}: engine origin")
+def _engine_probe(installation: Installation, cwd: Path, code: str) -> str:
+    result = run([str(installation.python), "-c", code], cwd)
+    assert_success(result, context=f"{installation.label}: engine probe")
     return result.stdout.strip()
 
 
-def test_released_client_generates_identically_on_the_candidate(
+def _engine_origin(installation: Installation, cwd: Path) -> str:
+    return _engine_probe(
+        installation,
+        cwd,
+        "import forge_template, importlib.util as u; "
+        "print(u.find_spec('forge_template._discovery') is not None)",
+    )
+
+
+def _engine_version(installation: Installation, cwd: Path) -> str:
+    return _engine_probe(
+        installation,
+        cwd,
+        "import importlib.metadata as m; print(m.version('forge-template'))",
+    )
+
+
+def test_released_client_still_generates_on_its_own_engine_line(
     released_clients: dict[str, Installation], tmp_path: Path
 ) -> None:
-    assert _engine_origin(released_clients["published"], tmp_path) == "False"
-    assert _engine_origin(released_clients["candidate"], tmp_path) == "True"
+    """Positive control: the released client resolves a ``0.6`` engine and
+    generates with it, so the failure asserted next is the version, not the
+    environment."""
+    published = released_clients["published"]
+    assert _engine_origin(published, tmp_path) == "False"
+    assert _engine_version(published, tmp_path).startswith("0.6.")
 
-    for composition in _client_compositions():
-        trees = {}
-        for label, installation in released_clients.items():
-            parent = tmp_path / label / composition.slug
-            parent.mkdir(parents=True)
-            dest = parent / "project"
-            _generate(installation, composition, dest)
-            trees[label] = _tree(dest)
-        assert trees["candidate"].keys() == trees["published"].keys(), composition.slug
-        differing = sorted(
-            target
-            for target in trees["published"]
-            if trees["candidate"][target] != trees["published"][target]
-        )
-        assert differing == [], f"{composition.slug}: {differing}"
-        assert ".forge/generation.json" in trees["candidate"]
+    parent = tmp_path / "control"
+    parent.mkdir()
+    dest = parent / "project"
+    _generate(published, _smallest("library"), dest)
+    assert (dest / ".forge" / "generation.json").is_file()
 
 
-def test_released_client_doctor_accepts_the_candidate(
+def test_released_client_fails_closed_on_the_candidate_line(
     released_clients: dict[str, Installation], tmp_path: Path
 ) -> None:
+    """``create-forge 0.5.0`` declares ``forge-template>=0.6,<0.7``; the
+    candidate is on the ``0.7`` line, outside it. ``new`` must refuse before
+    generating anything: exit ``3``, the detected version and the supported
+    range in the message, and no destination. Byte-identical generation across
+    the two engines is ``CF-29.01``'s to prove once a client supports ``0.7``."""
+    candidate = released_clients["candidate"]
+    assert _engine_origin(candidate, tmp_path) == "True"
+    version = _candidate_version()
+    assert _engine_version(candidate, tmp_path) == version
+
+    for composition in (_smallest("library"), _smallest("batch")):
+        parent = tmp_path / "refused" / composition.slug
+        parent.mkdir(parents=True)
+        dest = parent / "project"
+        result = _run_new(candidate, composition, dest)
+        # The message is wrapped to the terminal width.
+        output = " ".join((result.stdout + result.stderr).split())
+        assert result.returncode == 3, (composition.slug, output)
+        assert f"Detected forge-template {version}" in output, output
+        assert RELEASED_CLIENT_ENGINE_RANGE in output, output
+        assert not dest.exists(), f"{composition.slug}: a refused run wrote output"
+
+
+def test_released_client_doctor_reports_the_candidate_negotiation(
+    released_clients: dict[str, Installation], tmp_path: Path
+) -> None:
+    """``doctor`` negotiates the protocols, not the package range, so it
+    reports the candidate healthy while ``new`` refuses it. That is the
+    released client's behaviour and is recorded, not asserted away; tightening
+    it is client work."""
     installation = released_clients["candidate"]
     env = child_env(
         tmp_path / ".config", extra_path=venv_python(installation.venv).parent
@@ -426,7 +461,8 @@ def test_released_client_doctor_accepts_the_candidate(
     report = json.loads(result.stdout)
     integration = report["integration"]
     assert report["ok"] is True
-    assert integration["engine_package"] == PUBLISHED_VERSION
+    assert integration["engine_package"] == _candidate_version()
+    assert integration["engine_range"] == RELEASED_CLIENT_ENGINE_RANGE
     assert integration["projectspec_protocol"]["detected"] == "1"
     assert integration["component_manifest_protocol"]["detected"] == "1,2,3"
     assert integration["metadata_version"]["detected"] == 1

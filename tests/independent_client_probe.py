@@ -2,7 +2,7 @@
 
 Run by ``tests/test_decomposed_engine_pairing.py`` with the interpreter of a
 clean virtual environment that has exactly one ``forge-template`` installed
-(the candidate wheel, its sdist build, or the published ``0.6.0`` wheel). It
+(the candidate wheel, its sdist build, or the published ``0.7.0`` wheel). It
 imports nothing but the standard library and the top-level ``forge_template``
 package -- no repository file, no private module, no test seam -- reads a
 JSON request on stdin, and prints one JSON observation on stdout. Two
