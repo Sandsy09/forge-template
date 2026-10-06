@@ -18,6 +18,10 @@ children FT-28.01–03 implement and release the line this contract classifies.
 [ADR 0082](adr/0082-batch-archetype-implementation.md) has now landed the
 component: `discover_components()` returns `batch`, though the `0.7.0` line
 itself is not yet published -- that is FT-28.03's event.
+[FT-28.02](https://github.com/Sandsy09/forge-template/issues/202) /
+[ADR 0083](adr/0083-validate-batch-generated-projects.md) has executed the
+generated-project, endpoint and regression rows; see
+[batch-validation.md](batch-validation.md).
 `tests/test_batch_gates.py` pins both facts, updated in step with each stage
 rather than deleted, the same discipline `tests/test_streamlit_gates.py`
 followed through Stage 20.

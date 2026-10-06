@@ -8,14 +8,15 @@ hardcodes ``"platforms": []`` and uses only ``jupyter`` / ``scientific-python``
 executed against engine-rendered output at all, and invariant 1 (generated
 output is pre-commit clean) had never been checked on the engine path.
 
-Four cells, one per archetype -- the three that existed at FT-17.05 and, since
-FT-20.03 / ADR 0072, ``streamlit`` -- each with ``github`` and every capability
-it can carry (``renovate`` is excluded -- it conflicts with
-the ``dependabot`` cell here uses; ``documentation`` is ``library``-only, since
-it ``requires`` ``library``). Each cell: lock, sync, build (wheel + sdist),
-isolated install, the generated project's own locked ``poe check``, then a real
-``git init`` + ``pre-commit run --all-files``, then the Forge-freedom probe
-(row G2) at both build time (the lockfile) and install time (the venv).
+Five cells, one per archetype -- the three that existed at FT-17.05, ``streamlit``
+since FT-20.03 / ADR 0072, and ``batch`` since FT-28.02 / ADR 0083 -- each with
+``github`` and every capability it can carry (``renovate`` is excluded -- it
+conflicts with the ``dependabot`` cell here uses; ``documentation`` is
+``library``-only, since it ``requires`` ``library``). Each cell: lock, sync,
+build (wheel + sdist), isolated install, the generated project's own locked
+``poe check``, then a real ``git init`` + ``pre-commit run --all-files``, then
+the Forge-freedom probe (row G2) at both build time (the lockfile) and install
+time (the venv).
 
 ``archetype``-marked (``uv run poe archetype -n 4``): each cell is a real
 network-bound `uv lock`/`uv sync`/`uv build` plus a `pre-commit` run that
@@ -74,6 +75,12 @@ _CELLS = [
         "full_comp_streamlit",
         _NON_LIBRARY_CAPABILITIES,
         id="streamlit",
+    ),
+    pytest.param(
+        "batch",
+        "full_comp_batch",
+        _NON_LIBRARY_CAPABILITIES,
+        id="batch",
     ),
 ]
 

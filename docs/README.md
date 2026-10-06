@@ -43,6 +43,13 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   (FT-EPIC-28, #190) — the component landed at FT-28.01, the `0.7.0` line
   itself is not yet published (FT-28.03) — pinned by
   `tests/test_batch_gates.py`.
+- [batch-validation.md](batch-validation.md) — what the `batch` archetype and
+  its four capability selections are proven to do as generated projects and
+  distributions: restoration from a committed lock, both window-edge Python
+  endpoints, the bounded deterministic smoke, module-only artefacts,
+  Forge-free installs, the byte-level regression pin across all five
+  archetypes, and provenance/update evidence including the
+  `data/output.json` exclusion (FT-28.02, ADR 0083).
 - [data-science-capabilities.md](data-science-capabilities.md) — the accepted
   optionless Jupyter tooling and optional Scientific Python dependency
   contracts, including both production capability implementations on `main`.

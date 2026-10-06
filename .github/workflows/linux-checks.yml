@@ -123,7 +123,7 @@ jobs:
 
   # ---------------------------------------------------------------------------
   # Real generated-project proof for every production archetype (Library, CLI,
-  # Data Science, Streamlit) and capability composition -- tests/*_build.py,
+  # Data Science, Streamlit, Batch) and capability composition -- tests/*_build.py,
   # tests/test_*_endpoints.py and tests/test_full_composition_build.py.
   # ---------------------------------------------------------------------------
   archetype:

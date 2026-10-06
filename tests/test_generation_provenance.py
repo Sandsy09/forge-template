@@ -13,12 +13,15 @@ the documented code.
 
 Since FT-17.04 / ADR 0065 shipped the real reproducible-render and update
 surface, this module also drives ``plan_update`` directly: the reproduction
-guarantee across all three archetypes, the five-value classification
+guarantee across every archetype (three at FT-17.04, plus ``streamlit`` and
+``batch`` since FT-28.02 / ADR 0083), the five-value classification
 vocabulary, ownership/regeneration agreement with the new plan, the
 unavailable-historical-provider and tampered-merge-base fail-closed paths,
-the decision-2 lenient-recorded-version seam, and rename-window surfacing
-against a synthetic fixture catalogue (the shipped catalogue declares no
-``[[renames]]`` record).
+the decision-2 lenient-recorded-version seam, rename-window surfacing against
+a synthetic fixture catalogue (the shipped catalogue declares no
+``[[renames]]`` record), and -- new at FT-28.02 -- that batch's own runtime
+output (``data/output.json``) never appears as a manifest-owned update
+target, since ADR 0081 choice 2 keeps it outside rendering entirely.
 """
 
 from __future__ import annotations
@@ -333,16 +336,27 @@ _ARCHETYPE_PAYLOADS: dict[str, dict[str, Any]] = {
         },
         "component_options": {},
     },
+    "streamlit": {
+        **_REFERENCE_PAYLOAD,
+        "components": {"archetype": "streamlit", "capabilities": [], "platforms": []},
+        "component_options": {},
+    },
+    "batch": {
+        **_REFERENCE_PAYLOAD,
+        "components": {"archetype": "batch", "capabilities": [], "platforms": []},
+        "component_options": {},
+    },
 }
 
 
 @pytest.mark.parametrize("archetype", sorted(_ARCHETYPE_PAYLOADS))
 def test_reproduction_is_byte_identical_across_archetypes(archetype: str) -> None:
-    """The reproducibility guarantee, proven same-release for all three
-    archetypes: render -> attach metadata -> re-render from the embedded spec
-    -> byte-identical, and the recorded document verifies against the
-    reproduction. Cross-release provisioning is the client's own step
-    (CF-16.02), proven against a real released artefact at FT-17.05/FT-18.01."""
+    """The reproducibility guarantee, proven same-release for every archetype
+    the catalogue carries: render -> attach metadata -> re-render from the
+    embedded spec -> byte-identical, and the recorded document verifies
+    against the reproduction. Cross-release provisioning is the client's own
+    step (CF-16.02), proven against a real released artefact at
+    FT-17.05/FT-18.01."""
     spec = parse_project_spec(_ARCHETYPE_PAYLOADS[archetype])
     original = render_project(spec)
     assert original.metadata is not None
@@ -576,6 +590,24 @@ def test_plan_update_surfaces_only_in_window_renames(
             "since": "1.1.0",
         }
     ]
+
+
+def test_batch_output_is_never_a_manifest_owned_update_target() -> None:
+    """ADR 0081 choice 2: ``data/output.json`` is the job's own runtime
+    output, written by an atomic overwrite at a different layer entirely --
+    it is never a rendered, manifest-owned target, so no ``plan_update`` call
+    for a batch-containing project may classify it at all."""
+    batch_spec = parse_project_spec(_ARCHETYPE_PAYLOADS["batch"])
+    batch = render_project(batch_spec)
+    assert batch.metadata is not None
+    assert "data/output.json" not in {f.target for f in batch.files}
+
+    recorded = _document(batch)
+    old_bytes = {f.target: f.content for f in batch.files}
+    plan = plan_update(recorded, old=old_bytes, new=batch)
+
+    assert "data/output.json" not in {t.target for t in plan.targets}
+    assert {t.classification for t in plan.targets} == {"unchanged"}
 
 
 def test_skip_if_exists_matches_copier() -> None:
