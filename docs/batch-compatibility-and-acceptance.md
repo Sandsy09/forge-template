@@ -17,8 +17,9 @@ children FT-28.01–03 implement and release the line this contract classifies.
 [FT-28.01](https://github.com/Sandsy09/forge-template/issues/201) /
 [ADR 0082](adr/0082-batch-archetype-implementation.md) has now landed the
 component: `discover_components()` returns `batch`.
-[FT-28.03](https://github.com/Sandsy09/forge-template/issues/203) releases the
-`0.7.0` line itself.
+[FT-28.03](https://github.com/Sandsy09/forge-template/issues/203) then
+published the `0.7.0` line itself; see
+[batch-provider-release.md](batch-provider-release.md).
 [FT-28.02](https://github.com/Sandsy09/forge-template/issues/202) /
 [ADR 0083](adr/0083-validate-batch-generated-projects.md) has executed the
 generated-project, endpoint and regression rows; see

@@ -50,7 +50,7 @@ for exact pins and engine-extra installation.
 ### Use Copier directly
 
 ```bash
-uvx copier copy gh:Sandsy09/forge-template your-project --trust --vcs-ref v0.6.0
+uvx copier copy gh:Sandsy09/forge-template your-project --trust --vcs-ref v0.7.0
 cd your-project
 uv run poe check
 ```
@@ -59,7 +59,7 @@ Copier asks the template's own questions. `--trust` allows its tasks to
 initialise Git, make local commits, install dependencies, and install hooks.
 Only run template code you trust. Omit `--vcs-ref` to use the latest
 suitable release tag. Through the companion CLI, the equivalent template
-selection is `new --template library --ref v0.6.0`.
+selection is `new --template library --ref v0.7.0`.
 
 ### Pull template updates
 
@@ -67,14 +67,14 @@ From a clean, committed Copier-generated project:
 
 ```bash
 uvx create-forge update --dry-run
-uvx create-forge update --ref v0.6.0
+uvx create-forge update --ref v0.7.0
 uv run poe check
 ```
 
 Keep `.copier-answers.yml` committed. Review the diff, resolve conflicts,
 and rerun checks before committing. A dry run validates the request without
 applying it or producing a file-by-file diff. Direct Copier users can run
-`uvx copier update --trust --vcs-ref v0.6.0` instead.
+`uvx copier update --trust --vcs-ref v0.7.0` instead.
 
 ## Preview: project types and capabilities
 
@@ -121,16 +121,13 @@ not a standalone scaffolding command.
 
 ## What's next
 
-The Foundation and Data Science roadmaps are complete. The filed [Engine-Default
-Cutover](docs/roadmap-v3/README.md) and [Streamlit
-Archetype](docs/roadmap-v4/README.md) roadmaps describe future work; their
-issues are open, and no release is scheduled. Streamlit waited for the cutover
-contracts, not the completed cutover release. Its project shape and
-[compatibility line](docs/streamlit-compatibility-and-acceptance.md) are
-[accepted contracts](docs/streamlit-archetype.md), and the archetype itself is
-implemented and validated on `main` -- package, launcher, smoke test, `run` task,
-safeguards and generated-project evidence -- unreleased until a later
-`forge-template` release publishes it.
+The Foundation and Data Science roadmaps are complete. The Streamlit and Batch
+archetypes are published in `forge-template`
+[0.6.0](docs/streamlit-provider-release.md) and
+[0.7.0](docs/batch-provider-release.md); their project shapes are
+[Streamlit](docs/streamlit-archetype.md) and [Batch](docs/batch-archetype.md)
+contracts. Released `create-forge` does not select them yet: adopting each line
+is separate client work.
 Follow [open work](https://github.com/Sandsy09/forge-template/issues) and
 [releases](https://github.com/Sandsy09/forge-template/releases), or suggest a
 useful project type or capability.

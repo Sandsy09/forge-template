@@ -41,7 +41,7 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   capability matrix, the Python and dependency evidence, the bounded
   deterministic smoke, and the executable acceptance matrix for Stage 28
   (FT-EPIC-28, #190) — the component landed at FT-28.01 and FT-28.03
-  releases the `0.7.0` line — pinned by `tests/test_batch_gates.py`.
+  published the `0.7.0` line — pinned by `tests/test_batch_gates.py`.
 - [batch-validation.md](batch-validation.md) — what the `batch` archetype and
   its four capability selections are proven to do as generated projects and
   distributions: restoration from a committed lock, both window-edge Python
@@ -49,6 +49,11 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   Forge-free installs, the byte-level regression pin across all five
   archetypes, and provenance/update evidence including the
   `data/output.json` exclusion (FT-28.02, ADR 0083).
+- [batch-provider-release.md](batch-provider-release.md) — FT-28.03's record of
+  the published, reviewed `forge-template` `0.7.0` release: the release chain,
+  published artefacts, the audit against the `0.6.0` line, the Copier-floor
+  correction, the direct-Copier regression, and the provider hand-off to
+  `create-forge`.
 - [data-science-capabilities.md](data-science-capabilities.md) — the accepted
   optionless Jupyter tooling and optional Scientific Python dependency
   contracts, including both production capability implementations on `main`.

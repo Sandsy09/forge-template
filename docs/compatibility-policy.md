@@ -147,16 +147,18 @@ and the acceptance matrix live in
 [ADR 0081](adr/0081-batch-composition-compatibility-and-acceptance.md)
 classified which axes the batch archetype moves, against the rules in this
 document, and
-[FT-28.03](https://github.com/Sandsy09/forge-template/issues/203) releases the
-line as `0.7.0`:
+[FT-28.03](https://github.com/Sandsy09/forge-template/issues/203) published the
+line as `0.7.0` ([release record](batch-provider-release.md)):
 
-- **`forge-template` package** → a new minor line, `0.7.0`. Below `1.0` a
-  supported range is minor-scoped, so published `create-forge` `0.5.0`'s
-  `>=0.6,<0.7` does not drift into it and widens only at
-  [CF-29.01](https://github.com/Sandsy09/create-forge/issues/204); `1.0.0` is
-  explicitly not promised.
+- **`forge-template` package** → a new minor line, `0.7.0`, **done** by
+  FT-28.03. Below `1.0` a supported range is minor-scoped, so published
+  `create-forge` `0.5.0`'s `>=0.6,<0.7` does not drift into it and widens only
+  at [CF-29.01](https://github.com/Sandsy09/create-forge/issues/204); `1.0.0`
+  is explicitly not promised.
 - **Discovered components** → sixteen, with `batch` entering at component
-  version `1.0.0` on manifest protocol `2`.
+  version `1.0.0` on manifest protocol `2`, **done** by
+  [FT-28.01](https://github.com/Sandsy09/forge-template/issues/201) and
+  [FT-28.02](https://github.com/Sandsy09/forge-template/issues/202).
 - **Every other axis, and the whole public facade** → unchanged.
 
 Full detail and the acceptance matrix live in

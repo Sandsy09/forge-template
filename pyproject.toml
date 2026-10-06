@@ -191,7 +191,7 @@ markers = [
     "crossrepo: validates this repo against a sibling create-forge checkout (slow, sibling-gated; `poe crossrepo`)",
     "sweep: plans and renders every valid composition the catalogue accepts (slow; `poe sweep`)",
     "cutover: validates the released 0.5.0 provider against the candidate client and the 0.4.1-pinned released client (slow; `poe cutover`)",
-    "pairing: pairs the candidate engine build with the released create-forge client and an independent client against the published 0.6.0 (slow, network; `poe pairing`)",
+    "pairing: pairs the candidate engine build with the released create-forge client and an independent client against the published 0.7.0 (slow, network; `poe pairing`)",
 ]
 
 [tool.coverage.run]
@@ -261,7 +261,7 @@ cutover = "pytest -m cutover"
 # FT-25.03: installs the candidate wheel and its sdist build in clean
 # environments and pairs them with the released create-forge 0.5.0 and a
 # minimal independent client (tests/independent_client_probe.py), comparing
-# every observation with the published forge-template 0.6.0 from PyPI
+# every observation with the published forge-template 0.7.0 from PyPI
 # (digest-verified). Network-dependent and slow, so it is a deliberate local
 # check like `crossrepo`, not a CI job. See docs/engine-internals.md.
 pairing = "pytest -m pairing --no-cov"
