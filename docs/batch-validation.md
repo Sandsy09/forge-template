@@ -137,18 +137,44 @@ socketpair detail at Streamlit's own validation
 
 ## Evidence
 
-Local results, on Windows with `uv` 0.12:
+Local results, on Windows with `uv` 0.12, at the pull request's branch:
 
 | Check | Result |
 | --- | --- |
-| `uv run poe check` | see the pull request's recorded run |
-| `uv run poe sweep` | 7,042 passed (3,520 valid compositions, `batch` included) |
-| `tests/test_batch_endpoints.py`, `-n 4` | see the pull request's recorded run |
-| `tests/test_full_composition_build.py -k batch` | see the pull request's recorded run |
-| `uv run poe check:wheel` | see the pull request's recorded run |
+| `uv run poe check` | 1,178 passed, 2 skipped (8m11s) |
+| `uv run poe check:wheel` | ok: wheel 128,916 bytes (ceiling 131,072), sdist 1,190,144 bytes |
+| `tests/test_batch_endpoints.py` and `tests/test_batch_harness.py`, `-n 2` | 14 passed (5m53s) |
+| `tests/test_full_composition_build.py -k batch` | 1 passed (4m38s) |
 
-The pull request records the protected CI run against the exact commit, with
-the exact pass counts and durations for each row above.
+The exhaustive sweep was **not** run locally: a full local run is long and
+memory-heavy on a development laptop, and CI runs it on every change to
+component content. Its evidence is the protected run below.
+
+Protected CI,
+[run 37445444559](https://github.com/Sandsy09/forge-template/actions/runs/37445444559)
+against the pull request's head commit, all checks passing on Linux
+(`ubuntu-24.04`), with the Windows smoke also passing:
+
+| Job | Result |
+| --- | --- |
+| Composition sweep, direct engine | 3,520 of 3,520 executed, 3m34s (203 s in the sweep step) |
+| Composition sweep, independent client | 3,520 of 3,520 executed, 7m13s (422 s in the sweep step) |
+| Archetype builds | 4m27s |
+| Windows smoke | 1m40s |
+| Validation budget | `ok`; critical path 9.7 min against a 20-minute fail line |
+
+The same run on the `ubuntu-26.04` canary also passed.
+
+No case failed and none was excluded.
+
+### Budget re-measurement
+
+The sweep steps measured about 0.058 s per composition (direct) and 0.120 s
+(independent) over 3,520 compositions, against the recorded 0.104 s and
+0.215 s in `.github/validation-budgets.toml`. This is one run on one runner
+type, so the recorded figures are left unchanged: they remain conservative,
+the growth guard passes, and a single sample is not grounds to loosen it. A
+later re-measurement over several runs may lower them.
 
 ## Downstream and later work
 
