@@ -124,7 +124,10 @@ not the fast outliers.
   input.
 - **Runner image.** The `ubuntu-26.04` canary ran the same jobs in the same
   range (independent sweep 5.5 to 10.7, direct 5.1 to 5.2, archetype 3.1 to
-  4.1), but with only four runs it is informational, not a baseline.
+  4.1), but with only four runs it is informational, not a baseline. Protected
+  CI has run on `ubuntu-26.04` since the runner promotion (#206); the approved
+  budgets stay as measured on `ubuntu-24.04`, and re-baselining on the new
+  image is a separate reviewed change.
 
 ## Approved budgets
 

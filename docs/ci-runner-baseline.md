@@ -2,7 +2,7 @@
 
 This is the living contract for which GitHub-hosted runner images
 `forge-template`'s own workflows run on, how the next Ubuntu image is trialled,
-and when it is promoted. [ADR
+when it is promoted, and how a promotion is rolled back. [ADR
 0074](adr/0074-pin-the-ubuntu-runner-baseline-with-a-canary.md) records the
 decision. `check_runner_labels` in `src/forge_template/github_actions.py`
 (run by `uv run poe check` through `schema.check_all()`) and
@@ -31,8 +31,8 @@ which fails if the workflows disagree with them.
 
 | Role | Label | Runs |
 | --- | --- | --- |
-| Baseline | `ubuntu-24.04` | every protected Ubuntu job: the `linux` call and the `all-green` aggregate in `test-template.yml`, and both jobs in `release.yml` |
-| Canary | `ubuntu-26.04` | the identical Linux checks, in `runner-canary.yml`, non-blocking |
+| Baseline | `ubuntu-26.04` | every protected Ubuntu job: in `test-template.yml` the `linux` call and every other job but `windows` (`classify`, `audit`, `budget` and the `all-green` aggregate), and every job in `release.yml` |
+| Canary | `ubuntu-24.04` | the identical Linux checks, in `runner-canary.yml`, non-blocking; the rollback lane on the previous baseline since the promotion ([#206](https://github.com/Sandsy09/forge-template/issues/206)) |
 | Unpinned | `windows-latest` | the `windows` smoke job in `test-template.yml`; a known gap, see below |
 
 Pinning is per image, so it still receives GitHub's routine image updates (a
@@ -46,16 +46,18 @@ new `20260920.314.1`-style version of the same OS). What it removes is the
   four direct-Copier combinations, archetype builds, both composition sweeps,
   `copier update` compatibility, wheel contents and the released-client check.
   It has read-only permissions and the same SHA pins as every other workflow.
-- `test-template.yml` calls it once with the baseline label. The required
-  aggregate `All checks passed` needs that call and the Windows job.
+- `test-template.yml` calls it once with the baseline label. Its own jobs
+  (change classification, dependency audit, validation budget and the
+  aggregate) name the baseline directly. The required aggregate `All checks
+  passed` needs all of them and the Windows job.
 - `runner-canary.yml` calls it once with the canary label, on the same
   triggers (push to `main`, pull requests, the Monday cron, manual dispatch).
   It has no aggregate job and nothing depends on it, so it cannot block a
   merge and cannot produce the required check's name.
 
 Because both callers share one definition, the canary cannot drift from the
-protected checks: what is proven on 26.04 is exactly what is required on
-24.04.
+protected checks: what the rollback lane proves on 24.04 is exactly what is
+required on 26.04.
 
 `release.yml` holds release-capable scopes (`contents: write`, `id-token:
 write`), so it is pinned to the baseline and deliberately not canaried. The
@@ -99,26 +101,33 @@ The baseline moves to the canary's image when **all** of these hold:
   `wheel` jobs, not merely lint.
 
 Promotion is one pull request that changes the label everywhere it is named:
-the `linux` call and `all-green` in `test-template.yml`, both jobs in
-`release.yml`, and the `Baseline` row above. The canary is then pointed at
-the next candidate image, or kept on the old baseline as a rollback lane. A
-promotion needs no new ADR while it follows these criteria; changing the
-criteria, or dropping the canary, does.
+every Ubuntu job in `test-template.yml` (the `linux` call and the jobs that
+name `runs-on` directly), every job in `release.yml`, and the `Baseline` row
+above. The canary is then pointed at the next candidate image, or kept on the
+old baseline as a rollback lane. A promotion needs no new ADR while it follows
+these criteria; changing the criteria, or dropping the canary, does.
+
+The 24.04 to 26.04 promotion
+([#206](https://github.com/Sandsy09/forge-template/issues/206)) kept the
+canary on `ubuntu-24.04` as the rollback lane, since no newer candidate image
+exists. When one does, or when GitHub announces a 24.04 deprecation, the
+canary moves on.
 
 If GitHub announces a deprecation or brownout schedule for the baseline
-image, promotion moves ahead of it regardless of the four-run window. Tracked
-in [#206](https://github.com/Sandsy09/forge-template/issues/206).
+image, promotion moves ahead of it regardless of the four-run window.
 
-## Known image difference: `/tmp` on 26.04
+## Known image difference: `/tmp` on 26.04, the baseline
 
-`ubuntu-26.04` mounts `/tmp` as a RAM-backed tmpfs (about 7.8G, `usrquota`,
+`ubuntu-26.04`, the baseline, mounts `/tmp` as a RAM-backed tmpfs (about 7.8G, `usrquota`,
 roughly 6.3G usable per user); `ubuntu-24.04` keeps it on the root disk. It
 is a Ubuntu 26.04 default that GitHub's announcements do not mention
 ([runner-images #14777](https://github.com/actions/runner-images/issues/14777),
 open, with an image-side fix under discussion). The `archetype` job's temp
 venvs fill that quota, so its first step exports `TMPDIR` from `RUNNER_TEMP`
 on the workspace disk, the same filesystem as the uv cache;
-`tests/test_runner_baseline.py` pins the step. Jobs that write little to
+`tests/test_runner_baseline.py` pins the step. Since the promotion this step
+is what keeps the protected `archetype` job green; on the 24.04 rollback lane
+it is harmless. Jobs that write little to
 `/tmp` (the combos and `copier update`: 131M to 392M) need nothing. Do not
 mask `tmp.mount` in a job to hide this: the canary exists to show it. If
 GitHub changes the image default, revisit the step, not the baseline.
@@ -126,8 +135,9 @@ GitHub changes the image default, revisit the step, not the baseline.
 ## Rollback
 
 Every label is explicit, so rolling back is reverting the promotion pull
-request. Nothing else moves: the canary lane is the previous baseline until
-it is retired.
+request. Nothing else moves: the canary lane is the previous baseline
+(`ubuntu-24.04`) until it is retired, so the revert's target is proven green
+on every push and Monday.
 
 ## Known gap: `windows-latest`
 
@@ -203,3 +213,40 @@ used 131M to 392M on 26.04.
 (`test_real_workflows_name_no_moving_ubuntu_alias` and
 `test_protected_ubuntu_jobs_run_on_the_contract_baseline`); restoring the
 labels passed.
+
+## Promotion evidence
+
+Recorded for [#206](https://github.com/Sandsy09/forge-template/issues/206),
+which moved the baseline from `ubuntu-24.04` to `ubuntu-26.04`. GitHub had
+announced no deprecation of 24.04, so the full four-run window applied.
+
+### Criteria
+
+The four most recent Monday scheduled runs of `runner-canary.yml` before the
+merge, each with all 11 jobs green (lint, the four direct-Copier
+combinations, `archetype`, both composition sweeps, `update-compat`, `wheel`
+and the released-client check). The image each reports in its "Set up job"
+log:
+
+| Date | Run | Commit | Image | Version | Result |
+| --- | --- | --- | --- | --- | --- |
+| 28 Sep 2026 | [36424460795](https://github.com/Sandsy09/forge-template/actions/runs/36424460795) | `aa95786` | `ubuntu-26.04` | `20260920.143.1` | 11 of 11 green |
+| 5 Oct 2026 | [37317554418](https://github.com/Sandsy09/forge-template/actions/runs/37317554418) | `135845a` | `ubuntu-26.04` | `20260927.149.1` | 11 of 11 green |
+| 12 Oct 2026 | TBD | TBD | `ubuntu-26.04` | TBD | TBD |
+| 19 Oct 2026 | TBD | TBD | `ubuntu-26.04` | TBD | TBD |
+
+- Canary green on `main` HEAD: TBD.
+- No canary-attributed issue open: the only open `area:ci` issues were #206
+  itself and [#207](https://github.com/Sandsy09/forge-template/issues/207)
+  (Windows pinning); [#209](https://github.com/Sandsy09/forge-template/issues/209),
+  the 26.04 `/tmp` quota, was closed by #210.
+
+### Validation of the promotion
+
+Pull request TBD. The baseline jobs reported `ubuntu-26.04` and the
+rollback-lane canary `ubuntu-24.04`; TBD.
+
+The only required status check stayed `All checks passed`. The `Linux (…)`
+and `Runner canary (…)` job-name prefixes changed, which the budget report
+and `ci_timings.py` already match for any `ubuntu-` version, so job history
+carried over.

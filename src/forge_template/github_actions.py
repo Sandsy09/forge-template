@@ -143,6 +143,6 @@ def check_runner_labels(workflows: Path) -> list[str]:
                 errors.append(
                     f"{path.name}: job {name!r} runs on 'ubuntu-latest', a "
                     "moving alias; name an explicit image such as "
-                    "'ubuntu-24.04' (docs/ci-runner-baseline.md)"
+                    "'ubuntu-26.04' (docs/ci-runner-baseline.md)"
                 )
     return errors
