@@ -29,7 +29,7 @@ jobs:
   # ---------------------------------------------------------------------------
   classify:
     name: Classify change
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       sweeps: ${{ steps.classify.outputs.sweeps }}
     steps:
@@ -57,11 +57,11 @@ jobs:
   # this one string, in the contract, and in release.yml.
   # ---------------------------------------------------------------------------
   linux:
-    name: Linux (ubuntu-24.04)
+    name: Linux (ubuntu-26.04)
     needs: classify
     uses: ./.github/workflows/linux-checks.yml
     with:
-      runner: ubuntu-24.04
+      runner: ubuntu-26.04
       # Only the literal 'false' skips the sweeps; an empty or failed
       # classification (fail-closed) still runs them.
       sweeps: ${{ needs.classify.outputs.sweeps != 'false' }}
@@ -103,7 +103,7 @@ jobs:
   # ---------------------------------------------------------------------------
   audit:
     name: Dependency audit
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       ON_OUTAGE: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && 'fail' || 'warn' }}
     steps:
@@ -128,7 +128,7 @@ jobs:
   # ---------------------------------------------------------------------------
   budget:
     name: Validation budget
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [classify, linux, windows, audit]
     if: ${{ !cancelled() }}
     permissions:
@@ -163,7 +163,7 @@ jobs:
   # ---------------------------------------------------------------------------
   all-green:
     name: All checks passed
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [classify, linux, windows, audit, budget]
     if: always()
     steps:

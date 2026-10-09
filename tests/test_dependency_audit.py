@@ -640,7 +640,6 @@ def test_the_committed_exceptions_file_is_valid() -> None:
 def test_ci_audits_on_every_pull_request_and_gates_the_required_check() -> None:
     jobs = _workflow("test-template.yml")["jobs"]
     job = jobs["audit"]
-    assert job["runs-on"] == "ubuntu-24.04"
     assert {"linux", "windows", "audit"} <= set(jobs["all-green"]["needs"])
     assert "scripts/audit_dependencies.py" in _run_steps(job)
     assert '--on-outage "$ON_OUTAGE"' in _run_steps(job)

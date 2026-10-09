@@ -236,8 +236,9 @@ projects (that lives under `template/{% if use_docs %}docs{% endif %}/`).
   review, pinned by `tests/test_dependency_audit.py` (ADR 0075).
 - [ci-runner-baseline.md](ci-runner-baseline.md) — FT-24.01's contract for
   the GitHub-hosted runner images this repository's workflows run on: the
-  pinned `ubuntu-24.04` baseline, the non-blocking `ubuntu-26.04` canary,
-  ownership, promotion and rollback criteria, and the generated-workflow
+  pinned `ubuntu-26.04` baseline, the non-blocking `ubuntu-24.04` canary
+  (the rollback lane since #206's promotion), ownership, promotion and
+  rollback criteria, and the generated-workflow
   exclusion, pinned by `tests/test_runner_baseline.py` (ADR 0074).
 - [roadmap-tracking.md](roadmap-tracking.md) — FT-24.03's contract for roadmap
   packs, `roadmap:N` labels, stage milestones, native sub-issue and blocked-by

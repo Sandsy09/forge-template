@@ -57,7 +57,12 @@ def test_protected_ubuntu_jobs_run_on_the_contract_baseline() -> None:
     ci = _workflow("test-template.yml")["jobs"]
     assert ci["linux"]["uses"] == _REUSABLE
     assert ci["linux"]["with"]["runner"] == baseline
-    assert ci["all-green"]["runs-on"] == baseline
+    # Every other Ubuntu job too, not only the Linux call and the aggregate:
+    # promotion moves the label everywhere it is named.
+    direct = {name: job["runs-on"] for name, job in ci.items() if name != "linux"}
+    assert direct.pop("windows") == "windows-latest"  # the known gap (#207)
+    assert set(direct) >= {"classify", "audit", "budget", "all-green"}
+    assert set(direct.values()) == {baseline}, direct
 
     release = _workflow("release.yml")["jobs"]
     assert {job["runs-on"] for job in release.values()} == {baseline}

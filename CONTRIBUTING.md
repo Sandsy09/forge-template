@@ -131,7 +131,7 @@ repository is tagged.
 ## What CI runs
 
 `.github/workflows/test-template.yml` runs the Linux checks from the reusable
-`linux-checks.yml`, pinned to `ubuntu-24.04`, plus a Windows smoke render. The
+`linux-checks.yml`, pinned to `ubuntu-26.04`, plus a Windows smoke render. The
 Linux checks validate:
 
 - Pre-commit plus the fast repository suite.
